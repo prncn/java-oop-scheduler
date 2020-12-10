@@ -2,5 +2,16 @@
 Scheduling application.
 
 ## Checklist
-[] Step One
-[] Step Two
+### Authentication 
+#### User Login GUI
+- [ ] Register, login UI    
+- [ ] Validate user    
+#### User Login Backend
+- [ ] Choose database (SQL/MongoDB/Redis)  
+- [ ] Create user collection
+- [ ] Create login API (REST-API?)  
+- [ ] Create session tokens/encryption  
+- [ ] Admin access  
+
+### Meetings/Appointments
+- [ ] Create Meetings/Appointments collection
