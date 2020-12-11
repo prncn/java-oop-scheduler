@@ -23,7 +23,7 @@ public class LoginGUI implements ActionListener {
     JPanel panel = new JPanel();
     frame.setSize(500, 400);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    //athar
+    //athar ist hier
     frame.add(panel);
     panel.setLayout(null);
 
