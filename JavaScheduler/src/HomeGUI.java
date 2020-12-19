@@ -1,7 +1,5 @@
 import java.awt.Font;
 
-import javax.swing.JLabel;
-
 public class HomeGUI extends MasterAbstractGUI {
   private static final long serialVersionUID = -771654490802003766L;
 
