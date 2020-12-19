@@ -4,14 +4,15 @@ Scheduling application.
 ## Checklist
 ### Workflow
 - [x] Setup github repo  
-- [ ] Decide java stack
-  - [ ] GUI framework
-  - [ ] Database
+- [x] Decide java stack
+  - [x] GUI framework: *Swing*
+  - [x] Database: *MySQL(Server)*, SQLite(Local Embedded)
 
 ### User Profiles 
-- [ ] Create user profiles and login (authentication) 
-  - [ ] Provide GUI interface 
-  - [ ] *Store* and *encrypt* login data in database   
+- [x] Create user profiles and login (authentication) 
+  - [x] Provide GUI interface 
+  - [x] *Store* login data in database   
+  - [ ] *Encrypt* login data in database   
 - [ ] Admin permission to access, edit and delete users  
 
 ### Create Meetings/Appointments
