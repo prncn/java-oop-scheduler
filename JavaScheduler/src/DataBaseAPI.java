@@ -1,6 +1,7 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -28,13 +29,21 @@ public class DataBaseAPI {
   }
 
   public static boolean verifyUser(String username, String password) throws SQLException {
-    String sql = "SELECT * FROM UserAccount WHERE username='" + username + "' AND password='" + password + "'";
-    Connection connection = connectDatabase();
-    Statement statement = connection.createStatement();
+	String DB_PW = "SELECT * FROM UserAccount WHERE username='" + username + "'";
+	Connection connection2 = connectDatabase();
+    Statement statement2 = connection2.createStatement();
+    ResultSet result2 = statement2.executeQuery(DB_PW);
+    result2.next();
+    String DB_PW2 = result2.getString("password");
+	System.out.println(DB_PW2);
+	String password_encrypted = PasswordEncryption.verify(password, DB_PW2);
+    String sql = "SELECT * FROM UserAccount WHERE username='" + username + "' AND password='" + password_encrypted + "'";
+    //Connection connection = connectDatabase();
+    Statement statement = connection2.createStatement();
     ResultSet result = statement.executeQuery(sql);
     Boolean isUser = result.next();
     
-    closeDatabase(connection);
+    closeDatabase(connection2);
     return isUser;
   }
 
