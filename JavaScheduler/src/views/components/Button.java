@@ -9,6 +9,7 @@ import javax.swing.JButton;
 
 public class Button extends JButton implements MouseListener{
 
+  private static final long serialVersionUID = 1L;
   private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
   private Color color;
   private int width = 100;

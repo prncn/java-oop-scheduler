@@ -30,7 +30,6 @@ public class LoginUI extends MasterUI {
   protected Label screenTitle;
   protected static Point lgnBox = new Point(100, 70);
 
-  // protected static JPanel panel = new JPanel();
 
   public LoginUI() {
     this.setTitle("Scheduler Login");

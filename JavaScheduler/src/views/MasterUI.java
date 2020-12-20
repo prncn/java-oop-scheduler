@@ -14,6 +14,7 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Component;
 import java.awt.Insets;
+import java.awt.event.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,12 +31,14 @@ abstract public class MasterUI extends JFrame {
   /**
    * Global colors and fonts
    */
+  private static Boolean LIGHT_MODE = false;
   protected static Color primaryCol = new Color(50, 50, 65);
-  protected static Color primaryColAlt = primaryCol.brighter();
+  protected static Color primaryColAlt = new Color(60, 60, 75);
   protected static Color foregroundCol = Color.WHITE;
   // protected static Color primaryCol = new Color(250, 250, 255);
-  // protected static Color primaryColAlt = primaryCol.darker();
+  // protected static Color primaryColAlt = new Color(240, 240, 245);
   // protected static Color foregroundCol = Color.BLACK;
+
   protected static Color accentCol = new Color(116, 207, 183);
   protected static Color accentColDark = accentCol.darker();
   protected static Font bodyFont; // has to be wrapped in try catch
@@ -48,11 +51,12 @@ abstract public class MasterUI extends JFrame {
   protected static File fileRoot = new File(System.getProperty("user.dir"));
   protected static ImageIcon favicon = new ImageIcon(fileRoot + "/JavaScheduler/assets/icons/favicon-96x96.png");
   protected static ImageIcon loginHeroImage = new ImageIcon(
-    fileRoot + "/JavaScheduler/assets/icons/undraw_Analysis_re_w2vd.png");
+      fileRoot + "/JavaScheduler/assets/icons/undraw_Analysis_re_w2vd.png");
   protected static ImageIcon signupHeroImage = new ImageIcon(
-    fileRoot + "/JavaScheduler/assets/icons/undraw_Cloud_docs_re_xjht.png");
+      fileRoot + "/JavaScheduler/assets/icons/undraw_Cloud_docs_re_xjht.png");
 
   public MasterUI() {
+
     this.setIconImage(favicon.getImage());
     this.setResizable(false);
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

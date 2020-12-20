@@ -6,7 +6,6 @@ import controllers.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -19,7 +18,7 @@ public class RegisterUI extends LoginUI {
   private JLabel emailLabel;
 
   public RegisterUI() {
-    this.setTitle("Scheduler Sign-Up");
+    this.setTitle("Scheduler Sign Up");
     this.setSize(600, 700);
 
     loginBtn.setText("Sign Up");
@@ -63,7 +62,8 @@ public class RegisterUI extends LoginUI {
           return;
         }
 
-        UserAccount user = new UserAccount(inputUser, inputPass, inputEmail);
+        String encryptPass = PasswordEncryption.createHash(inputPass);
+        UserAccount user = new UserAccount(inputUser, encryptPass, inputEmail);
         if(!DataBaseAPI.isAvailable(user)){
           success.setText("User already exists");
           return;

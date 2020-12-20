@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.naming.spi.DirStateFactory.Result;
+
 public class DataBaseAPI {
 
   private static final String SQL_CLOUD_URI = "jdbc:mysql://bqzknjzyoeidxu0hmqhq-mysql.services.clever-cloud.com:3306/bqzknjzyoeidxu0hmqhq?useSSL=false";
@@ -31,14 +33,32 @@ public class DataBaseAPI {
   }
 
   public static boolean verifyUser(String username, String password) throws SQLException {
-    String sql = "SELECT * FROM UserAccount WHERE username='" + username + "' AND password='" + password + "'";
     Connection connection = connectDatabase();
+    ResultSet userData = fetchUserData(connection, username);
+    String saltHash = userData.getString("password");
+    String password_encrypted = PasswordEncryption.verify(password, saltHash);
+    
+    String sql = "SELECT * FROM UserAccount WHERE username='" + username + "' AND password='" + password_encrypted + "'";
     Statement statement = connection.createStatement();
     ResultSet result = statement.executeQuery(sql);
     Boolean isUser = result.next();
     
     closeDatabase(connection);
     return isUser;
+  }
+
+  private static ResultSet fetchUserData(Connection connection, String username) {
+	  String sql = "SELECT * FROM UserAccount WHERE username='" + username + "'";
+    try {
+      Statement statement = connection.createStatement();
+      ResultSet result = statement.executeQuery(sql);
+      result.next();
+      return result;
+    } catch (SQLException e) {
+      e.printStackTrace();
+      System.out.println(e);
+      return null;
+    }
   }
 
   public static boolean createUser(UserAccount user) {
