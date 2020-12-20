@@ -11,7 +11,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +33,10 @@ abstract class MasterAbstractGUI extends JFrame {
    */
   protected static Color primaryCol = new Color(50, 50, 65);
   protected static Color primaryColAlt = new Color(60, 60, 75);
+  protected static Color foregroundCol = Color.WHITE;
+  // protected static Color primaryCol = new Color(250, 250, 255);
+  // protected static Color primaryColAlt = new Color(240, 240, 245);
+  // protected static Color foregroundCol = Color.BLACK;
   protected static Color accentCol = new Color(116, 207, 183);
   protected static Color accentColDark = new Color(86, 156, 137);
   protected static Font bodyFont; // has to be wrapped in try catch
@@ -41,8 +48,10 @@ abstract class MasterAbstractGUI extends JFrame {
    */
   protected static File fileRoot = new File(System.getProperty("user.dir"));
   protected static ImageIcon favicon = new ImageIcon(fileRoot + "/JavaScheduler/assets/icons/favicon-96x96.png");
-  protected static ImageIcon heroImage = new ImageIcon(
+  protected static ImageIcon loginHeroImage = new ImageIcon(
       fileRoot + "/JavaScheduler/assets/icons/undraw_Analysis_re_w2vd.png");
+  protected static ImageIcon signupHeroImage = new ImageIcon(
+    fileRoot + "/JavaScheduler/assets/icons/undraw_Cloud_docs_re_xjht.png");
 
   public MasterAbstractGUI() {
     this.setIconImage(favicon.getImage());
@@ -63,6 +72,34 @@ abstract class MasterAbstractGUI extends JFrame {
     }
   }
 
+  public static JLabel createLabel(int x, int y, String text) {
+    JLabel label = new JLabel(text);
+    label.setBounds(x, y, 250, 25);
+    return label;
+  }
+
+  public static JButton createButton(int x, int y, String text, Color color) {
+    JButton button = new JButton(text);
+    Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
+    button.setBounds(x, y, 100, 40);
+    button.setBorderPainted(false);
+    button.setBackground(color);
+    button.setCursor(cursor);
+
+    if(color == accentCol){
+      button.addMouseListener(new MouseAdapter() {
+        public void mouseEntered(MouseEvent e) {
+          button.setBackground(accentColDark);
+        }
+        public void mouseExited(MouseEvent e) {
+          button.setBackground(accentCol);
+        }
+      });
+    }
+
+    return button;
+  }
+
   /**
    * Loop through each UI component and change its style depending on Swing
    * instance.
@@ -71,7 +108,7 @@ abstract class MasterAbstractGUI extends JFrame {
     for (Component c : panel.getComponents()) {
       if(c instanceof JLabel || c instanceof JTextField || c instanceof JButton) {
         c.setFont(monoFont);
-        c.setForeground(Color.WHITE);
+        c.setForeground(foregroundCol);
       }
 
       if(c instanceof JTextField){
@@ -89,7 +126,7 @@ abstract class MasterAbstractGUI extends JFrame {
       }
   
       if(c instanceof JTextField){
-        ((JTextComponent) c).setCaretColor(Color.WHITE);
+        ((JTextComponent) c).setCaretColor(foregroundCol);
         ((JTextComponent) c).setBackground(primaryColAlt);
         ((JTextComponent) c).setBorder(javax.swing.BorderFactory.createEmptyBorder());
       }
