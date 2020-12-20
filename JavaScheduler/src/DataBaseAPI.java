@@ -10,18 +10,13 @@ public class DataBaseAPI {
   private static final String SQL_CLOUD_USERNAME = "udpcghp8h7wkwbrg";
   private static final String SQL_CLOUD_PASSWORD = "mYe6S6puRrvcblEZPIWZ";
 
-  private static Connection connect;
-
-  public static ResultSet connectToDatabase(String sql) {
+  public static Connection connectDatabase() {
     try {
       Class.forName("com.mysql.jdbc.Driver");
-      connect = DriverManager.getConnection(SQL_CLOUD_URI, SQL_CLOUD_USERNAME, SQL_CLOUD_PASSWORD);
+      Connection connection = DriverManager.getConnection(SQL_CLOUD_URI, SQL_CLOUD_USERNAME, SQL_CLOUD_PASSWORD);
       System.out.println("Database connected..");
 
-      Statement statement = connect.createStatement();
-      ResultSet result = statement.executeQuery(sql);
-
-      return result;
+      return connection;
 
     } catch (SQLException e) {
       System.out.println(e.getMessage());
@@ -34,28 +29,49 @@ public class DataBaseAPI {
 
   public static boolean verifyUser(String username, String password) throws SQLException {
     String sql = "SELECT * FROM UserAccount WHERE username='" + username + "' AND password='" + password + "'";
-    if (connectToDatabase(sql).next()) {
-      connect.close();
-      return true;
-    }
-    connect.close();
-    return false;
+    Connection connection = connectDatabase();
+    Statement statement = connection.createStatement();
+    ResultSet result = statement.executeQuery(sql);
+    Boolean isUser = result.next();
+    
+    closeDatabase(connection);
+    return isUser;
   }
 
   public static boolean createUser(UserAccount user) {
     String sql = "INSERT INTO `UserAccount` (`id`, `username`, `password`, `email`) VALUES ('" + user.getId() + "', '"
         + user.getUsername() + "', '" + user.getPassword() + "', '" + user.getEmail() + "')";
-    ResultSet execute = connectToDatabase(sql);
-    return (execute != null);
+    Connection connection = connectDatabase();
+    Statement statement;
+    try {
+      statement = connection.createStatement();
+      statement.execute(sql);
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return false;
+    }
+
+    return true;
   }
 
-  public static boolean userAvailable(String username, String email) throws SQLException {
-    String sql = "SELECT * FROM UserAccount WHERE username='" + username + "' AND email='" + email + "'";
-    if (connectToDatabase(sql).next()) {
-      connect.close();
-      return true;
+  public static boolean isAvailable(UserAccount user) {
+    String sql = "SELECT * FROM UserAccount WHERE username='" + user.getUsername() + "' OR email='" + user.getEmail() + "'";
+    Connection connection = connectDatabase();
+    try {
+      Statement statement = connection.createStatement();
+      ResultSet result = statement.executeQuery(sql);
+      Boolean isTaken = result.next();
+      closeDatabase(connection);
+      return !isTaken;
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return false;
     }
-    connect.close();
-    return false;
+    
+  }
+
+  private static void closeDatabase(Connection connection) throws SQLException {
+    System.out.println("Connection closed.");
+    connection.close();
   }
 }
