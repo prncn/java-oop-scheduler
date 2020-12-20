@@ -13,6 +13,7 @@ public class RegisterGUI extends LoginGUI {
   private JTextField emailField;
   private JLabel passConfLabel;
   private JLabel emailLabel;
+  
 
   public RegisterGUI() {
     this.setTitle("Scheduler Sign-Up");
@@ -58,8 +59,11 @@ public class RegisterGUI extends LoginGUI {
           success.setText("Invalid email");
           return;
         }
-
-        UserAccount user = new UserAccount(inputUser, inputPass, inputEmail);
+        
+        String encryptPass = PasswordEncryption.createHash(inputPass);
+        System.out.println(encryptPass);
+        
+        UserAccount user = new UserAccount(inputUser, encryptPass, inputEmail);
         if(!DataBaseAPI.isAvailable(user)){
           success.setText("User already exists");
           return;
