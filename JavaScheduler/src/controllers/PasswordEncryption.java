@@ -1,3 +1,4 @@
+package controllers;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -9,16 +10,9 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-// TODO: Auto-generated Javadoc
-/*
- *
- */
-
 /**
  * The Class PasswordEncryption is used to encrypt and decrypt a Password
- *
  * @author Wizard107
- * 
  */
 public class PasswordEncryption {
 	
@@ -33,9 +27,8 @@ public class PasswordEncryption {
 	
 	/**
 	 * Creates the password how it is stored in database.
-	 *
-	 * @param password the password that is encrypted
 	 * 
+	 * @param password the password that is encrypted 
 	 * @return Encoded Password in Format Salt$Hash
 	 */
 	public static String createHash(String password) {
@@ -45,13 +38,12 @@ public class PasswordEncryption {
 		byte[] hash = pbkdf2(password.toCharArray(), salt, iterations);		//hash is created with password, salt and number of iterations
 		return Base64.getEncoder().withoutPadding().encodeToString(salt) + "$" + Base64.getEncoder().withoutPadding().encodeToString(hash);		//Returns encrypted password without ==(padding) 
 	}
-	/*
+
+	/**
 	 * Verifies wether entered password matches password from database
 	 * 
-	 * @param password the password entered
-	 * 
-	 * @param stored_pw encrypted password from database
-	 * 
+	 * @param password the password entered 
+	 * @param stored_pw encrypted password from database 
 	 * @return return the hash that is created with entered password
 	 */
 	public static String verify(String password, String stored_pw) {
@@ -79,14 +71,11 @@ public class PasswordEncryption {
 			return key.getEncoded();
 		} 
 		catch (NoSuchAlgorithmException e) {
-		// TODO Auto-generated catch block
 			throw new IllegalStateException("Algorithm Invalid" + e);
 		}
 		catch (InvalidKeySpecException e) {
 			throw new IllegalStateException("SecretKeyFactory invalid" + e);
 		}
-		
 	}
-	
 
 }

@@ -1,9 +1,13 @@
+package controllers;
+
+import models.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import javax.naming.spi.DirStateFactory.Result;
 
 public class DataBaseAPI {
 
@@ -29,22 +33,32 @@ public class DataBaseAPI {
   }
 
   public static boolean verifyUser(String username, String password) throws SQLException {
-	String DB_PW = "SELECT * FROM UserAccount WHERE username='" + username + "'";
-	Connection connection2 = connectDatabase();
-    Statement statement2 = connection2.createStatement();
-    ResultSet result2 = statement2.executeQuery(DB_PW);
-    result2.next();
-    String DB_PW2 = result2.getString("password");
-	System.out.println(DB_PW2);
-	String password_encrypted = PasswordEncryption.verify(password, DB_PW2);
+    Connection connection = connectDatabase();
+    ResultSet userData = fetchUserData(connection, username);
+    String saltHash = userData.getString("password");
+    String password_encrypted = PasswordEncryption.verify(password, saltHash);
+    
     String sql = "SELECT * FROM UserAccount WHERE username='" + username + "' AND password='" + password_encrypted + "'";
-    //Connection connection = connectDatabase();
-    Statement statement = connection2.createStatement();
+    Statement statement = connection.createStatement();
     ResultSet result = statement.executeQuery(sql);
     Boolean isUser = result.next();
     
-    closeDatabase(connection2);
+    closeDatabase(connection);
     return isUser;
+  }
+
+  private static ResultSet fetchUserData(Connection connection, String username) {
+	  String sql = "SELECT * FROM UserAccount WHERE username='" + username + "'";
+    try {
+      Statement statement = connection.createStatement();
+      ResultSet result = statement.executeQuery(sql);
+      result.next();
+      return result;
+    } catch (SQLException e) {
+      e.printStackTrace();
+      System.out.println(e);
+      return null;
+    }
   }
 
   public static boolean createUser(UserAccount user) {

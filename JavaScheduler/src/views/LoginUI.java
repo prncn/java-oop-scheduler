@@ -1,49 +1,51 @@
+package views;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.Font;
 import java.awt.Point;
 
 import javax.swing.*;
+
+import controllers.DataBaseAPI;
+import views.components.*;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 
-public class LoginGUI extends MasterAbstractGUI {
+public class LoginUI extends MasterUI {
   private static final long serialVersionUID = -6864342302747015773L;
 
   /**
    * UI components
    */
-  private static JLabel userLabel;
+  private static Label userLabel;
   protected static JTextField userField;
-  private static JLabel passLabel;
+  private static Label passLabel;
   protected static JPasswordField passField;
-  protected static JButton loginBtn;
-  protected static JButton registerBtn;
-  protected static JLabel success;
+  protected static Button loginBtn;
+  protected static Button registerBtn;
+  protected static Label success;
   protected JLabel backIconHero;
-  protected JLabel screenTitle;
+  protected Label screenTitle;
   protected static Point lgnBox = new Point(100, 70);
 
-  // protected static JPanel panel = new JPanel();
 
-  public LoginGUI() {
+  public LoginUI() {
     this.setTitle("Scheduler Login");
     this.setSize(600, 500);
 
-    userLabel = createLabel(lgnBox.x, lgnBox.y + 30, "Username");
-    passLabel = createLabel(lgnBox.x, lgnBox.y + 100, "Password");
+    userLabel = new Label(lgnBox.x, lgnBox.y + 30, "Username");
+    passLabel = new Label(lgnBox.x, lgnBox.y + 100, "Password");
     userField = new JTextField();
     passField = new JPasswordField();
-    loginBtn = createButton(lgnBox.x, lgnBox.y + 180, "Login", accentCol);
-    registerBtn = createButton(lgnBox.x + 110, lgnBox.y + 180, "Sign Up", primaryCol);
-    success = createLabel(lgnBox.x, lgnBox.y + 250, "");
+    loginBtn = new Button(lgnBox.x, lgnBox.y + 180, "Login", accentCol);
+    registerBtn = new Button(lgnBox.x + 110, lgnBox.y + 180, "Sign Up");
+    success = new Label(lgnBox.x, lgnBox.y + 250, "");
     backIconHero = new JLabel(loginHeroImage);
-    screenTitle = new JLabel("Login to Your Account");
+    screenTitle = new Label(lgnBox.x, lgnBox.y, "Login to Your Account");
 
     backIconHero.setBounds(200, 250, 400, 400);
-    screenTitle.setBounds(lgnBox.x, lgnBox.y, 500, 25);
 
     userField.setBounds(lgnBox.x, lgnBox.y + 50, 210, 40);
     passField.setBounds(lgnBox.x, lgnBox.y + 120, 210, 40);
@@ -64,7 +66,7 @@ public class LoginGUI extends MasterAbstractGUI {
           if (DataBaseAPI.verifyUser(inputUser, inputPass)) {
             dispose();
             userWelcome.setText("Hi, " + inputUser + "!");
-            HomeGUI home = new HomeGUI();
+            HomeUI home = new HomeUI();
             home.setVisible(true);
           } else {
             success.setText("Wrong username or password");
@@ -80,7 +82,7 @@ public class LoginGUI extends MasterAbstractGUI {
       public void actionPerformed(ActionEvent e) {
         panel.removeAll();
         dispose();
-        RegisterGUI register = new RegisterGUI();
+        RegisterUI register = new RegisterUI();
         register.setVisible(true);
       }
     });
@@ -96,12 +98,12 @@ public class LoginGUI extends MasterAbstractGUI {
     panel.add(screenTitle);
 
     setComponentStyles();
-    screenTitle.setFont(bodyFont.deriveFont(Font.BOLD, 20f));
+    screenTitle.setTitle();
     this.setLocationRelativeTo(null);
   }
 
   public static void main(String[] args) {
-    LoginGUI logFrame = new LoginGUI();
+    LoginUI logFrame = new LoginUI();
     logFrame.setVisible(true);
   }
 

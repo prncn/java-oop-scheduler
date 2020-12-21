@@ -1,22 +1,24 @@
+package views;
+
+import models.*;
+import views.components.Label;
+import controllers.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.Component;
 
-import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class RegisterGUI extends LoginGUI {
+public class RegisterUI extends LoginUI {
   private static final long serialVersionUID = -6864343981907015773L;
   private JPasswordField passConfField;
   private JTextField emailField;
   private JLabel passConfLabel;
   private JLabel emailLabel;
-  
 
-  public RegisterGUI() {
-    this.setTitle("Scheduler Sign-Up");
+  public RegisterUI() {
+    this.setTitle("Scheduler Sign Up");
     this.setSize(600, 700);
 
     loginBtn.setText("Sign Up");
@@ -24,8 +26,8 @@ public class RegisterGUI extends LoginGUI {
     
     passConfField = new JPasswordField();
     emailField = new JTextField();
-    passConfLabel = createLabel(lgnBox.x, lgnBox.y + 170, "Confirm Password");
-    emailLabel = createLabel(lgnBox.x, lgnBox.y + 240, "Email");
+    passConfLabel = new Label(lgnBox.x, lgnBox.y + 170, "Confirm Password");
+    emailLabel = new Label(lgnBox.x, lgnBox.y + 240, "Email");
     backIconHero.setIcon(signupHeroImage);
     backIconHero.setBounds(250, 300, 400, 400);
 
@@ -59,10 +61,8 @@ public class RegisterGUI extends LoginGUI {
           success.setText("Invalid email");
           return;
         }
-        
+
         String encryptPass = PasswordEncryption.createHash(inputPass);
-        System.out.println(encryptPass);
-        
         UserAccount user = new UserAccount(inputUser, encryptPass, inputEmail);
         if(!DataBaseAPI.isAvailable(user)){
           success.setText("User already exists");
@@ -71,7 +71,7 @@ public class RegisterGUI extends LoginGUI {
         DataBaseAPI.createUser(user);
         panel.removeAll();
         dispose();
-        LoginGUI login = new LoginGUI();
+        LoginUI login = new LoginUI();
         login.setVisible(true);
         success.setText("Account created");
       }
@@ -81,7 +81,7 @@ public class RegisterGUI extends LoginGUI {
       public void actionPerformed(ActionEvent e) {
         panel.removeAll();
         dispose();
-        LoginGUI login = new LoginGUI();
+        LoginUI login = new LoginUI();
         login.setVisible(true);
       }
     });
@@ -93,13 +93,13 @@ public class RegisterGUI extends LoginGUI {
 
     setComponentStyles();
     screenTitle.setText("Create Account");
-    screenTitle.setFont(bodyFont.deriveFont(Font.BOLD, 20f));
+    screenTitle.setTitle();
 
     this.setLocationRelativeTo(null);
   }
   
   public static void main(String[] args) {
-    RegisterGUI register = new RegisterGUI();
+    RegisterUI register = new RegisterUI();
     register.setVisible(true);
   }
 }

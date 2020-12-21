@@ -1,9 +1,11 @@
+package views;
+
 import java.awt.Font;
 
-public class HomeGUI extends MasterAbstractGUI {
+public class HomeUI extends MasterUI {
   private static final long serialVersionUID = -771654490802003766L;
 
-  public HomeGUI() {
+  public HomeUI() {
     panel.removeAll();
     this.setTitle("Meetings Scheduler");
     this.setSize(1200, 700);
@@ -20,7 +22,7 @@ public class HomeGUI extends MasterAbstractGUI {
   }
   
   public static void main(String[] args) {
-    HomeGUI homeFrame = new HomeGUI();
+    HomeUI homeFrame = new HomeUI();
     homeFrame.setVisible(true);
   }
   
