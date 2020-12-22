@@ -20,7 +20,7 @@ public class RegisterUI extends LoginUI {
   public RegisterUI() {
     this.setTitle("Scheduler Sign Up");
     this.setSize(600, 700);
-    panel.setSize(this.getWidth(), this.getHeight());
+    panel.updateBounds(this);
 
     loginBtn.setText("Sign Up");
     registerBtn.setText("Go Back");
@@ -92,7 +92,7 @@ public class RegisterUI extends LoginUI {
     panel.add(emailLabel);
     panel.add(emailField);
 
-    this.setComponentStyles(panel);
+    this.setComponentStyles(panel, null);
     screenTitle.setText("Create Account");
     screenTitle.setHeading();
 

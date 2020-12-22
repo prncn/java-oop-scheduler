@@ -15,7 +15,6 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Component;
 import java.awt.Insets;
-import java.awt.event.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,16 +25,17 @@ abstract public class MasterUI extends JFrame {
   /**
    * Global UI components
    */
-  protected static JPanel panel = new JPanel();
+  protected static Panel panel = new Panel();
   protected static Label userWelcome = new Label();
 
   /**
    * Global colors and fonts
    */
-  private static Boolean LIGHT_MODE = false;
-  protected static Color primaryCol = new Color(50, 50, 65);
+  // private static Boolean LIGHT_MODE = false;
+  protected static Color primaryCol = new Color(55, 55, 70);
   protected static Color primaryColAlt = new Color(60, 60, 75);
   protected static Color foregroundCol = Color.WHITE;
+  protected static Color lightCol = new Color(250, 250, 255);
   // protected static Color primaryCol = new Color(250, 250, 255);
   // protected static Color primaryColAlt = new Color(240, 240, 245);
   // protected static Color foregroundCol = Color.BLACK;
@@ -99,24 +99,42 @@ abstract public class MasterUI extends JFrame {
       case "primaryCol": return primaryCol;
       case "primaryColAlt": return primaryColAlt;
       case "accentCol": return accentCol;
+      case "lightCol": return lightCol;
       default: throw new IllegalArgumentException("Invalid color");
     }
+  }
+
+  public static void setForegroundCol(Color color) {
+    foregroundCol = color;
   }
 
   /**
    * Loop through each UI component and change its style depending on Swing
    * instance.
    */
-  public void setComponentStyles(JPanel panel) {
+  public void setComponentStyles(JPanel panel, String colorMode) {
+    Color foreground;
+    Color background;
+    if(colorMode == "dark" || colorMode == null){
+      foreground = foregroundCol;
+      background = primaryColAlt;
+    } else if(colorMode == "light"){
+      foreground = primaryColAlt;
+      background = new Color(240, 240, 245);
+    } else {
+      throw new IllegalArgumentException("Invalid color mode.");
+    }
+  
     for(Component p : this.getRootPane().getComponents()){
       if(p instanceof JPanel){
         // System.out.println("Panel found..");
       }
     }
+    
     for(Component c : panel.getComponents()){
       if(c instanceof JLabel || c instanceof JTextField || c instanceof JButton){
         c.setFont(monoFont);
-        c.setForeground(foregroundCol);
+        c.setForeground(foreground);
       }
       if(c instanceof JTextField){
         c.setFont(monoFont.deriveFont(19f));
@@ -128,13 +146,14 @@ abstract public class MasterUI extends JFrame {
         if(((Button) c).getIsTab()) {
           c.setFont(bodyFont);
         }
+        ((AbstractButton) c).setForeground(foregroundCol);
         ((AbstractButton) c).setFocusPainted(false);
         ((AbstractButton) c).setContentAreaFilled(true);
         ((AbstractButton) c).setMargin(new Insets(5, 5, 3, 3));
       }
       if(c instanceof JTextField){
-        ((JTextComponent) c).setCaretColor(foregroundCol);
-        ((JTextComponent) c).setBackground(primaryColAlt);
+        ((JTextComponent) c).setCaretColor(foreground);
+        ((JTextComponent) c).setBackground(background);
         ((JTextComponent) c).setBorder(javax.swing.BorderFactory.createEmptyBorder());
       }
     }

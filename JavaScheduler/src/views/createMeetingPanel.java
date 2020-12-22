@@ -1,11 +1,9 @@
 package views;
 
 import javax.swing.JFrame;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import views.components.*;
-import views.MasterUI;
 
 public class createMeetingPanel extends Panel {
 
@@ -41,7 +39,7 @@ public class createMeetingPanel extends Panel {
     this.add(eventName);
     this.add(confirmBtn);
 
-    ((MasterUI) frame).setComponentStyles(this);
+    ((MasterUI) frame).setComponentStyles(this, "light");
     screenTitle.setHeading();
   }
 }

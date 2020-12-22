@@ -1,14 +1,14 @@
 package models;
 
 public class Reminder {
-    private timeFrame time;
+    private DueBefore time;
 
     /** todo
      * Sets the time variable to t
      * @param t
      * @return
      */
-    public Boolean startReminder(timeFrame t){
+    public Boolean startReminder(DueBefore t){
         return false;
     }
 

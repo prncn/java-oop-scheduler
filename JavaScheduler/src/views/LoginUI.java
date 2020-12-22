@@ -34,7 +34,7 @@ public class LoginUI extends MasterUI {
   public LoginUI() {
     this.setTitle("Scheduler Login");
     this.setSize(600, 500);
-    panel.setSize(this.getWidth(), this.getHeight());
+    panel.updateBounds(this);
 
     userLabel = new Label(lgnBox.x, lgnBox.y + 30, "Username");
     passLabel = new Label(lgnBox.x, lgnBox.y + 100, "Password");
@@ -98,7 +98,7 @@ public class LoginUI extends MasterUI {
     panel.add(backIconHero);
     panel.add(screenTitle);
 
-    this.setComponentStyles(panel);
+    this.setComponentStyles(panel, null);
     screenTitle.setHeading();
     this.setLocationRelativeTo(null);
     this.setVisible(true);
