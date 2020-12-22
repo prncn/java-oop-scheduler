@@ -12,9 +12,13 @@ public class Label extends JLabel {
     this.setBounds(x, y, 250, 25);
   }
 
-  public void setTitle() {
-    this.setSize(500, 30);
-    this.setFont(this.getFont().deriveFont(Font.BOLD, 20f));
+  public Label() {
+    super();
+  }
+
+  public void setHeading() {
+    this.setSize(500, 40);
+    this.setFont(this.getFont().deriveFont(Font.BOLD, 30f));
   }
 
 }

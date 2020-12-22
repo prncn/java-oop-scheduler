@@ -34,6 +34,7 @@ public class LoginUI extends MasterUI {
   public LoginUI() {
     this.setTitle("Scheduler Login");
     this.setSize(600, 500);
+    panel.setSize(this.getWidth(), this.getHeight());
 
     userLabel = new Label(lgnBox.x, lgnBox.y + 30, "Username");
     passLabel = new Label(lgnBox.x, lgnBox.y + 100, "Password");
@@ -43,7 +44,7 @@ public class LoginUI extends MasterUI {
     registerBtn = new Button(lgnBox.x + 110, lgnBox.y + 180, "Sign Up");
     success = new Label(lgnBox.x, lgnBox.y + 250, "");
     backIconHero = new JLabel(loginHeroImage);
-    screenTitle = new Label(lgnBox.x, lgnBox.y, "Login to Your Account");
+    screenTitle = new Label(lgnBox.x, lgnBox.y - 10, "Login");
 
     backIconHero.setBounds(200, 250, 400, 400);
 
@@ -97,15 +98,12 @@ public class LoginUI extends MasterUI {
     panel.add(backIconHero);
     panel.add(screenTitle);
 
-    setComponentStyles();
-    screenTitle.setTitle();
+    this.setComponentStyles(panel);
+    screenTitle.setHeading();
     this.setLocationRelativeTo(null);
+    this.setVisible(true);
   }
 
-  public static void main(String[] args) {
-    LoginUI logFrame = new LoginUI();
-    logFrame.setVisible(true);
-  }
 
   /**
    * Class to make borderless window draggable (Unused if native windows borders
