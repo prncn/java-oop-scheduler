@@ -1,5 +1,6 @@
 package views;
 
+import views.components.*;
 import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -26,7 +27,7 @@ abstract public class MasterUI extends JFrame {
    * Global UI components
    */
   protected static JPanel panel = new JPanel();
-  protected static JLabel userWelcome = new JLabel();
+  protected static Label userWelcome = new Label();
 
   /**
    * Global colors and fonts
@@ -48,23 +49,37 @@ abstract public class MasterUI extends JFrame {
   /**
    * File path and images
    */
-  protected static File fileRoot = new File(System.getProperty("user.dir"));
-  protected static ImageIcon favicon = new ImageIcon(fileRoot + "/JavaScheduler/assets/icons/favicon-96x96.png");
+  private static File fileRoot = new File(System.getProperty("user.dir"));
+  private static String iconsRoot = "/JavaScheduler/assets/icons/";
+  protected static ImageIcon favicon = new ImageIcon(fileRoot + iconsRoot + "favicon-96x96.png");
   protected static ImageIcon loginHeroImage = new ImageIcon(
-      fileRoot + "/JavaScheduler/assets/icons/undraw_Analysis_re_w2vd.png");
+    fileRoot + iconsRoot + "undraw_Analysis_re_w2vd.png");
   protected static ImageIcon signupHeroImage = new ImageIcon(
-      fileRoot + "/JavaScheduler/assets/icons/undraw_Cloud_docs_re_xjht.png");
+    fileRoot + iconsRoot + "undraw_Cloud_docs_re_xjht.png");
+  protected static ImageIcon dashboardIcon = new ImageIcon(
+    fileRoot + iconsRoot + "dashboard-solid-24.png");
+  protected static ImageIcon createMeetingIcon = new ImageIcon(
+    fileRoot + iconsRoot + "add-to-queue-solid-24.png");
+  protected static ImageIcon exportIcon = new ImageIcon(
+    fileRoot + iconsRoot + "download-solid-24.png");
+  protected static ImageIcon calendarIcon = new ImageIcon(
+    fileRoot + iconsRoot + "calendar-regular-24.png");
+  protected static ImageIcon settingsIcon = new ImageIcon(
+    fileRoot + iconsRoot + "category-regular-24.png");
+  protected static ImageIcon logoutIcon = new ImageIcon(
+    fileRoot + iconsRoot + "log-out-solid-24.png");
 
   public MasterUI() {
 
     this.setIconImage(favicon.getImage());
     this.setResizable(false);
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    this.add(panel);
-
+    this.setLayout(null);
+    
     panel.setBackground(primaryCol);
     panel.setLayout(null);
-
+    
+    this.add(panel);
     try {
       bodyFont = Font
           .createFont(Font.TRUETYPE_FONT, new File(fileRoot + "/JavaScheduler/assets/fonts/UniversLTStd.otf"))
@@ -77,19 +92,29 @@ abstract public class MasterUI extends JFrame {
   
   /**
    * Getter for external or non-inherited classes
-   * @return primaryCol - Primary background color of UI
+   * @return Color from MasterUI
    */
-  public static Color getPrimaryCol() {
-    return primaryCol;
+  public static Color getColor(String color) {
+    switch(color){
+      case "primaryCol": return primaryCol;
+      case "primaryColAlt": return primaryColAlt;
+      case "accentCol": return accentCol;
+      default: throw new IllegalArgumentException("Invalid color");
+    }
   }
 
   /**
    * Loop through each UI component and change its style depending on Swing
    * instance.
    */
-  public static void setComponentStyles() {
-    for (Component c : panel.getComponents()) {
-      if(c instanceof JLabel || c instanceof JTextField || c instanceof JButton) {
+  public void setComponentStyles(JPanel panel) {
+    for(Component p : this.getRootPane().getComponents()){
+      if(p instanceof JPanel){
+        // System.out.println("Panel found..");
+      }
+    }
+    for(Component c : panel.getComponents()){
+      if(c instanceof JLabel || c instanceof JTextField || c instanceof JButton){
         c.setFont(monoFont);
         c.setForeground(foregroundCol);
       }
@@ -100,6 +125,9 @@ abstract public class MasterUI extends JFrame {
         c.setFont(bodyFont);
       }
       if(c instanceof JButton){
+        if(((Button) c).getIsTab()) {
+          c.setFont(bodyFont);
+        }
         ((AbstractButton) c).setFocusPainted(false);
         ((AbstractButton) c).setContentAreaFilled(true);
         ((AbstractButton) c).setMargin(new Insets(5, 5, 3, 3));
