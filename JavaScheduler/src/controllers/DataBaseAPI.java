@@ -97,4 +97,22 @@ public class DataBaseAPI {
     System.out.println("Connection closed.");
     connection.close();
   }
+
+  public static UserAccount getUser(String username) {
+    Connection connection = connectDatabase();
+    ResultSet result = fetchUserData(connection, username);
+
+    try {
+      String _id = result.getString("id");
+      String _username = result.getString("username");
+      String _password = result.getString("password");
+      String _email = result.getString("email");
+      closeDatabase(connection);
+      return new UserAccount(_username, _password, _email);
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
+
 }
