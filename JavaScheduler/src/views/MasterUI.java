@@ -51,7 +51,7 @@ abstract public class MasterUI extends JFrame {
    */
   private static File fileRoot = new File(System.getProperty("user.dir"));
   private static String iconsRoot = "/JavaScheduler/assets/icons/";
-  protected static ImageIcon favicon = new ImageIcon(fileRoot + iconsRoot + "favicon-96x96.png");
+  protected static ImageIcon favicon = new ImageIcon(fileRoot + iconsRoot + "category-solid-24.png");
   protected static ImageIcon loginHeroImage = new ImageIcon(
     fileRoot + iconsRoot + "undraw_Analysis_re_w2vd.png");
   protected static ImageIcon signupHeroImage = new ImageIcon(
@@ -75,11 +75,10 @@ abstract public class MasterUI extends JFrame {
     this.setResizable(false);
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.setLayout(null);
-    
     panel.setBackground(primaryCol);
     panel.setLayout(null);
-    
     this.add(panel);
+
     try {
       bodyFont = Font
           .createFont(Font.TRUETYPE_FONT, new File(fileRoot + "/JavaScheduler/assets/fonts/UniversLTStd.otf"))

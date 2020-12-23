@@ -71,10 +71,10 @@ public class RegisterUI extends LoginUI {
         }
         DataBaseAPI.createUser(user);
         panel.removeAll();
-        dispose();
         LoginUI login = new LoginUI();
         login.setVisible(true);
         success.setText("Account created");
+        dispose();
       }
     });
     

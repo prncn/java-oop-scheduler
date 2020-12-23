@@ -33,6 +33,10 @@ public class DataBaseAPI {
   public static boolean verifyUser(String username, String password) throws SQLException {
     Connection connection = connectDatabase();
     ResultSet userData = fetchUserData(connection, username);
+    if(userData == null){
+      System.out.println("EMPTY ELEM");
+      return false;
+    }
     String saltHash = userData.getString("password");
     String password_encrypted = PasswordEncryption.verify(password, saltHash);
     
@@ -50,8 +54,8 @@ public class DataBaseAPI {
     try {
       Statement statement = connection.createStatement();
       ResultSet result = statement.executeQuery(sql);
-      result.next();
-      return result;
+      if(result.next()) return result;
+      return null;
     } catch (SQLException e) {
       e.printStackTrace();
       System.out.println(e);
@@ -67,6 +71,7 @@ public class DataBaseAPI {
     try {
       statement = connection.createStatement();
       statement.execute(sql);
+      closeDatabase(connection);
     } catch (SQLException e) {
       e.printStackTrace();
       return false;
@@ -88,7 +93,6 @@ public class DataBaseAPI {
       e.printStackTrace();
       return false;
     }
-    
   }
 
   private static void closeDatabase(Connection connection) throws SQLException {
@@ -99,6 +103,7 @@ public class DataBaseAPI {
   public static UserAccount getUser(String username) {
     Connection connection = connectDatabase();
     ResultSet result = fetchUserData(connection, username);
+    if(result == null) return null;
 
     try {
       String _id = result.getString("id");

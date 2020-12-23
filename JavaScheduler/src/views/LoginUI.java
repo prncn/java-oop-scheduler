@@ -6,6 +6,7 @@ import java.awt.Point;
 
 import javax.swing.*;
 
+import models.UserAccount;
 import controllers.DataBaseAPI;
 import views.components.*;
 
@@ -65,10 +66,10 @@ public class LoginUI extends MasterUI {
 
         try {
           if (DataBaseAPI.verifyUser(inputUser, inputPass)) {
-            dispose();
-            userWelcome.setText("Hi, " + inputUser + "!");
-            HomeUI home = new HomeUI();
+            UserAccount session = DataBaseAPI.getUser(inputUser);
+            HomeUI home = new HomeUI(session);
             home.setVisible(true);
+            dispose();
           } else {
             success.setText("Wrong username or password");
             passField.setText("");
