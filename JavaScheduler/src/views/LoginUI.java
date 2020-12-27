@@ -41,7 +41,7 @@ public class LoginUI extends MasterUI {
     passLabel = new Label(lgnBox.x, lgnBox.y + 100, "Password");
     userField = new JTextField();
     passField = new JPasswordField();
-    loginBtn = new Button(lgnBox.x, lgnBox.y + 180, "Login", accentCol);
+    loginBtn = new Button(lgnBox.x, lgnBox.y + 180, "Login", secondaryCol);
     registerBtn = new Button(lgnBox.x + 110, lgnBox.y + 180, "Sign Up");
     success = new Label(lgnBox.x, lgnBox.y + 250, "");
     backIconHero = new JLabel(loginHeroImage);

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Meeting {
     private String id;
     private Event event;
-    private ArrayList<User> participants;
+    private ArrayList<UserAccount> participants;
     private Priority priority;
     private String attachment;
 
@@ -14,7 +14,7 @@ public class Meeting {
         HIGH, MEDIUM, LOW
     }
 
-    public Meeting(Event event, ArrayList<User> participants, Priority priority) {
+    public Meeting(Event event, ArrayList<UserAccount> participants, Priority priority) {
         this.event = event;
         this.participants = participants;
         this.priority = priority;
@@ -26,7 +26,7 @@ public class Meeting {
     public Event getEvent() {
         return event;
     }
-    public ArrayList<User> getParticipants() {
+    public ArrayList<UserAccount> getParticipants() {
         return participants;
     }
     public Priority getPriority() {
@@ -42,7 +42,7 @@ public class Meeting {
     public void setEvent(Event event) {
         this.event = event;
     }
-    public void setParticipants(ArrayList<User> participants) {
+    public void setParticipants(ArrayList<UserAccount> participants) {
         this.participants = participants;
     }
     public void setPriority(Priority level) {
