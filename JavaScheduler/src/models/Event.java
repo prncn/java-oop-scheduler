@@ -1,12 +1,19 @@
 package models;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Event {
     private String name;
-    private Date date;
+    private LocalDate date;
     private int durationMin;
     private Location location;
+
+    public Event(String name, LocalDate date, int durationMin, Location location){
+        this.name = name;
+        this.date = date;
+        this.durationMin = durationMin;
+        this.location = location;
+    }
 
     public String getName() {
         return name;
@@ -16,11 +23,11 @@ public class Event {
         this.name = name;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

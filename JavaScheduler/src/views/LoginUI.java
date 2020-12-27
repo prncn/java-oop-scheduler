@@ -6,6 +6,7 @@ import java.awt.Point;
 
 import javax.swing.*;
 
+import models.UserAccount;
 import controllers.DataBaseAPI;
 import views.components.*;
 
@@ -34,13 +35,13 @@ public class LoginUI extends MasterUI {
   public LoginUI() {
     this.setTitle("Scheduler Login");
     this.setSize(600, 500);
-    panel.setSize(this.getWidth(), this.getHeight());
+    panel.updateBounds(this);
 
     userLabel = new Label(lgnBox.x, lgnBox.y + 30, "Username");
     passLabel = new Label(lgnBox.x, lgnBox.y + 100, "Password");
     userField = new JTextField();
     passField = new JPasswordField();
-    loginBtn = new Button(lgnBox.x, lgnBox.y + 180, "Login", accentCol);
+    loginBtn = new Button(lgnBox.x, lgnBox.y + 180, "Login", secondaryCol);
     registerBtn = new Button(lgnBox.x + 110, lgnBox.y + 180, "Sign Up");
     success = new Label(lgnBox.x, lgnBox.y + 250, "");
     backIconHero = new JLabel(loginHeroImage);
@@ -65,10 +66,10 @@ public class LoginUI extends MasterUI {
 
         try {
           if (DataBaseAPI.verifyUser(inputUser, inputPass)) {
-            dispose();
-            userWelcome.setText("Hi, " + inputUser + "!");
-            HomeUI home = new HomeUI();
+            UserAccount session = DataBaseAPI.getUser(inputUser);
+            HomeUI home = new HomeUI(session);
             home.setVisible(true);
+            dispose();
           } else {
             success.setText("Wrong username or password");
             passField.setText("");
@@ -98,7 +99,7 @@ public class LoginUI extends MasterUI {
     panel.add(backIconHero);
     panel.add(screenTitle);
 
-    this.setComponentStyles(panel);
+    this.setComponentStyles(panel, null);
     screenTitle.setHeading();
     this.setLocationRelativeTo(null);
     this.setVisible(true);

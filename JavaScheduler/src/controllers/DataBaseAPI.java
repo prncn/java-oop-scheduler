@@ -7,8 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.naming.spi.DirStateFactory.Result;
-
 public class DataBaseAPI {
 
   private static final String SQL_CLOUD_URI = "jdbc:mysql://bqzknjzyoeidxu0hmqhq-mysql.services.clever-cloud.com:3306/bqzknjzyoeidxu0hmqhq?useSSL=false";
@@ -35,6 +33,10 @@ public class DataBaseAPI {
   public static boolean verifyUser(String username, String password) throws SQLException {
     Connection connection = connectDatabase();
     ResultSet userData = fetchUserData(connection, username);
+    if(userData == null){
+      System.out.println("EMPTY ELEM");
+      return false;
+    }
     String saltHash = userData.getString("password");
     String password_encrypted = PasswordEncryption.verify(password, saltHash);
     
@@ -52,8 +54,8 @@ public class DataBaseAPI {
     try {
       Statement statement = connection.createStatement();
       ResultSet result = statement.executeQuery(sql);
-      result.next();
-      return result;
+      if(result.next()) return result;
+      return null;
     } catch (SQLException e) {
       e.printStackTrace();
       System.out.println(e);
@@ -69,6 +71,7 @@ public class DataBaseAPI {
     try {
       statement = connection.createStatement();
       statement.execute(sql);
+      closeDatabase(connection);
     } catch (SQLException e) {
       e.printStackTrace();
       return false;
@@ -90,7 +93,6 @@ public class DataBaseAPI {
       e.printStackTrace();
       return false;
     }
-    
   }
 
   private static void closeDatabase(Connection connection) throws SQLException {
@@ -101,14 +103,17 @@ public class DataBaseAPI {
   public static UserAccount getUser(String username) {
     Connection connection = connectDatabase();
     ResultSet result = fetchUserData(connection, username);
+    if(result == null) return null;
 
     try {
-      String _id = result.getString("id");
-      String _username = result.getString("username");
-      String _password = result.getString("password");
-      String _email = result.getString("email");
+      UserAccount user = new UserAccount();
+      user.setId(result.getString("id"));
+      user.setUsername(result.getString("username"));
+      user.setPassword(result.getString("password"));
+      user.setEmail(result.getString("email"));
       closeDatabase(connection);
-      return new UserAccount(_username, _password, _email);
+
+      return user;
     } catch (SQLException e) {
       e.printStackTrace();
       return null;
