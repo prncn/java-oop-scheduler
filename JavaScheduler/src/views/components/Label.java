@@ -12,6 +12,11 @@ public class Label extends JLabel {
     this.setBounds(x, y, 250, 25);
   }
 
+  public Label(String text) {
+    super(text);
+    this.setSize(250, 25);
+  }
+
   public Label() {
     super();
   }
@@ -21,4 +26,7 @@ public class Label extends JLabel {
     this.setFont(this.getFont().deriveFont(Font.BOLD, 30f));
   }
 
+  public void setPosition(int x, int y) {
+    this.setBounds(x, y, this.getWidth(), this.getHeight());
+  }
 }

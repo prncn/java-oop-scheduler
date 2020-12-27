@@ -5,7 +5,6 @@ import views.HomeUI;
 
 import java.awt.Cursor;
 import java.awt.Insets;
-import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
@@ -61,7 +60,7 @@ public class Button extends JButton implements MouseListener{
     this.setBackground(MasterUI.getColor("primaryColAlt"));
     this.setSize(200, 50);
     this.setHorizontalAlignment(SwingConstants.LEFT);
-    this.setMargin(new Insets(5, 5, 10, 10));
+    this.setMargin(new Insets(10, 10, 10, 10));
     this.setFont(this.getFont().deriveFont(13f));
     this.setForeground(Color.WHITE);
     this.setFocusPainted(false);
