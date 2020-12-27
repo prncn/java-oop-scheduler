@@ -1,7 +1,11 @@
 package views.components;
 
 import java.awt.Font;
+
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+
+import views.MasterUI;
 
 public class Label extends JLabel {
 
@@ -9,6 +13,7 @@ public class Label extends JLabel {
 
   public Label(int x, int y, String text) {
     super(text);
+    this.setFont(MasterUI.getFont("bodyFont"));
     this.setBounds(x, y, 250, 25);
   }
 
@@ -19,6 +24,10 @@ public class Label extends JLabel {
 
   public Label() {
     super();
+  }
+
+  public Label(ImageIcon image) {
+    super(image);
   }
 
   public void setHeading() {

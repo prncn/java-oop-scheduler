@@ -34,14 +34,17 @@ abstract public class MasterUI extends JFrame {
   // private static Boolean LIGHT_MODE = false;
   protected static Color primaryCol = new Color(55, 55, 70);
   protected static Color primaryColAlt = new Color(60, 60, 75);
-  protected static Color foregroundCol = Color.WHITE;
+  protected static Color fontCol = Color.WHITE;
   protected static Color lightCol = new Color(250, 250, 255);
+  protected static Color lightColAlt = new Color(240, 240, 245);
   // protected static Color primaryCol = new Color(250, 250, 255);
   // protected static Color primaryColAlt = new Color(240, 240, 245);
   // protected static Color foregroundCol = Color.BLACK;
 
-  protected static Color accentCol = new Color(116, 207, 183);
-  protected static Color accentColDark = accentCol.darker();
+  protected static Color secondaryCol = new Color(116, 207, 183);
+  protected static Color secondaryColAlt = secondaryCol.darker();
+  protected static Color accentCol = new Color(102, 0, 255);
+
   protected static Font bodyFont; // has to be wrapped in try catch
   protected static Font bodyFontAlt = new Font("Arial", Font.BOLD, 15);
   protected static Font monoFont = new Font("Consolas", Font.PLAIN, 15);
@@ -51,21 +54,29 @@ abstract public class MasterUI extends JFrame {
    */
   private static File fileRoot = new File(System.getProperty("user.dir"));
   private static String iconsRoot = "/JavaScheduler/assets/icons/";
+  private static String imagesRoot = "/JavaScheduler/assets/images/";
+
+  protected static ImageIcon loginHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Analysis_re_w2vd.png");
+  protected static ImageIcon signupHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Cloud_docs_re_xjht.png");
+  protected static ImageIcon createdMeetingImage = new ImageIcon(fileRoot + imagesRoot + "undraw_relaxing_walk_mljx.png");
+
   protected static ImageIcon favicon = new ImageIcon(fileRoot + iconsRoot + "category-solid-24.png");
-  protected static ImageIcon loginHeroImage = new ImageIcon(
-    fileRoot + iconsRoot + "undraw_Analysis_re_w2vd.png");
-  protected static ImageIcon signupHeroImage = new ImageIcon(
-    fileRoot + iconsRoot + "undraw_Cloud_docs_re_xjht.png");
-  protected static ImageIcon dashboardIcon = new ImageIcon(
-    fileRoot + iconsRoot + "dashboard-solid-24.png");
+  protected static ImageIcon adminIcon = new ImageIcon(fileRoot + iconsRoot + "menu-alt-left-regular-24.png");
+  protected static ImageIcon nextIcon = new ImageIcon(fileRoot + iconsRoot + "chevron-right-solid-24.png");
+  protected static ImageIcon prevIcon = new ImageIcon(fileRoot + iconsRoot + "chevron-left-solid-24.png");
+  protected static ImageIcon backIcon = new ImageIcon(fileRoot + iconsRoot + "left-arrow-alt-solid-24.png");
+  protected static ImageIcon downIcon = new ImageIcon(fileRoot + iconsRoot + "chevron-down-solid-24.png");
+  protected static ImageIcon dashboardIcon = new ImageIcon(fileRoot + iconsRoot + "category-regular-24.png");
+  protected static ImageIcon addUserIcon = new ImageIcon(fileRoot + iconsRoot + "user-plus-solid-24.png");
+  protected static ImageIcon circleUserIcon = new ImageIcon(fileRoot + iconsRoot + "user-circle-regular-36.png");
   protected static ImageIcon createMeetingIcon = new ImageIcon(
     fileRoot + iconsRoot + "add-to-queue-solid-24.png");
   protected static ImageIcon exportIcon = new ImageIcon(
     fileRoot + iconsRoot + "download-solid-24.png");
   protected static ImageIcon calendarIcon = new ImageIcon(
     fileRoot + iconsRoot + "calendar-regular-24.png");
-  protected static ImageIcon settingsIcon = new ImageIcon(
-    fileRoot + iconsRoot + "category-regular-24.png");
+  protected static ImageIcon profileIcon = new ImageIcon(
+    fileRoot + iconsRoot + "user-solid-24.png");
   protected static ImageIcon logoutIcon = new ImageIcon(
     fileRoot + iconsRoot + "log-out-solid-24.png");
 
@@ -97,14 +108,32 @@ abstract public class MasterUI extends JFrame {
     switch(color){
       case "primaryCol": return primaryCol;
       case "primaryColAlt": return primaryColAlt;
+      case "secondaryCol": return secondaryCol;
       case "accentCol": return accentCol;
       case "lightCol": return lightCol;
-      default: throw new IllegalArgumentException("Invalid color");
+      case "lightColAlt": return lightColAlt;
+      default: throw new IllegalArgumentException("Invalid color name");
     }
   }
 
+  /**
+   * Getter for external or non-inherited classes
+   * @return Color from MasterUI
+   */
+  public static Font getFont(String font) {
+    switch(font){
+      case "bodyFont": return bodyFont;
+      case "monoFont": return monoFont;
+      default: throw new IllegalArgumentException("Invalid font name");
+    }
+  }
+
+  /**
+   * Set foreground Color
+   * @param color - Color to be set
+   */
   public static void setForegroundCol(Color color) {
-    foregroundCol = color;
+    fontCol = color;
   }
 
   /**
@@ -115,7 +144,7 @@ abstract public class MasterUI extends JFrame {
     Color foreground;
     Color background;
     if(colorMode == "dark" || colorMode == null){
-      foreground = foregroundCol;
+      foreground = fontCol;
       background = primaryColAlt;
     } else if(colorMode == "light"){
       foreground = primaryColAlt;
@@ -131,7 +160,7 @@ abstract public class MasterUI extends JFrame {
     }
     
     for(Component c : panel.getComponents()){
-      if(c instanceof JLabel || c instanceof JTextField || c instanceof JButton){
+      if(c instanceof JLabel || c instanceof JTextField){
         c.setFont(monoFont);
         c.setForeground(foreground);
       }
@@ -142,10 +171,13 @@ abstract public class MasterUI extends JFrame {
         c.setFont(bodyFont);
       }
       if(c instanceof JButton){
-        if(((Button) c).getIsTab()) {
+        c.setFont(monoFont);
+        if(((Button) c).getTab()) {
           c.setFont(bodyFont);
         }
-        ((AbstractButton) c).setForeground(foregroundCol);
+        if(((Button) c).getDark()) {
+          ((AbstractButton) c).setForeground(fontCol);
+        }
         ((AbstractButton) c).setFocusPainted(false);
         ((AbstractButton) c).setContentAreaFilled(true);
         ((AbstractButton) c).setMargin(new Insets(5, 5, 3, 3));

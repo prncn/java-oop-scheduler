@@ -106,12 +106,14 @@ public class DataBaseAPI {
     if(result == null) return null;
 
     try {
-      String _id = result.getString("id");
-      String _username = result.getString("username");
-      String _password = result.getString("password");
-      String _email = result.getString("email");
+      UserAccount user = new UserAccount();
+      user.setId(result.getString("id"));
+      user.setUsername(result.getString("username"));
+      user.setPassword(result.getString("password"));
+      user.setEmail(result.getString("email"));
       closeDatabase(connection);
-      return new UserAccount(_username, _password, _email);
+
+      return user;
     } catch (SQLException e) {
       e.printStackTrace();
       return null;
