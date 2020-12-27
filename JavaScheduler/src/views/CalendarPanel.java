@@ -1,6 +1,8 @@
 package views;
 
 import java.awt.Color;
+
+import controllers.Formatter;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
@@ -124,27 +126,7 @@ public class CalendarPanel extends Panel {
     }
   }
 
-  /**
-   * Parse any date to LocalDate object
-   * 
-   * @param year  - Integer of year
-   * @param month - Integer of month
-   * @param day   - Integer of day
-   * @return - Parsed LocalDate
-   */
-  public LocalDate parseDate(int year, int month, int day) {
-    String formattedDate = "";
-    try {
-      String parseDate = year + "-" + month + "-" + day;
-      SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-      Date date = parser.parse(parseDate);
-      formattedDate = parser.format(date);
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
-
-    return LocalDate.parse(formattedDate);
-  }
+  
 
   /**
    * Parse strings of text fields to LocalDate objects to be passed onto date
@@ -197,7 +179,7 @@ public class CalendarPanel extends Panel {
     if (nextMonth.getValue() == breakpoint) {
       yearField.setText(Integer.toString(Integer.parseInt(yearField.getText()) + addremove));
     }
-    dayField.setText(formatOrdinal(1));
+    dayField.setText(Formatter.formatOrdinal(1));
     if (isMinified) {
       monthField.setText(nextMonth.toString().substring(0, 3));
     } else {
@@ -232,27 +214,7 @@ public class CalendarPanel extends Panel {
     this.add(nextMonthBtn);
     this.add(prevMonthBtn);
   }
-
-  /**
-   * Correctly format ordinal suffix of a positive number (2 -> 2nd, 43 -> 43rd)
-   * 
-   * @param num - Original number
-   * @return String formatted number
-   */
-  public static String formatOrdinal(int num) {
-    if (num == 11 || num == 12 || num == 13)
-      return num + "th";
-    switch (num % 10) {
-      case 1:
-        return num + "st";
-      case 2:
-        return num + "nd";
-      case 3:
-        return num + "rd";
-      default:
-        return num + "th";
-    }
-  }
+  
 
   /**
    * Function to change date of calendar according to input from text fields
@@ -303,7 +265,7 @@ public class CalendarPanel extends Panel {
       Button dayBtn = new Button(incremX, incremY, Integer.toString(dayNum), MasterUI.lightColAlt);
       styleDayBtn(dayBtn);
 
-      if (isMinified && parseDate(currentYear, currentMonth.getValue(), dayNum).isBefore(today)) {
+      if (isMinified && Formatter.parseDate(currentYear, currentMonth.getValue(), dayNum).isBefore(today)) {
         dayBtn.setForeground(Color.LIGHT_GRAY);
         dayBtn.setEnabled(false);
       }
@@ -343,7 +305,7 @@ public class CalendarPanel extends Panel {
     } else {
       monthField.setText(date.getMonth().toString());
     }
-    dayField.setText(formatOrdinal(date.getDayOfMonth()));
+    dayField.setText(Formatter.formatOrdinal(date.getDayOfMonth()));
 
     monthField.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -419,7 +381,7 @@ public class CalendarPanel extends Panel {
     } else {
       monthField.setText(monthStr);
     }
-    dayField.setText(formatOrdinal(dayNum));
+    dayField.setText(Formatter.formatOrdinal(dayNum));
 
     if (prevActive != null) {
       prevActive.setColor(MasterUI.lightColAlt);
