@@ -5,17 +5,13 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.UIManager;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dialog;
 import java.awt.Font;
-import java.awt.Insets;
 import java.awt.Point;
 
 import views.components.Button;
@@ -37,6 +33,8 @@ public class HomeUI extends MasterUI {
   private Button exportTab;
   private Button logoutTab;
   private Button prevBtn;
+
+  public Label meetingName;
 
   public HomeUI(UserAccount user) {
     frame = this;
@@ -61,7 +59,7 @@ public class HomeUI extends MasterUI {
     this.setComponentStyles(sidebar, "dark");
     this.setComponentStyles(panel, "light");
 
-    initDashboardTab();
+    createDashboardTab();
 
     this.add(sidebar);
     this.setLocationRelativeTo(null);
@@ -70,11 +68,14 @@ public class HomeUI extends MasterUI {
   /**
    * Create and initialise (default) dashboard panel
    */
-  private void initDashboardTab() {
+  private void createDashboardTab() {
     userWelcome.setText("Upcoming Events");
     userWelcome.setBounds(40, 40, 10, 10);
     userWelcome.setHeading();
 
+    meetingName = new Label(40, 200, "PLACEHOLDER MEETING NAME");
+
+    panel.add(meetingName);
     panel.add(userWelcome);
   }
 
@@ -109,7 +110,7 @@ public class HomeUI extends MasterUI {
       if (c instanceof Button) {
         ((AbstractButton) c).addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            if(prevBtn != null){
+            if (prevBtn != null) {
               prevBtn.setColor(MasterUI.primaryColAlt);
             }
             ((Button) c).setColor(MasterUI.secondaryCol);
@@ -128,57 +129,54 @@ public class HomeUI extends MasterUI {
     logoutTab.setIcon(logoutIcon);
     logoutTab.setTab();
     sidebar.add(logoutTab);
-    
+
     logoutTab.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-    	JDialog logout = new JDialog(frame, "Logout Verification");
-    	
-    	JLabel logoutlabel = new JLabel("Are you sure ?");
-    	logoutlabel.setFont(new Font("Consolas", Font.PLAIN, 15));
-    	logoutlabel.setForeground(fontCol);
-    	JButton yes = new Button(300,200,"Yes");
-    	JButton no = new Button(300,220,"No");
+        JDialog logout = new JDialog(frame, "Logout Verification");
 
-    	JPanel logoutp = new JPanel();
-    	logoutp.add(logoutlabel);
-    	logoutp.add(yes);
-    	logoutp.add(no);
-    	logoutp.setBackground(primaryColAlt);
-    	logout.add(logoutp);
-    	logout.setSize(300,80);
-    	logout.setVisible(true);
-    	logout.setLocation(800,500);
-    	yes.setFont(monoFont);
-    	yes.setForeground(Color.WHITE);
-    	yes.setBackground(secondaryCol);
-    	yes.setFocusPainted(false);
-    	yes.setContentAreaFilled(true);
-    	//yes.setMargin(new Insets(5, 5, 3, 3));
-    	yes.addActionListener(new ActionListener() {
-    		   @Override
-    		   public void actionPerformed(ActionEvent actionEvent) {
-    		       dispose();
-    		       panel.removeAll();
-    		       LoginUI login = new LoginUI();
-    		       login.setVisible(true);
-    		   }
-    		});
-    	no.setFont(monoFont);
-    	no.setForeground(Color.WHITE);
-    	no.setBackground(primaryColAlt);
-    	no.setFocusPainted(false);
-    	no.setContentAreaFilled(true);
-    	//no.setMargin(new Insets(5, 5, 3, 3));
-    	no.addActionListener(new ActionListener() {
- 		   @Override
- 		   public void actionPerformed(ActionEvent actionEvent) {
- 		       logout.dispose();
- 		      
- 		   }
- 		});
-    	
-    	
-   
+        JLabel logoutlabel = new JLabel("Are you sure ?");
+        logoutlabel.setFont(new Font("Consolas", Font.PLAIN, 15));
+        logoutlabel.setForeground(fontCol);
+        JButton yes = new Button(300, 200, "Yes");
+        JButton no = new Button(300, 220, "No");
+
+        JPanel logoutp = new JPanel();
+        logoutp.add(logoutlabel);
+        logoutp.add(yes);
+        logoutp.add(no);
+        logoutp.setBackground(primaryColAlt);
+        logout.add(logoutp);
+        logout.setSize(300, 80);
+        logout.setVisible(true);
+        logout.setLocation(800, 500);
+        yes.setFont(monoFont);
+        yes.setForeground(Color.WHITE);
+        yes.setBackground(secondaryCol);
+        yes.setFocusPainted(false);
+        yes.setContentAreaFilled(true);
+        // yes.setMargin(new Insets(5, 5, 3, 3));
+        yes.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent actionEvent) {
+            dispose();
+            panel.removeAll();
+            LoginUI login = new LoginUI();
+            login.setVisible(true);
+          }
+        });
+        no.setFont(monoFont);
+        no.setForeground(Color.WHITE);
+        no.setBackground(primaryColAlt);
+        no.setFocusPainted(false);
+        no.setContentAreaFilled(true);
+        // no.setMargin(new Insets(5, 5, 3, 3));
+        no.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent actionEvent) {
+            logout.dispose();
+
+          }
+        });
       }
     });
   }
@@ -201,6 +199,7 @@ public class HomeUI extends MasterUI {
 
   /**
    * Switch current active panel to another
+   * 
    * @param newPanel - Selected panel to be switched to
    */
   public static void switchPanel(JPanel newPanel) {
@@ -214,7 +213,7 @@ public class HomeUI extends MasterUI {
    * Make admin panel visible when current user is admin
    */
   private void showAdminPanel() {
-    if(user.getUsername() == "admin"){
+    if (user.getUsername() == "admin") {
       AdminPanel adminPanel = new AdminPanel(frame);
       Button adminTab = new Button(tabsBox.x, tabsBox.y - 50, "ADMIN_PANEL", adminPanel);
       adminTab.setIcon(adminIcon);
@@ -223,11 +222,11 @@ public class HomeUI extends MasterUI {
       sidebar.add(adminTab);
     }
   }
-  
+
   public static void main(String[] args) {
     UserAccount guest = new UserAccount("admin", "root", "admin@mail.com");
     HomeUI homeFrame = new HomeUI(guest);
     homeFrame.setVisible(true);
   }
-  
+
 }
