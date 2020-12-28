@@ -1,13 +1,12 @@
 package views;
 
 import javax.swing.AbstractButton;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.Component;
@@ -16,6 +15,8 @@ import java.awt.Point;
 
 import views.components.Button;
 import views.components.Label;
+import views.components.Panel;
+import models.Meeting;
 import models.UserAccount;
 
 public class HomeUI extends MasterUI {
@@ -34,6 +35,7 @@ public class HomeUI extends MasterUI {
   private Button logoutTab;
   private Button prevBtn;
 
+  private static Panel dashpanel;
   public static Label meetingName;
   public static Button dashboardTab;
   public static Button createTab;
@@ -63,7 +65,7 @@ public class HomeUI extends MasterUI {
     this.setComponentStyles(sidebar, "dark");
     this.setComponentStyles(panel, "light");
 
-    createDashboardTab();
+    createDashboardTab(user);
 
     this.add(sidebar);
     this.setLocationRelativeTo(null);
@@ -72,15 +74,49 @@ public class HomeUI extends MasterUI {
   /**
    * Create and initialise (default) dashboard panel
    */
-  private void createDashboardTab() {
+  private void createDashboardTab(UserAccount user) {
     userWelcome.setText("Upcoming Events");
     userWelcome.setBounds(40, 40, 10, 10);
     userWelcome.setHeading();
 
-    meetingName = new Label(40, 200, "PLACEHOLDER MEETING NAME");
+    dashpanel = new Panel();
+    dashpanel.setBounds(40, 80, panel.getWidth() - 100, panel.getHeight() - 160);
+    dashpanel.setBackground(lightCol);
 
-    panel.add(meetingName);
+    updateDashboad(user);
     panel.add(userWelcome);
+    panel.add(dashpanel);
+  }
+
+  /**
+   * Update meetings data on dashboard panel when the user's meetings change
+   * 
+   * @param user - Currently logged in user
+   */
+  public static void updateDashboad(UserAccount user) {
+    dashpanel.removeAll();
+
+    int initialY = 80;
+    ArrayList<Meeting> meetings = user.getMeetings();
+    if (meetings.isEmpty()) {
+      Label emptyDash = new Label(0, initialY, "No meetings currently planned. :(");
+      emptyDash.setHeading();
+      emptyDash.setSize(800, 40);
+      emptyDash.setForeground(Color.LIGHT_GRAY);
+      dashpanel.add(emptyDash);
+      return;
+    }
+    for (Meeting meeting : meetings) {
+      Label name = new Label(0, initialY, meeting.getEvent().getName());
+      Label locate = new Label(180, initialY, meeting.getEvent().getLocation());
+      Label date = new Label(450, initialY, meeting.getEvent().getDate().toString());
+      name.setSize(800, 30);
+      name.setFont(name.getFont().deriveFont(Font.BOLD));
+      dashpanel.add(name);
+      dashpanel.add(locate);
+      dashpanel.add(date);
+      initialY += 30;
+    }
   }
 
   /**
@@ -151,6 +187,7 @@ public class HomeUI extends MasterUI {
 
   /**
    * Open a dialog prompt asking the user to confirm their action
+   * 
    * @param action - ActionListener object to be passed to "YES" button
    * @param prompt - String prompt the user is asked
    */

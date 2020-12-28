@@ -383,7 +383,7 @@ public class CreateMeetingPanel extends Panel {
         String eventName = titleField.getText();
         LocalDate eventDate = LocalDate.parse(dateField.getText());
         int eventDuration = Integer.parseInt(durationField.getText());
-        Location location = new Location();
+        String location = locationField.getText();
         Event event = new Event(eventName, eventDate, eventDuration, location);
         
         Priority priority = selectedPriority;

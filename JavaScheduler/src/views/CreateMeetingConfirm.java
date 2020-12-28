@@ -56,5 +56,9 @@ public class CreateMeetingConfirm extends Panel {
     screenTitle.setForeground(MasterUI.accentCol);
     successMsg.setHeading();
     successMsg.setSize(690, 120);
+
+    user.addMeeting(meeting);
+    
+    HomeUI.updateDashboad(user);
   }
 }
