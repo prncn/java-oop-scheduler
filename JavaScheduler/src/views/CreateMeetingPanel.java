@@ -31,9 +31,9 @@ public class CreateMeetingPanel extends Panel {
   private TextField searchUserField;
   private Label userQueryResult;
   private int participantListPosition = 335;
-  private Panel redpanel;
   private ArrayList<UserAccount> participants = new ArrayList<>();
   private Priority selectedPriority;
+  public static Panel redpanel;
   public static TextField titleField;
   public static TextField dateField;
   public static TextField durationField;
@@ -45,8 +45,8 @@ public class CreateMeetingPanel extends Panel {
     participants.add(user);
 
     Label screenTitle = new Label(40, 40, "Schedule a Meeting");
-    Point contentBox = new Point(40, 100);
-    String[] lbStrings = { "Title", "Date", "Duration", "Location" };
+    Point contentBox = new Point(40, 170);
+    String[] lbStrings = { "Topic", "When", "Duration", "Where" };
 
     initDatePicker(frame);
     initPageButtons();
@@ -163,12 +163,13 @@ public class CreateMeetingPanel extends Panel {
     for (String lbString : lbStrings) {
       Label label = new Label(contentBox.x, initialY, lbString);
       TextField textfield;
+      TextField secondField;
       switch (lbString) {
-        case "Title":
+        case "Topic":
           textfield = new TextField(contentBox.x, initialY + 20);
           titleField = textfield;
           break;
-        case "Date":
+        case "When":
           textfield = new TextField(contentBox.x, initialY + 20);
           textfield.setSize(textfield.getWidth() - 60, textfield.getHeight());
           textfield.setEditable(false);
@@ -176,9 +177,14 @@ public class CreateMeetingPanel extends Panel {
           break;
         case "Duration":
           textfield = new TextField(contentBox.x, initialY + 20);
+          textfield.setSize((textfield.getWidth() / 2) - 2, textfield.getHeight());
           durationField = textfield;
+
+          secondField = new TextField(contentBox.x + textfield.getWidth() + 4, initialY + 20);
+          secondField.setSize(textfield.getWidth(), textfield.getHeight());
+          this.add(secondField);
           break;
-        case "Location":
+        case "Where":
           textfield = new TextField(contentBox.x, initialY + 20);
           locationField = textfield;
           break;
@@ -241,7 +247,7 @@ public class CreateMeetingPanel extends Panel {
    * Create and initialise add-participant section
    */
   private void initAddParticipant(UserAccount user) {
-    Label searchUserLabel = new Label(400, 170, "Participants");
+    Label searchUserLabel = new Label(400, 170, "People to invite");
     searchUserField = new TextField(400, 190);
 
     userQueryResult = new Label(400, 250, "");
@@ -276,10 +282,10 @@ public class CreateMeetingPanel extends Panel {
    * Draw priority label and buttons
    */
   private void drawPrioritySection() {
-    Label priorityLabel = new Label(40, 380, "Priority");
-    Button loPrioBtn = new Button(40, 400, "LOW", new Color(171, 169, 239));
-    Button midPrioBtn = new Button(140, 400, "MEDIUM", new Color(129, 109, 254));
-    Button hiPrioBtn = new Button(240, 400, "HIGH", MasterUI.accentCol);
+    Label priorityLabel = new Label(40, 100, "Priority");
+    Button loPrioBtn = new Button(40, 120, "LOW", new Color(171, 169, 239));
+    Button midPrioBtn = new Button(140, 120, "MEDIUM", new Color(129, 109, 254));
+    Button hiPrioBtn = new Button(240, 120, "HIGH", MasterUI.accentCol);
 
     loPrioBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -329,7 +335,7 @@ public class CreateMeetingPanel extends Panel {
    * @param frame - Frame of current instance
    */
   private void initDatePicker(JFrame frame) {
-    Button openDatePicker = new Button(285, 190, "", MasterUI.accentCol);
+    Button openDatePicker = new Button(285, 260, "", MasterUI.accentCol);
     openDatePicker.setIcon(MasterUI.calendarIcon);
     openDatePicker.setSize(55, 40);
 
@@ -345,7 +351,7 @@ public class CreateMeetingPanel extends Panel {
           redpanel.setSize(0, 0);
           redpanel.isActive = false;
         } else {
-          redpanel.setBounds(285, 190, 300, 310);
+          redpanel.setBounds(285, 260, 300, 310);
           redpanel.isActive = true;
         }
       }
