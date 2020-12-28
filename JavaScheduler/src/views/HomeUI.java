@@ -1,12 +1,21 @@
 package views;
 
 import javax.swing.AbstractButton;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Font;
+import java.awt.Insets;
 import java.awt.Point;
 
 import views.components.Button;
@@ -119,13 +128,57 @@ public class HomeUI extends MasterUI {
     logoutTab.setIcon(logoutIcon);
     logoutTab.setTab();
     sidebar.add(logoutTab);
-
+    
     logoutTab.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        dispose();
-        panel.removeAll();
-        LoginUI login = new LoginUI();
-        login.setVisible(true);
+    	JDialog logout = new JDialog(frame, "Logout Verification");
+    	
+    	JLabel logoutlabel = new JLabel("Are you sure ?");
+    	logoutlabel.setFont(new Font("Consolas", Font.PLAIN, 15));
+    	logoutlabel.setForeground(fontCol);
+    	JButton yes = new Button(300,200,"Yes");
+    	JButton no = new Button(300,220,"No");
+
+    	JPanel logoutp = new JPanel();
+    	logoutp.add(logoutlabel);
+    	logoutp.add(yes);
+    	logoutp.add(no);
+    	logoutp.setBackground(primaryColAlt);
+    	logout.add(logoutp);
+    	logout.setSize(300,80);
+    	logout.setVisible(true);
+    	logout.setLocation(800,500);
+    	yes.setFont(monoFont);
+    	yes.setForeground(Color.WHITE);
+    	yes.setBackground(secondaryCol);
+    	yes.setFocusPainted(false);
+    	yes.setContentAreaFilled(true);
+    	//yes.setMargin(new Insets(5, 5, 3, 3));
+    	yes.addActionListener(new ActionListener() {
+    		   @Override
+    		   public void actionPerformed(ActionEvent actionEvent) {
+    		       dispose();
+    		       panel.removeAll();
+    		       LoginUI login = new LoginUI();
+    		       login.setVisible(true);
+    		   }
+    		});
+    	no.setFont(monoFont);
+    	no.setForeground(Color.WHITE);
+    	no.setBackground(primaryColAlt);
+    	no.setFocusPainted(false);
+    	no.setContentAreaFilled(true);
+    	//no.setMargin(new Insets(5, 5, 3, 3));
+    	no.addActionListener(new ActionListener() {
+ 		   @Override
+ 		   public void actionPerformed(ActionEvent actionEvent) {
+ 		       logout.dispose();
+ 		      
+ 		   }
+ 		});
+    	
+    	
+   
       }
     });
   }
