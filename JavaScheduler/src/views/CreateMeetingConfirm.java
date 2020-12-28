@@ -49,5 +49,7 @@ public class CreateMeetingConfirm extends Panel {
     screenTitle.setForeground(MasterUI.accentCol);
     successMsg.setHeading();
     successMsg.setSize(690, 120);
+
+    HomeUI.updateDashboard(user);
   }
 }
