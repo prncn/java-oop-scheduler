@@ -3,6 +3,8 @@ package views;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 
+import org.w3c.dom.Text;
+
 import controllers.DataBaseAPI;
 import models.UserAccount;
 import models.Meeting.Priority;
@@ -37,6 +39,7 @@ public class CreateMeetingPanel extends Panel {
   public static TextField titleField;
   public static TextField dateField;
   public static TextField durationField;
+  public static TextField timeField;
   public static TextField locationField;
   public static TextField reminderField;
 
@@ -180,9 +183,12 @@ public class CreateMeetingPanel extends Panel {
           textfield.setSize((textfield.getWidth() / 2) - 2, textfield.getHeight());
           durationField = textfield;
 
+          Label timelb = new Label(contentBox.x + textfield.getWidth() + 4, initialY, "Time");
           secondField = new TextField(contentBox.x + textfield.getWidth() + 4, initialY + 20);
           secondField.setSize(textfield.getWidth(), textfield.getHeight());
+          this.add(timelb);
           this.add(secondField);
+          timeField = secondField;
           break;
         case "Where":
           textfield = new TextField(contentBox.x, initialY + 20);
@@ -199,17 +205,18 @@ public class CreateMeetingPanel extends Panel {
         public void focusGained(FocusEvent e) {
           redpanel.setSize(0, 0);
           redpanel.isActive = false;
+          textfield.setText("");
         }
         public void focusLost(FocusEvent e) {
-          //
+          // unchanged
         }
       });
     }
-    for(Component c : this.getComponents()) {
-      if(c instanceof TextField){
-        
-      }
-    }
+    locationField.setText("Communications department");
+    dateField.setText("2022-01-01");
+    titleField.setText("Proxy Networking");
+    durationField.setText("95");
+    timeField.setText("9:00");
   }
 
   /**
@@ -370,27 +377,33 @@ public class CreateMeetingPanel extends Panel {
     Panel panel = this;
     Label errorMsg = new Label(40, 520, "");
     this.add(errorMsg);
-    confirmBtn.addActionListener(new ActionListener() {
+    ActionListener createAction = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        for (Component c : panel.getComponents()) {
-          if (c instanceof TextField && ((TextField) c).getText().isEmpty() && c != searchUserField
-              || selectedPriority == null || participants.size() < 2) {
-            errorMsg.setText("Missing required fields.");
-            return;
-          }
-        }
-
         panel.removeAll();
         String eventName = titleField.getText();
         LocalDate eventDate = LocalDate.parse(dateField.getText());
         int eventDuration = Integer.parseInt(durationField.getText());
         Location location = new Location();
         Event event = new Event(eventName, eventDate, eventDuration, location);
-
+        
         Priority priority = selectedPriority;
         Meeting meeting = new Meeting(event, participants, priority);
         Panel createMeetingConfirm = new CreateMeetingConfirm(frame, user, meeting);
         HomeUI.switchPanel(createMeetingConfirm);
+        HomeUI.createTab.changeReferencePanel(createMeetingConfirm);
+      }
+    };
+
+    confirmBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        for (Component c : panel.getComponents()) {
+          if (c instanceof TextField && ((TextField) c).getText().isEmpty() && c != searchUserField
+          || selectedPriority == null || participants.size() < 2) {
+            errorMsg.setText("Missing required fields.");
+            return;
+          }
+        }
+        HomeUI.confirmDialog(createAction, "Do you wish to continue?");
       }
     });
   }

@@ -34,7 +34,11 @@ public class HomeUI extends MasterUI {
   private Button logoutTab;
   private Button prevBtn;
 
-  public Label meetingName;
+  public static Label meetingName;
+  public static Button dashboardTab;
+  public static Button createTab;
+  public static Button calendarTab;
+  public static Button profileTab;
 
   public HomeUI(UserAccount user) {
     frame = this;
@@ -83,10 +87,10 @@ public class HomeUI extends MasterUI {
    * Create tab buttons on sidebar
    */
   private void createSidebarTabs() {
-    Button dashboardTab = new Button(tabsBox.x, tabsBox.y, "Dashboard", panel);
-    Button createTab = new Button(tabsBox.x, tabsBox.y + 50, "Create Meeting", createPanel);
-    Button calendarTab = new Button(tabsBox.x, tabsBox.y + 100, "View Calendar", calendarPanel);
-    Button profileTab = new Button(tabsBox.x, tabsBox.y + 150, "Profile", profilePanel);
+    dashboardTab = new Button(tabsBox.x, tabsBox.y, "Dashboard", panel);
+    createTab = new Button(tabsBox.x, tabsBox.y + 50, "Create Meeting", createPanel);
+    calendarTab = new Button(tabsBox.x, tabsBox.y + 100, "View Calendar", calendarPanel);
+    profileTab = new Button(tabsBox.x, tabsBox.y + 150, "Profile", profilePanel);
     exportTab = new Button(tabsBox.x, tabsBox.y + 250, "Export Schedule", primaryColAlt);
     dashboardTab.setIcon(dashboardIcon);
     createTab.setIcon(createMeetingIcon);
@@ -130,55 +134,58 @@ public class HomeUI extends MasterUI {
     logoutTab.setTab();
     sidebar.add(logoutTab);
 
+    ActionListener logoutAction = new ActionListener() {
+      public void actionPerformed(ActionEvent actionEvent) {
+        dispose();
+        panel.removeAll();
+        new LoginUI();
+      }
+    };
+
     logoutTab.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        JDialog logout = new JDialog(frame, "Logout Verification");
-
-        JLabel logoutlabel = new JLabel("Are you sure ?");
-        logoutlabel.setFont(new Font("Consolas", Font.PLAIN, 15));
-        logoutlabel.setForeground(fontCol);
-        JButton yes = new Button(300, 200, "Yes");
-        JButton no = new Button(300, 220, "No");
-
-        JPanel logoutp = new JPanel();
-        logoutp.add(logoutlabel);
-        logoutp.add(yes);
-        logoutp.add(no);
-        logoutp.setBackground(primaryColAlt);
-        logout.add(logoutp);
-        logout.setSize(300, 80);
-        logout.setVisible(true);
-        logout.setLocation(800, 500);
-        yes.setFont(monoFont);
-        yes.setForeground(Color.WHITE);
-        yes.setBackground(secondaryCol);
-        yes.setFocusPainted(false);
-        yes.setContentAreaFilled(true);
-        // yes.setMargin(new Insets(5, 5, 3, 3));
-        yes.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent actionEvent) {
-            dispose();
-            panel.removeAll();
-            LoginUI login = new LoginUI();
-            login.setVisible(true);
-          }
-        });
-        no.setFont(monoFont);
-        no.setForeground(Color.WHITE);
-        no.setBackground(primaryColAlt);
-        no.setFocusPainted(false);
-        no.setContentAreaFilled(true);
-        // no.setMargin(new Insets(5, 5, 3, 3));
-        no.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent actionEvent) {
-            logout.dispose();
-
-          }
-        });
+        confirmDialog(logoutAction, "Are you sure you want to logout?");
       }
     });
+  }
+
+  /**
+   * Open a dialog prompt asking the user to confirm their action
+   * @param action - ActionListener object to be passed to "YES" button
+   * @param prompt - String prompt the user is asked
+   */
+  public static void confirmDialog(ActionListener action, String prompt) {
+    JDialog confirmDialog = new JDialog(frame, "Confirm action");
+    frame.setEnabled(false);
+    Label logoutlabel = new Label(20, 20, prompt);
+    Button yes = new Button(30, 60, "Yes", secondaryCol);
+    Button no = new Button(140, 60, "No", lightColAlt);
+    no.setDark(false);
+
+    JPanel logoutp = new JPanel();
+    logoutp.setLayout(null);
+    logoutp.setBackground(MasterUI.lightCol);
+    logoutp.add(logoutlabel);
+    logoutp.add(yes);
+    logoutp.add(no);
+
+    confirmDialog.add(logoutp);
+    confirmDialog.setSize(300, 160);
+    confirmDialog.setResizable(false);
+    confirmDialog.setVisible(true);
+    confirmDialog.setLocationRelativeTo(null);
+
+    ((MasterUI) frame).setComponentStyles(logoutp, "light");
+
+    ActionListener closeDialog = new ActionListener() {
+      public void actionPerformed(ActionEvent actionEvent) {
+        frame.setEnabled(true);
+        confirmDialog.dispose();
+      }
+    };
+    yes.addActionListener(action);
+    yes.addActionListener(closeDialog);
+    no.addActionListener(closeDialog);
   }
 
   /**

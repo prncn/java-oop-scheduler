@@ -5,6 +5,9 @@ import controllers.*;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import models.Meeting;
 import models.UserAccount;
 import views.components.Button;
@@ -24,6 +27,11 @@ public class CreateMeetingConfirm extends Panel {
     backCreate.setColor(MasterUI.secondaryCol);
     backCreate.setVerticalAlignment(SwingConstants.CENTER);
     backCreate.setVerticalTextPosition(SwingConstants.BOTTOM);
+    backCreate.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        HomeUI.createTab.changeReferencePanel(createMeetingPanel);
+      }
+    });
       
     Label screenTitle = new Label(40, 40, "Created.");
     Label successMsg = new Label(40, 150, "");
@@ -43,7 +51,6 @@ public class CreateMeetingConfirm extends Panel {
     this.add(successMsg);
     this.add(secondaryMsg);
     ((MasterUI) frame).setComponentStyles(this, "light");
-
 
     screenTitle.setHeading();
     screenTitle.setForeground(MasterUI.accentCol);
