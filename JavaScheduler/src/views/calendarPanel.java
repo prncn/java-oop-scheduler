@@ -271,10 +271,6 @@ public class CalendarPanel extends Panel {
     redpanel.repaint();
   }
 
-  public LocalDate getDateFromString(String date) {
-    return null;
-  }
-
   /**
    * Initialise calendar layout
    * 
