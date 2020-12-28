@@ -2,7 +2,6 @@ package views.components;
 
 import views.MasterUI;
 import javax.swing.JFrame;
-import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 public class Panel extends JPanel {

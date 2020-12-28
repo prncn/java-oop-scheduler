@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Formatter {
-	public Formatter() {};
 	/**
 	   * Parse any date to LocalDate object
 	   * 
@@ -55,8 +54,8 @@ public class Formatter {
 	   * 
 	   * @param input - input String that gets capitalized
 	   */
-	  public String capitalize(String input) {
-		  String output = input.substring(0, 1).toUpperCase() + input.substring(1);
+	  public static String capitalize(String input) {
+		  String output = input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
 		  return output;
 	  }
 	  

@@ -21,7 +21,7 @@ import java.io.IOException;
 
 abstract public class MasterUI extends JFrame {
   private static final long serialVersionUID = 349351600837986896L;
-  
+
   /**
    * Global UI components
    */
@@ -58,7 +58,8 @@ abstract public class MasterUI extends JFrame {
 
   protected static ImageIcon loginHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Analysis_re_w2vd.png");
   protected static ImageIcon signupHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Cloud_docs_re_xjht.png");
-  protected static ImageIcon createdMeetingImage = new ImageIcon(fileRoot + imagesRoot + "undraw_relaxing_walk_mljx.png");
+  protected static ImageIcon createdMeetingImage = new ImageIcon(
+      fileRoot + imagesRoot + "undraw_relaxing_walk_mljx.png");
 
   protected static ImageIcon favicon = new ImageIcon(fileRoot + iconsRoot + "category-solid-24.png");
   protected static ImageIcon adminIcon = new ImageIcon(fileRoot + iconsRoot + "menu-alt-left-regular-24.png");
@@ -69,16 +70,11 @@ abstract public class MasterUI extends JFrame {
   protected static ImageIcon dashboardIcon = new ImageIcon(fileRoot + iconsRoot + "category-regular-24.png");
   protected static ImageIcon addUserIcon = new ImageIcon(fileRoot + iconsRoot + "user-plus-solid-24.png");
   protected static ImageIcon circleUserIcon = new ImageIcon(fileRoot + iconsRoot + "user-circle-regular-36.png");
-  protected static ImageIcon createMeetingIcon = new ImageIcon(
-    fileRoot + iconsRoot + "add-to-queue-solid-24.png");
-  protected static ImageIcon exportIcon = new ImageIcon(
-    fileRoot + iconsRoot + "download-solid-24.png");
-  protected static ImageIcon calendarIcon = new ImageIcon(
-    fileRoot + iconsRoot + "calendar-regular-24.png");
-  protected static ImageIcon profileIcon = new ImageIcon(
-    fileRoot + iconsRoot + "user-solid-24.png");
-  protected static ImageIcon logoutIcon = new ImageIcon(
-    fileRoot + iconsRoot + "log-out-solid-24.png");
+  protected static ImageIcon createMeetingIcon = new ImageIcon(fileRoot + iconsRoot + "add-to-queue-solid-24.png");
+  protected static ImageIcon exportIcon = new ImageIcon(fileRoot + iconsRoot + "download-solid-24.png");
+  protected static ImageIcon calendarIcon = new ImageIcon(fileRoot + iconsRoot + "calendar-regular-24.png");
+  protected static ImageIcon profileIcon = new ImageIcon(fileRoot + iconsRoot + "user-solid-24.png");
+  protected static ImageIcon logoutIcon = new ImageIcon(fileRoot + iconsRoot + "log-out-solid-24.png");
 
   public MasterUI() {
 
@@ -99,37 +95,50 @@ abstract public class MasterUI extends JFrame {
       bodyFont = bodyFontAlt; // if font asset import failed, fall back to Arial
     }
   }
-  
+
   /**
    * Getter for external or non-inherited classes
+   * 
    * @return Color from MasterUI
    */
   public static Color getColor(String color) {
-    switch(color){
-      case "primaryCol": return primaryCol;
-      case "primaryColAlt": return primaryColAlt;
-      case "secondaryCol": return secondaryCol;
-      case "accentCol": return accentCol;
-      case "lightCol": return lightCol;
-      case "lightColAlt": return lightColAlt;
-      default: throw new IllegalArgumentException("Invalid color name");
+    switch (color) {
+      case "primaryCol":
+        return primaryCol;
+      case "primaryColAlt":
+        return primaryColAlt;
+      case "secondaryCol":
+        return secondaryCol;
+      case "accentCol":
+        return accentCol;
+      case "lightCol":
+        return lightCol;
+      case "lightColAlt":
+        return lightColAlt;
+      default:
+        throw new IllegalArgumentException("Invalid color name");
     }
   }
 
   /**
    * Getter for external or non-inherited classes
+   * 
    * @return Color from MasterUI
    */
   public static Font getFont(String font) {
-    switch(font){
-      case "bodyFont": return bodyFont;
-      case "monoFont": return monoFont;
-      default: throw new IllegalArgumentException("Invalid font name");
+    switch (font) {
+      case "bodyFont":
+        return bodyFont;
+      case "monoFont":
+        return monoFont;
+      default:
+        throw new IllegalArgumentException("Invalid font name");
     }
   }
 
   /**
    * Set foreground Color
+   * 
    * @param color - Color to be set
    */
   public static void setForegroundCol(Color color) {
@@ -137,52 +146,48 @@ abstract public class MasterUI extends JFrame {
   }
 
   /**
-   * Loop through each UI component and change its style depending on Swing
-   * instance.
+   * Loop through components of the frame and change their style properties
+   * 
+   * @param panel     - Selcted panel to apply the changes to
+   * @param colorMode - String either "light" or "dark", changes color mode. Null defaults to dark.
    */
   public void setComponentStyles(JPanel panel, String colorMode) {
     Color foreground;
     Color background;
-    if(colorMode == "dark" || colorMode == null){
+    if (colorMode == "dark" || colorMode == null) {
       foreground = fontCol;
       background = primaryColAlt;
-    } else if(colorMode == "light"){
+    } else if (colorMode == "light") {
       foreground = primaryColAlt;
       background = new Color(240, 240, 245);
     } else {
       throw new IllegalArgumentException("Invalid color mode.");
     }
-  
-    for(Component p : this.getRootPane().getComponents()){
-      if(p instanceof JPanel){
-        // System.out.println("Panel found..");
-      }
-    }
-    
-    for(Component c : panel.getComponents()){
-      if(c instanceof JLabel || c instanceof JTextField){
+
+    for (Component c : panel.getComponents()) {
+      if (c instanceof JLabel || c instanceof JTextField) {
         c.setFont(monoFont);
         c.setForeground(foreground);
       }
-      if(c instanceof JTextField){
+      if (c instanceof JTextField) {
         c.setFont(monoFont.deriveFont(19f));
       }
-      if(c instanceof JLabel){
+      if (c instanceof JLabel) {
         c.setFont(bodyFont);
       }
-      if(c instanceof JButton){
+      if (c instanceof JButton) {
         c.setFont(monoFont);
-        if(((Button) c).getTab()) {
+        if (((Button) c).getTab()) {
           c.setFont(bodyFont);
         }
-        if(((Button) c).getDark()) {
+        if (((Button) c).getDark()) {
           ((AbstractButton) c).setForeground(fontCol);
         }
         ((AbstractButton) c).setFocusPainted(false);
         ((AbstractButton) c).setContentAreaFilled(true);
         ((AbstractButton) c).setMargin(new Insets(5, 5, 3, 3));
       }
-      if(c instanceof JTextField){
+      if (c instanceof JTextField) {
         ((JTextComponent) c).setCaretColor(foreground);
         ((JTextComponent) c).setBackground(background);
         ((JTextComponent) c).setBorder(javax.swing.BorderFactory.createEmptyBorder());

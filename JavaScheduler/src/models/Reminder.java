@@ -1,8 +1,6 @@
 package models;
 
 public class Reminder {
-    private DueBefore time;
-
     /** todo
      * Sets the time variable to t
      * @param t

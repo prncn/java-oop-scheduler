@@ -110,7 +110,7 @@ public class CalendarPanel extends Panel {
     String[] daysFull = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
     String[] daysShort = { "M", "T", "W", "T", "F", "S", "S" };
     String[] days;
-    if (d_wdth < 60) {
+    if (isMinified) {
       days = daysShort;
     } else {
       days = daysFull;
@@ -233,10 +233,6 @@ public class CalendarPanel extends Panel {
     redpanel.repaint();
   }
 
-  public LocalDate getDateFromString(String date) {
-    return null;
-  }
-
   /**
    * Initialise calendar layout
    * 
@@ -280,6 +276,8 @@ public class CalendarPanel extends Panel {
           dayBtn.setDark(true);
           if (isMinified) {
             CreateMeetingPanel.dateField.setText(parseDateFromTextField().toString());
+            CreateMeetingPanel.redpanel.setSize(0, 0);
+            CreateMeetingPanel.redpanel.isActive = false;
           }
         }
       });
