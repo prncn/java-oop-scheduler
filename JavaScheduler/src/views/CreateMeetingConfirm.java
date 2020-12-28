@@ -1,5 +1,8 @@
 package views;
 
+import java.awt.Color;
+import controllers.*;
+
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 
@@ -15,6 +18,7 @@ public class CreateMeetingConfirm extends Panel {
 
   public CreateMeetingConfirm(JFrame frame, UserAccount user, Meeting meeting) {
     super(frame);
+    
 
     CreateMeetingPanel createMeetingPanel = new CreateMeetingPanel(frame, user);
     Button backCreate = new Button(40, 400, "Back to creator", createMeetingPanel);
@@ -22,13 +26,13 @@ public class CreateMeetingConfirm extends Panel {
     backCreate.setColor(MasterUI.secondaryCol);
     backCreate.setVerticalAlignment(SwingConstants.CENTER);
     backCreate.setVerticalTextPosition(SwingConstants.BOTTOM);
-
+      
     Label screenTitle = new Label(40, 40, "Created.");
     Label successMsg = new Label(40, 150, "");
     Label secondaryMsg = new Label(40, 290, "All participants have been notified.");
     Label heroImage = new Label(MasterUI.createdMeetingImage);
     successMsg.setText("<html>You have scheduled a meeting<br/>on " + meeting.getEvent().getName() 
-    + " for the " + CalendarPanel.formatOrdinal(meeting.getEvent().getDate().getDayOfMonth()) + " of "+ meeting.getEvent().getDate().getMonth().toString().toLowerCase() + ".<html>");
+    + " for the " + Formatter.formatOrdinal(meeting.getEvent().getDate().getDayOfMonth()) + " of "+ meeting.getEvent().getDate().getMonth().toString().toLowerCase() + ".<html>");
     secondaryMsg.setSize(800, 40);
     heroImage.setBounds(400, 250, 542, 366);
 
