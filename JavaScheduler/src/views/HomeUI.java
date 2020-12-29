@@ -40,7 +40,7 @@ public class HomeUI extends MasterUI {
 
   private static Button dashboardTab;
   private static Panel dashpanel;
-  public static Label meetingName;
+  public static Label meetingsData;
   public static Button createTab;
 
   public HomeUI(UserAccount user) {
@@ -75,7 +75,6 @@ public class HomeUI extends MasterUI {
   public static void updateCalendar() {
     LocalDate today = LocalDate.now();
     calendarPanel.initCalendarLayout(today);
-    // this.repaint();
   }
 
   /**
@@ -97,20 +96,23 @@ public class HomeUI extends MasterUI {
 
   public static void updateDashboard(UserAccount user) {
     dashpanel.removeAll();
-    Point p = new Point(40,80);
-    if(user.getMeetings().size() == 0) {
-      meetingName = new Label(40, 80, "No meetings planned");
-      meetingName.setHeading();
-      meetingName.setSize(800, 40);
-      meetingName.setForeground(Color.LIGHT_GRAY);
-      dashpanel.add(meetingName);
+    Point p = new Point(0, 80);
+    if(user.getMeetings().isEmpty()) {
+      meetingsData = new Label(p.x, 80, "No meetings planned");
+      meetingsData.setHeading();
+      meetingsData.setSize(800, 40);
+      meetingsData.setForeground(Color.LIGHT_GRAY);
+      dashpanel.add(meetingsData);
     }
-    for (Meeting m : user.getMeetings()) {
-      meetingName = new Label(p.x, p.y , m.getEvent().getName());
-      Label locate = new Label(p.x + 180 , p.y , m.getEvent().getLocation().getWhere());
-      Label date = new Label(p.x + 400 , p.y , m.getEvent().getDate().toString());
 
-      switch (m.getPriority()) {
+    ArrayList<Meeting> meetings = user.getMeetings();
+    Collections.sort(meetings);
+    for (Meeting meeting : meetings) {
+      meetingsData = new Label(p.x, p.y , meeting.getEvent().getName());
+      Label locate = new Label(p.x + 180 , p.y , meeting.getEvent().getLocation().getWhere());
+      Label date = new Label(p.x + 400 , p.y , meeting.getEvent().getDate().toString());
+
+      switch (meeting.getPriority()) {
         case HIGH: {
           Label prio = new Label(p.x + 620 , p.y , "HIGH");
           prio.setForeground(new Color(194, 21, 73));
@@ -131,9 +133,9 @@ public class HomeUI extends MasterUI {
         }
       }
 
-      meetingName.setSize(800, 30);
-      meetingName.setFont(meetingName.getFont().deriveFont(Font.BOLD));
-      dashpanel.add(meetingName);
+      meetingsData.setSize(800, 30);
+      meetingsData.setFont(meetingsData.getFont().deriveFont(Font.BOLD));
+      dashpanel.add(meetingsData);
       dashpanel.add(locate);
       dashpanel.add(date);
       p.y += 30;

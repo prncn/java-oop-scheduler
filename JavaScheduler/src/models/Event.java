@@ -6,9 +6,9 @@ public class Event {
     private String name;
     private LocalDate date;
     private int durationMin;
-    private String location;
+    private Location location;
 
-    public Event(String name, LocalDate date, int durationMin, String location){
+    public Event(String name, LocalDate date, int durationMin, Location location){
         this.name = name;
         this.date = date;
         this.durationMin = durationMin;
@@ -39,11 +39,11 @@ public class Event {
         this.durationMin = durationMin;
     }
 
-    public String getLocation() {
+    public Location getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
 }

@@ -7,6 +7,7 @@ import controllers.DataBaseAPI;
 import models.UserAccount;
 import models.Meeting.Priority;
 import models.Event;
+import models.Location;
 import models.Meeting;
 
 import java.awt.Point;
