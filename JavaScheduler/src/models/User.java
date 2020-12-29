@@ -18,7 +18,7 @@ public class User {
   private Boolean isAdmin;
 
   public User() {
-    //
+    // Empty constructor
   }
 
   public User(String username, String password, String email) {
