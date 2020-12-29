@@ -23,6 +23,14 @@ public class UserAccount {
     this.meetings = new ArrayList<Meeting>();
   }
 
+  public void addMeeting(Meeting meeting) {
+    meetings.add(meeting);
+  }
+
+  public ArrayList<Meeting> getMeetings() {
+    return meetings;
+  }
+
   /**
    * Get user ID
    * @return String user ID
@@ -95,15 +103,10 @@ public class UserAccount {
     return UUID.randomUUID().toString().replace("-", "");
   }
 
-  public ArrayList<Meeting> getMeetings() {
-    return this.meetings;
-  }
   public void setMeetings(ArrayList<Meeting> meetings) {
     this.meetings = meetings;
   }
-  public void addMeeting(Meeting meeting) {
-    meetings.add(meeting);
-  }
+  
 
   @Override
   public boolean equals(Object other) {
