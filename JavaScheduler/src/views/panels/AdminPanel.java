@@ -1,15 +1,15 @@
-package views;
+package views.panels;
 
 import java.awt.Color;
 import javax.swing.JFrame;
 import views.components.Panel;
 
-public class ProfilePanel extends Panel {
+public class AdminPanel extends Panel {
 
   private static final long serialVersionUID = 1L;
 
-  public ProfilePanel(JFrame frame) {
+  public AdminPanel(JFrame frame) {
     super(frame);
-    this.setBackground(Color.RED);
+    this.setBackground(Color.MAGENTA);
   }
 }

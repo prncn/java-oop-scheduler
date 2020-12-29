@@ -44,7 +44,7 @@ public class Button extends JButton implements MouseListener {
     super(text);
     drawDefaultStyle();
     this.setPosition(x, y);
-    this.setBackground(MasterUI.getColor("primaryCol"));
+    this.setBackground(MasterUI.primaryCol);
     tabbed = false;
     dark = true;
     filled = false;
@@ -53,9 +53,9 @@ public class Button extends JButton implements MouseListener {
   public Button(int x, int y, String text, JPanel switchTo) {
     super(text);
     drawDefaultStyle();
-    this.color = MasterUI.getColor("primaryColAlt");
+    this.color = MasterUI.primaryColAlt;
     this.setPosition(x, y);
-    this.setBackground(MasterUI.getColor("primaryColAlt"));
+    this.setBackground(MasterUI.primaryColAlt);
     this.setSize(200, 50);
     this.setHorizontalAlignment(SwingConstants.LEFT);
     this.setMargin(new Insets(10, 10, 10, 10));

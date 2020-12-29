@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.Locale;
 
-public class Formatter {
+public class FormatUtil {
 	/**
 	   * Parse any date to LocalDate object
 	   * 
