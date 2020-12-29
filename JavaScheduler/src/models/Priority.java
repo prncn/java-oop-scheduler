@@ -1,2 +1,5 @@
-package models;public class Priority {
+package models;
+
+public enum Priority {
+    HIGH, MEDIUM, LOW
 }
