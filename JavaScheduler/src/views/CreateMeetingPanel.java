@@ -47,7 +47,7 @@ public class CreateMeetingPanel extends Panel {
 
     Label screenTitle = new Label(40, 40, "Schedule a Meeting");
     Point contentBox = new Point(40, 170);
-    String[] lbStrings = { "Topic", "When", "Duration", "Where" };
+    String[] lbStrings = { "Topic", "When", "Start Time", "Where" };
 
     initDatePicker(frame);
     initPageButtons();
@@ -55,7 +55,7 @@ public class CreateMeetingPanel extends Panel {
     drawPrioritySection();
     initAddParticipant(user);
     drawReminderSection(frame);
-    validateForm(frame, user);
+    processConfirm(frame, user);
 
     this.add(screenTitle);
     ((MasterUI) frame).setComponentStyles(this, "light");
@@ -177,12 +177,12 @@ public class CreateMeetingPanel extends Panel {
           textfield.setEditable(false);
           dateField = textfield;
           break;
-        case "Duration":
+        case "Start Time":
           textfield = new TextField(contentBox.x, initialY + 20);
           textfield.setSize((textfield.getWidth() / 2) - 2, textfield.getHeight());
           durationField = textfield;
 
-          Label timelb = new Label(contentBox.x + textfield.getWidth() + 4, initialY, "Time");
+          Label timelb = new Label(contentBox.x + textfield.getWidth() + 4, initialY, "End Time");
           secondField = new TextField(contentBox.x + textfield.getWidth() + 4, initialY + 20);
           secondField.setSize(textfield.getWidth(), textfield.getHeight());
           this.add(timelb);
@@ -369,10 +369,25 @@ public class CreateMeetingPanel extends Panel {
   }
 
   /**
-   * Valide creation form. If required fields are missing, the user gets an error
-   * (on UI level).
+   * Validate input form
+   * @param errorMsg - Label to display error message
+   * @return Boolean wether form is valid or not
    */
-  private void validateForm(JFrame frame, UserAccount user) {
+  private boolean validateForm(Label errorMsg, Panel panel) {
+    for (Component c : panel.getComponents()) {
+      if (c instanceof TextField && ((TextField) c).getText().isEmpty() && c != searchUserField
+      || selectedPriority == null) {
+        errorMsg.setText("Missing required fields.");
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Confirm creation form. Feed form data to new meeting object and proceed to success screen.
+   */
+  private void processConfirm(JFrame frame, UserAccount user) {
     Panel panel = this;
     Label errorMsg = new Label(40, 520, "");
     this.add(errorMsg);
@@ -397,13 +412,7 @@ public class CreateMeetingPanel extends Panel {
 
     confirmBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        for (Component c : panel.getComponents()) {
-          if (c instanceof TextField && ((TextField) c).getText().isEmpty() && c != searchUserField
-          || selectedPriority == null || participants.size() < 2) {
-            errorMsg.setText("Missing required fields.");
-            return;
-          }
-        }
+        if(!validateForm(errorMsg, panel)) return;
         HomeUI.confirmDialog(createAction, "Do you wish to continue?");
       }
     });
