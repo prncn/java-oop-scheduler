@@ -19,6 +19,10 @@ import models.Event;
 import views.components.Button;
 import views.components.Label;
 import views.components.Panel;
+import views.panels.AdminPanel;
+import views.panels.CalendarPanel;
+import views.panels.ProfilePanel;
+import views.panels.ScheduleEvent;
 import models.User;
 
 public class HomeUI extends MasterUI {
@@ -30,7 +34,7 @@ public class HomeUI extends MasterUI {
   private static JFrame frame;
   private Point tabsBox;
 
-  private CreateMeetingPanel createPanel;
+  private ScheduleEvent createPanel;
   private static CalendarPanel calendarPanel;
   private ProfilePanel profilePanel;
   private Button exportTab;
@@ -54,7 +58,7 @@ public class HomeUI extends MasterUI {
     panel.setBackground(lightCol);
 
     tabsBox = new Point(0, 200);
-    createPanel = new CreateMeetingPanel(frame, user);
+    createPanel = new ScheduleEvent(frame, user);
     calendarPanel = new CalendarPanel(frame, 95, false, user);
     profilePanel = new ProfilePanel(frame);
 

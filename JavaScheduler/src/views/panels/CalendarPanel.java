@@ -1,8 +1,8 @@
-package views;
+package views.panels;
 
 import java.awt.Color;
 
-import controllers.Formatter;
+import controllers.FormatUtil;
 import models.Event;
 import models.User;
 
@@ -24,6 +24,7 @@ import views.components.Button;
 import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
+import views.MasterUI;
 
 public class CalendarPanel extends Panel {
 
@@ -182,7 +183,7 @@ public class CalendarPanel extends Panel {
     if (nextMonth.getValue() == breakpoint) {
       yearField.setText(Integer.toString(Integer.parseInt(yearField.getText()) + addremove));
     }
-    dayField.setText(Formatter.formatOrdinal(1));
+    dayField.setText(FormatUtil.formatOrdinal(1));
     if (isMinified) {
       monthField.setText(nextMonth.toString().substring(0, 3));
     } else {
@@ -261,7 +262,7 @@ public class CalendarPanel extends Panel {
         incremY += d_wdth;
       }
       Button dayBtn = new Button(incremX, incremY, Integer.toString(dayNum), MasterUI.lightColAlt);
-      LocalDate currentLocalDate = Formatter.parseDate(currentYear, currentMonth.getValue(), dayNum);
+      LocalDate currentLocalDate = FormatUtil.parseDate(currentYear, currentMonth.getValue(), dayNum);
       styleDayBtn(dayBtn);
 
       if (isMinified && currentLocalDate.isBefore(today)) {
@@ -272,10 +273,10 @@ public class CalendarPanel extends Panel {
         for (Event meeting : user.getAcceptedEvents()) {
           if (currentLocalDate.equals(meeting.getDate())) {
             dayBtn.setColor(MasterUI.accentCol);
-            dayBtn.setDark(true);
           }
         }
       }
+
       dayBtn.setPrevColor(dayBtn.getColor());
       if (dayNum == activeSelectDay) {
         dayBtn.setColor(MasterUI.secondaryCol);
@@ -283,15 +284,14 @@ public class CalendarPanel extends Panel {
         prevActive = dayBtn;
       }
 
-
       dayBtn.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           switchActiveDayBtn(dayBtn, currentYear, currentMonth, dayNum);
           dayBtn.setDark(true);
           if (isMinified) {
-            CreateMeetingPanel.dateField.setText(parseDateFromTextField().toString());
-            CreateMeetingPanel.redpanel.setSize(0, 0);
-            CreateMeetingPanel.redpanel.isActive = false;
+            ScheduleEvent.dateField.setText(parseDateFromTextField().toString());
+            ScheduleEvent.redpanel.setSize(0, 0);
+            ScheduleEvent.redpanel.isActive = false;
           }
         }
       });
@@ -318,7 +318,7 @@ public class CalendarPanel extends Panel {
     } else {
       monthField.setText(date.getMonth().toString());
     }
-    dayField.setText(Formatter.formatOrdinal(date.getDayOfMonth()));
+    dayField.setText(FormatUtil.formatOrdinal(date.getDayOfMonth()));
 
     monthField.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -394,7 +394,7 @@ public class CalendarPanel extends Panel {
     } else {
       monthField.setText(monthStr);
     }
-    dayField.setText(Formatter.formatOrdinal(dayNum));
+    dayField.setText(FormatUtil.formatOrdinal(dayNum));
 
     if (prevActive != null) {
       prevActive.setColor(prevActive.getPrevColor());

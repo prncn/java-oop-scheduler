@@ -1,4 +1,4 @@
-package views;
+package views.panels;
 
 import controllers.*;
 
@@ -13,15 +13,17 @@ import models.User;
 import views.components.Button;
 import views.components.Label;
 import views.components.Panel;
+import views.HomeUI;
+import views.MasterUI;
 
-public class CreateMeetingConfirm extends Panel {
+public class ScheduleEventConfirm extends Panel {
 
   private static final long serialVersionUID = 4625075272906690489L;
 
-  public CreateMeetingConfirm(JFrame frame, User user, Event meeting) {
+  public ScheduleEventConfirm(JFrame frame, User user, Event meeting) {
     super(frame);
     
-    CreateMeetingPanel createMeetingPanel = new CreateMeetingPanel(frame, user);
+    ScheduleEvent createMeetingPanel = new ScheduleEvent(frame, user);
     Button backCreate = new Button(40, 400, "Back to creator", createMeetingPanel);
     backCreate.setIcon(MasterUI.backIcon);
     backCreate.setColor(MasterUI.secondaryCol);
@@ -38,8 +40,8 @@ public class CreateMeetingConfirm extends Panel {
     Label secondaryMsg = new Label(40, 290, "All participants have been notified.");
     Label heroImage = new Label(MasterUI.createdMeetingImage);
 
-    String meetingDateDay = Formatter.formatOrdinal(meeting.getDate().getDayOfMonth());
-    String meetingDateMonth = Formatter.capitalize(meeting.getDate().getMonth().toString());
+    String meetingDateDay = FormatUtil.formatOrdinal(meeting.getDate().getDayOfMonth());
+    String meetingDateMonth = FormatUtil.capitalize(meeting.getDate().getMonth().toString());
     successMsg.setText("<html>You have scheduled a meeting<br/>on " + meeting.getName()
     + " for the " + meetingDateDay + " of "+ meetingDateMonth + ".<html>");
     secondaryMsg.setSize(800, 40);

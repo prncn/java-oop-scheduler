@@ -13,7 +13,7 @@ public class Label extends JLabel {
 
   public Label(int x, int y, String text) {
     super(text);
-    this.setFont(MasterUI.getFont("bodyFont"));
+    this.setFont(MasterUI.bodyFont);
     this.setBounds(x, y, 250, 25);
   }
 
