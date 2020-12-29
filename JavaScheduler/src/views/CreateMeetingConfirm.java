@@ -8,8 +8,8 @@ import javax.swing.SwingConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import models.Meeting;
-import models.UserAccount;
+import models.Event;
+import models.User;
 import views.components.Button;
 import views.components.Label;
 import views.components.Panel;
@@ -18,7 +18,7 @@ public class CreateMeetingConfirm extends Panel {
 
   private static final long serialVersionUID = 4625075272906690489L;
 
-  public CreateMeetingConfirm(JFrame frame, UserAccount user, Meeting meeting) {
+  public CreateMeetingConfirm(JFrame frame, User user, Event meeting) {
     super(frame);
     
     CreateMeetingPanel createMeetingPanel = new CreateMeetingPanel(frame, user);
@@ -38,9 +38,9 @@ public class CreateMeetingConfirm extends Panel {
     Label secondaryMsg = new Label(40, 290, "All participants have been notified.");
     Label heroImage = new Label(MasterUI.createdMeetingImage);
 
-    String meetingDateDay = Formatter.formatOrdinal(meeting.getEvent().getDate().getDayOfMonth());
-    String meetingDateMonth = Formatter.capitalize(meeting.getEvent().getDate().getMonth().toString());
-    successMsg.setText("<html>You have scheduled a meeting<br/>on " + meeting.getEvent().getName() 
+    String meetingDateDay = Formatter.formatOrdinal(meeting.getDate().getDayOfMonth());
+    String meetingDateMonth = Formatter.capitalize(meeting.getDate().getMonth().toString());
+    successMsg.setText("<html>You have scheduled a meeting<br/>on " + meeting.getName()
     + " for the " + meetingDateDay + " of "+ meetingDateMonth + ".<html>");
     secondaryMsg.setSize(800, 40);
     heroImage.setBounds(400, 250, 542, 366);

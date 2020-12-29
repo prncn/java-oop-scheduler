@@ -3,32 +3,38 @@ package models;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class UserAccount {
+public class User {
 
   private String id;
   private String username;
+  private String surname;
+  private String name;
   private String password;
   private String email;
-  private ArrayList<Meeting> meetings = new ArrayList<Meeting>();
+  private ArrayList<Event> acceptedEvents = new ArrayList<Event>();
+  private ArrayList<Event> pendingEvents = new ArrayList<Event>();
+  private ArrayList<Event> createdEvents = new ArrayList<Event>();
+  private ArrayList<Location> customLocations = new ArrayList<Location>();
+  private Boolean isAdmin;
 
-  public UserAccount() {
+  public User() {
     //
   }
 
-  public UserAccount(String username, String password, String email) {
+  public User(String username, String password, String email) {
     this.id = generateUUID();
     this.username = username;
     this.password = password;
     this.email = email;
-    this.meetings = new ArrayList<Meeting>();
+    this.acceptedEvents = new ArrayList<Event>();
   }
 
-  public void addMeeting(Meeting meeting) {
-    meetings.add(meeting);
+  public void addEvent(Event e) {
+    acceptedEvents.add(e);
   }
 
-  public ArrayList<Meeting> getMeetings() {
-    return meetings;
+  public ArrayList<Event> getAcceptedEvents() {
+    return acceptedEvents;
   }
 
   /**
@@ -64,6 +70,14 @@ public class UserAccount {
   }
 
   /**
+   * Get admin status
+   * @return Boolean admin status
+   */
+  public Boolean getAdmin() {
+    return isAdmin;
+  }
+
+  /**
    * Set user ID
    * @param id - String ID
    */
@@ -78,6 +92,15 @@ public class UserAccount {
   public void setUsername(String username) {
     this.username = username;
   }
+
+  /**
+   * Set Admin
+   * @param admin - Boolean isAdmin
+   */
+  public void setAdmin(Boolean admin) {
+    isAdmin = admin;
+  }
+
 
   /**
    * Set user password
@@ -95,6 +118,46 @@ public class UserAccount {
     this.email = email;
   }
 
+  public ArrayList<Event> getPendingEvents() {
+    return pendingEvents;
+  }
+
+  public void setPendingEvents(ArrayList<Event> pendingEvents) {
+    this.pendingEvents = pendingEvents;
+  }
+
+  public ArrayList<Event> getCreatedEvents() {
+    return createdEvents;
+  }
+
+  public void setCreatedEvents(ArrayList<Event> createdEvents) {
+    this.createdEvents = createdEvents;
+  }
+
+  public ArrayList<Location> getCustomLocations() {
+    return customLocations;
+  }
+
+  public void setCustomLocations(ArrayList<Location> customLocations) {
+    this.customLocations = customLocations;
+  }
+
+  public String getSurname() {
+    return surname;
+  }
+
+  public void setSurname(String surname) {
+    this.surname = surname;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
   /**
    * Generate a random UUID for a newly created user account
    * @return standard UUID with dashes removed
@@ -103,14 +166,31 @@ public class UserAccount {
     return UUID.randomUUID().toString().replace("-", "");
   }
 
-  public void setMeetings(ArrayList<Meeting> meetings) {
-    this.meetings = meetings;
+  public void setAcceptedEvents(ArrayList<Event> acceptedEvents) {
+    this.acceptedEvents = acceptedEvents;
   }
-  
+
 
   @Override
   public boolean equals(Object other) {
-    UserAccount that = (UserAccount) other;
+    User that = (User) other;
     return this.id.equals(that.id);
+  }
+
+  /** todo
+   *
+   * @param u
+   * @return false on unsuccessful deletion, true on successful deletion
+   */
+  public boolean deleteUser(User u){
+    return false;
+  }
+
+  /** todo
+   *
+   * @param u User input
+   */
+  public void accessUserProfile(User u){
+
   }
 }

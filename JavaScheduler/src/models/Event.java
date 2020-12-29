@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 
-public class Meeting implements Comparable<Meeting> {
+public class Event implements Comparable<Event> {
     private String id;
     private ArrayList<User> participants;
     private Priority priority;
@@ -20,9 +20,16 @@ public class Meeting implements Comparable<Meeting> {
     private User host;
 
 
-    public Meeting(ArrayList<User> participants, Priority priority) {
+    public Event(ArrayList<User> participants, Priority priority) {
         this.participants = participants;
         this.priority = priority;
+    }
+
+    public Event(String name, LocalDate date, int durationMinutes, Location location){
+        this.name = name;
+        this.date = date;
+        this.durationMinutes = durationMinutes;
+        this.location = location;
     }
 
     public String getId() {
@@ -135,7 +142,7 @@ public class Meeting implements Comparable<Meeting> {
     }
 
     @Override 
-    public int compareTo(Meeting other) {
+    public int compareTo(Event other) {
         if(getDate() == null || other.getDate() == null){
             return 0;
         }

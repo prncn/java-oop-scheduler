@@ -7,10 +7,10 @@ public class Location {
     private String zip;
     private String building;
     private String RoomNr;
-    private String where;
+    private String name;
 
-    public Location(String _where) {
-        this.where = _where;
+    public Location(String name) {
+        this.name = name;
     }
 
     public String getCity() {
@@ -61,7 +61,7 @@ public class Location {
         RoomNr = roomNr;
     }
 
-    public String getWhere() { return where; }
+    public String getName() { return name; }
 
-    public void setWhere(String where) { this.where = where; }
+    public void setName(String name) { this.name = name; }
 }

@@ -6,7 +6,7 @@ import java.awt.Point;
 
 import javax.swing.*;
 
-import models.UserAccount;
+import models.User;
 import controllers.DataBaseAPI;
 import views.components.*;
 
@@ -66,7 +66,7 @@ public class LoginUI extends MasterUI {
 
         try {
           if (DataBaseAPI.verifyUser(inputUser, inputPass)) {
-            UserAccount session = DataBaseAPI.getUser(inputUser);
+            User session = DataBaseAPI.getUser(inputUser);
             HomeUI home = new HomeUI(session);
             home.setVisible(true);
             dispose();
