@@ -15,17 +15,17 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Point;
 
-import models.Meeting;
+import models.Event;
 import views.components.Button;
 import views.components.Label;
 import views.components.Panel;
-import models.UserAccount;
+import models.User;
 
 public class HomeUI extends MasterUI {
 
   private static final long serialVersionUID = -771654490802003766L;
   private JPanel sidebar = new JPanel();
-  private UserAccount user;
+  private User user;
   private static JPanel currentPanel = panel;
   private static JFrame frame;
   private Point tabsBox;
@@ -43,7 +43,7 @@ public class HomeUI extends MasterUI {
   public static Label meetingsData;
   public static Button createTab;
 
-  public HomeUI(UserAccount user) {
+  public HomeUI(User user) {
     frame = this;
     this.user = user;
     this.add(panel);
@@ -80,7 +80,7 @@ public class HomeUI extends MasterUI {
   /**
    * Create and initialise (default) dashboard panel
    */
-  private void createDashboardTab(UserAccount user) {
+  private void createDashboardTab(User user) {
     userWelcome.setText("Upcoming Events");
     userWelcome.setBounds(40, 40, 10, 10);
     userWelcome.setHeading();
@@ -94,10 +94,10 @@ public class HomeUI extends MasterUI {
     panel.add(dashpanel);
   }
 
-  public static void updateDashboard(UserAccount user) {
+  public static void updateDashboard(User user) {
     dashpanel.removeAll();
     Point p = new Point(0, 80);
-    if(user.getMeetings().isEmpty()) {
+    if(user.getAcceptedEvents().isEmpty()) {
       meetingsData = new Label(p.x, 80, "No meetings planned");
       meetingsData.setHeading();
       meetingsData.setSize(800, 40);
@@ -105,12 +105,12 @@ public class HomeUI extends MasterUI {
       dashpanel.add(meetingsData);
     }
 
-    ArrayList<Meeting> meetings = user.getMeetings();
+    ArrayList<Event> meetings = user.getAcceptedEvents();
     Collections.sort(meetings);
-    for (Meeting meeting : meetings) {
-      meetingsData = new Label(p.x, p.y , meeting.getEvent().getName());
-      Label locate = new Label(p.x + 180 , p.y , meeting.getEvent().getLocation().getWhere());
-      Label date = new Label(p.x + 400 , p.y , meeting.getEvent().getDate().toString());
+    for (Event meeting : meetings) {
+      meetingsData = new Label(p.x, p.y , meeting.getName());
+      Label locate = new Label(p.x + 180 , p.y , meeting.getLocation().getName());
+      Label date = new Label(p.x + 400 , p.y , meeting.getDate().toString());
 
       switch (meeting.getPriority()) {
         case HIGH: {
@@ -291,7 +291,7 @@ public class HomeUI extends MasterUI {
   }
 
   public static void main(String[] args) {
-    UserAccount guest = new UserAccount("admin", "root", "admin@mail.com");
+    User guest = new User("admin", "root", "admin@mail.com");
     HomeUI homeFrame = new HomeUI(guest);
     homeFrame.setVisible(true);
   }

@@ -3,8 +3,8 @@ package views;
 import java.awt.Color;
 
 import controllers.Formatter;
-import models.Meeting;
-import models.UserAccount;
+import models.Event;
+import models.User;
 
 import java.awt.Font;
 import java.awt.event.ActionListener;
@@ -46,9 +46,9 @@ public class CalendarPanel extends Panel {
   private Button prevMonthBtn;
 
   private boolean isMinified;
-  private UserAccount user;
+  private User user;
 
-  public CalendarPanel(JFrame frame, int d_wdth, boolean isMinified, UserAccount user) {
+  public CalendarPanel(JFrame frame, int d_wdth, boolean isMinified, User user) {
     super(frame);
     this.setLayout(null);
     this.d_wdth = d_wdth;
@@ -269,8 +269,8 @@ public class CalendarPanel extends Panel {
         dayBtn.setEnabled(false);
       }
       if (!isMinified) {
-        for (Meeting meeting : user.getMeetings()) {
-          if (currentLocalDate.equals(meeting.getEvent().getDate())) {
+        for (Event meeting : user.getAcceptedEvents()) {
+          if (currentLocalDate.equals(meeting.getDate())) {
             dayBtn.setColor(MasterUI.accentCol);
             dayBtn.setDark(true);
           }

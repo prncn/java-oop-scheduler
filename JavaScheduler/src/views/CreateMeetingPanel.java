@@ -4,11 +4,10 @@ import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 
 import controllers.DataBaseAPI;
-import models.UserAccount;
-import models.Meeting.Priority;
-import models.Event;
+import models.User;
+import models.Priority;
 import models.Location;
-import models.Meeting;
+import models.Event;
 
 import java.awt.Point;
 import java.awt.Color;
@@ -31,7 +30,7 @@ public class CreateMeetingPanel extends Panel {
   private TextField searchUserField;
   private Label userQueryResult;
   private int participantListPosition = 335;
-  private ArrayList<UserAccount> participants = new ArrayList<>();
+  private ArrayList<User> participants = new ArrayList<>();
   private Priority selectedPriority;
   public static Panel redpanel;
   public static TextField titleField;
@@ -41,7 +40,7 @@ public class CreateMeetingPanel extends Panel {
   public static TextField locationField;
   public static TextField reminderField;
 
-  public CreateMeetingPanel(JFrame frame, UserAccount user) {
+  public CreateMeetingPanel(JFrame frame, User user) {
     super(frame);
     participants.add(user);
 
@@ -225,7 +224,7 @@ public class CreateMeetingPanel extends Panel {
     String username = searchUserField.getText();
     if (username.isEmpty())
       return;
-    UserAccount user = DataBaseAPI.getUser(username);
+    User user = DataBaseAPI.getUser(username);
     if (user == null) {
       userQueryResult.setText("User not found");
     } else {
@@ -252,7 +251,7 @@ public class CreateMeetingPanel extends Panel {
   /**
    * Create and initialise add-participant section
    */
-  private void initAddParticipant(UserAccount user) {
+  private void initAddParticipant(User user) {
     Label searchUserLabel = new Label(400, 170, "People to invite");
     searchUserField = new TextField(400, 190);
 
@@ -372,7 +371,7 @@ public class CreateMeetingPanel extends Panel {
    * Valide creation form. If required fields are missing, the user gets an error
    * (on UI level).
    */
-  private void validateForm(JFrame frame, UserAccount user) {
+  private void validateForm(JFrame frame, User user) {
     Panel panel = this;
     Label errorMsg = new Label(40, 520, "");
     this.add(errorMsg);
@@ -387,8 +386,8 @@ public class CreateMeetingPanel extends Panel {
         Event event = new Event(eventName, eventDate, eventDuration, location);
         
         Priority priority = selectedPriority;
-        Meeting meeting = new Meeting(event, participants, priority);
-        user.addMeeting(meeting);
+        Event meeting = new Event(participants, priority);
+        user.addEvent(meeting);
         Panel createMeetingConfirm = new CreateMeetingConfirm(frame, user, meeting);
         HomeUI.switchPanel(createMeetingConfirm);
         HomeUI.createTab.changeReferencePanel(createMeetingConfirm);
