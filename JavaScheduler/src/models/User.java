@@ -1,67 +1,116 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
-public abstract class User {
-    private String id;
-    private String username;
-    private String password;
-    private String email;
-    private ArrayList<Meeting> meetings;
-    private Boolean isAdmin;
+public class UserAccount {
 
-    /** todo
-     * Creates a meeting which then is added into the meetings Array
-     */
-    public void createMeeting(){
+  private String id;
+  private String username;
+  private String password;
+  private String email;
+  private ArrayList<Meeting> meetings = new ArrayList<Meeting>();
 
-    }
+  public UserAccount() {
+    //
+  }
 
-    public String getId() {
-        return id;
-    }
+  public UserAccount(String username, String password, String email) {
+    this.id = generateUUID();
+    this.username = username;
+    this.password = password;
+    this.email = email;
+    this.meetings = new ArrayList<Meeting>();
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public void addMeeting(Meeting meeting) {
+    meetings.add(meeting);
+  }
 
-    public String getUsername() {
-        return username;
-    }
+  public ArrayList<Meeting> getMeetings() {
+    return meetings;
+  }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  /**
+   * Get user ID
+   * @return String user ID
+   */
+  public String getId() {
+    return this.id;
+  }
 
-    public String getPassword() {
-        return password;
-    }
+  /**
+   * Get username
+   * @return String username
+   */
+  public String getUsername() {
+    return this.username;
+  }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+  /**
+   * Get user password
+   * @return String user password (encrypted)
+   */
+  public String getPassword() {
+    return this.password;
+  }
 
-    public String getEmail() {
-        return email;
-    }
+  /**
+   * Get user email
+   * @return String user email
+   */
+  public String getEmail() {
+    return this.email;
+  }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+  /**
+   * Set user ID
+   * @param id - String ID
+   */
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public ArrayList<Meeting> getMeetings() {
-        return meetings;
-    }
+  /**
+   * Set username
+   * @param username - String username
+   */
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    public void setMeetings(ArrayList<Meeting> meetings) {
-        this.meetings = meetings;
-    }
+  /**
+   * Set user password
+   * @param password - String password (encrypted)
+   */
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-    public Boolean getAdmin() {
-        return isAdmin;
-    }
+  /**
+   * Set user email
+   * @param email - String email
+   */
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-    public void setAdmin(Boolean admin) {
-        isAdmin = admin;
-    }
+  /**
+   * Generate a random UUID for a newly created user account
+   * @return standard UUID with dashes removed
+   */
+  public static String generateUUID() {
+    return UUID.randomUUID().toString().replace("-", "");
+  }
+
+  public void setMeetings(ArrayList<Meeting> meetings) {
+    this.meetings = meetings;
+  }
+  
+
+  @Override
+  public boolean equals(Object other) {
+    UserAccount that = (UserAccount) other;
+    return this.id.equals(that.id);
+  }
 }
