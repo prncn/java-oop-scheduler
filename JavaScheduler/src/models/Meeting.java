@@ -3,7 +3,7 @@ package models;
 import java.util.ArrayList;
 
 
-public class Meeting {
+public class Meeting implements Comparable<Meeting> {
     private String id;
     private Event event;
     private ArrayList<UserAccount> participants;
@@ -68,6 +68,14 @@ public class Meeting {
      */
     public Boolean removeParticipant(User u) {
         return false;
+    }
+
+    @Override 
+    public int compareTo(Meeting other) {
+        if(getEvent().getDate() == null || other.getEvent().getDate() == null){
+            return 0;
+        }
+        return getEvent().getDate().compareTo(other.getEvent().getDate());
     }
 
 }

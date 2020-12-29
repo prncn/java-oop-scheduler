@@ -3,13 +3,10 @@ package views;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 
-import org.w3c.dom.Text;
-
 import controllers.DataBaseAPI;
 import models.UserAccount;
 import models.Meeting.Priority;
 import models.Event;
-import models.Location;
 import models.Meeting;
 
 import java.awt.Point;
@@ -113,6 +110,7 @@ public class CreateMeetingPanel extends Panel {
     Panel panel = this;
     Label reminderLabel = new Label(400, 100, "Remind me before event");
     reminderField = new TextField(400, 120);
+    reminderField.setText("Don't remind me");
     Button dpdwn = new Button(705, 120, "", MasterUI.accentCol);
     dpdwn.setIcon(MasterUI.downIcon);
     dpdwn.setSize(40, 40);
@@ -346,7 +344,7 @@ public class CreateMeetingPanel extends Panel {
     openDatePicker.setIcon(MasterUI.calendarIcon);
     openDatePicker.setSize(55, 40);
 
-    redpanel = new CalendarPanel(frame, 40, true);
+    redpanel = new CalendarPanel(frame, 40, true, null);
     redpanel.setSize(0, 0);
     redpanel.setBackground(MasterUI.lightCol);
     redpanel.setLayout(null);

@@ -9,7 +9,7 @@ public class UserAccount {
   private String username;
   private String password;
   private String email;
-  private ArrayList<Meeting> meetings;
+  private ArrayList<Meeting> meetings = new ArrayList<>();
 
   public UserAccount() {
     //
@@ -20,7 +20,6 @@ public class UserAccount {
     this.username = username;
     this.password = password;
     this.email = email;
-    meetings = new ArrayList<>();
   }
 
   public void addMeeting(Meeting meeting) {

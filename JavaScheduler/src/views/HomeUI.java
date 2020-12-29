@@ -6,7 +6,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.Component;
@@ -29,7 +31,7 @@ public class HomeUI extends MasterUI {
   private Point tabsBox;
 
   private CreateMeetingPanel createPanel;
-  private CalendarPanel calendarPanel;
+  private static CalendarPanel calendarPanel;
   private ProfilePanel profilePanel;
   private Button exportTab;
   private Button logoutTab;
@@ -54,7 +56,7 @@ public class HomeUI extends MasterUI {
 
     tabsBox = new Point(0, 200);
     createPanel = new CreateMeetingPanel(frame, user);
-    calendarPanel = new CalendarPanel(frame, 95, false);
+    calendarPanel = new CalendarPanel(frame, 95, false, user);
     profilePanel = new ProfilePanel(frame);
 
     styleSidebar();
@@ -69,6 +71,12 @@ public class HomeUI extends MasterUI {
 
     this.add(sidebar);
     this.setLocationRelativeTo(null);
+  }
+
+  public static void updateCalendar() {
+    LocalDate today = LocalDate.now();
+    calendarPanel.initCalendarLayout(today);
+    // this.repaint();
   }
 
   /**
@@ -106,6 +114,7 @@ public class HomeUI extends MasterUI {
       dashpanel.add(emptyDash);
       return;
     }
+    Collections.sort(meetings);
     for (Meeting meeting : meetings) {
       Label name = new Label(0, initialY, meeting.getEvent().getName());
       Label locate = new Label(180, initialY, meeting.getEvent().getLocation());

@@ -60,5 +60,6 @@ public class CreateMeetingConfirm extends Panel {
     user.addMeeting(meeting);
     
     HomeUI.updateDashboad(user);
+    HomeUI.updateCalendar();
   }
 }

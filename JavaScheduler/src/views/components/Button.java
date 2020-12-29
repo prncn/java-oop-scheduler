@@ -26,6 +26,7 @@ public class Button extends JButton implements MouseListener {
   private boolean filled;
   private boolean tabbed;
   private ActionListener switchPanelAction;
+  private Color prevColor;
 
   public Button(int x, int y, String text, Color color) {
     super(text);
@@ -134,6 +135,14 @@ public class Button extends JButton implements MouseListener {
     return this.dark;
   }
 
+  public Color getPrevColor() {
+    return this.prevColor;
+  }
+
+  public void setPrevColor(Color color) {
+    this.prevColor = color;
+  }
+
   /**
    * Set color of button
    * 
@@ -142,6 +151,10 @@ public class Button extends JButton implements MouseListener {
   public void setColor(Color color) {
     this.setBackground(color);
     this.color = color;
+  }
+
+  public Color getColor() {
+    return this.color;
   }
 
   public void setTab() {
