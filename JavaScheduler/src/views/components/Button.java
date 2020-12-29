@@ -41,6 +41,7 @@ public class Button extends JButton implements MouseListener{
   public Button(int x, int y, String text) {
     super(text);
     drawDefaultStyle();
+    this.setPosition(x, y);
     this.setBackground(MasterUI.getColor("primaryCol"));
     tabbed = false;
     dark = true;

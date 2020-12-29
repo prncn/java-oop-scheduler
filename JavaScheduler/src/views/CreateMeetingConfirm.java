@@ -1,6 +1,5 @@
 package views;
 
-import java.awt.Color;
 import controllers.*;
 
 import javax.swing.JFrame;
@@ -19,7 +18,6 @@ public class CreateMeetingConfirm extends Panel {
   public CreateMeetingConfirm(JFrame frame, UserAccount user, Meeting meeting) {
     super(frame);
     
-
     CreateMeetingPanel createMeetingPanel = new CreateMeetingPanel(frame, user);
     Button backCreate = new Button(40, 400, "Back to creator", createMeetingPanel);
     backCreate.setIcon(MasterUI.backIcon);
@@ -31,8 +29,11 @@ public class CreateMeetingConfirm extends Panel {
     Label successMsg = new Label(40, 150, "");
     Label secondaryMsg = new Label(40, 290, "All participants have been notified.");
     Label heroImage = new Label(MasterUI.createdMeetingImage);
+
+    String meetingDateDay = Formatter.formatOrdinal(meeting.getEvent().getDate().getDayOfMonth());
+    String meetingDateMonth = Formatter.capitalize(meeting.getEvent().getDate().getMonth().toString());
     successMsg.setText("<html>You have scheduled a meeting<br/>on " + meeting.getEvent().getName() 
-    + " for the " + Formatter.formatOrdinal(meeting.getEvent().getDate().getDayOfMonth()) + " of "+ meeting.getEvent().getDate().getMonth().toString().toLowerCase() + ".<html>");
+    + " for the " + meetingDateDay + " of "+ meetingDateMonth + ".<html>");
     secondaryMsg.setSize(800, 40);
     heroImage.setBounds(400, 250, 542, 366);
 
@@ -48,5 +49,7 @@ public class CreateMeetingConfirm extends Panel {
     screenTitle.setForeground(MasterUI.accentCol);
     successMsg.setHeading();
     successMsg.setSize(690, 120);
+
+    HomeUI.updateDashboard(user);
   }
 }

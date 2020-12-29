@@ -10,8 +10,13 @@ public class TextField extends JTextField {
     super(title);
     this.setBounds(x, y, 300, 40);
   }
+
   public TextField(int x, int y) {
     super();
     this.setBounds(x, y, 300, 40);
+  }
+
+  public void setPosition(int x, int y) {
+    this.setBounds(x, y, this.getWidth(), this.getHeight());
   }
 }

@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class UserAccount {
@@ -8,6 +9,7 @@ public class UserAccount {
   private String username;
   private String password;
   private String email;
+  private ArrayList<Meeting> meetings;
 
   public UserAccount() {
     //
@@ -18,6 +20,7 @@ public class UserAccount {
     this.username = username;
     this.password = password;
     this.email = email;
+    this.meetings = new ArrayList<Meeting>();
   }
 
   /**
@@ -90,6 +93,16 @@ public class UserAccount {
    */
   public static String generateUUID() {
     return UUID.randomUUID().toString().replace("-", "");
+  }
+
+  public ArrayList<Meeting> getMeetings() {
+    return this.meetings;
+  }
+  public void setMeetings(ArrayList<Meeting> meetings) {
+    this.meetings = meetings;
+  }
+  public void addMeeting(Meeting meeting) {
+    meetings.add(meeting);
   }
 
   @Override
