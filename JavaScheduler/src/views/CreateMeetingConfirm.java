@@ -57,9 +57,6 @@ public class CreateMeetingConfirm extends Panel {
     successMsg.setHeading();
     successMsg.setSize(690, 120);
 
-    user.addMeeting(meeting);
-    
-    HomeUI.updateDashboad(user);
-    HomeUI.updateCalendar();
+    HomeUI.updateDashboard(user);
   }
 }

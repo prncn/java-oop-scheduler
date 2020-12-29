@@ -381,11 +381,13 @@ public class CreateMeetingPanel extends Panel {
         String eventName = titleField.getText();
         LocalDate eventDate = LocalDate.parse(dateField.getText());
         int eventDuration = Integer.parseInt(durationField.getText());
-        String location = locationField.getText();
+        String locText = locationField.getText();
+        Location location = new Location(locText);
         Event event = new Event(eventName, eventDate, eventDuration, location);
         
         Priority priority = selectedPriority;
         Meeting meeting = new Meeting(event, participants, priority);
+        user.addMeeting(meeting);
         Panel createMeetingConfirm = new CreateMeetingConfirm(frame, user, meeting);
         HomeUI.switchPanel(createMeetingConfirm);
         HomeUI.createTab.changeReferencePanel(createMeetingConfirm);

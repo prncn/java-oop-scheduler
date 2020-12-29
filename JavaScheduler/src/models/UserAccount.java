@@ -9,7 +9,7 @@ public class UserAccount {
   private String username;
   private String password;
   private String email;
-  private ArrayList<Meeting> meetings = new ArrayList<>();
+  private ArrayList<Meeting> meetings;
 
   public UserAccount() {
     //
@@ -20,6 +20,7 @@ public class UserAccount {
     this.username = username;
     this.password = password;
     this.email = email;
+    this.meetings = new ArrayList<Meeting>();
   }
 
   public void addMeeting(Meeting meeting) {
@@ -101,6 +102,11 @@ public class UserAccount {
   public static String generateUUID() {
     return UUID.randomUUID().toString().replace("-", "");
   }
+
+  public void setMeetings(ArrayList<Meeting> meetings) {
+    this.meetings = meetings;
+  }
+  
 
   @Override
   public boolean equals(Object other) {
