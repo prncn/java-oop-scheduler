@@ -14,8 +14,10 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Point;
 
+import models.Meeting;
 import views.components.Button;
 import views.components.Label;
+import views.components.Panel;
 import models.UserAccount;
 
 public class HomeUI extends MasterUI {
@@ -34,7 +36,11 @@ public class HomeUI extends MasterUI {
   private Button logoutTab;
   private Button prevBtn;
 
-  public Label meetingName;
+
+  private static Button dashboardTab;
+  private static Panel dashpanel;
+  public static Label meetingName;
+  public static Button createTab;
 
   public HomeUI(UserAccount user) {
     frame = this;
@@ -73,18 +79,66 @@ public class HomeUI extends MasterUI {
     userWelcome.setBounds(40, 40, 10, 10);
     userWelcome.setHeading();
 
-    meetingName = new Label(40, 200, "PLACEHOLDER MEETING NAME");
+    dashpanel = new Panel();
+    dashpanel.setBounds(40, 80, panel.getWidth() - 100, panel.getHeight() - 160);
+    dashpanel.setBackground(lightCol);
 
-    panel.add(meetingName);
+    updateDashboard(user);
     panel.add(userWelcome);
+    panel.add(dashpanel);
+  }
+
+  public static void updateDashboard(UserAccount user) {
+    dashpanel.removeAll();
+    Point p = new Point(40,80);
+    if(user.getMeetings().size() == 0) {
+      meetingName = new Label(40, 80, "No meetings planned");
+      meetingName.setHeading();
+      meetingName.setSize(800, 40);
+      meetingName.setForeground(Color.LIGHT_GRAY);
+      dashpanel.add(meetingName);
+    }
+    for (Meeting m : user.getMeetings()) {
+      meetingName = new Label(p.x, p.y , m.getEvent().getName());
+      Label locate = new Label(p.x + 180 , p.y , m.getEvent().getLocation().getWhere());
+      Label date = new Label(p.x + 400 , p.y , m.getEvent().getDate().toString());
+
+      switch (m.getPriority()) {
+        case HIGH: {
+          Label prio = new Label(p.x + 620 , p.y , "HIGH");
+          prio.setForeground(new Color(194, 21, 73));
+          dashpanel.add(prio);
+          break;
+        }
+        case MEDIUM: {
+          Label prio = new Label(p.x + 620 , p.y , "MEDIUM");
+          prio.setForeground(new Color(219, 218, 149));
+          dashpanel.add(prio);
+          break;
+        }
+        case LOW: {
+          Label prio = new Label(p.x + 620 , p.y , "LOW");
+          prio.setForeground(MasterUI.secondaryCol);
+          dashpanel.add(prio);
+          break;
+        }
+      }
+
+      meetingName.setSize(800, 30);
+      meetingName.setFont(meetingName.getFont().deriveFont(Font.BOLD));
+      dashpanel.add(meetingName);
+      dashpanel.add(locate);
+      dashpanel.add(date);
+      p.y += 30;
+    }
   }
 
   /**
    * Create tab buttons on sidebar
    */
   private void createSidebarTabs() {
-    Button dashboardTab = new Button(tabsBox.x, tabsBox.y, "Dashboard", panel);
-    Button createTab = new Button(tabsBox.x, tabsBox.y + 50, "Create Meeting", createPanel);
+    dashboardTab = new Button(tabsBox.x, tabsBox.y, "Dashboard", panel);
+    createTab = new Button(tabsBox.x, tabsBox.y + 50, "Create Meeting", createPanel);
     Button calendarTab = new Button(tabsBox.x, tabsBox.y + 100, "View Calendar", calendarPanel);
     Button profileTab = new Button(tabsBox.x, tabsBox.y + 150, "Profile", profilePanel);
     exportTab = new Button(tabsBox.x, tabsBox.y + 250, "Export Schedule", primaryColAlt);
