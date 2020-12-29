@@ -15,7 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-public class Button extends JButton implements MouseListener{
+public class Button extends JButton implements MouseListener {
 
   private static final long serialVersionUID = 1L;
   private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
@@ -25,6 +25,8 @@ public class Button extends JButton implements MouseListener{
   private boolean dark;
   private boolean filled;
   private boolean tabbed;
+  private ActionListener switchPanelAction;
+  private Color prevColor;
 
   public Button(int x, int y, String text, Color color) {
     super(text);
@@ -37,7 +39,7 @@ public class Button extends JButton implements MouseListener{
     dark = true;
     filled = true;
   }
-  
+
   public Button(int x, int y, String text) {
     super(text);
     drawDefaultStyle();
@@ -47,7 +49,7 @@ public class Button extends JButton implements MouseListener{
     dark = true;
     filled = false;
   }
-  
+
   public Button(int x, int y, String text, JPanel switchTo) {
     super(text);
     drawDefaultStyle();
@@ -64,12 +66,30 @@ public class Button extends JButton implements MouseListener{
     tabbed = true;
     dark = true;
     filled = true;
-    
-    this.addActionListener(new ActionListener() {
+
+    switchPanelAction = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         HomeUI.switchPanel(switchTo);
       }
-    });
+    };
+
+    this.addActionListener(switchPanelAction);
+  }
+
+  /**
+   * Change reference of Panel to which the button should link to
+   * @param switchTo - Panel object to be set
+   */
+  public void changeReferencePanel(JPanel switchTo) {
+    this.removeActionListener(switchPanelAction);
+
+    switchPanelAction = new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        HomeUI.switchPanel(switchTo);
+      }
+    };
+
+    this.addActionListener(switchPanelAction);
   }
 
   /**
@@ -84,39 +104,57 @@ public class Button extends JButton implements MouseListener{
 
   /**
    * Set position of button
+   * 
    * @param x - Horizontal position coordinate
    * @param y - Vertical position coordinate
    */
   public void setPosition(int x, int y) {
     this.setBounds(x, y, this.getWidth(), this.getHeight());
   }
-  
+
   /**
    * Set dark mode value
-   * @param bool - Boolean enable/disable dark mode 
+   * 
+   * @param bool - Boolean enable/disable dark mode
    */
   public void setDark(boolean bool) {
     this.dark = bool;
-    if(bool) this.setForeground(Color.WHITE);
-    else this.setForeground(Color.BLACK);
+    if (bool)
+      this.setForeground(Color.WHITE);
+    else
+      this.setForeground(Color.BLACK);
   }
-
 
   /**
    * Get wether button is set on dark mode
-   * @return Boolean object instead of boolean primitive since unset buttons may return null
+   * 
+   * @return Boolean object instead of boolean primitive since unset buttons may
+   *         return null
    */
   public Boolean getDark() {
     return this.dark;
   }
 
+  public Color getPrevColor() {
+    return this.prevColor;
+  }
+
+  public void setPrevColor(Color color) {
+    this.prevColor = color;
+  }
+
   /**
-   * Set color of button 
+   * Set color of button
+   * 
    * @param color - Color to be set
    */
   public void setColor(Color color) {
     this.setBackground(color);
     this.color = color;
+  }
+
+  public Color getColor() {
+    return this.color;
   }
 
   public void setTab() {
@@ -133,6 +171,7 @@ public class Button extends JButton implements MouseListener{
 
   /**
    * Get wether button is a tab button
+   * 
    * @return boolean is tab or not
    */
   public boolean getTab() {
@@ -141,22 +180,26 @@ public class Button extends JButton implements MouseListener{
 
   @Override
   public void mouseEntered(MouseEvent e) {
-    if(this.filled){
+    if (this.filled) {
       this.setBackground(color.darker());
     }
   }
 
   @Override
   public void mouseExited(MouseEvent e) {
-    if(this.filled){
+    if (this.filled) {
       this.setBackground(color);
     }
   }
-  
+
   public void mousePressed(MouseEvent e) {
     this.setBackground(color);
   }
-  public void mouseReleased(MouseEvent e) {}
-  public void mouseClicked(MouseEvent e) {}
+
+  public void mouseReleased(MouseEvent e) {
+  }
+
+  public void mouseClicked(MouseEvent e) {
+  }
 
 }

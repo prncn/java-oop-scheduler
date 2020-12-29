@@ -1,13 +1,14 @@
 package views;
 
 import javax.swing.AbstractButton;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.Component;
@@ -30,7 +31,7 @@ public class HomeUI extends MasterUI {
   private Point tabsBox;
 
   private CreateMeetingPanel createPanel;
-  private CalendarPanel calendarPanel;
+  private static CalendarPanel calendarPanel;
   private ProfilePanel profilePanel;
   private Button exportTab;
   private Button logoutTab;
@@ -39,7 +40,7 @@ public class HomeUI extends MasterUI {
 
   private static Button dashboardTab;
   private static Panel dashpanel;
-  public static Label meetingName;
+  public static Label meetingsData;
   public static Button createTab;
 
   public HomeUI(UserAccount user) {
@@ -54,7 +55,7 @@ public class HomeUI extends MasterUI {
 
     tabsBox = new Point(0, 200);
     createPanel = new CreateMeetingPanel(frame, user);
-    calendarPanel = new CalendarPanel(frame, 95, false);
+    calendarPanel = new CalendarPanel(frame, 95, false, user);
     profilePanel = new ProfilePanel(frame);
 
     styleSidebar();
@@ -65,16 +66,21 @@ public class HomeUI extends MasterUI {
     this.setComponentStyles(sidebar, "dark");
     this.setComponentStyles(panel, "light");
 
-    createDashboardTab();
+    createDashboardTab(user);
 
     this.add(sidebar);
     this.setLocationRelativeTo(null);
   }
 
+  public static void updateCalendar() {
+    LocalDate today = LocalDate.now();
+    calendarPanel.initCalendarLayout(today);
+  }
+
   /**
    * Create and initialise (default) dashboard panel
    */
-  private void createDashboardTab() {
+  private void createDashboardTab(UserAccount user) {
     userWelcome.setText("Upcoming Events");
     userWelcome.setBounds(40, 40, 10, 10);
     userWelcome.setHeading();
@@ -90,20 +96,23 @@ public class HomeUI extends MasterUI {
 
   public static void updateDashboard(UserAccount user) {
     dashpanel.removeAll();
-    Point p = new Point(40,80);
-    if(user.getMeetings().size() == 0) {
-      meetingName = new Label(40, 80, "No meetings planned");
-      meetingName.setHeading();
-      meetingName.setSize(800, 40);
-      meetingName.setForeground(Color.LIGHT_GRAY);
-      dashpanel.add(meetingName);
+    Point p = new Point(0, 80);
+    if(user.getMeetings().isEmpty()) {
+      meetingsData = new Label(p.x, 80, "No meetings planned");
+      meetingsData.setHeading();
+      meetingsData.setSize(800, 40);
+      meetingsData.setForeground(Color.LIGHT_GRAY);
+      dashpanel.add(meetingsData);
     }
-    for (Meeting m : user.getMeetings()) {
-      meetingName = new Label(p.x, p.y , m.getEvent().getName());
-      Label locate = new Label(p.x + 180 , p.y , m.getEvent().getLocation().getWhere());
-      Label date = new Label(p.x + 400 , p.y , m.getEvent().getDate().toString());
 
-      switch (m.getPriority()) {
+    ArrayList<Meeting> meetings = user.getMeetings();
+    Collections.sort(meetings);
+    for (Meeting meeting : meetings) {
+      meetingsData = new Label(p.x, p.y , meeting.getEvent().getName());
+      Label locate = new Label(p.x + 180 , p.y , meeting.getEvent().getLocation().getWhere());
+      Label date = new Label(p.x + 400 , p.y , meeting.getEvent().getDate().toString());
+
+      switch (meeting.getPriority()) {
         case HIGH: {
           Label prio = new Label(p.x + 620 , p.y , "HIGH");
           prio.setForeground(new Color(194, 21, 73));
@@ -124,9 +133,9 @@ public class HomeUI extends MasterUI {
         }
       }
 
-      meetingName.setSize(800, 30);
-      meetingName.setFont(meetingName.getFont().deriveFont(Font.BOLD));
-      dashpanel.add(meetingName);
+      meetingsData.setSize(800, 30);
+      meetingsData.setFont(meetingsData.getFont().deriveFont(Font.BOLD));
+      dashpanel.add(meetingsData);
       dashpanel.add(locate);
       dashpanel.add(date);
       p.y += 30;
@@ -184,55 +193,59 @@ public class HomeUI extends MasterUI {
     logoutTab.setTab();
     sidebar.add(logoutTab);
 
+    ActionListener logoutAction = new ActionListener() {
+      public void actionPerformed(ActionEvent actionEvent) {
+        dispose();
+        panel.removeAll();
+        new LoginUI();
+      }
+    };
+
     logoutTab.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        JDialog logout = new JDialog(frame, "Logout Verification");
-
-        JLabel logoutlabel = new JLabel("Are you sure ?");
-        logoutlabel.setFont(new Font("Consolas", Font.PLAIN, 15));
-        logoutlabel.setForeground(fontCol);
-        JButton yes = new Button(300, 200, "Yes");
-        JButton no = new Button(300, 220, "No");
-
-        JPanel logoutp = new JPanel();
-        logoutp.add(logoutlabel);
-        logoutp.add(yes);
-        logoutp.add(no);
-        logoutp.setBackground(primaryColAlt);
-        logout.add(logoutp);
-        logout.setSize(300, 80);
-        logout.setVisible(true);
-        logout.setLocation(800, 500);
-        yes.setFont(monoFont);
-        yes.setForeground(Color.WHITE);
-        yes.setBackground(secondaryCol);
-        yes.setFocusPainted(false);
-        yes.setContentAreaFilled(true);
-        // yes.setMargin(new Insets(5, 5, 3, 3));
-        yes.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent actionEvent) {
-            dispose();
-            panel.removeAll();
-            LoginUI login = new LoginUI();
-            login.setVisible(true);
-          }
-        });
-        no.setFont(monoFont);
-        no.setForeground(Color.WHITE);
-        no.setBackground(primaryColAlt);
-        no.setFocusPainted(false);
-        no.setContentAreaFilled(true);
-        // no.setMargin(new Insets(5, 5, 3, 3));
-        no.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent actionEvent) {
-            logout.dispose();
-
-          }
-        });
+        confirmDialog(logoutAction, "Are you sure you want to logout?");
       }
     });
+  }
+
+  /**
+   * Open a dialog prompt asking the user to confirm their action
+   * 
+   * @param action - ActionListener object to be passed to "YES" button
+   * @param prompt - String prompt the user is asked
+   */
+  public static void confirmDialog(ActionListener action, String prompt) {
+    JDialog confirmDialog = new JDialog(frame, "Confirm action");
+    frame.setEnabled(false);
+    Label logoutlabel = new Label(20, 20, prompt);
+    Button yes = new Button(30, 60, "Yes", secondaryCol);
+    Button no = new Button(140, 60, "No", lightColAlt);
+    no.setDark(false);
+
+    JPanel logoutp = new JPanel();
+    logoutp.setLayout(null);
+    logoutp.setBackground(MasterUI.lightCol);
+    logoutp.add(logoutlabel);
+    logoutp.add(yes);
+    logoutp.add(no);
+
+    confirmDialog.add(logoutp);
+    confirmDialog.setSize(300, 160);
+    confirmDialog.setResizable(false);
+    confirmDialog.setVisible(true);
+    confirmDialog.setLocationRelativeTo(null);
+
+    ((MasterUI) frame).setComponentStyles(logoutp, "light");
+
+    ActionListener closeDialog = new ActionListener() {
+      public void actionPerformed(ActionEvent actionEvent) {
+        frame.setEnabled(true);
+        confirmDialog.dispose();
+      }
+    };
+    yes.addActionListener(action);
+    yes.addActionListener(closeDialog);
+    no.addActionListener(closeDialog);
   }
 
   /**

@@ -3,6 +3,9 @@ package views;
 import java.awt.Color;
 
 import controllers.Formatter;
+import models.Meeting;
+import models.UserAccount;
+
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
@@ -43,12 +46,14 @@ public class CalendarPanel extends Panel {
   private Button prevMonthBtn;
 
   private boolean isMinified;
+  private UserAccount user;
 
-  public CalendarPanel(JFrame frame, int d_wdth, boolean isMinified) {
+  public CalendarPanel(JFrame frame, int d_wdth, boolean isMinified, UserAccount user) {
     super(frame);
     this.setLayout(null);
     this.d_wdth = d_wdth;
     this.isMinified = isMinified;
+    this.user = user;
 
     drawDisplayModeBtns();
 
@@ -125,8 +130,6 @@ public class CalendarPanel extends Panel {
       incremX += d_wdth;
     }
   }
-
-  
 
   /**
    * Parse strings of text fields to LocalDate objects to be passed onto date
@@ -214,7 +217,6 @@ public class CalendarPanel extends Panel {
     this.add(nextMonthBtn);
     this.add(prevMonthBtn);
   }
-  
 
   /**
    * Function to change date of calendar according to input from text fields
@@ -238,7 +240,7 @@ public class CalendarPanel extends Panel {
    * 
    * @param date - LocalDate object describing any date
    */
-  private void initCalendarLayout(LocalDate date) {
+  public void initCalendarLayout(LocalDate date) {
     Month currentMonth = date.getMonth();
     int dayOfMonth = date.getDayOfMonth();
     int currentYear = date.getYear();
@@ -259,17 +261,29 @@ public class CalendarPanel extends Panel {
         incremY += d_wdth;
       }
       Button dayBtn = new Button(incremX, incremY, Integer.toString(dayNum), MasterUI.lightColAlt);
+      LocalDate currentLocalDate = Formatter.parseDate(currentYear, currentMonth.getValue(), dayNum);
       styleDayBtn(dayBtn);
 
-      if (isMinified && Formatter.parseDate(currentYear, currentMonth.getValue(), dayNum).isBefore(today)) {
+      if (isMinified && currentLocalDate.isBefore(today)) {
         dayBtn.setForeground(Color.LIGHT_GRAY);
         dayBtn.setEnabled(false);
       }
+      if (!isMinified) {
+        for (Meeting meeting : user.getMeetings()) {
+          if (currentLocalDate.equals(meeting.getEvent().getDate())) {
+            dayBtn.setColor(MasterUI.accentCol);
+            dayBtn.setDark(true);
+          }
+        }
+      }
+      dayBtn.setPrevColor(dayBtn.getColor());
       if (dayNum == activeSelectDay) {
         dayBtn.setColor(MasterUI.secondaryCol);
         dayBtn.setDark(true);
         prevActive = dayBtn;
       }
+
+
       dayBtn.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           switchActiveDayBtn(dayBtn, currentYear, currentMonth, dayNum);
@@ -286,6 +300,7 @@ public class CalendarPanel extends Panel {
       incremX += d_wdth;
     }
   }
+
 
   /**
    * Create and initialise date text fields
@@ -382,7 +397,7 @@ public class CalendarPanel extends Panel {
     dayField.setText(Formatter.formatOrdinal(dayNum));
 
     if (prevActive != null) {
-      prevActive.setColor(MasterUI.lightColAlt);
+      prevActive.setColor(prevActive.getPrevColor());
       prevActive.setDark(false);
     }
 
