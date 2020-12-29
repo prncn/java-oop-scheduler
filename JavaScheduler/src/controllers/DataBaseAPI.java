@@ -63,7 +63,7 @@ public class DataBaseAPI {
     }
   }
 
-  public static boolean createUser(UserAccount user) {
+  public static boolean createUser(User user) {
     String sql = "INSERT INTO `UserAccount` (`id`, `username`, `password`, `email`) VALUES ('" + user.getId() + "', '"
         + user.getUsername() + "', '" + user.getPassword() + "', '" + user.getEmail() + "')";
     Connection connection = connectDatabase();
@@ -80,7 +80,7 @@ public class DataBaseAPI {
     return true;
   }
 
-  public static boolean isAvailable(UserAccount user) {
+  public static boolean isAvailable(User user) {
     String sql = "SELECT * FROM UserAccount WHERE username='" + user.getUsername() + "' OR email='" + user.getEmail() + "'";
     Connection connection = connectDatabase();
     try {
@@ -100,13 +100,13 @@ public class DataBaseAPI {
     connection.close();
   }
 
-  public static UserAccount getUser(String username) {
+  public static User getUser(String username) {
     Connection connection = connectDatabase();
     ResultSet result = fetchUserData(connection, username);
     if(result == null) return null;
 
     try {
-      UserAccount user = new UserAccount();
+      User user = new User();
       user.setId(result.getString("id"));
       user.setUsername(result.getString("username"));
       user.setPassword(result.getString("password"));

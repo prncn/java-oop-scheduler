@@ -1,14 +1,16 @@
-package views;
+package views.panels;
 
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 
+import controllers.ControlHandler;
 import controllers.DataBaseAPI;
-import models.UserAccount;
-import models.Meeting.Priority;
-import models.Event;
+import models.User;
+import models.Priority;
 import models.Location;
-import models.Meeting;
+import models.Event;
+import views.HomeUI;
+import views.MasterUI;
 
 import java.awt.Point;
 import java.awt.Color;
@@ -22,7 +24,7 @@ import java.util.ArrayList;
 
 import views.components.*;
 
-public class CreateMeetingPanel extends Panel {
+public class ScheduleEvent extends Panel {
 
   private static final long serialVersionUID = 1L;
   private Button addUserBtn;
@@ -31,7 +33,7 @@ public class CreateMeetingPanel extends Panel {
   private TextField searchUserField;
   private Label userQueryResult;
   private int participantListPosition = 335;
-  private ArrayList<UserAccount> participants = new ArrayList<>();
+  private ArrayList<User> participants = new ArrayList<>();
   private Priority selectedPriority;
   public static Panel redpanel;
   public static TextField titleField;
@@ -41,7 +43,7 @@ public class CreateMeetingPanel extends Panel {
   public static TextField locationField;
   public static TextField reminderField;
 
-  public CreateMeetingPanel(JFrame frame, UserAccount user) {
+  public ScheduleEvent(JFrame frame, User user) {
     super(frame);
     participants.add(user);
 
@@ -79,7 +81,7 @@ public class CreateMeetingPanel extends Panel {
           "Don't remind me" };
       int rmd_initialY = 0;
       for (String dueBefore : dueBefores) {
-        remOption = new Button(0, rmd_initialY, dueBefore, MasterUI.getColor("lightColAlt"));
+        remOption = new Button(0, rmd_initialY, dueBefore, MasterUI.lightColAlt);
         remOption.setSize(dropdown.getWidth(), 40);
         remOption.setDark(false);
         remOption.setForeground(Color.BLACK);
@@ -155,7 +157,8 @@ public class CreateMeetingPanel extends Panel {
   }
 
   /**
-   * Create and initialise text forms. This method implements a loop for developemental purposes.
+   * Create and initialise text forms. This method implements a loop for
+   * developemental purposes.
    * 
    * @param contentBox - Border box and bounds for forms
    * @param lbStrings  - Names of forms to create
@@ -206,6 +209,7 @@ public class CreateMeetingPanel extends Panel {
           redpanel.isActive = false;
           textfield.setText("");
         }
+
         public void focusLost(FocusEvent e) {
           // unchanged
         }
@@ -225,7 +229,7 @@ public class CreateMeetingPanel extends Panel {
     String username = searchUserField.getText();
     if (username.isEmpty())
       return;
-    UserAccount user = DataBaseAPI.getUser(username);
+    User user = DataBaseAPI.getUser(username);
     if (user == null) {
       userQueryResult.setText("User not found");
     } else {
@@ -252,7 +256,7 @@ public class CreateMeetingPanel extends Panel {
   /**
    * Create and initialise add-participant section
    */
-  private void initAddParticipant(UserAccount user) {
+  private void initAddParticipant(User user) {
     Label searchUserLabel = new Label(400, 170, "People to invite");
     searchUserField = new TextField(400, 190);
 
@@ -285,6 +289,21 @@ public class CreateMeetingPanel extends Panel {
   }
 
   /**
+   * Set default unselected priority button styles
+   * @param lo - Low priority button
+   * @param mid - Medium priority button
+   * @param hi - Hight priority button
+   */
+  private void styleDefaultPriorityBtns(Button lo, Button mid, Button hi) {
+    lo.setColor(MasterUI.lightColAlt);
+    mid.setColor(MasterUI.lightColAlt);
+    hi.setColor(MasterUI.lightColAlt);
+    lo.setText("LOW");
+    mid.setText("MID");
+    hi.setText("HIGH");
+  }
+
+  /**
    * Draw priority label and buttons
    */
   private void drawPrioritySection() {
@@ -295,35 +314,26 @@ public class CreateMeetingPanel extends Panel {
 
     loPrioBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        styleDefaultPriorityBtns(loPrioBtn, midPrioBtn, hiPrioBtn);
         loPrioBtn.setColor(MasterUI.secondaryCol);
-        midPrioBtn.setColor(MasterUI.lightColAlt);
-        hiPrioBtn.setColor(MasterUI.lightColAlt);
         loPrioBtn.setText("Casual");
-        midPrioBtn.setText("MID");
-        hiPrioBtn.setText("HIGH");
         selectedPriority = Priority.LOW;
       }
     });
 
     midPrioBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        loPrioBtn.setColor(MasterUI.lightColAlt);
+        styleDefaultPriorityBtns(loPrioBtn, midPrioBtn, hiPrioBtn);
         midPrioBtn.setColor(new Color(219, 218, 149));
-        hiPrioBtn.setColor(MasterUI.lightColAlt);
-        loPrioBtn.setText("LOW");
         midPrioBtn.setText("Moderate");
-        hiPrioBtn.setText("HIGH");
         selectedPriority = Priority.MEDIUM;
       }
     });
 
     hiPrioBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        loPrioBtn.setColor(MasterUI.lightColAlt);
-        midPrioBtn.setColor(MasterUI.lightColAlt);
+        styleDefaultPriorityBtns(loPrioBtn, midPrioBtn, hiPrioBtn);
         hiPrioBtn.setColor(new Color(194, 21, 73));
-        loPrioBtn.setText("LOW");
-        midPrioBtn.setText("MID");
         hiPrioBtn.setText("Urgent");
         selectedPriority = Priority.HIGH;
       }
@@ -370,13 +380,14 @@ public class CreateMeetingPanel extends Panel {
 
   /**
    * Validate input form
+   * 
    * @param errorMsg - Label to display error message
    * @return Boolean wether form is valid or not
    */
   private boolean validateForm(Label errorMsg, Panel panel) {
     for (Component c : panel.getComponents()) {
       if (c instanceof TextField && ((TextField) c).getText().isEmpty() && c != searchUserField
-      || selectedPriority == null) {
+          || selectedPriority == null) {
         errorMsg.setText("Missing required fields.");
         return false;
       }
@@ -385,26 +396,23 @@ public class CreateMeetingPanel extends Panel {
   }
 
   /**
-   * Confirm creation form. Feed form data to new meeting object and proceed to success screen.
+   * Confirm creation form. Feed form data to new meeting object and proceed to
+   * success screen.
    */
-  private void processConfirm(JFrame frame, UserAccount user) {
+  private void processConfirm(JFrame frame, User user) {
     Panel panel = this;
     Label errorMsg = new Label(40, 520, "");
     this.add(errorMsg);
     ActionListener createAction = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         panel.removeAll();
-        String eventName = titleField.getText();
-        LocalDate eventDate = LocalDate.parse(dateField.getText());
-        int eventDuration = Integer.parseInt(durationField.getText());
-        String locText = locationField.getText();
-        Location location = new Location(locText);
-        Event event = new Event(eventName, eventDate, eventDuration, location);
-        
-        Priority priority = selectedPriority;
-        Meeting meeting = new Meeting(event, participants, priority);
-        user.addMeeting(meeting);
-        Panel createMeetingConfirm = new CreateMeetingConfirm(frame, user, meeting);
+
+        Event event = ControlHandler.consumeEventForm(titleField, dateField, durationField, locationField);
+        event.setParticipants(participants);
+        event.setPriority(selectedPriority);
+        user.addEvent(event);
+
+        Panel createMeetingConfirm = new ScheduleEventConfirm(frame, user, event);
         HomeUI.switchPanel(createMeetingConfirm);
         HomeUI.createTab.changeReferencePanel(createMeetingConfirm);
       }
@@ -412,7 +420,8 @@ public class CreateMeetingPanel extends Panel {
 
     confirmBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        if(!validateForm(errorMsg, panel)) return;
+        if (!validateForm(errorMsg, panel))
+          return;
         HomeUI.confirmDialog(createAction, "Do you wish to continue?");
       }
     });
