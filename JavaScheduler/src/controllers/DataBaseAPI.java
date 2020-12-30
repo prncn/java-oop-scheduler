@@ -3,6 +3,7 @@ package controllers;
 import models.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -40,20 +41,27 @@ public class DataBaseAPI {
     String saltHash = userData.getString("password");
     String password_encrypted = PasswordEncryption.verify(password, saltHash);
     
-    String sql = "SELECT * FROM UserAccount WHERE username='" + username + "' AND password='" + password_encrypted + "'";
-    Statement statement = connection.createStatement();
-    ResultSet result = statement.executeQuery(sql);
-    Boolean isUser = result.next();
+    String sql = "SELECT * FROM UserAccount WHERE username = ? AND password = ?";
     
+    PreparedStatement statement = connection.prepareStatement(sql);
+    statement.setString(1, username);
+    statement.setString(2, password_encrypted);
+ 
+    ResultSet result = statement.executeQuery();
+
+    Boolean isUser = result.next();
+    statement.close();
     closeDatabase(connection);
     return isUser;
   }
 
   private static ResultSet fetchUserData(Connection connection, String username) {
-	  String sql = "SELECT * FROM UserAccount WHERE username='" + username + "'";
+	  String sql = "SELECT * FROM UserAccount WHERE username = ?";
     try {
-      Statement statement = connection.createStatement();
-      ResultSet result = statement.executeQuery(sql);
+      PreparedStatement statement = connection.prepareStatement(sql);
+      statement.setString(1, username);
+      ResultSet result = statement.executeQuery();
+      
       if(result.next()) return result;
       return null;
     } catch (SQLException e) {
@@ -64,13 +72,18 @@ public class DataBaseAPI {
   }
 
   public static boolean createUser(User user) {
-    String sql = "INSERT INTO `UserAccount` (`id`, `username`, `password`, `email`) VALUES ('" + user.getId() + "', '"
-        + user.getUsername() + "', '" + user.getPassword() + "', '" + user.getEmail() + "')";
+    String sql = "INSERT INTO UserAccount (id, username, password, email)"
+    + " VALUES(?, ?, ?, ?)";        
     Connection connection = connectDatabase();
-    Statement statement;
     try {
-      statement = connection.createStatement();
-      statement.execute(sql);
+      PreparedStatement statement = connection.prepareStatement(sql);
+      statement.setString(1, user.getId());
+      statement.setString(2, user.getUsername());
+      statement.setString(3, user.getPassword());
+      statement.setString(4, user.getEmail());
+      statement.executeUpdate();
+      
+      statement.close();
       closeDatabase(connection);
     } catch (SQLException e) {
       e.printStackTrace();
@@ -81,12 +94,16 @@ public class DataBaseAPI {
   }
 
   public static boolean isAvailable(User user) {
-    String sql = "SELECT * FROM UserAccount WHERE username='" + user.getUsername() + "' OR email='" + user.getEmail() + "'";
-    Connection connection = connectDatabase();
+	String sql = "SELECT * FROM UserAccount WHERE username = ? OR email=?";
+	Connection connection = connectDatabase();
     try {
-      Statement statement = connection.createStatement();
-      ResultSet result = statement.executeQuery(sql);
+      PreparedStatement statement = connection.prepareStatement(sql);
+      statement.setString(1, user.getUsername());
+      statement.setString(2, user.getEmail());
+      
+      ResultSet result = statement.executeQuery();
       Boolean isTaken = result.next();
+      statement.close();
       closeDatabase(connection);
       return !isTaken;
     } catch (SQLException e) {
