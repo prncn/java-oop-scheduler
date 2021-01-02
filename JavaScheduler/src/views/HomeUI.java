@@ -6,7 +6,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import java.awt.event.ActionListener;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.awt.event.ActionEvent;
@@ -26,7 +25,6 @@ import views.panels.ScheduleEvent;
 import models.User;
 
 public class HomeUI extends MasterUI {
-
   private static final long serialVersionUID = -771654490802003766L;
   private JPanel sidebar = new JPanel();
   private User user;
@@ -35,17 +33,18 @@ public class HomeUI extends MasterUI {
   private Point tabsBox;
 
   private ScheduleEvent createPanel;
-  private static CalendarPanel calendarPanel;
+  public static CalendarPanel calendarPanel;
   private ProfilePanel profilePanel;
   private Button exportTab;
   private Button logoutTab;
   private Button prevBtn;
 
-
   private static Button dashboardTab;
   private static Panel dashpanel;
-  public static Label meetingsData;
+  public static Label eventData;
   public static Button createTab;
+  public static Button calendarTab;
+  public static Button profileTab;
 
   public HomeUI(User user) {
     frame = this;
@@ -71,15 +70,10 @@ public class HomeUI extends MasterUI {
     this.setComponentStyles(panel, "light");
 
     createDashboardTab(user);
-
     this.add(sidebar);
     this.setLocationRelativeTo(null);
   }
 
-  public static void updateCalendar() {
-    LocalDate today = LocalDate.now();
-    calendarPanel.initCalendarLayout(today);
-  }
 
   /**
    * Create and initialise (default) dashboard panel
@@ -93,53 +87,51 @@ public class HomeUI extends MasterUI {
     dashpanel.setBounds(40, 80, panel.getWidth() - 100, panel.getHeight() - 160);
     dashpanel.setBackground(lightCol);
 
-    updateDashboard(user);
+    Label notifLabel = new Label(650, 40, "Pending invites:");
+    notifLabel.setFont(monoFont);
+    notifLabel.appendIcon(bellIcon);
+
+    Label emptyNotif = new Label(650, 80, "You're all caught up!");
+    emptyNotif.setFont(monoFont);
+    emptyNotif.setForeground(Color.LIGHT_GRAY);
+
+    panel.add(emptyNotif);
+    panel.add(notifLabel);
+
+    drawEventData(user);
     panel.add(userWelcome);
     panel.add(dashpanel);
   }
 
-  public static void updateDashboard(User user) {
+  /**
+   * Draw event data on dashboard
+   * @param user - Currently logged in user
+   */
+  public static void drawEventData(User user) {
     dashpanel.removeAll();
     Point p = new Point(0, 80);
     if(user.getAcceptedEvents().isEmpty()) {
-      meetingsData = new Label(p.x, 80, "No meetings planned");
-      meetingsData.setHeading();
-      meetingsData.setSize(800, 40);
-      meetingsData.setForeground(Color.LIGHT_GRAY);
-      dashpanel.add(meetingsData);
+      eventData = new Label(p.x, 80, "No meetings planned");
+      eventData.setHeading();
+      eventData.setSize(800, 40);
+      eventData.setForeground(Color.LIGHT_GRAY);
+      dashpanel.add(eventData);
     }
 
-    ArrayList<Event> meetings = user.getAcceptedEvents();
-    Collections.sort(meetings);
-    for (Event meeting : meetings) {
-      meetingsData = new Label(p.x, p.y , meeting.getName());
-      Label locate = new Label(p.x + 180 , p.y , meeting.getLocation().getName());
-      Label date = new Label(p.x + 400 , p.y , meeting.getDate().toString());
+    ArrayList<Event> events = user.getAcceptedEvents();
+    Collections.sort(events);
+    for (Event event : events) {
+      eventData = new Label(p.x, p.y , event.getName());
+      Label locate = new Label(p.x + 180 , p.y , event.getLocation().getName());
+      Label date = new Label(p.x + 400 , p.y , event.getDate().toString());
 
-      switch (meeting.getPriority()) {
-        case HIGH: {
-          Label prio = new Label(p.x + 620 , p.y , "HIGH");
-          prio.setForeground(new Color(194, 21, 73));
-          dashpanel.add(prio);
-          break;
-        }
-        case MEDIUM: {
-          Label prio = new Label(p.x + 620 , p.y , "MEDIUM");
-          prio.setForeground(new Color(219, 218, 149));
-          dashpanel.add(prio);
-          break;
-        }
-        case LOW: {
-          Label prio = new Label(p.x + 620 , p.y , "LOW");
-          prio.setForeground(MasterUI.secondaryCol);
-          dashpanel.add(prio);
-          break;
-        }
-      }
+      Label prio = new Label(p.x + 620 , p.y , event.getPriority().name());
+      prio.setForeground(event.getPriority().getColor());
+      dashpanel.add(prio);
 
-      meetingsData.setSize(800, 30);
-      meetingsData.setFont(meetingsData.getFont().deriveFont(Font.BOLD));
-      dashpanel.add(meetingsData);
+      eventData.setSize(800, 30);
+      eventData.setFont(eventData.getFont().deriveFont(Font.BOLD));
+      dashpanel.add(eventData);
       dashpanel.add(locate);
       dashpanel.add(date);
       p.y += 30;
@@ -152,8 +144,8 @@ public class HomeUI extends MasterUI {
   private void createSidebarTabs() {
     dashboardTab = new Button(tabsBox.x, tabsBox.y, "Dashboard", panel);
     createTab = new Button(tabsBox.x, tabsBox.y + 50, "Create Meeting", createPanel);
-    Button calendarTab = new Button(tabsBox.x, tabsBox.y + 100, "View Calendar", calendarPanel);
-    Button profileTab = new Button(tabsBox.x, tabsBox.y + 150, "Profile", profilePanel);
+    calendarTab = new Button(tabsBox.x, tabsBox.y + 100, "View Calendar", calendarPanel);
+    profileTab = new Button(tabsBox.x, tabsBox.y + 150, "Profile", profilePanel);
     exportTab = new Button(tabsBox.x, tabsBox.y + 250, "Export Schedule", primaryColAlt);
     dashboardTab.setIcon(dashboardIcon);
     createTab.setIcon(createMeetingIcon);
