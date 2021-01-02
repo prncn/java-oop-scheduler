@@ -45,9 +45,10 @@ Scheduling application.
   - [ ] Location creator panel
 
 ### Create Meetings/Appointments
-- [x] Model meetings system (*version 3*)
+- [ ] Model meetings system (*version 3*)
   - [x] Implement prototype systems (version 3)
   - [x] Reduce and minimise model
+  - [x] Redesign invite system
 - [x] User UI form to add entries (meetings/appointments)
 - [x] Create and pass Meeting entity as java class
   - [x] Entry contains info about *event* (see event entity)
