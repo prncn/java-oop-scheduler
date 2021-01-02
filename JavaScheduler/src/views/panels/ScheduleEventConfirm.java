@@ -59,6 +59,7 @@ public class ScheduleEventConfirm extends Panel {
     successMsg.setHeading();
     successMsg.setSize(690, 120);
 
-    HomeUI.updateDashboard(user);
+    ControlHandler.updateDashboard(user);
+    ControlHandler.updateCalendar(frame);
   }
 }

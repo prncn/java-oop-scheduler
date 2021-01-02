@@ -7,13 +7,12 @@ public class User {
 
   private String id;
   private String username;
-  private String surname;
-  private String name;
+  private String firstname;
+  private String lastname;
   private String password;
   private String email;
   private ArrayList<Event> acceptedEvents = new ArrayList<Event>();
   private ArrayList<Event> pendingEvents = new ArrayList<Event>();
-  private ArrayList<Event> createdEvents = new ArrayList<Event>();
   private ArrayList<Location> customLocations = new ArrayList<Location>();
   private Boolean isAdmin;
 
@@ -21,12 +20,23 @@ public class User {
     // Empty constructor
   }
 
+  /**
+   * Constructor after account creation and before storing to database
+   * @param username
+   * @param password
+   * @param email
+   */
   public User(String username, String password, String email) {
     this.id = generateUUID();
     this.username = username;
+    this.firstname = "";
+    this.lastname = "";
     this.password = password;
     this.email = email;
     this.acceptedEvents = new ArrayList<Event>();
+    this.pendingEvents = new ArrayList<Event>();
+    this.customLocations = new ArrayList<Location>();
+    this.isAdmin = false;
   }
 
   public void addEvent(Event e) {
@@ -126,14 +136,6 @@ public class User {
     this.pendingEvents = pendingEvents;
   }
 
-  public ArrayList<Event> getCreatedEvents() {
-    return createdEvents;
-  }
-
-  public void setCreatedEvents(ArrayList<Event> createdEvents) {
-    this.createdEvents = createdEvents;
-  }
-
   public ArrayList<Location> getCustomLocations() {
     return customLocations;
   }
@@ -142,20 +144,20 @@ public class User {
     this.customLocations = customLocations;
   }
 
-  public String getSurname() {
-    return surname;
+  public String getFirstname() {
+    return firstname;
   }
 
-  public void setSurname(String surname) {
-    this.surname = surname;
+  public void setFirstname(String surname) {
+    this.firstname = surname;
   }
 
-  public String getName() {
-    return name;
+  public String getLastname() {
+    return lastname;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setLastname(String name) {
+    this.lastname = name;
   }
 
   /**
@@ -191,6 +193,6 @@ public class User {
    * @param u User input
    */
   public void accessUserProfile(User u){
-
+    return;
   }
 }

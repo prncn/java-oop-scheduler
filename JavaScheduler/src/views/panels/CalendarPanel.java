@@ -24,13 +24,14 @@ import views.components.Button;
 import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
+import views.HomeUI;
 import views.MasterUI;
 
 public class CalendarPanel extends Panel {
 
   private static final long serialVersionUID = 1L;
   public int d_wdth; // 95
-  private final int initialX = 10; // 20
+  final static int initialX = 10; // 20
   private final int initialY = 100; // 120
 
   private TextField yearField = new TextField(700, 70);
@@ -38,40 +39,48 @@ public class CalendarPanel extends Panel {
   private TextField dayField = new TextField(700, 170);
 
   private Panel redpanel = new Panel();
+  private CalendarPanelWeeky weeklyDisplay;
   private Button prevActive = null;
+  private Button highlightToday;
   public LocalDate today;
+  private Label meetingsInfo;
+  private String noMeetingStr = "No meetings on this day :)";
 
-  private Button dispModeWeek;
-  private Button dispModeMonth;
+  public static Button dispModeWeek;
+  public static Button dispModeMonth;
   private Button nextMonthBtn;
   private Button prevMonthBtn;
 
   private boolean isMinified;
-  private User user;
+  private JFrame frame;
+  public User user;
 
   public CalendarPanel(JFrame frame, int d_wdth, boolean isMinified, User user) {
     super(frame);
     this.setLayout(null);
     this.d_wdth = d_wdth;
     this.isMinified = isMinified;
+    this.frame = frame;
     this.user = user;
 
     drawDisplayModeBtns();
-
-    Label meetingsInfo = new Label(700, 250, "No meetings on this day :)");
+    
+    meetingsInfo = new Label(700, 250, noMeetingStr);
     this.add(meetingsInfo);
     drawWeekDaysBar();
-
     today = LocalDate.now();
-    initDateTextFields(today, frame);
-
+    initDateTextFields(today);
+    setDisplayAction();
+    
     LocalDate argDate = parseDateFromTextField();
     initCalendarLayout(argDate);
-    initNavigationBtns(frame);
+    initNavigationBtns();
 
     redpanel.setBounds(initialX, initialY, 7 * d_wdth, 5 * d_wdth);
     redpanel.setBackground(MasterUI.lightCol);
     this.add(redpanel);
+    this.add(dispModeWeek);
+    this.add(dispModeMonth);
 
     ((MasterUI) frame).setComponentStyles(redpanel, "light");
     ((MasterUI) frame).setComponentStyles(this, "light");
@@ -101,12 +110,46 @@ public class CalendarPanel extends Panel {
   /**
    * Draw buttons to switch display modes
    */
-  private void drawDisplayModeBtns() {
+  private static void drawDisplayModeBtns() {
     dispModeWeek = new Button(initialX, 10, "Week", MasterUI.lightColAlt);
-    dispModeMonth = new Button(70, 10, "Month", MasterUI.secondaryCol);
+    dispModeMonth = new Button(70, 10, "Month", MasterUI.lightColAlt);
 
-    this.add(dispModeWeek);
-    this.add(dispModeMonth);
+    dispModeWeek.setDark(false);
+    dispModeWeek.setSize(60, 35);
+    dispModeMonth.setDark(true);
+    dispModeMonth.setSize(60, 35);
+  }
+
+  /**
+   * Get corresponding display button action depending on current display
+   * @param display - Currently displayed calendar (monthly/weekly)
+   * @return ActionListener for display button
+   */
+  public static ActionListener getDisplayAction(Panel display) {
+    return new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        HomeUI.switchPanel(display);
+        HomeUI.calendarTab.changeReferencePanel(display);
+      }
+    };
+  }
+
+  /**
+   * Set button action on display modes
+   */
+  private void setDisplayAction() {
+    dispModeMonth.setColor(MasterUI.secondaryCol);
+    CalendarPanel origin = this;
+    // weeklyDisplay = new CalendarPanelWeeky(frame, origin);
+
+    // dispModeWeek.addActionListener(getDisplayAction(weeklyDisplay));
+    dispModeWeek.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        weeklyDisplay = new CalendarPanelWeeky(frame, origin, user);
+        HomeUI.switchPanel(weeklyDisplay);
+        HomeUI.calendarTab.changeReferencePanel(weeklyDisplay);
+      }
+    });
   }
 
   /**
@@ -125,6 +168,7 @@ public class CalendarPanel extends Panel {
     for (String day : days) {
       Label dayLabel = new Label(incremX, initialY - 50, day);
       dayLabel.setHorizontalAlignment(SwingConstants.CENTER);
+      dayLabel.setBackground(MasterUI.lightColAlt);
       dayLabel.setSize(d_wdth - 2, 40);
       dayLabel.setOpaque(true);
       this.add(dayLabel);
@@ -197,9 +241,9 @@ public class CalendarPanel extends Panel {
    * 
    * @param frame - JFrame of current instance
    */
-  private void initNavigationBtns(JFrame frame) {
-    nextMonthBtn = new Button(750, 20, "", MasterUI.lightColAlt);
-    prevMonthBtn = new Button(690, 20, "", MasterUI.lightColAlt);
+  private void initNavigationBtns() {
+    nextMonthBtn = new Button(740, 15, "", MasterUI.lightColAlt);
+    prevMonthBtn = new Button(680, 15, "", MasterUI.lightColAlt);
     nextMonthBtn.setIcon(MasterUI.nextIcon);
     prevMonthBtn.setIcon(MasterUI.prevIcon);
 
@@ -224,7 +268,7 @@ public class CalendarPanel extends Panel {
    * 
    * @param frame - JFrame of current instance (used for setComponentStyles cast)
    */
-  private void changeDateFromTextField(JFrame frame) {
+  public void changeDateFromTextField(JFrame frame) {
     redpanel.removeAll();
     redpanel.repaint();
 
@@ -234,6 +278,84 @@ public class CalendarPanel extends Panel {
     redpanel.setLayout(null);
     ((MasterUI) frame).setComponentStyles(redpanel, "light");
     redpanel.repaint();
+  }
+
+  /**
+   * Set event info label when day button is clicked
+   * 
+   * @param str - String the label to be set to
+   * @return ActionListener to be passed to day button
+   */
+  private ActionListener setInfoAction(String str) {
+    return new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        meetingsInfo.setText(str);
+      }
+    };
+  }
+
+  /**
+   * Fetch event info on day button click of that day
+   * 
+   * @param currentLocalDate - LocalDate of calendar day
+   * @param dayBtn           - Calendar day button
+   */
+  private void fetchEventInfo(LocalDate currentLocalDate, Button dayBtn) {
+    if (isMinified)
+      return;
+    for (Event event : user.getAcceptedEvents()) {
+      if (currentLocalDate.equals(event.getDate())) {
+        dayBtn.setColor(MasterUI.accentCol);
+        dayBtn.addActionListener(setInfoAction(event.getName()));
+        dayBtn.setText("<html><p>" + event.getName() + "</p><html>");
+        dayBtn.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD));
+        dayBtn.setVerticalAlignment(SwingConstants.TOP);
+        dayBtn.setDark(true);
+        
+        // dayBtn.setIcon(MasterUI.profileIcon);
+      } else {
+        dayBtn.addActionListener(setInfoAction(noMeetingStr));
+      }
+    }
+  }
+
+  /**
+   * Make days that are in the past unclickable
+   * 
+   * @param dayBtn           - Calendar day button
+   * @param currentLocalDate - Current date object
+   */
+  private void disablePassedDates(Button dayBtn, LocalDate currentLocalDate) {
+    if (isMinified && currentLocalDate.isBefore(today)) {
+      dayBtn.setForeground(Color.LIGHT_GRAY);
+      dayBtn.setEnabled(false);
+    }
+  }
+
+  /**
+   * Send selected day's date to ScheduleEvent form field
+   */
+  private void sendToScheduleForm() {
+    if (isMinified) {
+      ScheduleEvent.dateField.setText(parseDateFromTextField().toString());
+      ScheduleEvent.redpanel.setSize(0, 0);
+      ScheduleEvent.redpanel.isActive = false;
+    }
+  }
+
+  /**
+   * Set style for active selected day button
+   * 
+   * @param dayNum          - Integer of current day of the month
+   * @param activeSelectDay - Integer of active selection (day that is currently clicked)
+   * @param dayBtn          - Calendar day button
+   */
+  private void styleActiveSelectDay(int dayNum, int activeSelectDay, Button dayBtn) {
+    if (dayNum == activeSelectDay) {
+      dayBtn.setColor(MasterUI.secondaryCol);
+      dayBtn.setDark(true);
+      prevActive = dayBtn;
+    }
   }
 
   /**
@@ -248,13 +370,12 @@ public class CalendarPanel extends Panel {
     YearMonth yearMonth = YearMonth.of(currentYear, currentMonth);
     int firstWeekday = yearMonth.atDay(1).getDayOfWeek().getValue();
     int daysInMonth = yearMonth.lengthOfMonth();
-
-    int activeSelectDay = dayOfMonth;
-
+    int activeSelectDay = dayOfMonth; // default active selection is today's day button
     int firstDay = firstWeekday - 1;
     int incremX = 0;
     int incremY = 0;
     incremX += firstDay * d_wdth;
+
     for (int i = firstDay; i < firstDay + daysInMonth; i++) {
       int dayNum = i - firstDay + 1;
       if (i % 7 == 0 && i != 0) {
@@ -263,36 +384,25 @@ public class CalendarPanel extends Panel {
       }
       Button dayBtn = new Button(incremX, incremY, Integer.toString(dayNum), MasterUI.lightColAlt);
       LocalDate currentLocalDate = FormatUtil.parseDate(currentYear, currentMonth.getValue(), dayNum);
+
       styleDayBtn(dayBtn);
-
-      if (isMinified && currentLocalDate.isBefore(today)) {
-        dayBtn.setForeground(Color.LIGHT_GRAY);
-        dayBtn.setEnabled(false);
-      }
-      if (!isMinified) {
-        for (Event meeting : user.getAcceptedEvents()) {
-          if (currentLocalDate.equals(meeting.getDate())) {
-            dayBtn.setColor(MasterUI.accentCol);
-          }
-        }
-      }
-
+      disablePassedDates(dayBtn, currentLocalDate);
+      fetchEventInfo(currentLocalDate, dayBtn);
       dayBtn.setPrevColor(dayBtn.getColor());
-      if (dayNum == activeSelectDay) {
-        dayBtn.setColor(MasterUI.secondaryCol);
-        dayBtn.setDark(true);
-        prevActive = dayBtn;
+      styleActiveSelectDay(dayNum, activeSelectDay, dayBtn);
+
+      if(currentLocalDate.equals(LocalDate.now())){
+        highlightToday = dayBtn;
+        dayBtn.setForeground(Color.RED);
       }
 
       dayBtn.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          switchActiveDayBtn(dayBtn, currentYear, currentMonth, dayNum);
           dayBtn.setDark(true);
-          if (isMinified) {
-            ScheduleEvent.dateField.setText(parseDateFromTextField().toString());
-            ScheduleEvent.redpanel.setSize(0, 0);
-            ScheduleEvent.redpanel.isActive = false;
-          }
+          switchActiveDayBtn(dayBtn, currentYear, currentMonth, dayNum);
+          sendToScheduleForm();
+          if(!isMinified)
+            weeklyDisplay.drawWeekDaysBar(FormatUtil.parseDate(currentYear, currentMonth.getValue(), dayNum));
         }
       });
 
@@ -301,14 +411,13 @@ public class CalendarPanel extends Panel {
     }
   }
 
-
   /**
    * Create and initialise date text fields
    * 
    * @param date  - LocalDate object of any date
    * @param frame - JFrame of current instance
    */
-  private void initDateTextFields(LocalDate date, JFrame frame) {
+  private void initDateTextFields(LocalDate date) {
     yearField = new TextField(700, 70);
     monthField = new TextField(700, 120);
     dayField = new TextField(700, 170);
@@ -335,11 +444,6 @@ public class CalendarPanel extends Panel {
    * Set styles for display mode buttons and navigation buttons
    */
   private void styleTopIcons() {
-    dispModeWeek.setDark(false);
-    dispModeWeek.setSize(60, 35);
-    dispModeMonth.setDark(true);
-    dispModeMonth.setSize(60, 35);
-
     nextMonthBtn.setSize(60, 35);
     nextMonthBtn.setColor(MasterUI.lightCol);
     prevMonthBtn.setSize(60, 35);
@@ -368,7 +472,7 @@ public class CalendarPanel extends Panel {
    */
   private void styleDayBtn(Button dayBtn) {
     dayBtn.setDark(false);
-    dayBtn.setForeground(MasterUI.primaryColAlt);
+    dayBtn.setForeground(Color.BLACK);
     dayBtn.setVerticalAlignment(SwingConstants.BOTTOM);
     dayBtn.setHorizontalAlignment(SwingConstants.RIGHT);
     dayBtn.setSize(d_wdth - 2, d_wdth - 2);
@@ -398,7 +502,12 @@ public class CalendarPanel extends Panel {
 
     if (prevActive != null) {
       prevActive.setColor(prevActive.getPrevColor());
-      prevActive.setDark(false);
+      if(prevActive.getPrevColor().equals(MasterUI.lightColAlt)){
+        prevActive.setDark(false);
+      } 
+    }
+    if(prevActive.equals(highlightToday)){
+      prevActive.setForeground(Color.RED);
     }
 
     dayBtn.setColor(MasterUI.secondaryCol);

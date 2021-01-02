@@ -1,9 +1,17 @@
 package controllers;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Random;
+
+import javax.swing.JFrame;
 
 import models.Event;
 import models.Location;
+import models.Priority;
+import models.User;
+import views.HomeUI;
 import views.components.TextField;
 
 public class ControlHandler {
@@ -17,14 +25,51 @@ public class ControlHandler {
    * @param locationField - Field for location
    * @return Event object from given data
    */
-  public static Event consumeEventForm(TextField titleField, TextField dateField, TextField durationField,
-      TextField locationField) {
+  public static Event consumeEventForm(TextField titleField, TextField dateField, TextField startField,
+      TextField endField, TextField locationField) {
     String eventName = titleField.getText();
     LocalDate eventDate = LocalDate.parse(dateField.getText());
-    int eventDuration = Integer.parseInt(durationField.getText());
+    LocalTime eventTime = LocalTime.parse(startField.getText());
+    int eventDuration = FormatUtil.parseDuration(startField.getText(), endField.getText());
     String locationName = locationField.getText();
     Location location = new Location(locationName);
-    return new Event(eventName, eventDate, eventDuration, location);
+    return new Event(eventName, eventDate, eventTime, eventDuration, location);
+  }
+
+  /**
+   * Update and redraw calendar layout on events. Method gets called on event
+   * change.
+   */
+  public static void updateCalendar(JFrame frame) {
+    HomeUI.calendarPanel.changeDateFromTextField(frame);
+    HomeUI.calendarPanel.repaint();
+  }
+
+  /**
+   * Update and redraw event data on dashboard. Method gets called on event
+   * change.
+   * 
+   * @param user - Currently logged in user
+   */
+  public static void updateDashboard(User user) {
+    HomeUI.drawEventData(user);
+  }
+
+  /**
+   * Create dummy event for testing. Date and time are randomised.
+   * @return Test event object
+   */
+  public static Event createTestEvent() {
+    Random rand = new Random();
+    DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-M-d");
+    DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("H:mm");
+    LocalDate date = LocalDate.parse("2021-01-" + String.valueOf(rand.nextInt(31) + 1), dateFormat);
+    LocalTime time = LocalTime.parse(String.valueOf(rand.nextInt(17-9) + 9) + ":00", timeFormat);
+    int duration = rand.nextInt(190 - 30) + 30;
+    System.out.println(duration);
+    Event event = new Event("Test", date, time, duration, new Location("Testtown"));
+    event.setPriority(Priority.LOW);
+    return event;
   }
 
 }

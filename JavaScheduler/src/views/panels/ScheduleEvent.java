@@ -7,7 +7,6 @@ import controllers.ControlHandler;
 import controllers.DataBaseAPI;
 import models.User;
 import models.Priority;
-import models.Location;
 import models.Event;
 import views.HomeUI;
 import views.MasterUI;
@@ -19,7 +18,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import views.components.*;
@@ -35,25 +33,29 @@ public class ScheduleEvent extends Panel {
   private int participantListPosition = 335;
   private ArrayList<User> participants = new ArrayList<>();
   private Priority selectedPriority;
+  private Point contentBox;
   public static Panel redpanel;
   public static TextField titleField;
   public static TextField dateField;
-  public static TextField durationField;
-  public static TextField timeField;
+  public static TextField startField;
+  public static TextField endField;
   public static TextField locationField;
   public static TextField reminderField;
 
+  private User user;
+
   public ScheduleEvent(JFrame frame, User user) {
     super(frame);
+    this.user = user;
     participants.add(user);
 
+    contentBox = new Point(40, 170);
     Label screenTitle = new Label(40, 40, "Schedule a Meeting");
-    Point contentBox = new Point(40, 170);
     String[] lbStrings = { "Topic", "When", "Start Time", "Where" };
 
     initDatePicker(frame);
     initPageButtons();
-    initFormContent(contentBox, lbStrings);
+    initFormContent(lbStrings);
     drawPrioritySection();
     initAddParticipant(user);
     drawReminderSection(frame);
@@ -160,10 +162,9 @@ public class ScheduleEvent extends Panel {
    * Create and initialise text forms. This method implements a loop for
    * developemental purposes.
    * 
-   * @param contentBox - Border box and bounds for forms
    * @param lbStrings  - Names of forms to create
    */
-  private void initFormContent(Point contentBox, String[] lbStrings) {
+  private void initFormContent(String[] lbStrings) {
     int initialY = contentBox.y;
     for (String lbString : lbStrings) {
       Label label = new Label(contentBox.x, initialY, lbString);
@@ -183,14 +184,14 @@ public class ScheduleEvent extends Panel {
         case "Start Time":
           textfield = new TextField(contentBox.x, initialY + 20);
           textfield.setSize((textfield.getWidth() / 2) - 2, textfield.getHeight());
-          durationField = textfield;
+          startField = textfield;
 
           Label timelb = new Label(contentBox.x + textfield.getWidth() + 4, initialY, "End Time");
           secondField = new TextField(contentBox.x + textfield.getWidth() + 4, initialY + 20);
           secondField.setSize(textfield.getWidth(), textfield.getHeight());
           this.add(timelb);
           this.add(secondField);
-          timeField = secondField;
+          endField = secondField;
           break;
         case "Where":
           textfield = new TextField(contentBox.x, initialY + 20);
@@ -216,10 +217,10 @@ public class ScheduleEvent extends Panel {
       });
     }
     locationField.setText("Communications department");
-    dateField.setText("2022-01-01");
+    dateField.setText("2021-01-12");
     titleField.setText("Proxy Networking");
-    durationField.setText("95");
-    timeField.setText("9:00");
+    startField.setText("09:00");
+    endField.setText("10:35");
   }
 
   /**
@@ -315,7 +316,7 @@ public class ScheduleEvent extends Panel {
     loPrioBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         styleDefaultPriorityBtns(loPrioBtn, midPrioBtn, hiPrioBtn);
-        loPrioBtn.setColor(MasterUI.secondaryCol);
+        loPrioBtn.setColor(MasterUI.loPrioCol);
         loPrioBtn.setText("Casual");
         selectedPriority = Priority.LOW;
       }
@@ -324,7 +325,7 @@ public class ScheduleEvent extends Panel {
     midPrioBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         styleDefaultPriorityBtns(loPrioBtn, midPrioBtn, hiPrioBtn);
-        midPrioBtn.setColor(new Color(219, 218, 149));
+        midPrioBtn.setColor(MasterUI.midPrioCol);
         midPrioBtn.setText("Moderate");
         selectedPriority = Priority.MEDIUM;
       }
@@ -333,7 +334,7 @@ public class ScheduleEvent extends Panel {
     hiPrioBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         styleDefaultPriorityBtns(loPrioBtn, midPrioBtn, hiPrioBtn);
-        hiPrioBtn.setColor(new Color(194, 21, 73));
+        hiPrioBtn.setColor(MasterUI.hiPrioCol);
         hiPrioBtn.setText("Urgent");
         selectedPriority = Priority.HIGH;
       }
@@ -407,7 +408,7 @@ public class ScheduleEvent extends Panel {
       public void actionPerformed(ActionEvent e) {
         panel.removeAll();
 
-        Event event = ControlHandler.consumeEventForm(titleField, dateField, durationField, locationField);
+        Event event = ControlHandler.consumeEventForm(titleField, dateField, startField, endField, locationField);
         event.setParticipants(participants);
         event.setPriority(selectedPriority);
         user.addEvent(event);
@@ -422,7 +423,7 @@ public class ScheduleEvent extends Panel {
       public void actionPerformed(ActionEvent e) {
         if (!validateForm(errorMsg, panel))
           return;
-        HomeUI.confirmDialog(createAction, "Do you wish to continue?");
+        HomeUI.confirmDialog(createAction, "Do you wish to proceed?");
       }
     });
   }
