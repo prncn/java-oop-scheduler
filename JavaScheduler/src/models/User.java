@@ -16,15 +16,24 @@ public class User {
   private ArrayList<Location> customLocations = new ArrayList<Location>();
   private Boolean isAdmin;
 
-  public User() {
-    // Empty constructor
+  /**
+   * Constructor for fetching user from database and creating model class from it
+   */
+  public User(String id, String username, String firstname, String lastname, String email,
+      ArrayList<Event> acceptEvents, ArrayList<Event> pendingEvents, ArrayList<Location> customLocations) {
+    this.id = id;
+    this.username = username;
+    this.firstname = firstname;
+    this.lastname = lastname;
+    this.email = email;
+    this.acceptedEvents = acceptEvents;
+    this.pendingEvents = pendingEvents;
+    this.customLocations = customLocations;
+    this.isAdmin = false;
   }
 
   /**
    * Constructor after account creation and before storing to database
-   * @param username
-   * @param password
-   * @param email
    */
   public User(String username, String password, String email) {
     this.id = generateUUID();
@@ -39,16 +48,27 @@ public class User {
     this.isAdmin = false;
   }
 
-  public void addEvent(Event e) {
-    acceptedEvents.add(e);
+  /**
+   * Create new event
+   * 
+   * @param event - Newly created event
+   */
+  public void createEvent(Event event) {
+    acceptedEvents.add(event);
   }
 
+  /**
+   * Get accepted events
+   * 
+   * @return List of accepted events from user
+   */
   public ArrayList<Event> getAcceptedEvents() {
     return acceptedEvents;
   }
 
   /**
    * Get user ID
+   * 
    * @return String user ID
    */
   public String getId() {
@@ -57,6 +77,7 @@ public class User {
 
   /**
    * Get username
+   * 
    * @return String username
    */
   public String getUsername() {
@@ -65,6 +86,7 @@ public class User {
 
   /**
    * Get user password
+   * 
    * @return String user password (encrypted)
    */
   public String getPassword() {
@@ -73,6 +95,7 @@ public class User {
 
   /**
    * Get user email
+   * 
    * @return String user email
    */
   public String getEmail() {
@@ -81,6 +104,7 @@ public class User {
 
   /**
    * Get admin status
+   * 
    * @return Boolean admin status
    */
   public Boolean getAdmin() {
@@ -89,6 +113,7 @@ public class User {
 
   /**
    * Set user ID
+   * 
    * @param id - String ID
    */
   public void setId(String id) {
@@ -97,6 +122,7 @@ public class User {
 
   /**
    * Set username
+   * 
    * @param username - String username
    */
   public void setUsername(String username) {
@@ -105,15 +131,16 @@ public class User {
 
   /**
    * Set Admin
+   * 
    * @param admin - Boolean isAdmin
    */
   public void setAdmin(Boolean admin) {
     isAdmin = admin;
   }
 
-
   /**
    * Set user password
+   * 
    * @param password - String password (encrypted)
    */
   public void setPassword(String password) {
@@ -122,6 +149,7 @@ public class User {
 
   /**
    * Set user email
+   * 
    * @param email - String email
    */
   public void setEmail(String email) {
@@ -152,26 +180,41 @@ public class User {
     this.firstname = surname;
   }
 
+  /**
+   * Get last name
+   * 
+   * @return last name
+   */
   public String getLastname() {
     return lastname;
   }
 
+  /**
+   * Set last name
+   * 
+   * @param name
+   */
   public void setLastname(String name) {
     this.lastname = name;
   }
 
   /**
    * Generate a random UUID for a newly created user account
+   * 
    * @return standard UUID with dashes removed
    */
   public static String generateUUID() {
     return UUID.randomUUID().toString().replace("-", "");
   }
 
+  /**
+   * Set accepted events
+   * 
+   * @param acceptedEvents
+   */
   public void setAcceptedEvents(ArrayList<Event> acceptedEvents) {
     this.acceptedEvents = acceptedEvents;
   }
-
 
   @Override
   public boolean equals(Object other) {
@@ -179,20 +222,22 @@ public class User {
     return this.id.equals(that.id);
   }
 
-  /** todo
+  /**
+   * todo
    *
    * @param u
    * @return false on unsuccessful deletion, true on successful deletion
    */
-  public boolean deleteUser(User u){
+  public boolean deleteUser(User u) {
     return false;
   }
 
-  /** todo
+  /**
+   * todo
    *
    * @param u User input
    */
-  public void accessUserProfile(User u){
+  public void accessUserProfile(User u) {
     return;
   }
 }

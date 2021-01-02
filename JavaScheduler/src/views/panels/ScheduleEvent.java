@@ -28,9 +28,9 @@ public class ScheduleEvent extends Panel {
   private Button addUserBtn;
   private Button confirmBtn;
   private Button remOption;
-  private Button hiPrioButton;
-  private Button midPrioButton;
-  private Button loPrioButton;
+  private Button hiPrioBtn;
+  private Button midPrioBtn;
+  private Button loPrioBtn;
   private TextField searchUserField;
   private Label userQueryResult;
   private int participantListPosition = 335;
@@ -294,34 +294,34 @@ public class ScheduleEvent extends Panel {
   }
 
   /**
-   * Set default unselected priority button styles
-   */
-  private void styleDefaultPriorityBtns() {
-    loPrioButton.setColor(MasterUI.lightColAlt);
-    midPrioButton.setColor(MasterUI.lightColAlt);
-    hiPrioButton.setColor(MasterUI.lightColAlt);
-    loPrioButton.setText("LOW");
-    midPrioButton.setText("MID");
-    hiPrioButton.setText("HIGH");
-  }
-
-  /**
    * Draw priority label and buttons
    */
   private void drawPrioritySection() {
     Label priorityLabel = new Label(40, 100, "Priority");
-    Button loPrioBtn = new Button(40, 120, "LOW", new Color(171, 169, 239));
-    Button midPrioBtn = new Button(140, 120, "MEDIUM", new Color(129, 109, 254));
-    Button hiPrioBtn = new Button(240, 120, "HIGH", MasterUI.accentCol);
-
+    loPrioBtn = new Button(40, 120, "LOW", new Color(171, 169, 239));
+    midPrioBtn = new Button(140, 120, "MEDIUM", new Color(129, 109, 254));
+    hiPrioBtn = new Button(240, 120, "HIGH", MasterUI.accentCol);
+    
     loPrioBtn.addActionListener(prioBtnAction(Priority.LOW, loPrioBtn));
     midPrioBtn.addActionListener(prioBtnAction(Priority.MEDIUM, midPrioBtn));
     hiPrioBtn.addActionListener(prioBtnAction(Priority.HIGH, hiPrioBtn));
-
+    
     this.add(priorityLabel);
     this.add(loPrioBtn);
     this.add(midPrioBtn);
     this.add(hiPrioBtn);
+  }
+
+  /**
+   * Set default unselected priority button styles
+   */
+  private void styleDefaultPriorityBtns() {
+    loPrioBtn.setColor(MasterUI.lightColAlt);
+    midPrioBtn.setColor(MasterUI.lightColAlt);
+    hiPrioBtn.setColor(MasterUI.lightColAlt);
+    loPrioBtn.setText("LOW");
+    midPrioBtn.setText("MID");
+    hiPrioBtn.setText("HIGH");
   }
 
   /**
@@ -405,7 +405,7 @@ public class ScheduleEvent extends Panel {
         Event event = ControlHandler.consumeEventForm(titleField, dateField, startField, endField, locationField);
         event.setParticipants(participants);
         event.setPriority(selectedPriority);
-        user.addEvent(event);
+        user.createEvent(event);
 
         Panel createMeetingConfirm = new ScheduleEventConfirm(frame, user, event);
         HomeUI.switchPanel(createMeetingConfirm);
