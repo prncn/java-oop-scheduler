@@ -28,6 +28,9 @@ public class ScheduleEvent extends Panel {
   private Button addUserBtn;
   private Button confirmBtn;
   private Button remOption;
+  private Button hiPrioButton;
+  private Button midPrioButton;
+  private Button loPrioButton;
   private TextField searchUserField;
   private Label userQueryResult;
   private int participantListPosition = 335;
@@ -41,11 +44,12 @@ public class ScheduleEvent extends Panel {
   public static TextField endField;
   public static TextField locationField;
   public static TextField reminderField;
-
+  private JFrame frame;
   private User user;
 
   public ScheduleEvent(JFrame frame, User user) {
     super(frame);
+    this.frame = frame;
     this.user = user;
     participants.add(user);
 
@@ -53,13 +57,13 @@ public class ScheduleEvent extends Panel {
     Label screenTitle = new Label(40, 40, "Schedule a Meeting");
     String[] lbStrings = { "Topic", "When", "Start Time", "Where" };
 
-    initDatePicker(frame);
+    initDatePicker();
     initPageButtons();
     initFormContent(lbStrings);
     drawPrioritySection();
-    initAddParticipant(user);
-    drawReminderSection(frame);
-    processConfirm(frame, user);
+    initAddParticipant();
+    drawReminderSection();
+    processConfirm();
 
     this.add(screenTitle);
     ((MasterUI) frame).setComponentStyles(this, "light");
@@ -111,7 +115,7 @@ public class ScheduleEvent extends Panel {
    * 
    * @param frame - JFrame of current instance
    */
-  private void drawReminderSection(JFrame frame) {
+  private void drawReminderSection() {
     Panel panel = this;
     Label reminderLabel = new Label(400, 100, "Remind me before event");
     reminderField = new TextField(400, 120);
@@ -159,10 +163,10 @@ public class ScheduleEvent extends Panel {
   }
 
   /**
-   * Create and initialise text forms. This method implements a loop for
-   * developemental purposes.
+   * Create and initialise text forms. This method is designed as a loop instead
+   * of statically for developemental purposes.
    * 
-   * @param lbStrings  - Names of forms to create
+   * @param lbStrings - Names of forms to create
    */
   private void initFormContent(String[] lbStrings) {
     int initialY = contentBox.y;
@@ -257,7 +261,7 @@ public class ScheduleEvent extends Panel {
   /**
    * Create and initialise add-participant section
    */
-  private void initAddParticipant(User user) {
+  private void initAddParticipant() {
     Label searchUserLabel = new Label(400, 170, "People to invite");
     searchUserField = new TextField(400, 190);
 
@@ -291,17 +295,14 @@ public class ScheduleEvent extends Panel {
 
   /**
    * Set default unselected priority button styles
-   * @param lo - Low priority button
-   * @param mid - Medium priority button
-   * @param hi - Hight priority button
    */
-  private void styleDefaultPriorityBtns(Button lo, Button mid, Button hi) {
-    lo.setColor(MasterUI.lightColAlt);
-    mid.setColor(MasterUI.lightColAlt);
-    hi.setColor(MasterUI.lightColAlt);
-    lo.setText("LOW");
-    mid.setText("MID");
-    hi.setText("HIGH");
+  private void styleDefaultPriorityBtns() {
+    loPrioButton.setColor(MasterUI.lightColAlt);
+    midPrioButton.setColor(MasterUI.lightColAlt);
+    hiPrioButton.setColor(MasterUI.lightColAlt);
+    loPrioButton.setText("LOW");
+    midPrioButton.setText("MID");
+    hiPrioButton.setText("HIGH");
   }
 
   /**
@@ -313,32 +314,9 @@ public class ScheduleEvent extends Panel {
     Button midPrioBtn = new Button(140, 120, "MEDIUM", new Color(129, 109, 254));
     Button hiPrioBtn = new Button(240, 120, "HIGH", MasterUI.accentCol);
 
-    loPrioBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        styleDefaultPriorityBtns(loPrioBtn, midPrioBtn, hiPrioBtn);
-        loPrioBtn.setColor(MasterUI.loPrioCol);
-        loPrioBtn.setText("Casual");
-        selectedPriority = Priority.LOW;
-      }
-    });
-
-    midPrioBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        styleDefaultPriorityBtns(loPrioBtn, midPrioBtn, hiPrioBtn);
-        midPrioBtn.setColor(MasterUI.midPrioCol);
-        midPrioBtn.setText("Moderate");
-        selectedPriority = Priority.MEDIUM;
-      }
-    });
-
-    hiPrioBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        styleDefaultPriorityBtns(loPrioBtn, midPrioBtn, hiPrioBtn);
-        hiPrioBtn.setColor(MasterUI.hiPrioCol);
-        hiPrioBtn.setText("Urgent");
-        selectedPriority = Priority.HIGH;
-      }
-    });
+    loPrioBtn.addActionListener(prioBtnAction(Priority.LOW, loPrioBtn));
+    midPrioBtn.addActionListener(prioBtnAction(Priority.MEDIUM, midPrioBtn));
+    hiPrioBtn.addActionListener(prioBtnAction(Priority.HIGH, hiPrioBtn));
 
     this.add(priorityLabel);
     this.add(loPrioBtn);
@@ -347,11 +325,27 @@ public class ScheduleEvent extends Panel {
   }
 
   /**
-   * Create and initialise date picker
+   * Get button action for priority buttons
    * 
-   * @param frame - Frame of current instance
+   * @param prio - Priority enum
+   * @param btn  - Button for priority
+   * @return ActionListener styling priority button
    */
-  private void initDatePicker(JFrame frame) {
+  public ActionListener prioBtnAction(Priority prio, Button btn) {
+    return new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        styleDefaultPriorityBtns();
+        btn.setColor(prio.getColor());
+        btn.setText(prio.toString());
+        selectedPriority = prio;
+      }
+    };
+  }
+
+  /**
+   * Create and initialise date picker
+   */
+  private void initDatePicker() {
     Button openDatePicker = new Button(285, 260, "", MasterUI.accentCol);
     openDatePicker.setIcon(MasterUI.calendarIcon);
     openDatePicker.setSize(55, 40);
@@ -400,7 +394,7 @@ public class ScheduleEvent extends Panel {
    * Confirm creation form. Feed form data to new meeting object and proceed to
    * success screen.
    */
-  private void processConfirm(JFrame frame, User user) {
+  private void processConfirm() {
     Panel panel = this;
     Label errorMsg = new Label(40, 520, "");
     this.add(errorMsg);
