@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
 
 public class DataBaseAPI {
 
@@ -123,11 +123,10 @@ public class DataBaseAPI {
     if(result == null) return null;
 
     try {
-      User user = new User();
-      user.setId(result.getString("id"));
-      user.setUsername(result.getString("username"));
-      user.setPassword(result.getString("password"));
-      user.setEmail(result.getString("email"));
+      String id = result.getString("id");
+      String name = result.getString("username");
+      String email = result.getString("email");
+      User user = new User(id, name, "", "", email, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
       closeDatabase(connection);
 
       return user;
@@ -136,5 +135,4 @@ public class DataBaseAPI {
       return null;
     }
   }
-
 }

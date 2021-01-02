@@ -44,6 +44,10 @@ abstract public class MasterUI extends JFrame {
   public static Color secondaryColAlt = secondaryCol.darker();
   public static Color accentCol = new Color(102, 0, 255);
 
+  public static Color hiPrioCol = new Color(194, 21, 73);
+  public static Color midPrioCol = new Color(219, 218, 149);
+  public static Color loPrioCol = secondaryCol;
+
   public static Font bodyFont; // has to be wrapped in try catch
   public static Font bodyFontAlt = new Font("Arial", Font.BOLD, 15);
   public static Font monoFont = new Font("Consolas", Font.PLAIN, 15);
@@ -73,6 +77,7 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon calendarIcon = new ImageIcon(fileRoot + iconsRoot + "calendar-regular-24.png");
   public static ImageIcon profileIcon = new ImageIcon(fileRoot + iconsRoot + "user-solid-24.png");
   public static ImageIcon logoutIcon = new ImageIcon(fileRoot + iconsRoot + "log-out-solid-24.png");
+  public static ImageIcon bellIcon = new ImageIcon(fileRoot + iconsRoot + "bell-solid-24.png");
 
   public MasterUI() {
     this.setIconImage(favicon.getImage());
@@ -123,13 +128,12 @@ abstract public class MasterUI extends JFrame {
 
     for (Component c : panel.getComponents()) {
       if (c instanceof JLabel || c instanceof JTextField) {
-        c.setFont(monoFont);
         c.setForeground(foreground);
       }
       if (c instanceof JTextField) {
-        c.setFont(monoFont.deriveFont(19f));
+        c.setFont(monoFont.deriveFont(17f));
       }
-      if (c instanceof JLabel) {
+      if (c instanceof JLabel && !((Label) c).getHeading()) {
         c.setFont(bodyFont);
       }
       if (c instanceof JButton) {

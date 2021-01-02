@@ -7,7 +7,6 @@ import controllers.ControlHandler;
 import controllers.DataBaseAPI;
 import models.User;
 import models.Priority;
-import models.Location;
 import models.Event;
 import views.HomeUI;
 import views.MasterUI;
@@ -19,7 +18,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import views.components.*;
@@ -30,34 +28,42 @@ public class ScheduleEvent extends Panel {
   private Button addUserBtn;
   private Button confirmBtn;
   private Button remOption;
+  private Button hiPrioBtn;
+  private Button midPrioBtn;
+  private Button loPrioBtn;
   private TextField searchUserField;
   private Label userQueryResult;
   private int participantListPosition = 335;
   private ArrayList<User> participants = new ArrayList<>();
   private Priority selectedPriority;
+  private Point contentBox;
   public static Panel redpanel;
   public static TextField titleField;
   public static TextField dateField;
-  public static TextField durationField;
-  public static TextField timeField;
+  public static TextField startField;
+  public static TextField endField;
   public static TextField locationField;
   public static TextField reminderField;
+  private JFrame frame;
+  private User user;
 
   public ScheduleEvent(JFrame frame, User user) {
     super(frame);
+    this.frame = frame;
+    this.user = user;
     participants.add(user);
 
+    contentBox = new Point(40, 170);
     Label screenTitle = new Label(40, 40, "Schedule a Meeting");
-    Point contentBox = new Point(40, 170);
     String[] lbStrings = { "Topic", "When", "Start Time", "Where" };
 
-    initDatePicker(frame);
+    initDatePicker();
     initPageButtons();
-    initFormContent(contentBox, lbStrings);
+    initFormContent(lbStrings);
     drawPrioritySection();
-    initAddParticipant(user);
-    drawReminderSection(frame);
-    processConfirm(frame, user);
+    initAddParticipant();
+    drawReminderSection();
+    processConfirm();
 
     this.add(screenTitle);
     ((MasterUI) frame).setComponentStyles(this, "light");
@@ -109,7 +115,7 @@ public class ScheduleEvent extends Panel {
    * 
    * @param frame - JFrame of current instance
    */
-  private void drawReminderSection(JFrame frame) {
+  private void drawReminderSection() {
     Panel panel = this;
     Label reminderLabel = new Label(400, 100, "Remind me before event");
     reminderField = new TextField(400, 120);
@@ -157,13 +163,12 @@ public class ScheduleEvent extends Panel {
   }
 
   /**
-   * Create and initialise text forms. This method implements a loop for
-   * developemental purposes.
+   * Create and initialise text forms. This method is designed as a loop instead
+   * of statically for developemental purposes.
    * 
-   * @param contentBox - Border box and bounds for forms
-   * @param lbStrings  - Names of forms to create
+   * @param lbStrings - Names of forms to create
    */
-  private void initFormContent(Point contentBox, String[] lbStrings) {
+  private void initFormContent(String[] lbStrings) {
     int initialY = contentBox.y;
     for (String lbString : lbStrings) {
       Label label = new Label(contentBox.x, initialY, lbString);
@@ -183,14 +188,14 @@ public class ScheduleEvent extends Panel {
         case "Start Time":
           textfield = new TextField(contentBox.x, initialY + 20);
           textfield.setSize((textfield.getWidth() / 2) - 2, textfield.getHeight());
-          durationField = textfield;
+          startField = textfield;
 
           Label timelb = new Label(contentBox.x + textfield.getWidth() + 4, initialY, "End Time");
           secondField = new TextField(contentBox.x + textfield.getWidth() + 4, initialY + 20);
           secondField.setSize(textfield.getWidth(), textfield.getHeight());
           this.add(timelb);
           this.add(secondField);
-          timeField = secondField;
+          endField = secondField;
           break;
         case "Where":
           textfield = new TextField(contentBox.x, initialY + 20);
@@ -216,10 +221,10 @@ public class ScheduleEvent extends Panel {
       });
     }
     locationField.setText("Communications department");
-    dateField.setText("2022-01-01");
+    dateField.setText("2021-01-12");
     titleField.setText("Proxy Networking");
-    durationField.setText("95");
-    timeField.setText("9:00");
+    startField.setText("09:00");
+    endField.setText("10:35");
   }
 
   /**
@@ -256,7 +261,7 @@ public class ScheduleEvent extends Panel {
   /**
    * Create and initialise add-participant section
    */
-  private void initAddParticipant(User user) {
+  private void initAddParticipant() {
     Label searchUserLabel = new Label(400, 170, "People to invite");
     searchUserField = new TextField(400, 190);
 
@@ -289,56 +294,18 @@ public class ScheduleEvent extends Panel {
   }
 
   /**
-   * Set default unselected priority button styles
-   * @param lo - Low priority button
-   * @param mid - Medium priority button
-   * @param hi - Hight priority button
-   */
-  private void styleDefaultPriorityBtns(Button lo, Button mid, Button hi) {
-    lo.setColor(MasterUI.lightColAlt);
-    mid.setColor(MasterUI.lightColAlt);
-    hi.setColor(MasterUI.lightColAlt);
-    lo.setText("LOW");
-    mid.setText("MID");
-    hi.setText("HIGH");
-  }
-
-  /**
    * Draw priority label and buttons
    */
   private void drawPrioritySection() {
     Label priorityLabel = new Label(40, 100, "Priority");
-    Button loPrioBtn = new Button(40, 120, "LOW", new Color(171, 169, 239));
-    Button midPrioBtn = new Button(140, 120, "MEDIUM", new Color(129, 109, 254));
-    Button hiPrioBtn = new Button(240, 120, "HIGH", MasterUI.accentCol);
-
-    loPrioBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        styleDefaultPriorityBtns(loPrioBtn, midPrioBtn, hiPrioBtn);
-        loPrioBtn.setColor(MasterUI.secondaryCol);
-        loPrioBtn.setText("Casual");
-        selectedPriority = Priority.LOW;
-      }
-    });
-
-    midPrioBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        styleDefaultPriorityBtns(loPrioBtn, midPrioBtn, hiPrioBtn);
-        midPrioBtn.setColor(new Color(219, 218, 149));
-        midPrioBtn.setText("Moderate");
-        selectedPriority = Priority.MEDIUM;
-      }
-    });
-
-    hiPrioBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        styleDefaultPriorityBtns(loPrioBtn, midPrioBtn, hiPrioBtn);
-        hiPrioBtn.setColor(new Color(194, 21, 73));
-        hiPrioBtn.setText("Urgent");
-        selectedPriority = Priority.HIGH;
-      }
-    });
-
+    loPrioBtn = new Button(40, 120, "LOW", new Color(171, 169, 239));
+    midPrioBtn = new Button(140, 120, "MEDIUM", new Color(129, 109, 254));
+    hiPrioBtn = new Button(240, 120, "HIGH", MasterUI.accentCol);
+    
+    loPrioBtn.addActionListener(prioBtnAction(Priority.LOW, loPrioBtn));
+    midPrioBtn.addActionListener(prioBtnAction(Priority.MEDIUM, midPrioBtn));
+    hiPrioBtn.addActionListener(prioBtnAction(Priority.HIGH, hiPrioBtn));
+    
     this.add(priorityLabel);
     this.add(loPrioBtn);
     this.add(midPrioBtn);
@@ -346,11 +313,39 @@ public class ScheduleEvent extends Panel {
   }
 
   /**
-   * Create and initialise date picker
-   * 
-   * @param frame - Frame of current instance
+   * Set default unselected priority button styles
    */
-  private void initDatePicker(JFrame frame) {
+  private void styleDefaultPriorityBtns() {
+    loPrioBtn.setColor(MasterUI.lightColAlt);
+    midPrioBtn.setColor(MasterUI.lightColAlt);
+    hiPrioBtn.setColor(MasterUI.lightColAlt);
+    loPrioBtn.setText("LOW");
+    midPrioBtn.setText("MID");
+    hiPrioBtn.setText("HIGH");
+  }
+
+  /**
+   * Get button action for priority buttons
+   * 
+   * @param prio - Priority enum
+   * @param btn  - Button for priority
+   * @return ActionListener styling priority button
+   */
+  public ActionListener prioBtnAction(Priority prio, Button btn) {
+    return new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        styleDefaultPriorityBtns();
+        btn.setColor(prio.getColor());
+        btn.setText(prio.toString());
+        selectedPriority = prio;
+      }
+    };
+  }
+
+  /**
+   * Create and initialise date picker
+   */
+  private void initDatePicker() {
     Button openDatePicker = new Button(285, 260, "", MasterUI.accentCol);
     openDatePicker.setIcon(MasterUI.calendarIcon);
     openDatePicker.setSize(55, 40);
@@ -399,7 +394,7 @@ public class ScheduleEvent extends Panel {
    * Confirm creation form. Feed form data to new meeting object and proceed to
    * success screen.
    */
-  private void processConfirm(JFrame frame, User user) {
+  private void processConfirm() {
     Panel panel = this;
     Label errorMsg = new Label(40, 520, "");
     this.add(errorMsg);
@@ -407,10 +402,10 @@ public class ScheduleEvent extends Panel {
       public void actionPerformed(ActionEvent e) {
         panel.removeAll();
 
-        Event event = ControlHandler.consumeEventForm(titleField, dateField, durationField, locationField);
+        Event event = ControlHandler.consumeEventForm(titleField, dateField, startField, endField, locationField);
         event.setParticipants(participants);
         event.setPriority(selectedPriority);
-        user.addEvent(event);
+        user.createEvent(event);
 
         Panel createMeetingConfirm = new ScheduleEventConfirm(frame, user, event);
         HomeUI.switchPanel(createMeetingConfirm);
@@ -422,7 +417,7 @@ public class ScheduleEvent extends Panel {
       public void actionPerformed(ActionEvent e) {
         if (!validateForm(errorMsg, panel))
           return;
-        HomeUI.confirmDialog(createAction, "Do you wish to continue?");
+        HomeUI.confirmDialog(createAction, "Do you wish to proceed?");
       }
     });
   }
