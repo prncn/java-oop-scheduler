@@ -9,9 +9,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Locale;
 
-import models.Event;
-import views.MasterUI;
-
 import java.awt.Color;
 
 public class FormatUtil {

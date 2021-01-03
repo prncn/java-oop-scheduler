@@ -140,9 +140,8 @@ public class CalendarPanel extends Panel {
   private void setDisplayAction() {
     dispModeMonth.setColor(MasterUI.secondaryCol);
     CalendarPanel origin = this;
-    // weeklyDisplay = new CalendarPanelWeeky(frame, origin);
+    weeklyDisplay = new CalendarPanelWeeky(frame, origin, user);
 
-    // dispModeWeek.addActionListener(getDisplayAction(weeklyDisplay));
     dispModeWeek.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         weeklyDisplay = new CalendarPanelWeeky(frame, origin, user);
@@ -401,8 +400,9 @@ public class CalendarPanel extends Panel {
           dayBtn.setDark(true);
           switchActiveDayBtn(dayBtn, currentYear, currentMonth, dayNum);
           sendToScheduleForm();
-          if(!isMinified)
+          if(!isMinified){
             weeklyDisplay.drawWeekDaysBar(FormatUtil.parseDate(currentYear, currentMonth.getValue(), dayNum));
+          }
         }
       });
 
