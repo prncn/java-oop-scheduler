@@ -49,8 +49,9 @@ abstract public class MasterUI extends JFrame {
   public static Color loPrioCol = secondaryCol;
 
   public static Font bodyFont; // has to be wrapped in try catch
-  public static Font bodyFontAlt = new Font("Arial", Font.BOLD, 15);
+  public static Font bodyFontAlt = new Font("Arial", Font.PLAIN, 15);
   public static Font monoFont = new Font("Consolas", Font.PLAIN, 15);
+  public static Font robotoFont;
 
   /**
    * File path and images
@@ -63,7 +64,7 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon signupHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Cloud_docs_re_xjht.png");
   public static ImageIcon createdMeetingImage = new ImageIcon(fileRoot + imagesRoot + "undraw_relaxing_walk_mljx.png");
 
-  public static ImageIcon favicon = new ImageIcon(fileRoot + iconsRoot + "category-solid-24.png");
+  public static ImageIcon favicon = new ImageIcon(fileRoot + iconsRoot + "category-solid-36.png");
   public static ImageIcon adminIcon = new ImageIcon(fileRoot + iconsRoot + "menu-alt-left-regular-24.png");
   public static ImageIcon nextIcon = new ImageIcon(fileRoot + iconsRoot + "chevron-right-solid-24.png");
   public static ImageIcon prevIcon = new ImageIcon(fileRoot + iconsRoot + "chevron-left-solid-24.png");
@@ -92,9 +93,14 @@ abstract public class MasterUI extends JFrame {
       bodyFont = Font
           .createFont(Font.TRUETYPE_FONT, new File(fileRoot + "/JavaScheduler/assets/fonts/UniversLTStd.otf"))
           .deriveFont(15f);
+
+      robotoFont = Font
+          .createFont(Font.TRUETYPE_FONT, new File(fileRoot + "/JavaScheduler/assets/fonts/Roboto-Regular.ttf"))
+          .deriveFont(15f);
     } catch (IOException | FontFormatException e) {
       System.out.println(e);
       bodyFont = bodyFontAlt; // if font asset import failed, fall back to Arial
+      robotoFont = bodyFont;
     }
   }
 
@@ -111,7 +117,8 @@ abstract public class MasterUI extends JFrame {
    * Loop through components of the frame and change their style properties
    * 
    * @param panel     - Selcted panel to apply the changes to
-   * @param colorMode - String either "light" or "dark", changes color mode. Null defaults to dark.
+   * @param colorMode - String either "light" or "dark", changes color mode. Null
+   *                  defaults to dark.
    */
   public void setComponentStyles(JPanel panel, String colorMode) {
     Color foreground;
@@ -131,7 +138,7 @@ abstract public class MasterUI extends JFrame {
         c.setForeground(foreground);
       }
       if (c instanceof JTextField) {
-        c.setFont(monoFont.deriveFont(17f));
+        c.setFont(robotoFont);
       }
       if (c instanceof JLabel && !((Label) c).getHeading()) {
         c.setFont(bodyFont);

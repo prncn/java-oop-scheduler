@@ -2,13 +2,13 @@ package views.panels;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -18,7 +18,6 @@ import javax.swing.SwingConstants;
 
 import controllers.FormatUtil;
 import models.Event;
-import models.Priority;
 import models.User;
 import views.MasterUI;
 import views.components.Button;
@@ -43,7 +42,6 @@ public class CalendarPanelWeeky extends Panel {
 
   public LocalDate date;
   private CalendarPanel origin;
-  private ArrayList<Event> events = new ArrayList<>();
   private User user;
 
   public CalendarPanelWeeky(JFrame frame, CalendarPanel origin, User user) {
@@ -56,28 +54,25 @@ public class CalendarPanelWeeky extends Panel {
     dayNums.setBounds(initialX + 90, initialY, (d_wdth - 2) * 7, 70);
     drawDisplayModeBtns(frame);
 
-    JScrollPane scroller = new JScrollPane();
-    scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-    scroller.getVerticalScrollBar().setUnitIncrement(10);
-    scroller.setBounds(10, 120, this.getWidth() - 40, this.getHeight() - 170);
-    scroller.setPreferredSize(new Dimension(this.getWidth() - 40, this.getHeight() - 170));
-    scroller.setBorder(BorderFactory.createEmptyBorder());
-
-    scrollpanel = new Panel();
+    JScrollPane scroller = createScrollPane();
     scroller.getViewport().add(scrollpanel);
-    scrollpanel.setPreferredSize(new Dimension(this.getWidth() - 80, 30 * 26));
-    scrollpanel.setBounds(10, 120, this.getWidth() - 40, this.getHeight() - 170);
-    scrollpanel.setBackground(MasterUI.lightCol);
-    drawGrid(scrollpanel);
-    
-    greenpanel = new Panel();
-    greenpanel.setBounds(10, 120, this.getWidth() - 40, this.getHeight() - 170);
-    greenpanel.setBackground(MasterUI.lightCol);
-    this.add(greenpanel);
-    drawGrid(greenpanel);
-
+    createDynamicPanel();
+    createStaticPanel();
     drawWeekDaysBar(date);
+    replaceStaticPanel(scroller);
+    
+    this.add(scroller);
+    this.add(dispModeMonth);
+    this.add(dispModeWeek);
+    this.add(dayNums);
 
+    ((MasterUI) frame).setComponentStyles(this, "light");
+  }
+
+  /**
+   * Replace static calendar panel with the dynamic panel when the user scrolls
+   */
+  private void replaceStaticPanel(JScrollPane scroller) {
     Panel panel = this;
     JScrollBar bar = scroller.getVerticalScrollBar();
     bar.addAdjustmentListener(new AdjustmentListener() {
@@ -85,14 +80,42 @@ public class CalendarPanelWeeky extends Panel {
         panel.remove(greenpanel);
       }
     });
+  }
 
-    // this.add(redpanel);
-    this.add(scroller);
-    this.add(dispModeMonth);
-    this.add(dispModeWeek);
-    this.add(dayNums);
+  /**
+   * Create scroll pane
+   * @return JScrollPane object
+   */
+  private JScrollPane createScrollPane() {
+    JScrollPane scroller = new JScrollPane();
+    scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+    scroller.getVerticalScrollBar().setUnitIncrement(10);
+    scroller.setBounds(10, 120, this.getWidth() - 40, this.getHeight() - 170);
+    scroller.setPreferredSize(new Dimension(this.getWidth() - 40, this.getHeight() - 170));
+    scroller.setBorder(BorderFactory.createEmptyBorder());
+    return scroller;
+  }
 
-    ((MasterUI) frame).setComponentStyles(this, "light");
+  /**
+   * Create dynamic panel to which the scroll pane will be set to
+   */
+  private void createDynamicPanel() {
+    scrollpanel = new Panel();
+    scrollpanel.setPreferredSize(new Dimension(this.getWidth() - 80, 30 * 26));
+    scrollpanel.setBounds(10, 120, this.getWidth() - 40, this.getHeight() - 170);
+    scrollpanel.setBackground(MasterUI.lightCol);
+    drawGrid(scrollpanel);
+  }
+
+  /**
+   * Create static panel which only shows before the user starts scrolling
+   */
+  private void createStaticPanel() {
+    greenpanel = new Panel();
+    greenpanel.setBounds(10, 120, this.getWidth() - 40, this.getHeight() - 170);
+    greenpanel.setBackground(MasterUI.lightCol);
+    this.add(greenpanel);
+    drawGrid(greenpanel);
   }
 
   /**
@@ -103,7 +126,7 @@ public class CalendarPanelWeeky extends Panel {
    * @param scrollpanel - Panel containg calendar grid
    * @param time        - Time of event
    */
-  public static void placeEvent(Panel panel, Event event) {
+  private static void placeEvent(Panel panel, Event event) {
     LocalDate date = event.getDate();
     LocalTime time = event.getTime();
     Color eventCol;
@@ -114,12 +137,13 @@ public class CalendarPanelWeeky extends Panel {
     int yOffset = d_wdth * (weekDay - 1);
     eventCol = event.getPriority().getColor();
 
-    bluepanel.setBounds(90 + yOffset, xOffset, d_wdth, Math.max(event.getDurationMinutes(), 45));
+    bluepanel.setBounds(90 + yOffset, xOffset, d_wdth - 2, Math.max(event.getDurationMinutes(), 45));
     bluepanel.setBackground(FormatUtil.colorLowerAlpha(eventCol, 80));
     bluepanel.setAlpha(0.8f);
 
     Label eventInfo = new Label(2, 2, "<html><p>" + event.getName() + "<br>" + event.getTime() + "</p><html>");
     eventInfo.setSize(d_wdth - 10, bluepanel.getHeight());
+    eventInfo.setFont(MasterUI.robotoFont);
     eventInfo.setVerticalAlignment(SwingConstants.TOP);
     eventInfo.setHorizontalAlignment(SwingConstants.LEFT);
     eventInfo.setForeground(eventCol.darker());
@@ -157,34 +181,33 @@ public class CalendarPanelWeeky extends Panel {
   }
 
   /**
-   * Draw weekly calendar grid
+   * Draw weekly calendar layout grid
    * 
    * @param redpanel - Panel the grid is placed on
    */
   private void drawGrid(Panel redpanel) {
-    int x = 0;
-    int h = 29;
-    int y = -(h + 1);
+    int h = 28;
+    Point p = new Point(0, -(h + 1));
     LocalTime time = LocalTime.parse("08:00");
     for (int i = 0; i < 208; i++) {
       Panel bluepanel = new Panel();
       bluepanel.setBackground(MasterUI.lightColAlt);
       if (i % 8 == 0) {
-        x = 0;
-        y += h + 1;
-        bluepanel.setBounds(x, y, 89, h);
+        p.x = 0;
+        p.y += h + 2;
+        bluepanel.setBounds(p.x, p.y, 88, h);
         if (i % 16 == 0) {
           Label label = new Label(10, 2, time.toString());
           bluepanel.add(label);
           time = time.plusHours(1);
         }
-        x += 90;
+        p.x += 90;
       } else {
-        bluepanel.setBounds(x, y, d_wdth - 1, h);
+        bluepanel.setBounds(p.x, p.y, d_wdth - 2, h);
         if (i % 8 == 6 || i % 8 == 7) {
           bluepanel.setBackground(new Color(230, 230, 235));
         }
-        x += d_wdth;
+        p.x += d_wdth;
       }
       redpanel.add(bluepanel);
     }
@@ -230,17 +253,15 @@ public class CalendarPanelWeeky extends Panel {
       dayNums.add(dayNum);
       incremX += d_wdth;
 
-      for(Event event : user.getAcceptedEvents()){
-        if(event.getDate().equals(date)){
-          placeEventDriver(event);
+      if(user != null){
+        for(Event event : user.getAcceptedEvents()){
+          if(event.getDate().equals(date)){
+            placeEventDriver(event);
+          }
         }
       }
       
       date = date.plusDays(1);
     }
-  }
-
-  public void addEvent(Event event) {
-    events.add(event);
   }
 }
