@@ -1,12 +1,10 @@
 package views.panels;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 
 import controllers.ControlHandler;
-import controllers.DataBaseAPI;
 import models.User;
 import views.MasterUI;
 import views.components.Button;
@@ -41,7 +39,8 @@ public class AdminPanel extends Panel {
           if(profilePanel != null){
             panel.remove(profilePanel);
           }
-          profilePanel = ProfilePanel.createMainPanel(user, true);
+          ProfilePanel.createEditButton(panel, user);
+          profilePanel = ProfilePanel.createMainPanel(user, true, panel);
           panel.add(profilePanel);
         }
       }

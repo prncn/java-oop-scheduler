@@ -7,7 +7,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.text.JTextComponent;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -155,7 +157,12 @@ abstract public class MasterUI extends JFrame {
         ((AbstractButton) c).setContentAreaFilled(true);
         ((AbstractButton) c).setMargin(new Insets(5, 5, 3, 3));
       }
-      
+      if (c instanceof JPasswordField) {
+        ((JTextComponent) c).setCaretColor(foreground);
+        ((JTextComponent) c).setBackground(background);
+        ((JTextComponent) c).setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+      }
+
     }
   }
 

@@ -4,7 +4,6 @@ import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 
 import controllers.ControlHandler;
-import controllers.DataBaseAPI;
 import models.User;
 import models.Priority;
 import models.Event;

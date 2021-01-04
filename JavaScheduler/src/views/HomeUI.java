@@ -8,12 +8,11 @@ import javax.swing.JPanel;
 import controllers.FormatUtil;
 
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.Point;
 
 import models.Event;
@@ -76,7 +75,6 @@ public class HomeUI extends MasterUI {
     this.setLocationRelativeTo(null);
   }
 
-
   /**
    * Create and initialise (default) dashboard panel
    */
@@ -112,26 +110,30 @@ public class HomeUI extends MasterUI {
 
   /**
    * Draw event data on dashboard
+   * 
    * @param user - Currently logged in user
    */
   public static void drawEventData(User user) {
     dashpanel.removeAll();
     Point p = new Point(0, 10);
-    if(user.getAcceptedEvents().isEmpty()) {
-      eventData = new Label(p.x, 80, "No meetings planned");
+    if (user.getAcceptedEvents().isEmpty()) {
+      eventData = new Label(p.x, 40, "<html><p>No events planned :( <br>Schedule a new event on the tab on the left</p><html>");
       eventData.setHeading();
-      eventData.setSize(800, 40);
+      eventData.setSize(700, 120);
       eventData.setForeground(Color.LIGHT_GRAY);
       dashpanel.add(eventData);
 
       return;
     }
 
-    ArrayList<Event> events = user.getAcceptedEvents();
+    List<Event> events = user.getAcceptedEvents();
     Collections.sort(events);
+    events.removeIf(e -> e.hasPassed()); // filter passed events
 
-    for (int i=0; i<Math.max(events.size(), 8); i++) {
+    for (int i = 0; i < events.size(); i++) {
       Event event = events.get(i);
+      if (i > 8) break; // slice list after 8 entries
+
       Panel card = new Panel();
       int mgn = 15; // margin in pixels
       Point c = new Point(mgn, 10);
@@ -156,9 +158,7 @@ public class HomeUI extends MasterUI {
       dashpanel.add(card);
       p.y += card.getHeight() + mgn;
 
-      if(i == 3){
-        p.setLocation(310, mgn);
-      }
+      if (i == 3) p.setLocation(310, mgn);
     }
   }
 
@@ -167,7 +167,7 @@ public class HomeUI extends MasterUI {
    */
   private void createSidebarTabs() {
     dashboardTab = new Button(tabsBox.x, tabsBox.y, "Dashboard", panel);
-    createTab = new Button(tabsBox.x, tabsBox.y + 50, "Create Meeting", createPanel);
+    createTab = new Button(tabsBox.x, tabsBox.y + 50, "Schedule Event", createPanel);
     calendarTab = new Button(tabsBox.x, tabsBox.y + 100, "View Calendar", calendarPanel);
     profileTab = new Button(tabsBox.x, tabsBox.y + 150, "Profile", profilePanel);
     exportTab = new Button(tabsBox.x, tabsBox.y + 250, "Export Schedule", primaryColAlt);
