@@ -5,6 +5,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import controllers.FormatUtil;
+
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,7 +61,7 @@ public class HomeUI extends MasterUI {
     tabsBox = new Point(0, 200);
     createPanel = new ScheduleEvent(frame, user);
     calendarPanel = new CalendarPanel(frame, 95, false, user);
-    profilePanel = new ProfilePanel(frame);
+    profilePanel = new ProfilePanel(frame, user);
 
     styleSidebar();
     showAdminPanel();
@@ -79,19 +81,24 @@ public class HomeUI extends MasterUI {
    * Create and initialise (default) dashboard panel
    */
   private void createDashboardTab(User user) {
-    userWelcome.setText("Upcoming Events");
-    userWelcome.setBounds(40, 40, 10, 10);
-    userWelcome.setHeading();
+    Label screenTitle = new Label(40, 40, "Upcoming events");
+    screenTitle.setHeading();
 
     dashpanel = new Panel();
-    dashpanel.setBounds(40, 80, panel.getWidth() - 100, panel.getHeight() - 160);
     dashpanel.setBackground(lightCol);
+    dashpanel.setBounds(40, 80, panel.getWidth() - 100, panel.getHeight() - 160);
 
-    Label notifLabel = new Label(650, 40, "Pending invites:");
+    Label dashImage = new Label(600, 400, "");
+    dashImage.setSize(339, 242);
+    dashImage.setIcon(MasterUI.dashImage);
+    panel.add(dashImage);
+
+    Label notifLabel = new Label(650, 40, "<html>Events you've been added to:<html>");
+    notifLabel.setSize(500, 40);
     notifLabel.setFont(monoFont);
     notifLabel.appendIcon(bellIcon);
 
-    Label emptyNotif = new Label(650, 80, "You're all caught up!");
+    Label emptyNotif = new Label(683, 80, "You're all caught up!");
     emptyNotif.setFont(monoFont);
     emptyNotif.setForeground(Color.LIGHT_GRAY);
 
@@ -99,7 +106,7 @@ public class HomeUI extends MasterUI {
     panel.add(notifLabel);
 
     drawEventData(user);
-    panel.add(userWelcome);
+    panel.add(screenTitle);
     panel.add(dashpanel);
   }
 
@@ -109,32 +116,49 @@ public class HomeUI extends MasterUI {
    */
   public static void drawEventData(User user) {
     dashpanel.removeAll();
-    Point p = new Point(0, 80);
+    Point p = new Point(0, 10);
     if(user.getAcceptedEvents().isEmpty()) {
       eventData = new Label(p.x, 80, "No meetings planned");
       eventData.setHeading();
       eventData.setSize(800, 40);
       eventData.setForeground(Color.LIGHT_GRAY);
       dashpanel.add(eventData);
+
+      return;
     }
 
     ArrayList<Event> events = user.getAcceptedEvents();
     Collections.sort(events);
-    for (Event event : events) {
-      eventData = new Label(p.x, p.y , event.getName());
-      Label locate = new Label(p.x + 180 , p.y , event.getLocation().getName());
-      Label date = new Label(p.x + 400 , p.y , event.getDate().toString());
 
-      Label prio = new Label(p.x + 620 , p.y , event.getPriority().name());
-      prio.setForeground(event.getPriority().getColor());
-      dashpanel.add(prio);
+    for (int i=0; i<Math.max(events.size(), 8); i++) {
+      Event event = events.get(i);
+      Panel card = new Panel();
+      int mgn = 15; // margin in pixels
+      Point c = new Point(mgn, 10);
+      card.setRounded(true);
+      card.setBounds(p.x, p.y, 300, 100);
+      card.setBackground(lightColAlt);
 
-      eventData.setSize(800, 30);
-      eventData.setFont(eventData.getFont().deriveFont(Font.BOLD));
-      dashpanel.add(eventData);
-      dashpanel.add(locate);
-      dashpanel.add(date);
-      p.y += 30;
+      Label name = new Label(c.x, c.y, "<html><strong>" + event.getName() + "<strong><html>");
+      Label location = new Label(c.x, c.y + 30, event.getLocation().getName());
+      Label date = new Label(c.x, c.y + 55, FormatUtil.readableDate(event.getDate()));
+      Label time = new Label(c.x + 60, c.y + 55, event.getTime().toString());
+
+      Label prio = new Label(card.getWidth() - 34, 10, "");
+      prio.setSize(24, 24);
+      prio.setIcon(event.getPriority().getIcon());
+
+      card.add(prio);
+      card.add(name);
+      card.add(location);
+      card.add(date);
+      card.add(time);
+      dashpanel.add(card);
+      p.y += card.getHeight() + mgn;
+
+      if(i == 3){
+        p.setLocation(310, mgn);
+      }
     }
   }
 

@@ -54,7 +54,8 @@ public class ScheduleEvent extends Panel {
     participants.add(user);
 
     contentBox = new Point(40, 170);
-    Label screenTitle = new Label(40, 40, "Schedule a Meeting");
+    Label screenTitle = new Label(40, 40, "Schedule an Event");
+    screenTitle.setHeading();
     String[] lbStrings = { "Topic", "When", "Start Time", "Where" };
 
     initDatePicker();
@@ -67,8 +68,6 @@ public class ScheduleEvent extends Panel {
 
     this.add(screenTitle);
     ((MasterUI) frame).setComponentStyles(this, "light");
-    confirmBtn.setVerticalTextPosition(SwingConstants.BOTTOM);
-    screenTitle.setHeading();
   }
 
   /**
@@ -155,8 +154,7 @@ public class ScheduleEvent extends Panel {
     addUserBtn.setSize(40, 40);
     addUserBtn.setIcon(MasterUI.addUserIcon);
     confirmBtn.setTab();
-    confirmBtn.setHorizontalAlignment(SwingConstants.CENTER);
-    confirmBtn.setVerticalAlignment(SwingConstants.CENTER);
+    confirmBtn.centerText();
 
     this.add(confirmBtn);
     this.add(addUserBtn);
@@ -228,27 +226,18 @@ public class ScheduleEvent extends Panel {
   }
 
   /**
-   * Search a user to add them to participants
+   * Search an user to add them to participants
    */
   public void searchParticipant() {
-    String username = searchUserField.getText();
-    if (username.isEmpty())
-      return;
-    User user = DataBaseAPI.getUser(username);
+    Panel panel = this;
+    User user = ControlHandler.searchUser(searchUserField, panel, userQueryResult);
     if (user == null) {
-      userQueryResult.setText("User not found");
     } else {
-      searchUserField.setText("");
-
       if (participants.contains(user)) {
         userQueryResult.setText("User already added");
         return;
       }
-
-      userQueryResult.setText("Added user");
-      userQueryResult.setForeground(MasterUI.secondaryCol);
       participants.add(user);
-
       Label participantLabel = new Label(400, participantListPosition, "");
       participantLabel.setText(user.getUsername());
       participantLabel.setIcon(MasterUI.circleUserIcon);

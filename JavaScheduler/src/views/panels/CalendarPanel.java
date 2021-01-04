@@ -34,9 +34,9 @@ public class CalendarPanel extends Panel {
   final static int initialX = 10; // 20
   private final int initialY = 100; // 120
 
-  private TextField yearField = new TextField(700, 70);
-  private TextField monthField = new TextField(700, 120);
-  private TextField dayField = new TextField(700, 170);
+  private TextField yearField;
+  private TextField monthField;
+  private TextField dayField;
 
   private Panel redpanel = new Panel();
   private CalendarPanelWeeky weeklyDisplay;
@@ -421,6 +421,7 @@ public class CalendarPanel extends Panel {
     yearField = new TextField(700, 70);
     monthField = new TextField(700, 120);
     dayField = new TextField(700, 170);
+    
     yearField.setText(Integer.toString(date.getYear()));
     if (isMinified) {
       monthField.setText(date.getMonth().toString().substring(0, 3));
@@ -455,14 +456,14 @@ public class CalendarPanel extends Panel {
    */
   private void styleDateTextFields() {
     yearField.setSize(100, 40);
-    yearField.setBackground(MasterUI.lightCol);
     yearField.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 30f));
+    yearField.wipeBackground();
     monthField.setSize(200, 40);
-    monthField.setBackground(MasterUI.lightCol);
     monthField.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 30f));
+    monthField.wipeBackground();
     dayField.setSize(200, 40);
-    dayField.setBackground(MasterUI.lightCol);
     dayField.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 30f));
+    dayField.wipeBackground();
   }
 
   /**

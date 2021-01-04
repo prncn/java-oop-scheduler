@@ -8,7 +8,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.text.JTextComponent;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -26,7 +25,6 @@ abstract public class MasterUI extends JFrame {
    * Global UI components
    */
   protected static Panel panel = new Panel();
-  protected static Label userWelcome = new Label();
 
   /**
    * Global colors and fonts
@@ -63,6 +61,7 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon loginHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Analysis_re_w2vd.png");
   public static ImageIcon signupHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Cloud_docs_re_xjht.png");
   public static ImageIcon createdMeetingImage = new ImageIcon(fileRoot + imagesRoot + "undraw_relaxing_walk_mljx.png");
+  public static ImageIcon dashImage = new ImageIcon(fileRoot + imagesRoot + "undraw_complete_task_u2c3.png");
 
   public static ImageIcon favicon = new ImageIcon(fileRoot + iconsRoot + "category-solid-36.png");
   public static ImageIcon adminIcon = new ImageIcon(fileRoot + iconsRoot + "menu-alt-left-regular-24.png");
@@ -79,6 +78,9 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon profileIcon = new ImageIcon(fileRoot + iconsRoot + "user-solid-24.png");
   public static ImageIcon logoutIcon = new ImageIcon(fileRoot + iconsRoot + "log-out-solid-24.png");
   public static ImageIcon bellIcon = new ImageIcon(fileRoot + iconsRoot + "bell-solid-24.png");
+  public static ImageIcon hiPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-rd.png");
+  public static ImageIcon midPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-ylw.png");
+  public static ImageIcon loPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-grn.png");
 
   public MasterUI() {
     this.setIconImage(favicon.getImage());
@@ -139,9 +141,7 @@ abstract public class MasterUI extends JFrame {
       }
       if (c instanceof JTextField) {
         c.setFont(robotoFont);
-      }
-      if (c instanceof JLabel && !((Label) c).getHeading()) {
-        c.setFont(bodyFont);
+        c.setBackground(background);
       }
       if (c instanceof JButton) {
         c.setFont(monoFont);
@@ -155,11 +155,7 @@ abstract public class MasterUI extends JFrame {
         ((AbstractButton) c).setContentAreaFilled(true);
         ((AbstractButton) c).setMargin(new Insets(5, 5, 3, 3));
       }
-      if (c instanceof JTextField) {
-        ((JTextComponent) c).setCaretColor(foreground);
-        ((JTextComponent) c).setBackground(background);
-        ((JTextComponent) c).setBorder(javax.swing.BorderFactory.createEmptyBorder());
-      }
+      
     }
   }
 
