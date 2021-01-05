@@ -55,14 +55,14 @@ public class ScheduleEventConfirm extends Panel {
     this.add(screenTitle);
     this.add(successMsg);
     this.add(secondaryMsg);
-    ((MasterUI) frame).setComponentStyles(this, "light");
+    MasterUI.setComponentStyles(this, "light");
 
     screenTitle.setHeading();
     screenTitle.setForeground(MasterUI.accentCol);
     successMsg.setHeading();
     successMsg.setSize(690, 120);
 
-    ControlHandler.updateDashboard(user);
-    ControlHandler.updateCalendar(frame);
+    ViewModelHandler.updateDashboard(user);
+    ViewModelHandler.updateCalendar(frame);
   }
 }

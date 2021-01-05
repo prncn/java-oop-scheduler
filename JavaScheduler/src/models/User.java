@@ -11,8 +11,7 @@ public class User {
   private String lastname;
   private String password;
   private String email;
-  private ArrayList<Event> acceptedEvents = new ArrayList<Event>();
-  private ArrayList<Event> pendingEvents = new ArrayList<Event>();
+  private ArrayList<Event> events = new ArrayList<Event>();
   private ArrayList<Location> customLocations = new ArrayList<Location>();
   private Boolean isAdmin;
 
@@ -26,8 +25,7 @@ public class User {
     this.firstname = firstname;
     this.lastname = lastname;
     this.email = email;
-    this.acceptedEvents = acceptEvents;
-    this.pendingEvents = pendingEvents;
+    this.events = acceptEvents;
     this.customLocations = customLocations;
     this.isAdmin = false;
   }
@@ -42,8 +40,7 @@ public class User {
     this.lastname = "";
     this.password = password;
     this.email = email;
-    this.acceptedEvents = new ArrayList<Event>();
-    this.pendingEvents = new ArrayList<Event>();
+    this.events = new ArrayList<Event>();
     this.customLocations = new ArrayList<Location>();
     this.isAdmin = false;
   }
@@ -54,7 +51,7 @@ public class User {
    * @param event - Newly created event
    */
   public void createEvent(Event event) {
-    acceptedEvents.add(event);
+    events.add(event);
   }
 
   /**
@@ -63,7 +60,7 @@ public class User {
    * @return List of accepted events from user
    */
   public ArrayList<Event> getAcceptedEvents() {
-    return acceptedEvents;
+    return events;
   }
 
   /**
@@ -156,14 +153,6 @@ public class User {
     this.email = email;
   }
 
-  public ArrayList<Event> getPendingEvents() {
-    return pendingEvents;
-  }
-
-  public void setPendingEvents(ArrayList<Event> pendingEvents) {
-    this.pendingEvents = pendingEvents;
-  }
-
   public ArrayList<Location> getCustomLocations() {
     return customLocations;
   }
@@ -213,7 +202,7 @@ public class User {
    * @param acceptedEvents
    */
   public void setAcceptedEvents(ArrayList<Event> acceptedEvents) {
-    this.acceptedEvents = acceptedEvents;
+    this.events = acceptedEvents;
   }
 
   @Override

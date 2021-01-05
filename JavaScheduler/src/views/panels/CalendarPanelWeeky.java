@@ -66,7 +66,7 @@ public class CalendarPanelWeeky extends Panel {
     this.add(dispModeWeek);
     this.add(dayNums);
 
-    ((MasterUI) frame).setComponentStyles(this, "light");
+    MasterUI.setComponentStyles(this, "light");
   }
 
   /**

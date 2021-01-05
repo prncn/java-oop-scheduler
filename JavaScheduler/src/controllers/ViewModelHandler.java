@@ -16,8 +16,9 @@ import views.MasterUI;
 import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
+import views.panels.Dashboard;
 
-public class ControlHandler {
+public class ViewModelHandler {
 
   /**
    * Consume input form data from Create view and generate a model Event
@@ -55,7 +56,7 @@ public class ControlHandler {
    * @param user - Currently logged in user
    */
   public static void updateDashboard(User user) {
-    HomeUI.drawEventData(user);
+    Dashboard.drawEventData(user);
   }
 
   /**

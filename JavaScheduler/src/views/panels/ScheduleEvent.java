@@ -3,7 +3,7 @@ package views.panels;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 
-import controllers.ControlHandler;
+import controllers.ViewModelHandler;
 import models.User;
 import models.Priority;
 import models.Event;
@@ -66,7 +66,7 @@ public class ScheduleEvent extends Panel {
     processConfirm();
 
     this.add(screenTitle);
-    ((MasterUI) frame).setComponentStyles(this, "light");
+    MasterUI.setComponentStyles(this, "light");
   }
 
   /**
@@ -104,7 +104,7 @@ public class ScheduleEvent extends Panel {
         });
       }
       dropdown.isActive = true;
-      ((MasterUI) frame).setComponentStyles(dropdown, "dark");
+      MasterUI.setComponentStyles(dropdown, "dark");
     }
   }
 
@@ -118,7 +118,7 @@ public class ScheduleEvent extends Panel {
     Label reminderLabel = new Label(400, 100, "Remind me before event");
     reminderField = new TextField(400, 120);
     reminderField.setText("Don't remind me");
-    Button dpdwn = new Button(705, 120, "", MasterUI.accentCol);
+    Button dpdwn = new Button(700, 120, "", MasterUI.lightColAlt);
     dpdwn.setIcon(MasterUI.downIcon);
     dpdwn.setSize(40, 40);
     reminderField.setEditable(false);
@@ -149,7 +149,7 @@ public class ScheduleEvent extends Panel {
    */
   private void initPageButtons() {
     confirmBtn = new Button(40, 550, "Confirm", MasterUI.secondaryCol);
-    addUserBtn = new Button(705, 190, "", MasterUI.accentCol);
+    addUserBtn = new Button(700, 190, "", MasterUI.lightColAlt);
     addUserBtn.setSize(40, 40);
     addUserBtn.setIcon(MasterUI.addUserIcon);
     confirmBtn.setTab();
@@ -229,7 +229,7 @@ public class ScheduleEvent extends Panel {
    */
   public void searchParticipant() {
     Panel panel = this;
-    User user = ControlHandler.searchUser(searchUserField, panel, userQueryResult);
+    User user = ViewModelHandler.searchUser(searchUserField, panel, userQueryResult);
     if (user == null) {
     } else {
       if (participants.contains(user)) {
@@ -390,7 +390,7 @@ public class ScheduleEvent extends Panel {
       public void actionPerformed(ActionEvent e) {
         panel.removeAll();
 
-        Event event = ControlHandler.consumeEventForm(titleField, dateField, startField, endField, locationField);
+        Event event = ViewModelHandler.consumeEventForm(titleField, dateField, startField, endField, locationField);
         event.setParticipants(participants);
         event.setPriority(selectedPriority);
         user.createEvent(event);

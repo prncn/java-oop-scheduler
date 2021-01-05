@@ -92,7 +92,7 @@ public class RegisterUI extends LoginUI {
     panel.add(emailLabel);
     panel.add(emailField);
 
-    this.setComponentStyles(panel, null);
+    setComponentStyles(panel, null);
     screenTitle.setText("Create Account");
     screenTitle.setHeading();
 

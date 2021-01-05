@@ -71,6 +71,7 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon prevIcon = new ImageIcon(fileRoot + iconsRoot + "chevron-left-solid-24.png");
   public static ImageIcon backIcon = new ImageIcon(fileRoot + iconsRoot + "left-arrow-alt-solid-24.png");
   public static ImageIcon downIcon = new ImageIcon(fileRoot + iconsRoot + "chevron-down-solid-24.png");
+  public static ImageIcon downIconDark = new ImageIcon(fileRoot + iconsRoot + "chevron-down-solid-24-dark.png");
   public static ImageIcon dashboardIcon = new ImageIcon(fileRoot + iconsRoot + "category-regular-24.png");
   public static ImageIcon addUserIcon = new ImageIcon(fileRoot + iconsRoot + "user-plus-solid-24.png");
   public static ImageIcon circleUserIcon = new ImageIcon(fileRoot + iconsRoot + "user-circle-regular-36.png");
@@ -80,6 +81,7 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon profileIcon = new ImageIcon(fileRoot + iconsRoot + "user-solid-24.png");
   public static ImageIcon logoutIcon = new ImageIcon(fileRoot + iconsRoot + "log-out-solid-24.png");
   public static ImageIcon bellIcon = new ImageIcon(fileRoot + iconsRoot + "bell-solid-24.png");
+  public static ImageIcon searchIcon = new ImageIcon(fileRoot + iconsRoot + "search-regular-24.png");
   public static ImageIcon hiPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-rd.png");
   public static ImageIcon midPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-ylw.png");
   public static ImageIcon loPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-grn.png");
@@ -124,7 +126,7 @@ abstract public class MasterUI extends JFrame {
    * @param colorMode - String either "light" or "dark", changes color mode. Null
    *                  defaults to dark.
    */
-  public void setComponentStyles(JPanel panel, String colorMode) {
+  public static void setComponentStyles(JPanel panel, String colorMode) {
     Color foreground;
     Color background;
     if (colorMode == "dark" || colorMode == null) {

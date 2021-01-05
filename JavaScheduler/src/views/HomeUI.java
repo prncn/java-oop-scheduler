@@ -5,22 +5,17 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import controllers.FormatUtil;
 
 import java.awt.event.ActionListener;
-import java.util.Collections;
-import java.util.List;
 import java.awt.event.ActionEvent;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
 
-import models.Event;
 import views.components.Button;
 import views.components.Label;
-import views.components.Panel;
 import views.panels.AdminPanel;
 import views.panels.CalendarPanel;
+import views.panels.Dashboard;
 import views.panels.ProfilePanel;
 import views.panels.ScheduleEvent;
 import models.User;
@@ -29,10 +24,11 @@ public class HomeUI extends MasterUI {
   private static final long serialVersionUID = -771654490802003766L;
   private JPanel sidebar = new JPanel();
   private User user;
-  private static JPanel currentPanel = panel;
+  private static JPanel currentPanel;
   private static JFrame frame;
   private Point tabsBox;
 
+  private Dashboard dashPanel;
   private ScheduleEvent createPanel;
   public static CalendarPanel calendarPanel;
   private ProfilePanel profilePanel;
@@ -41,8 +37,6 @@ public class HomeUI extends MasterUI {
   private Button prevBtn;
 
   private static Button dashboardTab;
-  private static Panel dashpanel;
-  public static Label eventData;
   public static Button createTab;
   public static Button calendarTab;
   public static Button profileTab;
@@ -50,123 +44,36 @@ public class HomeUI extends MasterUI {
   public HomeUI(User user) {
     frame = this;
     this.user = user;
-    this.add(panel);
     frame.setTitle("Meetings Scheduler");
     this.setSize(1200, 700);
-    panel.setBounds(200, 0, frame.getWidth() - 200, frame.getHeight());
-    panel.removeAll();
-    panel.setBackground(lightCol);
-
+    
     tabsBox = new Point(0, 200);
+    dashPanel = new Dashboard(frame, user);
     createPanel = new ScheduleEvent(frame, user);
     calendarPanel = new CalendarPanel(frame, 95, false, user);
     profilePanel = new ProfilePanel(frame, user);
+    currentPanel = dashPanel;
+    this.add(dashPanel);
 
     styleSidebar();
     showAdminPanel();
     createSidebarTabs();
     initLogoutTab();
 
-    this.setComponentStyles(sidebar, "dark");
-    this.setComponentStyles(panel, "light");
+    setComponentStyles(sidebar, "dark");
+    setComponentStyles(panel, "light");
 
-    createDashboardTab(user);
-    this.add(sidebar);
-    this.setLocationRelativeTo(null);
+    add(sidebar);
+    setLocationRelativeTo(null);
   }
 
-  /**
-   * Create and initialise (default) dashboard panel
-   */
-  private void createDashboardTab(User user) {
-    Label screenTitle = new Label(40, 40, "Upcoming events");
-    screenTitle.setHeading();
-
-    dashpanel = new Panel();
-    dashpanel.setBackground(lightCol);
-    dashpanel.setBounds(40, 80, panel.getWidth() - 100, panel.getHeight() - 160);
-
-    Label dashImage = new Label(600, 400, "");
-    dashImage.setSize(339, 242);
-    dashImage.setIcon(MasterUI.dashImage);
-    panel.add(dashImage);
-
-    Label notifLabel = new Label(650, 40, "<html>Events you've been added to:<html>");
-    notifLabel.setSize(500, 40);
-    notifLabel.setFont(monoFont);
-    notifLabel.appendIcon(bellIcon);
-
-    Label emptyNotif = new Label(683, 80, "You're all caught up!");
-    emptyNotif.setFont(monoFont);
-    emptyNotif.setForeground(Color.LIGHT_GRAY);
-
-    panel.add(emptyNotif);
-    panel.add(notifLabel);
-
-    drawEventData(user);
-    panel.add(screenTitle);
-    panel.add(dashpanel);
-  }
-
-  /**
-   * Draw event data on dashboard
-   * 
-   * @param user - Currently logged in user
-   */
-  public static void drawEventData(User user) {
-    dashpanel.removeAll();
-    Point p = new Point(0, 10);
-    if (user.getAcceptedEvents().isEmpty()) {
-      eventData = new Label(p.x, 40, "<html><p>No events planned :( <br>Schedule a new event on the tab on the left</p><html>");
-      eventData.setHeading();
-      eventData.setSize(700, 120);
-      eventData.setForeground(Color.LIGHT_GRAY);
-      dashpanel.add(eventData);
-
-      return;
-    }
-
-    List<Event> events = user.getAcceptedEvents();
-    Collections.sort(events);
-    events.removeIf(e -> e.hasPassed()); // filter passed events
-
-    for (int i = 0; i < events.size(); i++) {
-      Event event = events.get(i);
-      if (i > 8) break; // slice list after 8 entries
-
-      Panel card = new Panel();
-      int mgn = 15; // margin in pixels
-      Point c = new Point(mgn, 10);
-      card.setRounded(true);
-      card.setBounds(p.x, p.y, 300, 100);
-      card.setBackground(lightColAlt);
-
-      Label name = new Label(c.x, c.y, "<html><strong>" + event.getName() + "<strong><html>");
-      Label location = new Label(c.x, c.y + 30, event.getLocation().getName());
-      Label date = new Label(c.x, c.y + 55, FormatUtil.readableDate(event.getDate()));
-      Label time = new Label(c.x + 60, c.y + 55, event.getTime().toString());
-
-      Label prio = new Label(card.getWidth() - 34, 10, "");
-      prio.setSize(24, 24);
-      prio.setIcon(event.getPriority().getIcon());
-
-      card.add(prio);
-      card.add(name);
-      card.add(location);
-      card.add(date);
-      card.add(time);
-      dashpanel.add(card);
-      p.y += card.getHeight() + mgn;
-
-      if (i == 3) p.setLocation(310, mgn);
-    }
-  }
+  
 
   /**
    * Create tab buttons on sidebar
    */
   private void createSidebarTabs() {
-    dashboardTab = new Button(tabsBox.x, tabsBox.y, "Dashboard", panel);
+    dashboardTab = new Button(tabsBox.x, tabsBox.y, "Dashboard", dashPanel);
     createTab = new Button(tabsBox.x, tabsBox.y + 50, "Schedule Event", createPanel);
     calendarTab = new Button(tabsBox.x, tabsBox.y + 100, "View Calendar", calendarPanel);
     profileTab = new Button(tabsBox.x, tabsBox.y + 150, "Profile", profilePanel);
@@ -255,7 +162,7 @@ public class HomeUI extends MasterUI {
     confirmDialog.setVisible(true);
     confirmDialog.setLocationRelativeTo(null);
 
-    ((MasterUI) frame).setComponentStyles(logoutp, "light");
+    setComponentStyles(logoutp, "light");
 
     ActionListener closeDialog = new ActionListener() {
       public void actionPerformed(ActionEvent actionEvent) {
@@ -272,7 +179,7 @@ public class HomeUI extends MasterUI {
    * Set styles for sidebar
    */
   private void styleSidebar() {
-    Label headerinfoUser = new Label(20, 30, "Hi, " + user.getUsername());
+    Label headerinfoUser = new Label(20, 30, "Logged as " + user.getUsername());
     Label headerinfoEmail = new Label(20, 55, user.getEmail());
     headerinfoEmail.setFont(monoFont);
     headerinfoUser.setFont(monoFont);
