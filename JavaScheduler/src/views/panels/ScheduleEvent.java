@@ -9,17 +9,21 @@ import models.Priority;
 import models.Event;
 import views.HomeUI;
 import views.MasterUI;
+import views.components.Button;
+import views.components.Label;
+import views.components.Panel;
+import views.components.TextField;
 
-import java.awt.Point;
-import java.awt.Color;
-import java.awt.Component;
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-
-import views.components.*;
 
 public class ScheduleEvent extends Panel {
 
@@ -43,6 +47,13 @@ public class ScheduleEvent extends Panel {
   public static TextField endField;
   public static TextField locationField;
   public static TextField reminderField;
+  private static Label errorPriority;
+  private static Label errorTitle;
+  private static Label errorDate;
+  private static Label errorStartTime;
+  private static Label errorEndTime;
+  private static Label errorLocation;
+  private static Label errorReminder;
   private JFrame frame;
   private User user;
 
@@ -110,8 +121,6 @@ public class ScheduleEvent extends Panel {
 
   /**
    * Draw reminder section section that then prompts drop down options
-   * 
-   * @param frame - JFrame of current instance
    */
   private void drawReminderSection() {
     Panel panel = this;
@@ -162,8 +171,7 @@ public class ScheduleEvent extends Panel {
   /**
    * Create and initialise text forms. This method is designed as a loop instead
    * of statically for developemental purposes.
-   * 
-   * @param lbStrings - Names of forms to create
+   *
    */
   private void initFormContent(String[] lbStrings) {
     int initialY = contentBox.y;
@@ -365,17 +373,133 @@ public class ScheduleEvent extends Panel {
    * Validate input form
    * 
    * @param errorMsg - Label to display error message
-   * @return Boolean wether form is valid or not
+   * @return Boolean whether form is valid or not
    */
   private boolean validateForm(Label errorMsg, Panel panel) {
+    boolean valid = true;
+    Border border = BorderFactory.createLineBorder(Color.RED,1);
     for (Component c : panel.getComponents()) {
-      if (c instanceof TextField && ((TextField) c).getText().isEmpty() && c != searchUserField
-          || selectedPriority == null) {
+
+      if (c instanceof TextField && isBlankString( ((TextField) c).getText()) && c != searchUserField) {
+        ((TextField) c).setBorder(border);
         errorMsg.setText("Missing required fields.");
-        return false;
+        valid = false;
       }
+
+      if (selectedPriority == null) {
+        errorPriority.setText("(Select Priority)");
+        errorPriority.setForeground(Color.RED);
+        errorPriority.setHorizontalAlignment(SwingConstants.RIGHT);
+        valid = false;
+      }
+      else {
+        errorPriority.setText("");
+      }
+
+
+      if (c instanceof TextField && !isBlankString( ((TextField) c).getText()) && c != searchUserField) {
+        ((TextField) c).setBorder(BorderFactory.createEmptyBorder());
+      }
+
+      if((c == startField || c == endField) && !isValidTime(((TextField)c).getText())) {
+        ((TextField) c).setBorder(border);
+        valid = false;
+      }
+
+      if (c == titleField) {
+        if (isBlankString( ((TextField) c).getText())) {
+          errorTitle.setText("(Topic required)");
+          errorTitle.setForeground(Color.RED);
+          errorTitle.setHorizontalAlignment(SwingConstants.RIGHT);
+        }
+        else {
+          errorTitle.setText("");
+        }
+      }
+
+      if (c == dateField) {
+        if (isBlankString( ((TextField) c).getText())) {
+          errorDate.setText("(Select a date)");
+          errorDate.setForeground(Color.RED);
+          errorDate.setHorizontalAlignment(SwingConstants.RIGHT);
+        }
+        else {
+          errorDate.setText("");
+        }
+      }
+
+      if (c == startField) {
+        if ( isBlankString( ((TextField) c).getText()) || !isValidTime(((TextField)c).getText()) ) {
+          errorStartTime.setText("(invalid)");
+          errorStartTime.setForeground(Color.RED);
+          errorStartTime.setBounds(contentBox.x , contentBox.y + 132, startField.getWidth() , startField.getHeight());
+          errorStartTime.setHorizontalAlignment(SwingConstants.RIGHT);
+        }
+        else {
+          errorStartTime.setText("");
+        }
+      }
+
+      if (c == endField) {
+        if ( isBlankString( ((TextField) c).getText()) || !isValidTime(((TextField)c).getText()) ) {
+          errorEndTime.setText("(invalid)");
+          errorEndTime.setForeground(Color.RED);
+          errorEndTime.setBounds(contentBox.x + endField.getWidth() + 4, contentBox.y + 132, endField.getWidth(), endField.getHeight());
+          errorEndTime.setHorizontalAlignment(SwingConstants.RIGHT);
+        }
+        else {
+          errorEndTime.setText("");
+        }
+      }
+
+      if (c == locationField) {
+        if (isBlankString( ((TextField) c).getText()) ) {
+          errorLocation.setText("(Location required)");
+          errorLocation.setForeground(Color.RED);
+          errorLocation.setHorizontalAlignment(SwingConstants.RIGHT);
+        }
+        else {
+          errorLocation.setText("");
+        }
+      }
+
+      if (c == reminderField) {
+        if (isBlankString( ((TextField) c).getText())) {
+          errorReminder.setText("(Select a reminder)");
+          errorReminder.setForeground(Color.RED);
+          //errorReminder.setOpaque(true);
+        }
+        else {
+          errorReminder.setText("");
+        }
+      }
+
+    }
+    return valid;
+  }
+
+  /**
+   * validate if given string is of pattern "H:mm"
+   * @param time - the string to be checked
+   * @return Boolean whether form is valid or not
+   */
+  private boolean isValidTime(String time) {
+    try{
+      LocalTime.parse(time);
+    }
+    catch(DateTimeParseException e) {
+      return false;
     }
     return true;
+  }
+
+  /**
+   * check if a string is blank or not
+   * @param string - the string to be checked
+   * @return Boolean whether string is blanked or not
+   */
+  boolean isBlankString(String string) {
+    return string == null || string.trim().isEmpty();
   }
 
   /**
@@ -386,6 +510,24 @@ public class ScheduleEvent extends Panel {
     Panel panel = this;
     Label errorMsg = new Label(40, 520, "");
     this.add(errorMsg);
+
+    errorPriority = new Label(contentBox.x + 50  , 100, "");
+    errorTitle = new Label(contentBox.x + 50  , contentBox.y , "");
+    errorDate = new Label(contentBox.x + 50  , contentBox.y + 70, "");
+    errorLocation = new Label(contentBox.x + 50  , contentBox.y + 210, "");
+
+    errorStartTime = new Label(contentBox.x + 50, contentBox.y + 140 , "");
+    errorEndTime = new Label(contentBox.x + 221  , contentBox.y + 140 , "");
+    errorReminder = new Label(614  , 100, "");
+
+    this.add(errorTitle);
+    this.add(errorDate);
+    this.add(errorStartTime);
+    this.add(errorEndTime);
+    this.add(errorLocation);
+    this.add(errorReminder);
+    this.add(errorPriority);
+
     ActionListener createAction = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         panel.removeAll();
@@ -403,8 +545,9 @@ public class ScheduleEvent extends Panel {
 
     confirmBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        if (!validateForm(errorMsg, panel))
+        if (!validateForm(errorMsg, panel)) {
           return;
+        }
         HomeUI.confirmDialog(createAction, "Do you wish to proceed?");
       }
     });

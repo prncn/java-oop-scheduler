@@ -15,38 +15,48 @@ Scheduling application.
   - [x] *Encrypt* login data in database *CONTROLLER*  
 - [ ] Admin permission to access, edit and delete users  
   - [x] Admin account placeholder
-  - [ ] Design admin panel
+  - [x] Design admin panel
   - [ ] Implement accessor, editor and deletor in admin panel
 
 ### UI
 - [x] Create navigation panels
 - [x] Admin panel visibility
 - [ ] Dashboard
-  - [ ] Fetch user's meeting
+  - [x] Fetch user's meeting
+  - [ ] Add clock
+  - [ ] Add invites panel
+  - [ ] Replace events list with cards
 - [x] Create Meeting
   - [x] Schedule form
+    - [ ] Location suggestions
+    - [ ] Search users suggestions
   - [x] Success panel
 - [x] View Calendar
   - [x] Monthly display mode
     - [x] Design monthly calendar
     - [x] Correct date information
-    - [ ] Display meetings on days
-  - [ ] Weekly display mode
+    - [x] Display meetings on days
+  - [x] Weekly display mode
     - [x] Design weekly calendar
-    - [ ] Display meetings at time
+    - [x] Display meetings at time
+- [ ] Profile / Admin
+  - [ ] Display user data
+  - [ ] Edit user data panel
+  - [ ] Location creator panel
 
 ### Create Meetings/Appointments
-- [ ] Model meetings system
-  - [x] Implement prototype systems (version 2)
-  - [ ] Reduce and minimise model
+- [ ] Model meetings system (*version 3*)
+  - [x] Implement prototype systems (version 3)
+  - [x] Reduce and minimise model
+  - [x] Redesign invite system
 - [x] User UI form to add entries (meetings/appointments)
-- [ ] Create and pass Meeting entity as java class
+- [x] Create and pass Meeting entity as java class
   - [x] Entry contains info about *event* (see event entity)
   - [x] Entry contains participants (list of *users*)
   - [x] Entry contains *priority* (high, medium, low)
-    - [ ] Highlight events based to priority  
+    - [x] Highlight events based to priority  
   - [ ] Pass Meeting to participants *CONTROLLER*
-  - [ ] Prepare to display created meetings on dashboards
+  - [x] Prepare to display created meetings on dashboards
 - [ ] Store meetings entity in database
   - [ ] Link to user / participant
   - [ ] Prepare to display stored meetings on dashboards
@@ -55,8 +65,12 @@ Scheduling application.
   - [ ] Email notification *CONTROLLER*  
 
 ### Delete and Edit Meetings/Appointments
-- [ ] Delete from client and database
-- [ ] Edit in client and adjust database
+- [ ] Delete event
+  - [ ] From client
+  - [ ] From database
+- [ ] Edit event
+  - [ ] From client
+  - [ ] From database
 - [ ] User and Participant get *email notifcation* on delete/edit
 
 ### Documentation
