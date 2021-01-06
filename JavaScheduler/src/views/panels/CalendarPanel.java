@@ -34,9 +34,9 @@ public class CalendarPanel extends Panel {
   final static int initialX = 10; // 20
   private final int initialY = 100; // 120
 
-  private TextField yearField = new TextField(700, 70);
-  private TextField monthField = new TextField(700, 120);
-  private TextField dayField = new TextField(700, 170);
+  private TextField yearField;
+  private TextField monthField;
+  private TextField dayField;
 
   private Panel redpanel = new Panel();
   private CalendarPanelWeeky weeklyDisplay;
@@ -64,14 +64,14 @@ public class CalendarPanel extends Panel {
     this.user = user;
 
     drawDisplayModeBtns();
-    
+
     meetingsInfo = new Label(700, 250, noMeetingStr);
     this.add(meetingsInfo);
     drawWeekDaysBar();
     today = LocalDate.now();
     initDateTextFields(today);
     setDisplayAction();
-    
+
     LocalDate argDate = parseDateFromTextField();
     initCalendarLayout(argDate);
     initNavigationBtns();
@@ -82,8 +82,8 @@ public class CalendarPanel extends Panel {
     this.add(dispModeWeek);
     this.add(dispModeMonth);
 
-    ((MasterUI) frame).setComponentStyles(redpanel, "light");
-    ((MasterUI) frame).setComponentStyles(this, "light");
+    MasterUI.setComponentStyles(redpanel, "light");
+    MasterUI.setComponentStyles(this, "light");
     styleDateTextFields();
     styleTopIcons();
   }
@@ -122,6 +122,7 @@ public class CalendarPanel extends Panel {
 
   /**
    * Get corresponding display button action depending on current display
+   * 
    * @param display - Currently displayed calendar (monthly/weekly)
    * @return ActionListener for display button
    */
@@ -275,7 +276,7 @@ public class CalendarPanel extends Panel {
     initCalendarLayout(argDate);
 
     redpanel.setLayout(null);
-    ((MasterUI) frame).setComponentStyles(redpanel, "light");
+    MasterUI.setComponentStyles(redpanel, "light");
     redpanel.repaint();
   }
 
@@ -310,7 +311,7 @@ public class CalendarPanel extends Panel {
         dayBtn.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD));
         dayBtn.setVerticalAlignment(SwingConstants.TOP);
         dayBtn.setDark(true);
-        
+
         // dayBtn.setIcon(MasterUI.profileIcon);
       } else {
         dayBtn.addActionListener(setInfoAction(noMeetingStr));
@@ -346,7 +347,8 @@ public class CalendarPanel extends Panel {
    * Set style for active selected day button
    * 
    * @param dayNum          - Integer of current day of the month
-   * @param activeSelectDay - Integer of active selection (day that is currently clicked)
+   * @param activeSelectDay - Integer of active selection (day that is currently
+   *                        clicked)
    * @param dayBtn          - Calendar day button
    */
   private void styleActiveSelectDay(int dayNum, int activeSelectDay, Button dayBtn) {
@@ -358,7 +360,8 @@ public class CalendarPanel extends Panel {
   }
 
   /**
-   * Initialise calendar layout
+   * Initialise calendar layout. Partition date parameter into month, year, day of
+   * week, day of month etc. to draw a time accurate classic monthly calendar.
    * 
    * @param date - LocalDate object describing any date
    */
@@ -390,7 +393,7 @@ public class CalendarPanel extends Panel {
       dayBtn.setPrevColor(dayBtn.getColor());
       styleActiveSelectDay(dayNum, activeSelectDay, dayBtn);
 
-      if(currentLocalDate.equals(LocalDate.now())){
+      if (currentLocalDate.equals(LocalDate.now())) {
         highlightToday = dayBtn;
         dayBtn.setForeground(Color.RED);
       }
@@ -400,7 +403,7 @@ public class CalendarPanel extends Panel {
           dayBtn.setDark(true);
           switchActiveDayBtn(dayBtn, currentYear, currentMonth, dayNum);
           sendToScheduleForm();
-          if(!isMinified){
+          if (!isMinified) {
             weeklyDisplay.drawWeekDaysBar(FormatUtil.parseDate(currentYear, currentMonth.getValue(), dayNum));
           }
         }
@@ -421,6 +424,7 @@ public class CalendarPanel extends Panel {
     yearField = new TextField(700, 70);
     monthField = new TextField(700, 120);
     dayField = new TextField(700, 170);
+
     yearField.setText(Integer.toString(date.getYear()));
     if (isMinified) {
       monthField.setText(date.getMonth().toString().substring(0, 3));
@@ -455,14 +459,14 @@ public class CalendarPanel extends Panel {
    */
   private void styleDateTextFields() {
     yearField.setSize(100, 40);
-    yearField.setBackground(MasterUI.lightCol);
     yearField.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 30f));
+    yearField.wipeBackground();
     monthField.setSize(200, 40);
-    monthField.setBackground(MasterUI.lightCol);
     monthField.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 30f));
+    monthField.wipeBackground();
     dayField.setSize(200, 40);
-    dayField.setBackground(MasterUI.lightCol);
     dayField.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 30f));
+    dayField.wipeBackground();
   }
 
   /**
@@ -502,11 +506,11 @@ public class CalendarPanel extends Panel {
 
     if (prevActive != null) {
       prevActive.setColor(prevActive.getPrevColor());
-      if(prevActive.getPrevColor().equals(MasterUI.lightColAlt)){
+      if (prevActive.getPrevColor().equals(MasterUI.lightColAlt)) {
         prevActive.setDark(false);
-      } 
+      }
     }
-    if(prevActive.equals(highlightToday)){
+    if (prevActive.equals(highlightToday)) {
       prevActive.setForeground(Color.RED);
     }
 

@@ -14,7 +14,11 @@ public class DataBaseAPI {
   private static final String SQL_CLOUD_USERNAME = "udpcghp8h7wkwbrg";
   private static final String SQL_CLOUD_PASSWORD = "mYe6S6puRrvcblEZPIWZ";
 
-  public static Connection connectDatabase() {
+  /**
+   * Build a connection to the application database
+   * @return <code>null</code> on failed connection, else return {@link #Connection} object
+   */
+  private static Connection connectDatabase() {
     try {
       Class.forName("com.mysql.jdbc.Driver");
       Connection connection = DriverManager.getConnection(SQL_CLOUD_URI, SQL_CLOUD_USERNAME, SQL_CLOUD_PASSWORD);
@@ -31,22 +35,29 @@ public class DataBaseAPI {
     return null;
   }
 
+  /**
+   * Verify if given username and pass correspond to a user in the database
+   * @param username - String of username
+   * @param password - String of <i>hashed<i> password
+   * @return <code>true</code> if user exists
+   * @throws SQLException
+   */
   public static boolean verifyUser(String username, String password) throws SQLException {
     Connection connection = connectDatabase();
     ResultSet userData = fetchUserData(connection, username);
-    if(userData == null){
+    if (userData == null) {
       System.out.println("EMPTY ELEM");
       return false;
     }
     String saltHash = userData.getString("password");
     String password_encrypted = PasswordEncryption.verify(password, saltHash);
-    
+
     String sql = "SELECT * FROM UserAccount WHERE username = ? AND password = ?";
-    
+
     PreparedStatement statement = connection.prepareStatement(sql);
     statement.setString(1, username);
     statement.setString(2, password_encrypted);
- 
+
     ResultSet result = statement.executeQuery();
 
     Boolean isUser = result.next();
@@ -55,14 +66,21 @@ public class DataBaseAPI {
     return isUser;
   }
 
+  /**
+   * Fetch user data from database. This is only called by other user related DB functions.
+   * @param connection - SQL jdbc connection object, connection to DB 
+   * @param username - String of username
+   * @return SQL result of data entry or <code>null</code> if user doesn't exist
+   */
   private static ResultSet fetchUserData(Connection connection, String username) {
-	  String sql = "SELECT * FROM UserAccount WHERE username = ?";
+    String sql = "SELECT * FROM UserAccount WHERE username = ?";
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setString(1, username);
       ResultSet result = statement.executeQuery();
-      
-      if(result.next()) return result;
+
+      if (result.next())
+        return result;
       return null;
     } catch (SQLException e) {
       e.printStackTrace();
@@ -71,9 +89,13 @@ public class DataBaseAPI {
     }
   }
 
+  /**
+   * Create table entry of a new user in database. Used for account creation.
+   * @param user - User object of new user
+   * @return <code>true</code> on successful user creation
+   */
   public static boolean createUser(User user) {
-    String sql = "INSERT INTO UserAccount (id, username, password, email)"
-    + " VALUES(?, ?, ?, ?)";        
+    String sql = "INSERT INTO UserAccount (id, username, password, email)" + " VALUES(?, ?, ?, ?)";
     Connection connection = connectDatabase();
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
@@ -82,7 +104,7 @@ public class DataBaseAPI {
       statement.setString(3, user.getPassword());
       statement.setString(4, user.getEmail());
       statement.executeUpdate();
-      
+
       statement.close();
       closeDatabase(connection);
     } catch (SQLException e) {
@@ -93,14 +115,19 @@ public class DataBaseAPI {
     return true;
   }
 
+  /**
+   * Check if username or email is already taken
+   * @param user - User data
+   * @return <code>true</code> if user data is available
+   */
   public static boolean isAvailable(User user) {
-	String sql = "SELECT * FROM UserAccount WHERE username = ? OR email=?";
-	Connection connection = connectDatabase();
+    String sql = "SELECT * FROM UserAccount WHERE username = ? OR email=?";
+    Connection connection = connectDatabase();
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setString(1, user.getUsername());
       statement.setString(2, user.getEmail());
-      
+
       ResultSet result = statement.executeQuery();
       Boolean isTaken = result.next();
       statement.close();
@@ -112,23 +139,40 @@ public class DataBaseAPI {
     }
   }
 
-  private static void closeDatabase(Connection connection) throws SQLException {
+  /**
+   * Close an existing connection to the database. This function should be used after 
+   * every other database API function, as multiple unused connection may reach cloud traffic
+   * limit.
+   * @param connection - SQL connection object of existing connection
+   */
+  private static void closeDatabase(Connection connection) {
     System.out.println("Connection closed.");
-    connection.close();
+    try {
+      connection.close();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
 
+  /**
+   * Query a username and return the corresponding User object from its table entry.
+   * Used to search the user table.
+   * @param username - String of username
+   * @return User object on successful query, else <code>null</code>
+   */
   public static User getUser(String username) {
     Connection connection = connectDatabase();
     ResultSet result = fetchUserData(connection, username);
-    if(result == null) return null;
-
+    if (result == null) {
+      closeDatabase(connection);
+      return null;
+    }
     try {
       String id = result.getString("id");
       String name = result.getString("username");
       String email = result.getString("email");
       User user = new User(id, name, "", "", email, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
       closeDatabase(connection);
-
       return user;
     } catch (SQLException e) {
       e.printStackTrace();

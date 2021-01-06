@@ -90,6 +90,9 @@ public class FormatUtil {
 		return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
 	}
 
-
+	public static String readableDate(LocalDate date) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM");
+		return date.format(formatter);
+	}
 
 }

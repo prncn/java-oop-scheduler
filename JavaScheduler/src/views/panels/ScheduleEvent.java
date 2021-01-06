@@ -1,10 +1,12 @@
 package views.panels;
 
-import controllers.ControlHandler;
-import controllers.DataBaseAPI;
-import models.Event;
-import models.Priority;
+import javax.swing.JFrame;
+import javax.swing.SwingConstants;
+
+import controllers.ViewModelHandler;
 import models.User;
+import models.Priority;
+import models.Event;
 import views.HomeUI;
 import views.MasterUI;
 import views.components.Button;
@@ -62,7 +64,8 @@ public class ScheduleEvent extends Panel {
     participants.add(user);
 
     contentBox = new Point(40, 170);
-    Label screenTitle = new Label(40, 40, "Schedule a Meeting");
+    Label screenTitle = new Label(40, 40, "Schedule an Event");
+    screenTitle.setHeading();
     String[] lbStrings = { "Topic", "When", "Start Time", "Where" };
 
     initDatePicker();
@@ -74,9 +77,7 @@ public class ScheduleEvent extends Panel {
     processConfirm();
 
     this.add(screenTitle);
-    ((MasterUI) frame).setComponentStyles(this, "light");
-    confirmBtn.setVerticalTextPosition(SwingConstants.BOTTOM);
-    screenTitle.setHeading();
+    MasterUI.setComponentStyles(this, "light");
   }
 
   /**
@@ -114,7 +115,7 @@ public class ScheduleEvent extends Panel {
         });
       }
       dropdown.isActive = true;
-      ((MasterUI) frame).setComponentStyles(dropdown, "dark");
+      MasterUI.setComponentStyles(dropdown, "dark");
     }
   }
 
@@ -125,8 +126,8 @@ public class ScheduleEvent extends Panel {
     Panel panel = this;
     Label reminderLabel = new Label(400, 100, "Remind me before event");
     reminderField = new TextField(400, 120);
-    //reminderField.setText("Don't remind me");
-    Button dpdwn = new Button(705, 120, "", MasterUI.accentCol);
+    reminderField.setText("Don't remind me");
+    Button dpdwn = new Button(700, 120, "", MasterUI.lightColAlt);
     dpdwn.setIcon(MasterUI.downIcon);
     dpdwn.setSize(40, 40);
     reminderField.setEditable(false);
@@ -157,12 +158,11 @@ public class ScheduleEvent extends Panel {
    */
   private void initPageButtons() {
     confirmBtn = new Button(40, 550, "Confirm", MasterUI.secondaryCol);
-    addUserBtn = new Button(705, 190, "", MasterUI.accentCol);
+    addUserBtn = new Button(700, 190, "", MasterUI.lightColAlt);
     addUserBtn.setSize(40, 40);
     addUserBtn.setIcon(MasterUI.addUserIcon);
     confirmBtn.setTab();
-    confirmBtn.setHorizontalAlignment(SwingConstants.CENTER);
-    confirmBtn.setVerticalAlignment(SwingConstants.CENTER);
+    confirmBtn.centerText();
 
     this.add(confirmBtn);
     this.add(addUserBtn);
@@ -233,27 +233,18 @@ public class ScheduleEvent extends Panel {
   }
 
   /**
-   * Search a user to add them to participants
+   * Search an user to add them to participants
    */
   public void searchParticipant() {
-    String username = searchUserField.getText();
-    if (username.isEmpty())
-      return;
-    User user = DataBaseAPI.getUser(username);
+    Panel panel = this;
+    User user = ViewModelHandler.searchUser(searchUserField, panel, userQueryResult);
     if (user == null) {
-      userQueryResult.setText("User not found");
     } else {
-      searchUserField.setText("");
-
       if (participants.contains(user)) {
         userQueryResult.setText("User already added");
         return;
       }
-
-      userQueryResult.setText("Added user");
-      userQueryResult.setForeground(MasterUI.secondaryCol);
       participants.add(user);
-
       Label participantLabel = new Label(400, participantListPosition, "");
       participantLabel.setText(user.getUsername());
       participantLabel.setIcon(MasterUI.circleUserIcon);
@@ -386,7 +377,7 @@ public class ScheduleEvent extends Panel {
    */
   private boolean validateForm(Label errorMsg, Panel panel) {
     boolean valid = true;
-    Border border = BorderFactory.createLineBorder(Color.RED,1);
+    Border border = BorderFactory.createLineBorder(MasterUI.hiPrioCol, 1);
     for (Component c : panel.getComponents()) {
 
       if (c instanceof TextField && isBlankString( ((TextField) c).getText()) && c != searchUserField) {
@@ -403,11 +394,6 @@ public class ScheduleEvent extends Panel {
       }
       else {
         errorPriority.setText("");
-      }
-
-
-      if (c instanceof TextField && !isBlankString( ((TextField) c).getText()) && c != searchUserField) {
-        ((TextField) c).setBorder(BorderFactory.createEmptyBorder());
       }
 
       if((c == startField || c == endField) && !isValidTime(((TextField)c).getText())) {
@@ -503,7 +489,7 @@ public class ScheduleEvent extends Panel {
   }
 
   /**
-   * check if a string is blank or not
+   * Check if a string is blank or not
    * @param string - the string to be checked
    * @return Boolean whether string is blanked or not
    */
@@ -541,7 +527,7 @@ public class ScheduleEvent extends Panel {
       public void actionPerformed(ActionEvent e) {
         panel.removeAll();
 
-        Event event = ControlHandler.consumeEventForm(titleField, dateField, startField, endField, locationField);
+        Event event = ViewModelHandler.consumeEventForm(titleField, dateField, startField, endField, locationField);
         event.setParticipants(participants);
         event.setPriority(selectedPriority);
         user.createEvent(event);

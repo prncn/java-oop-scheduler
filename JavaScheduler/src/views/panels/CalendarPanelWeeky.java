@@ -66,7 +66,7 @@ public class CalendarPanelWeeky extends Panel {
     this.add(dispModeWeek);
     this.add(dayNums);
 
-    ((MasterUI) frame).setComponentStyles(this, "light");
+    MasterUI.setComponentStyles(this, "light");
   }
 
   /**
@@ -139,9 +139,9 @@ public class CalendarPanelWeeky extends Panel {
 
     bluepanel.setBounds(90 + yOffset, xOffset, d_wdth - 2, Math.max(event.getDurationMinutes(), 45));
     bluepanel.setBackground(FormatUtil.colorLowerAlpha(eventCol, 80));
-    bluepanel.setAlpha(0.8f);
+    bluepanel.setAlpha(0.9f);
 
-    Label eventInfo = new Label(2, 2, "<html><p>" + event.getName() + "<br>" + event.getTime() + "</p><html>");
+    Label eventInfo = new Label(2, 2, "<html><p><strong>" + event.getName() + "</strong><br>" + event.getTime() + "</p><html>");
     eventInfo.setSize(d_wdth - 10, bluepanel.getHeight());
     eventInfo.setFont(MasterUI.robotoFont);
     eventInfo.setVerticalAlignment(SwingConstants.TOP);

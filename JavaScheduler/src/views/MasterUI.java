@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
@@ -26,7 +27,6 @@ abstract public class MasterUI extends JFrame {
    * Global UI components
    */
   protected static Panel panel = new Panel();
-  protected static Label userWelcome = new Label();
 
   /**
    * Global colors and fonts
@@ -63,6 +63,7 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon loginHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Analysis_re_w2vd.png");
   public static ImageIcon signupHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Cloud_docs_re_xjht.png");
   public static ImageIcon createdMeetingImage = new ImageIcon(fileRoot + imagesRoot + "undraw_relaxing_walk_mljx.png");
+  public static ImageIcon dashImage = new ImageIcon(fileRoot + imagesRoot + "undraw_complete_task_u2c3.png");
 
   public static ImageIcon favicon = new ImageIcon(fileRoot + iconsRoot + "category-solid-36.png");
   public static ImageIcon adminIcon = new ImageIcon(fileRoot + iconsRoot + "menu-alt-left-regular-24.png");
@@ -70,6 +71,7 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon prevIcon = new ImageIcon(fileRoot + iconsRoot + "chevron-left-solid-24.png");
   public static ImageIcon backIcon = new ImageIcon(fileRoot + iconsRoot + "left-arrow-alt-solid-24.png");
   public static ImageIcon downIcon = new ImageIcon(fileRoot + iconsRoot + "chevron-down-solid-24.png");
+  public static ImageIcon downIconDark = new ImageIcon(fileRoot + iconsRoot + "chevron-down-solid-24-dark.png");
   public static ImageIcon dashboardIcon = new ImageIcon(fileRoot + iconsRoot + "category-regular-24.png");
   public static ImageIcon addUserIcon = new ImageIcon(fileRoot + iconsRoot + "user-plus-solid-24.png");
   public static ImageIcon circleUserIcon = new ImageIcon(fileRoot + iconsRoot + "user-circle-regular-36.png");
@@ -79,6 +81,10 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon profileIcon = new ImageIcon(fileRoot + iconsRoot + "user-solid-24.png");
   public static ImageIcon logoutIcon = new ImageIcon(fileRoot + iconsRoot + "log-out-solid-24.png");
   public static ImageIcon bellIcon = new ImageIcon(fileRoot + iconsRoot + "bell-solid-24.png");
+  public static ImageIcon searchIcon = new ImageIcon(fileRoot + iconsRoot + "search-regular-24.png");
+  public static ImageIcon hiPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-rd.png");
+  public static ImageIcon midPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-ylw.png");
+  public static ImageIcon loPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-grn.png");
 
   public MasterUI() {
     this.setIconImage(favicon.getImage());
@@ -120,7 +126,7 @@ abstract public class MasterUI extends JFrame {
    * @param colorMode - String either "light" or "dark", changes color mode. Null
    *                  defaults to dark.
    */
-  public void setComponentStyles(JPanel panel, String colorMode) {
+  public static void setComponentStyles(JPanel panel, String colorMode) {
     Color foreground;
     Color background;
     if (colorMode == "dark" || colorMode == null) {
@@ -139,9 +145,7 @@ abstract public class MasterUI extends JFrame {
       }
       if (c instanceof JTextField) {
         c.setFont(robotoFont);
-      }
-      if (c instanceof JLabel && !((Label) c).getHeading()) {
-        c.setFont(bodyFont);
+        c.setBackground(background);
       }
       if (c instanceof JButton) {
         c.setFont(monoFont);
@@ -155,11 +159,12 @@ abstract public class MasterUI extends JFrame {
         ((AbstractButton) c).setContentAreaFilled(true);
         ((AbstractButton) c).setMargin(new Insets(5, 5, 3, 3));
       }
-      if (c instanceof JTextField) {
+      if (c instanceof JPasswordField) {
         ((JTextComponent) c).setCaretColor(foreground);
         ((JTextComponent) c).setBackground(background);
-        ((JTextComponent) c).setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        ((JTextComponent) c).setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
       }
+
     }
   }
 

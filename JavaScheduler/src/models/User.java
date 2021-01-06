@@ -11,9 +11,8 @@ public class User {
   private String lastname;
   private String password;
   private String email;
-  private ArrayList<Event> acceptedEvents = new ArrayList<Event>();
-  private ArrayList<Event> pendingEvents = new ArrayList<Event>();
-  private ArrayList<Location> customLocations = new ArrayList<Location>();
+  private ArrayList<Event> events = new ArrayList<Event>();
+  private ArrayList<Location> locations = new ArrayList<Location>();
   private Boolean isAdmin;
 
   /**
@@ -26,9 +25,8 @@ public class User {
     this.firstname = firstname;
     this.lastname = lastname;
     this.email = email;
-    this.acceptedEvents = acceptEvents;
-    this.pendingEvents = pendingEvents;
-    this.customLocations = customLocations;
+    this.events = acceptEvents;
+    this.locations = customLocations;
     this.isAdmin = false;
   }
 
@@ -42,9 +40,8 @@ public class User {
     this.lastname = "";
     this.password = password;
     this.email = email;
-    this.acceptedEvents = new ArrayList<Event>();
-    this.pendingEvents = new ArrayList<Event>();
-    this.customLocations = new ArrayList<Location>();
+    this.events = new ArrayList<Event>();
+    this.locations = new ArrayList<Location>();
     this.isAdmin = false;
   }
 
@@ -54,7 +51,7 @@ public class User {
    * @param event - Newly created event
    */
   public void createEvent(Event event) {
-    acceptedEvents.add(event);
+    events.add(event);
   }
 
   /**
@@ -63,7 +60,7 @@ public class User {
    * @return List of accepted events from user
    */
   public ArrayList<Event> getAcceptedEvents() {
-    return acceptedEvents;
+    return events;
   }
 
   /**
@@ -156,26 +153,47 @@ public class User {
     this.email = email;
   }
 
-  public ArrayList<Event> getPendingEvents() {
-    return pendingEvents;
+  /**
+   * Get custom locations
+   * 
+   * @return locations
+   */
+  public ArrayList<Location> getLocations() {
+    return locations;
   }
 
-  public void setPendingEvents(ArrayList<Event> pendingEvents) {
-    this.pendingEvents = pendingEvents;
+  /**
+   * Set locations
+   * 
+   * @param customLocations
+   */
+  public void setLocations(ArrayList<Location> locations) {
+    this.locations = locations;
   }
 
-  public ArrayList<Location> getCustomLocations() {
-    return customLocations;
+  /**
+   * Add single location
+   * 
+   * @param location - Location
+   */
+  public void addLocation(Location location) {
+    locations.add(location);
   }
 
-  public void setCustomLocations(ArrayList<Location> customLocations) {
-    this.customLocations = customLocations;
-  }
-
+  /**
+   * Get first name
+   * 
+   * @return firstname
+   */
   public String getFirstname() {
     return firstname;
   }
 
+  /**
+   * Set first name
+   * 
+   * @param surname
+   */
   public void setFirstname(String surname) {
     this.firstname = surname;
   }
@@ -199,21 +217,21 @@ public class User {
   }
 
   /**
+   * Set accepted events
+   * 
+   * @param acceptedEvents
+   */
+  public void setEvents(ArrayList<Event> events) {
+    this.events = events;
+  }
+
+  /**
    * Generate a random UUID for a newly created user account
    * 
    * @return standard UUID with dashes removed
    */
   public static String generateUUID() {
     return UUID.randomUUID().toString().replace("-", "");
-  }
-
-  /**
-   * Set accepted events
-   * 
-   * @param acceptedEvents
-   */
-  public void setAcceptedEvents(ArrayList<Event> acceptedEvents) {
-    this.acceptedEvents = acceptedEvents;
   }
 
   @Override

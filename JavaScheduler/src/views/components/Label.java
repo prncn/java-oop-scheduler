@@ -21,11 +21,14 @@ public class Label extends JLabel {
 
   public Label(String text) {
     super(text);
+    this.setFont(MasterUI.bodyFont);
     this.setSize(250, 25);
   }
 
   public Label() {
     super();
+    this.setFont(MasterUI.bodyFont);
+    this.setSize(250, 25);
   }
 
   public Label(ImageIcon image) {

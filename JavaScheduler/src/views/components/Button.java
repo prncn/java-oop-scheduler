@@ -96,6 +96,7 @@ public class Button extends JButton implements MouseListener {
    * Set default button styles
    */
   public void drawDefaultStyle() {
+    this.setFont(MasterUI.robotoFont);
     this.setCursor(cursor);
     this.setSize(width, height);
     this.setBorderPainted(false);
@@ -176,6 +177,15 @@ public class Button extends JButton implements MouseListener {
    */
   public boolean getTab() {
     return this.tabbed;
+  }
+
+  /**
+   * Center text inside button
+   */
+  public void centerText() {
+    setVerticalTextPosition(SwingConstants.BOTTOM);
+    setHorizontalAlignment(SwingConstants.CENTER);
+    setVerticalAlignment(SwingConstants.CENTER);
   }
 
   @Override

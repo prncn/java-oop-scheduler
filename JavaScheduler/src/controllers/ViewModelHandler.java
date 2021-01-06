@@ -12,9 +12,13 @@ import models.Location;
 import models.Priority;
 import models.User;
 import views.HomeUI;
+import views.MasterUI;
+import views.components.Label;
+import views.components.Panel;
 import views.components.TextField;
+import views.panels.Dashboard;
 
-public class ControlHandler {
+public class ViewModelHandler {
 
   /**
    * Consume input form data from Create view and generate a model Event
@@ -52,7 +56,7 @@ public class ControlHandler {
    * @param user - Currently logged in user
    */
   public static void updateDashboard(User user) {
-    HomeUI.drawEventData(user);
+    Dashboard.drawEventData(user);
   }
 
   /**
@@ -70,6 +74,34 @@ public class ControlHandler {
     Event event = new Event("Test", date, time, duration, new Location("Testtown"));
     event.setPriority(Priority.LOW);
     return event;
+  }
+
+  /**
+   * User search field of view to search users from database
+   * @param searchField - TextField for query input, takes in usernames
+   * @param panel - Panel to be placed on
+   * @param userQueryResult - Label giving error or succes messages on query result
+   * @return - User object, null if not found
+   */
+  public static User searchUser(TextField searchField, Panel panel, Label userQueryResult) {
+    if(searchField.getText().isEmpty()){
+      return null;
+    }
+    User user = DataBaseAPI.getUser(searchField.getText());
+    userQueryResult.setPosition(searchField.getX(), searchField.getY() + 60);
+    userQueryResult.setText("");
+    if(user != null){
+      userQueryResult.setForeground(MasterUI.secondaryCol);
+      userQueryResult.setText("User found");
+      userQueryResult.setForeground(MasterUI.secondaryCol);
+      searchField.setText("");
+      panel.repaint();
+    } else {
+      userQueryResult.setForeground(MasterUI.primaryColAlt);
+      userQueryResult.setText("User not found");
+    }
+    panel.add(userQueryResult);
+    return user;
   }
 
 }

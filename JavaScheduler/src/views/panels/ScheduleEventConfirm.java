@@ -20,7 +20,7 @@ public class ScheduleEventConfirm extends Panel {
 
   private static final long serialVersionUID = 4625075272906690489L;
 
-  public ScheduleEventConfirm(JFrame frame, User user, Event meeting) {
+  public ScheduleEventConfirm(JFrame frame, User user, Event event) {
     super(frame);
     
     ScheduleEvent createMeetingPanel = new ScheduleEvent(frame, user);
@@ -40,26 +40,29 @@ public class ScheduleEventConfirm extends Panel {
     Label secondaryMsg = new Label(40, 290, "All participants have been notified.");
     Label heroImage = new Label(MasterUI.createdMeetingImage);
 
-    String meetingDateDay = FormatUtil.formatOrdinal(meeting.getDate().getDayOfMonth());
-    String meetingDateMonth = FormatUtil.capitalize(meeting.getDate().getMonth().toString());
-    successMsg.setText("<html>You have scheduled a meeting<br/>on " + meeting.getName()
+    String meetingDateDay = FormatUtil.formatOrdinal(event.getDate().getDayOfMonth());
+    String meetingDateMonth = FormatUtil.capitalize(event.getDate().getMonth().toString());
+    successMsg.setText("<html>You have scheduled an event<br/>" + event.getName()
     + " for the " + meetingDateDay + " of "+ meetingDateMonth + ".<html>");
     secondaryMsg.setSize(800, 40);
     heroImage.setBounds(400, 250, 542, 366);
+    if(event.getParticipants().isEmpty()){
+      secondaryMsg.setText("Your personal activity has been added.");
+    }
 
     this.add(heroImage);
     this.add(backCreate);
     this.add(screenTitle);
     this.add(successMsg);
     this.add(secondaryMsg);
-    ((MasterUI) frame).setComponentStyles(this, "light");
+    MasterUI.setComponentStyles(this, "light");
 
     screenTitle.setHeading();
     screenTitle.setForeground(MasterUI.accentCol);
     successMsg.setHeading();
     successMsg.setSize(690, 120);
 
-    ControlHandler.updateDashboard(user);
-    ControlHandler.updateCalendar(frame);
+    ViewModelHandler.updateDashboard(user);
+    ViewModelHandler.updateCalendar(frame);
   }
 }

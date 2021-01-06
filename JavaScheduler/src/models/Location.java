@@ -1,16 +1,33 @@
 package models;
 
 public class Location {
+    private String name;
     private String city;
+    private String zip;
     private String street;
     private String streetNr;
-    private String zip;
     private String building;
-    private String RoomNr;
-    private String name;
+    private String roomNr;
 
     public Location(String name) {
         this.name = name;
+        city = "";
+        street = "";
+        streetNr = "";
+        zip = "";
+        building = "";
+        roomNr = "";
+    }
+
+    public Location(String name, String city, String zip, String street, String streetNr, String building,
+            String roomNr) {
+        this.name = name;
+        this.city = city;
+        this.zip = zip;
+        this.street = street;
+        this.streetNr = streetNr;
+        this.building = building;
+        this.roomNr = roomNr;
     }
 
     public String getCity() {
@@ -54,14 +71,18 @@ public class Location {
     }
 
     public String getRoomNr() {
-        return RoomNr;
+        return roomNr;
     }
 
     public void setRoomNr(String roomNr) {
-        RoomNr = roomNr;
+        roomNr = roomNr;
     }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+    }
 }
