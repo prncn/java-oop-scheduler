@@ -12,7 +12,7 @@ public class User {
   private String password;
   private String email;
   private ArrayList<Event> events = new ArrayList<Event>();
-  private ArrayList<Location> customLocations = new ArrayList<Location>();
+  private ArrayList<Location> locations = new ArrayList<Location>();
   private Boolean isAdmin;
 
   /**
@@ -26,7 +26,7 @@ public class User {
     this.lastname = lastname;
     this.email = email;
     this.events = acceptEvents;
-    this.customLocations = customLocations;
+    this.locations = customLocations;
     this.isAdmin = false;
   }
 
@@ -41,7 +41,7 @@ public class User {
     this.password = password;
     this.email = email;
     this.events = new ArrayList<Event>();
-    this.customLocations = new ArrayList<Location>();
+    this.locations = new ArrayList<Location>();
     this.isAdmin = false;
   }
 
@@ -153,18 +153,47 @@ public class User {
     this.email = email;
   }
 
-  public ArrayList<Location> getCustomLocations() {
-    return customLocations;
+  /**
+   * Get custom locations
+   * 
+   * @return locations
+   */
+  public ArrayList<Location> getLocations() {
+    return locations;
   }
 
-  public void setCustomLocations(ArrayList<Location> customLocations) {
-    this.customLocations = customLocations;
+  /**
+   * Set locations
+   * 
+   * @param customLocations
+   */
+  public void setLocations(ArrayList<Location> locations) {
+    this.locations = locations;
   }
 
+  /**
+   * Add single location
+   * 
+   * @param location - Location
+   */
+  public void addLocation(Location location) {
+    locations.add(location);
+  }
+
+  /**
+   * Get first name
+   * 
+   * @return firstname
+   */
   public String getFirstname() {
     return firstname;
   }
 
+  /**
+   * Set first name
+   * 
+   * @param surname
+   */
   public void setFirstname(String surname) {
     this.firstname = surname;
   }
@@ -188,21 +217,21 @@ public class User {
   }
 
   /**
+   * Set accepted events
+   * 
+   * @param acceptedEvents
+   */
+  public void setEvents(ArrayList<Event> events) {
+    this.events = events;
+  }
+
+  /**
    * Generate a random UUID for a newly created user account
    * 
    * @return standard UUID with dashes removed
    */
   public static String generateUUID() {
     return UUID.randomUUID().toString().replace("-", "");
-  }
-
-  /**
-   * Set accepted events
-   * 
-   * @param acceptedEvents
-   */
-  public void setAcceptedEvents(ArrayList<Event> acceptedEvents) {
-    this.events = acceptedEvents;
   }
 
   @Override

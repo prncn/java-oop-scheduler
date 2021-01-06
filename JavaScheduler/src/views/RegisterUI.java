@@ -2,18 +2,18 @@ package views;
 
 import models.*;
 import views.components.Label;
+import views.components.TextField;
 import controllers.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
-import javax.swing.JTextField;
 
 public class RegisterUI extends LoginUI {
   private static final long serialVersionUID = -6864343981907015773L;
   private JPasswordField passConfField;
-  private JTextField emailField;
+  private TextField emailField;
   private JLabel passConfLabel;
   private JLabel emailLabel;
 
@@ -26,7 +26,7 @@ public class RegisterUI extends LoginUI {
     registerBtn.setText("Go Back");
     
     passConfField = new JPasswordField();
-    emailField = new JTextField();
+    emailField = new TextField(0, 0, "");
     passConfLabel = new Label(lgnBox.x, lgnBox.y + 170, "Confirm Password");
     emailLabel = new Label(lgnBox.x, lgnBox.y + 240, "Email");
     backIconHero.setIcon(signupHeroImage);

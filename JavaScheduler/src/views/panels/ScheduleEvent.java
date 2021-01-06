@@ -377,7 +377,7 @@ public class ScheduleEvent extends Panel {
    */
   private boolean validateForm(Label errorMsg, Panel panel) {
     boolean valid = true;
-    Border border = BorderFactory.createLineBorder(Color.RED,1);
+    Border border = BorderFactory.createLineBorder(MasterUI.hiPrioCol, 1);
     for (Component c : panel.getComponents()) {
 
       if (c instanceof TextField && isBlankString( ((TextField) c).getText()) && c != searchUserField) {
@@ -394,11 +394,6 @@ public class ScheduleEvent extends Panel {
       }
       else {
         errorPriority.setText("");
-      }
-
-
-      if (c instanceof TextField && !isBlankString( ((TextField) c).getText()) && c != searchUserField) {
-        ((TextField) c).setBorder(BorderFactory.createEmptyBorder());
       }
 
       if((c == startField || c == endField) && !isValidTime(((TextField)c).getText())) {
@@ -494,7 +489,7 @@ public class ScheduleEvent extends Panel {
   }
 
   /**
-   * check if a string is blank or not
+   * Check if a string is blank or not
    * @param string - the string to be checked
    * @return Boolean whether string is blanked or not
    */

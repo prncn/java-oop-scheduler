@@ -3,7 +3,7 @@ package views;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.Point;
-import java.awt.Component;
+import java.awt.Color;
 
 import javax.swing.*;
 
@@ -14,8 +14,6 @@ import views.components.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class LoginUI extends MasterUI {
   private static final long serialVersionUID = -6864342302747015773L;
@@ -66,9 +64,9 @@ public class LoginUI extends MasterUI {
     screenTitle = new Label(lgnBox.x, lgnBox.y - 10, "Login");
     backIconHero.setBounds(200, 250, 400, 400);
     userField.setSize(210, userField.getHeight());
+    userField.setCaretColor(Color.WHITE);
     passField.setBounds(lgnBox.x, lgnBox.y + 120, 210, 40);
 
-    List<Component> components = new ArrayList<>();
 
     panel.add(userLabel);
     panel.add(passLabel);
@@ -85,6 +83,7 @@ public class LoginUI extends MasterUI {
    * Set action listener for login button
    */
   public void loginBtnAction() {
+    JFrame frame = this;
     loginBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         String inputUser = userField.getText();
@@ -97,10 +96,11 @@ public class LoginUI extends MasterUI {
 
         try {
           if (DataBaseAPI.verifyUser(inputUser, inputPass)) {
+            frame.dispose();
+            frame.remove(panel);
             User session = DataBaseAPI.getUser(inputUser);
             HomeUI home = new HomeUI(session);
             home.setVisible(true);
-            dispose();
           } else {
             success.setText("Wrong username or password");
             passField.setText("");

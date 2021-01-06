@@ -2,7 +2,6 @@ package views.panels;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
 import controllers.FormatUtil;
@@ -23,7 +22,8 @@ public class Dashboard extends Panel {
 
   private static final long serialVersionUID = 1L;
   private static Panel redpanel;
-  private static Panel innerpanel;
+  private static Panel upSectionInner;
+  private static Panel allSectionInner;
   public static Label eventData;
 
   public Dashboard(JFrame frame, User user) {
@@ -34,10 +34,14 @@ public class Dashboard extends Panel {
     createDashboardTab(user);
     JScrollPane scroller = createScroller();
 
-    Label allEventsTitle = new Label(40, 640, "All Events");
-    allEventsTitle.setHeading();
+    allSectionInner = new Panel();
+    allSectionInner.setBackground(MasterUI.lightCol);
+    allSectionInner.setBounds(40, 520, upSectionInner.getWidth(), upSectionInner.getHeight());
+    redpanel.add(allSectionInner);
 
-    redpanel.add(allEventsTitle);
+    Label allEventsTitle = new Label(0, 70, "All Events");
+    allEventsTitle.setHeading();
+    allSectionInner.add(allEventsTitle);
 
     Label scrollHintIcon = new Label();
     scrollHintIcon.setBounds(getWidth() / 2 - 50, 600, 24, 24);
@@ -68,9 +72,9 @@ public class Dashboard extends Panel {
     Label screenTitle = new Label(40, 40, "Upcoming Events");
     screenTitle.setHeading();
 
-    innerpanel = new Panel();
-    innerpanel.setBackground(MasterUI.lightCol);
-    innerpanel.setBounds(40, 80, getWidth() - 100, getHeight() - 260);
+    upSectionInner = new Panel();
+    upSectionInner.setBackground(MasterUI.lightCol);
+    upSectionInner.setBounds(40, 80, getWidth() - 100, getHeight() - 260);
 
     Label dashImage = new Label(600, 400, "");
     dashImage.setSize(339, 242);
@@ -91,7 +95,7 @@ public class Dashboard extends Panel {
 
     drawEventData(user);
     redpanel.add(screenTitle);
-    redpanel.add(innerpanel);
+    redpanel.add(upSectionInner);
   }
 
   /**
@@ -100,37 +104,48 @@ public class Dashboard extends Panel {
    * @param user - Currently logged in user
    */
   public static void drawEventData(User user) {
-    innerpanel.removeAll();
-    Point p = new Point(0, 10);
+    upSectionInner.removeAll();
+    Point content = new Point(0, 10);
     if (user.getAcceptedEvents().isEmpty()) {
-      eventData = new Label(p.x, 40,
+      eventData = new Label(content.x, 40,
           "<html><p>No events planned :( <br>Schedule a new event on the tab on the left</p><html>");
       eventData.setHeading();
-      eventData.setSize(700, 120);
+      eventData.setSize(500, 120);
       eventData.setForeground(Color.LIGHT_GRAY);
-      innerpanel.add(eventData);
+      upSectionInner.add(eventData);
 
       return;
     }
 
-    List<Event> events = user.getAcceptedEvents();
-    Collections.sort(events);
-    events.removeIf(e -> e.hasPassed()); // filter passed events
+    List<Event> upcomingEvents = user.getAcceptedEvents();
+    List<Event> allEvents = user.getAcceptedEvents();
+    Collections.sort(upcomingEvents);
+    upcomingEvents.removeIf(e -> e.hasPassed()); // filter passed events
 
-    for (int i = 0; i < events.size(); i++) {
-      Event event = events.get(i);
+    for (int i = 0; i < upcomingEvents.size(); i++) {
+      Event event = upcomingEvents.get(i);
       if (i > 8)
         break; // slice list after 8 entries
       int mgn = 15; // margin in pixels
-      Panel card = drawEventCard(p, event);
+      Panel card = drawEventCard(content, event, upSectionInner);
 
-      p.y += card.getHeight() + mgn;
+      content.y += card.getHeight() + mgn;
       if (i == 3)
-        p.setLocation(310, mgn);
+        content.setLocation(310, mgn);
+    }
+
+    for (int i = 0; i < allEvents.size(); i++) {
+      Event event = allEvents.get(i);
+      int mgn = 15;
+      Panel card = drawEventCard(content, event, allSectionInner);
+
+      content.y += card.getHeight() + mgn;
+      if (i == 3)
+        content.setLocation(310, mgn);
     }
   }
 
-  private static Panel drawEventCard(Point p, Event event) {
+  private static Panel drawEventCard(Point p, Event event, Panel panel) {
     Panel card = new Panel();
     Point c = new Point(15, 10);
     card.setRounded(true);
@@ -151,7 +166,7 @@ public class Dashboard extends Panel {
     card.add(location);
     card.add(date);
     card.add(time);
-    innerpanel.add(card);
+    panel.add(card);
 
     return card;
   }

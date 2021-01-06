@@ -29,14 +29,14 @@ public class AdminPanel extends Panel {
     searchBack.setBounds(450, 0, getWidth() - 450, getHeight());
     searchBack.setBackground(MasterUI.accentCol);
     
-    Label searchTitle = new Label(500, 40, "<html><p>Search for a user and access their profile</p><html>");
+    Label searchTitle = new Label(50, 40, "<html><p>Search for a user and access their profile</p><html>");
     searchTitle.setVerticalTextPosition(SwingConstants.TOP);
     searchTitle.setHeading();
     searchTitle.setSize(450, 75);
 
-    TextField searchField = new TextField(500, 150);
-    Button searchBtn = new Button(800, 150, "");
-    Label userQueryResult = new Label(500, 250, "");
+    TextField searchField = new TextField(50, 150);
+    Button searchBtn = new Button(searchField.getX() + 300, searchField.getY(), "");
+    Label userQueryResult = new Label(searchField.getX(), searchField.getY() + 60, "");
     Panel panel = this;
     searchBtn.setSize(searchBtn.getHeight(), searchBtn.getHeight());
     searchBtn.setIcon(MasterUI.searchIcon);
@@ -44,23 +44,25 @@ public class AdminPanel extends Panel {
 
     searchBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        User user = ViewModelHandler.searchUser(searchField, panel, userQueryResult);
+        User user = ViewModelHandler.searchUser(searchField, searchBack, userQueryResult);
         if(user != null){
           if(profileInfo != null){
             panel.remove(profileInfo);
           }
           profileInfo = new ProfilePanelInfo(user);
-          profileInfo.setEditing();
+          profileInfo.setEdit();
           panel.add(profileInfo);
+          panel.repaint();
         }
       }
     });
 
     MasterUI.setComponentStyles(this, "light");
     
-    add(searchBtn);
-    add(searchField);
-    add(searchTitle);
+    searchBack.add(userQueryResult);
+    searchBack.add(searchBtn);
+    searchBack.add(searchField);
+    searchBack.add(searchTitle);
     add(adminTitle);
     add(searchBack);
   }

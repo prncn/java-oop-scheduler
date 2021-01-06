@@ -46,6 +46,7 @@ public class HomeUI extends MasterUI {
     this.user = user;
     frame.setTitle("Meetings Scheduler");
     this.setSize(1200, 700);
+    this.remove(panel);
     
     tabsBox = new Point(0, 200);
     dashPanel = new Dashboard(frame, user);

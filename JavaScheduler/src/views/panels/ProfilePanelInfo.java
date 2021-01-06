@@ -49,8 +49,11 @@ public class ProfilePanelInfo extends Panel {
     
     MasterUI.setComponentStyles(this, "light");
     setStatic();
-    // setEditing(fields);
   }
+
+  // public User fetchUserData() {
+  //   return new User(usernameField.getText(), emailField.getText(), )
+  // }
 
   /**
    * Set given fields to static, making uneditable and read-only
@@ -71,7 +74,7 @@ public class ProfilePanelInfo extends Panel {
    * Set given fields to editable mode
    * @param fields - Text fields for user data
    */
-  public void setEditing() {
+  public void setEdit() {
     if(getEditable()) return;
     TextField[] fields = {usernameField, emailField, firstnameField, lastnameField};
     for(TextField field : fields) {
@@ -83,13 +86,13 @@ public class ProfilePanelInfo extends Panel {
   }
   
   /**
-   * Bind {@link #setEditing()} to action listener
+   * Bind {@link #setEdit()} to action listener
    * @return ActionListener object
    */
   public ActionListener setEditingAction() {
     return new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        setEditing();
+        setEdit();
       }
     };
   }
