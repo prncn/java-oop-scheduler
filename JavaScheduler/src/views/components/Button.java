@@ -24,7 +24,7 @@ public class Button extends JButton implements MouseListener {
   private int height = 40;
   private boolean dark;
   private boolean filled;
-  private boolean tabbed;
+  private boolean isTab;
   private ActionListener switchPanelAction;
   private Color prevColor;
 
@@ -32,10 +32,9 @@ public class Button extends JButton implements MouseListener {
     super(text);
     drawDefaultStyle();
     this.color = color;
-    this.setPosition(x, y);
-    this.setContentAreaFilled(false);
-    this.setBackground(color);
-    tabbed = false;
+    setPosition(x, y);
+    setBackground(color);
+    isTab = false;
     dark = true;
     filled = true;
   }
@@ -45,7 +44,7 @@ public class Button extends JButton implements MouseListener {
     drawDefaultStyle();
     this.setPosition(x, y);
     this.setBackground(MasterUI.primaryCol);
-    tabbed = false;
+    isTab = false;
     dark = true;
     filled = false;
   }
@@ -53,27 +52,15 @@ public class Button extends JButton implements MouseListener {
   public Button(int x, int y, String text, JPanel switchTo) {
     super(text);
     drawDefaultStyle();
-    this.color = MasterUI.primaryColAlt;
-    this.setPosition(x, y);
-    this.setBackground(MasterUI.primaryColAlt);
-    this.setSize(200, 50);
-    this.setHorizontalAlignment(SwingConstants.LEFT);
-    this.setMargin(new Insets(10, 10, 10, 10));
-    this.setFont(this.getFont().deriveFont(13f));
-    this.setForeground(Color.WHITE);
-    this.setFocusPainted(false);
-    this.setIconTextGap(15);
-    tabbed = true;
+    switchPanelAction = HomeUI.switchPanelAction(switchTo);
+    addActionListener(switchPanelAction);
+    setPosition(x, y);
+    setBackground(MasterUI.primaryColAlt);
+    setTab();
+    color = MasterUI.primaryColAlt;
+    isTab = true;
     dark = true;
     filled = true;
-
-    switchPanelAction = new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        HomeUI.switchPanel(switchTo);
-      }
-    };
-
-    this.addActionListener(switchPanelAction);
   }
 
   /**
@@ -81,25 +68,23 @@ public class Button extends JButton implements MouseListener {
    * @param switchTo - Panel object to be set
    */
   public void changeReferencePanel(JPanel switchTo) {
-    this.removeActionListener(switchPanelAction);
-
+    removeActionListener(switchPanelAction);
     switchPanelAction = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         HomeUI.switchPanel(switchTo);
       }
     };
-
-    this.addActionListener(switchPanelAction);
+    addActionListener(switchPanelAction);
   }
 
   /**
    * Set default button styles
    */
   public void drawDefaultStyle() {
-    this.setFont(MasterUI.robotoFont);
-    this.setCursor(cursor);
-    this.setSize(width, height);
-    this.setBorderPainted(false);
+    setFont(MasterUI.robotoFont);
+    setCursor(cursor);
+    setSize(width, height);
+    setBorderPainted(false);
     addMouseListener(this);
   }
 
@@ -114,19 +99,6 @@ public class Button extends JButton implements MouseListener {
   }
 
   /**
-   * Set dark mode value
-   * 
-   * @param bool - Boolean enable/disable dark mode
-   */
-  public void setDark(boolean bool) {
-    this.dark = bool;
-    if (bool)
-      this.setForeground(Color.WHITE);
-    else
-      this.setForeground(Color.BLACK);
-  }
-
-  /**
    * Get wether button is set on dark mode
    * 
    * @return Boolean object instead of boolean primitive since unset buttons may
@@ -136,10 +108,33 @@ public class Button extends JButton implements MouseListener {
     return this.dark;
   }
 
+  /**
+   * Set dark mode value
+   * 
+   * @param value - Boolean <code>true</code> if dark mode should be enabled
+   */
+  public void setDark(boolean value) {
+    if(getDark() == value) return;
+    this.dark = value;
+    if (value)
+      this.setForeground(Color.WHITE);
+    else
+      this.setForeground(Color.BLACK);
+  }
+
+
+  /**
+   * Get previously set color
+   * @return Color
+   */
   public Color getPrevColor() {
     return this.prevColor;
   }
 
+  /**
+   * Store current color, to be accessed later
+   * @param color - Current color
+   */
   public void setPrevColor(Color color) {
     this.prevColor = color;
   }
@@ -158,16 +153,31 @@ public class Button extends JButton implements MouseListener {
     return this.color;
   }
 
+  /**
+   * Transform button to tab button. Tabs are wider
+   * and uncolored. Mainly used for panel navigation.
+   */
   public void setTab() {
-    this.setSize(200, 50);
-    this.setHorizontalAlignment(SwingConstants.LEFT);
-    this.setMargin(new Insets(5, 5, 10, 10));
-    this.setFont(this.getFont().deriveFont(13f));
-    this.setForeground(Color.WHITE);
-    this.setFocusPainted(false);
-    this.setContentAreaFilled(true);
-    this.setIconTextGap(15);
-    tabbed = true;
+    setSize(200, 50);
+    setHorizontalAlignment(SwingConstants.LEFT);
+    setMargin(new Insets(5, 5, 10, 10));
+    setFont(this.getFont().deriveFont(13f));
+    setForeground(Color.WHITE);
+    setFocusPainted(false);
+    setContentAreaFilled(true);
+    setIconTextGap(15);
+    isTab = true;
+  }
+
+  /**
+   * Transform button to small button. Small button are
+   * uncolored.
+   */
+  public void setSmall() {
+    setMargin(new Insets(0, 0, 0, 0));
+    setDark(false);
+    setColor(MasterUI.lightCol);
+    setSize(70, 40);
   }
 
   /**
@@ -176,7 +186,7 @@ public class Button extends JButton implements MouseListener {
    * @return boolean is tab or not
    */
   public boolean getTab() {
-    return this.tabbed;
+    return this.isTab;
   }
 
   /**
@@ -202,14 +212,12 @@ public class Button extends JButton implements MouseListener {
     }
   }
 
+  @Override
   public void mousePressed(MouseEvent e) {
     this.setBackground(color);
   }
 
-  public void mouseReleased(MouseEvent e) {
-  }
-
-  public void mouseClicked(MouseEvent e) {
-  }
+  public void mouseReleased(MouseEvent e) {}
+  public void mouseClicked(MouseEvent e) {}
 
 }

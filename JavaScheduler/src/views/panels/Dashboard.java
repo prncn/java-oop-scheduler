@@ -117,8 +117,20 @@ public class Dashboard extends Panel {
       return;
     }
 
+    
+    sectionUpcomingEventsCards(user, content);
+    sectionAllEventsCards(user, content);
+  }
+
+  /**
+   * Draw all cards onto upcoming events section. This will filter for up to 8
+   * coming events.
+   * 
+   * @param user
+   * @param content
+   */
+  private static void sectionUpcomingEventsCards(User user, Point content) {
     List<Event> upcomingEvents = user.getAcceptedEvents();
-    List<Event> allEvents = user.getAcceptedEvents();
     Collections.sort(upcomingEvents);
     upcomingEvents.removeIf(e -> e.hasPassed()); // filter passed events
 
@@ -133,7 +145,16 @@ public class Dashboard extends Panel {
       if (i == 3)
         content.setLocation(310, mgn);
     }
+  }
 
+  /**
+   * Draw all cards onto all events section. This will place all events.
+   * 
+   * @param user    - User to be read events from
+   * @param content - Point pixel coordinate to place the card
+   */
+  private static void sectionAllEventsCards(User user, Point content) {
+    List<Event> allEvents = user.getAcceptedEvents();
     for (int i = 0; i < allEvents.size(); i++) {
       Event event = allEvents.get(i);
       int mgn = 15;
@@ -145,6 +166,14 @@ public class Dashboard extends Panel {
     }
   }
 
+  /**
+   * Draw card layout for a single event
+   * 
+   * @param p     - Point pixel coordinate to place the card
+   * @param event - Event to be drawn
+   * @param panel - Panel for the card to be placed on
+   * @return Card as panel object
+   */
   private static Panel drawEventCard(Point p, Event event, Panel panel) {
     Panel card = new Panel();
     Point c = new Point(15, 10);

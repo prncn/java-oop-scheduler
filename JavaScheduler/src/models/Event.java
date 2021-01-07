@@ -6,17 +6,17 @@ import java.util.ArrayList;
 
 public class Event implements Comparable<Event> {
   private String id;
-  private ArrayList<User> participants;
-  private Priority priority;
-  private String attachment;
   private String name;
-  private Reminder reminder;
   private LocalDate date;
   private LocalTime time;
   private int durationMinutes;
-  private String description;
   private Location location;
   private User host;
+  private ArrayList<User> participants;
+  private Priority priority;
+  private String attachment;
+  private Reminder reminder;
+  private String description;
 
   public Event(ArrayList<User> participants, Priority priority) {
     this.participants = participants;
@@ -31,98 +31,178 @@ public class Event implements Comparable<Event> {
     this.location = location;
   }
 
+  /**
+   * Get event ID
+   * @return Event ID
+   */
   public String getId() {
     return id;
   }
 
-  public ArrayList<User> getParticipants() {
-    return participants;
-  }
-
-  public Priority getPriority() {
-    return this.priority;
-  }
-
-  public String getAttachment() {
-    return attachment;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public Reminder getReminder() {
-    return reminder;
-  }
-
-  public LocalDate getDate() {
-    return date;
-  }
-
-  public LocalTime getTime() {
-    return time;
-  }
-
-  public int getDurationMinutes() {
-    return durationMinutes;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public Location getLocation() {
-    return location;
-  }
-
-  public User getHost() {
-    return host;
-  }
-
+  /**
+   * Set event ID
+   * @param id - Event ID
+   */
   public void setId(String id) {
     this.id = id;
   }
 
-  public void setParticipants(ArrayList<User> participants) {
-    this.participants = participants;
+  /**
+   * Get name
+   * @return Title of event
+   */
+  public String getName() {
+    return name;
   }
 
-  public void setPriority(Priority level) {
-    this.priority = level;
-  }
-
-  public void setAttachment(String attachment) {
-    this.attachment = attachment;
-  }
-
+  /**
+   * Set name 
+   * @param name - Title of event
+   */
   public void setName(String name) {
     this.name = name;
   }
 
+  /**
+   * Get participants
+   * @return participants
+   */
+  public ArrayList<User> getParticipants() {
+    return participants;
+  }
+
+  /**
+   * Set participants
+   * @param participants - List of participants
+   */
+  public void setParticipants(ArrayList<User> participants) {
+    this.participants = participants;
+  }
+
+  /**
+   * Get Priority
+   * @return Enum level of priority
+   */
+  public Priority getPriority() {
+    return this.priority;
+  }
+
+  /**
+   * Set Priority
+   * @param level - Enum of priority
+   */
+  public void setPriority(Priority level) {
+    this.priority = level;
+  }
+  
+  /**
+   * Get reminder
+   * @return Enum time of reminder
+   */
+  public Reminder getReminder() {
+    return reminder;
+  }
+  
+  /**
+   * Set reminder
+   * @param reminder Enum time of reminder
+   */
   public void setReminder(Reminder reminder) {
     this.reminder = reminder;
   }
 
+  /**
+   * Get date of event
+   * @return - LocalDate object of event
+   */
+  public LocalDate getDate() {
+    return date;
+  }
+
+  /**
+   * Set date of event
+   * @param date - LocalDate object of event
+   */
   public void setDate(LocalDate date) {
     this.date = date;
   }
 
+  /**
+   * Get starting time of event
+   * @return LocalTime object of event
+   */
+  public LocalTime getTime() {
+    return time;
+  }
+
+  /**
+   * Set starting time of event
+   * @param time LocalTime object of event
+   */
   public void setTime(LocalTime time) {
     this.time = time;
   }
 
+  /**
+   * Get duration of event in minutes
+   * @return - Integer of duration
+   */
+  public int getDurationMinutes() {
+    return durationMinutes;
+  }
+  
+  /**
+   * Set duration of event in minutes
+   * @param durationMinutes - Integer of duration
+   */
   public void setDurationMinutes(int durationMinutes) {
     this.durationMinutes = durationMinutes;
   }
+  
+  /**
+   * Get description
+   * @return Description of event
+   */
+  public String getDescription() {
+    return description;
+  }
 
+  /**
+   * Set description 
+   * @param description - Description of event
+   */
   public void setDescription(String description) {
     this.description = description;
   }
 
+  /**
+   * Set location
+   * @return - Location of event
+   */
+  public Location getLocation() {
+    return location;
+  }
+
+  /**
+   * Set location
+   * @param location - Location of event
+   */
   public void setLocation(Location location) {
     this.location = location;
   }
 
+  /**
+   * Get host
+   * @return - User host
+   */
+  public User getHost() {
+    return host;
+  }
+
+  /**
+   * Set host
+   * @param host - User to be set to host
+   */
   public void setHost(User host) {
     this.host = host;
   }
@@ -138,22 +218,20 @@ public class Event implements Comparable<Event> {
   /**
    * todo
    *
-   * @param u
-   * @return false on unsuccessful addition of participant, true on successful
-   *         addition of participant
+   * @param user - User to be added
+   * @return <code>true</code> on successful addition 
    */
-  public boolean addParticipant(User u) {
+  public boolean addParticipant(User user) {
     return false;
   }
 
   /**
    * todo
    *
-   * @param u
-   * @return false on unsuccessful removal of participant, true on successful
-   *         removal of participant
+   * @param user - User to be removed
+   * @return <code>true</code> on successful removal
    */
-  public boolean removeParticipant(User u) {
+  public boolean removeParticipant(User user) {
     return false;
   }
 

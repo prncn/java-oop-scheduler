@@ -49,8 +49,7 @@ public class AdminPanel extends Panel {
           if(profileInfo != null){
             panel.remove(profileInfo);
           }
-          profileInfo = new ProfilePanelInfo(user);
-          profileInfo.setEdit();
+          profileInfo = new ProfilePanelInfo(user, true);
           panel.add(profileInfo);
           panel.repaint();
         }

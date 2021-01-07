@@ -46,6 +46,23 @@ public class User {
   }
 
   /**
+   * Copy constructor
+   * 
+   * @param other - Other user to be copied from
+   */
+  public User(User other) {
+    this.id = other.id;
+    this.username = other.username;
+    this.firstname = other.firstname;
+    this.lastname = other.lastname;
+    this.password = other.password;
+    this.email = other.email;
+    this.events = other.events;
+    this.locations = other.locations;
+    this.isAdmin = other.isAdmin;
+  }
+
+  /**
    * Create new event
    * 
    * @param event - Newly created event

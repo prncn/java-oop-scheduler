@@ -7,6 +7,7 @@ import controllers.ViewModelHandler;
 import models.User;
 import models.Priority;
 import models.Event;
+import models.Location;
 import views.HomeUI;
 import views.MasterUI;
 import views.components.Button;
@@ -16,7 +17,10 @@ import views.components.TextField;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -24,6 +28,7 @@ import java.awt.event.FocusListener;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ScheduleEvent extends Panel {
 
@@ -41,6 +46,7 @@ public class ScheduleEvent extends Panel {
   private Priority selectedPriority;
   private Point contentBox;
   public static Panel redpanel;
+  public JScrollPane dpscroll;
   public static TextField titleField;
   public static TextField dateField;
   public static TextField startField;
@@ -81,12 +87,12 @@ public class ScheduleEvent extends Panel {
   }
 
   /**
-   * Create dropdown options as to when to remind the user of their event
+   * Build dropdown options as to when to remind the user of their event
    * 
    * @param dropdown - Panel object of reminder section section
    * @param frame    - JFrame of current instance
    */
-  private void createReminderDropdown(Panel dropdown, JFrame frame, Panel panel) {
+  private void reminderDropdownSelection(Panel dropdown, JFrame frame, Panel panel) {
     if (dropdown.isActive) {
       dropdown.setSize(0, 0);
       dropdown.isActive = false;
@@ -120,6 +126,49 @@ public class ScheduleEvent extends Panel {
   }
 
   /**
+   * Build dropdown options as to which custom location to select
+   * @param textfield - Location TextField object to reference 
+   */
+  private void locationDropdownSelection(TextField textfield) {
+    if (dpscroll != null) {
+      remove(dpscroll);
+      dpscroll = null;
+      repaint();
+      return;
+    }
+    Panel dppanel = new Panel();
+    List<Location> locations = user.getLocations();
+    dppanel.setBounds(0, 0, textfield.getWidth() + 30, 40 * locations.size());
+    dppanel.setPreferredSize(new Dimension(textfield.getWidth(), 40 * locations.size()));
+    int y = 0;
+    for (Location location : locations) {
+      Button lcBtn = new Button(0, y, location.getName(), MasterUI.lightColAlt);
+      lcBtn.setSize(dppanel.getWidth(), 40);
+      lcBtn.setDark(false);
+      lcBtn.setHorizontalAlignment(SwingConstants.LEFT);
+      lcBtn.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          textfield.setText(location.getName());
+          remove(dpscroll);
+          dpscroll = null;
+          repaint();
+        }
+      });
+      dppanel.add(lcBtn);
+      y += lcBtn.getHeight();
+    }
+    dpscroll = new JScrollPane(dppanel);
+    dpscroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    dpscroll.getVerticalScrollBar().setUnitIncrement(15);
+    dpscroll.setBorder(BorderFactory.createEmptyBorder());
+    dpscroll.setBounds(textfield.getX(), textfield.getY() + textfield.getHeight(), textfield.getWidth() + 40, 40 * 2);
+    MasterUI.setComponentStyles(dppanel, "light");
+    add(dpscroll);
+    revalidate();
+    repaint();
+  }
+
+  /**
    * Draw reminder section section that then prompts drop down options
    */
   private void drawReminderSection() {
@@ -127,10 +176,10 @@ public class ScheduleEvent extends Panel {
     Label reminderLabel = new Label(400, 100, "Remind me before event");
     reminderField = new TextField(400, 120);
     reminderField.setText("Don't remind me");
+    reminderField.setEditable(false);
     Button dpdwn = new Button(700, 120, "", MasterUI.lightColAlt);
     dpdwn.setIcon(MasterUI.downIcon);
     dpdwn.setSize(40, 40);
-    reminderField.setEditable(false);
 
     Panel rp = new Panel();
     rp.setBounds(400, 160, 0, 0);
@@ -143,7 +192,7 @@ public class ScheduleEvent extends Panel {
         } else {
           panel.remove(searchUserField);
         }
-        createReminderDropdown(rp, frame, panel);
+        reminderDropdownSelection(rp, frame, panel);
       }
     });
 
@@ -204,7 +253,14 @@ public class ScheduleEvent extends Panel {
           break;
         case "Where":
           textfield = new TextField(contentBox.x, initialY + 20);
+          textfield.setSize(textfield.getWidth() - 40, textfield.getHeight());
           locationField = textfield;
+
+          Button dpdwn = new Button(contentBox.x + textfield.getWidth(), initialY + 20, "", MasterUI.lightColAlt);
+          dpdwn.setIcon(MasterUI.downIcon);
+          dpdwn.setSize(40, 40);
+          dpdwn.addActionListener(e -> locationDropdownSelection(textfield));
+          this.add(dpdwn);
           break;
         default:
           textfield = new TextField(contentBox.x, initialY + 20);
@@ -297,11 +353,11 @@ public class ScheduleEvent extends Panel {
     loPrioBtn = new Button(40, 120, "LOW", new Color(171, 169, 239));
     midPrioBtn = new Button(140, 120, "MEDIUM", new Color(129, 109, 254));
     hiPrioBtn = new Button(240, 120, "HIGH", MasterUI.accentCol);
-    
+
     loPrioBtn.addActionListener(prioBtnAction(Priority.LOW, loPrioBtn));
     midPrioBtn.addActionListener(prioBtnAction(Priority.MEDIUM, midPrioBtn));
     hiPrioBtn.addActionListener(prioBtnAction(Priority.HIGH, hiPrioBtn));
-    
+
     this.add(priorityLabel);
     this.add(loPrioBtn);
     this.add(midPrioBtn);
@@ -380,7 +436,7 @@ public class ScheduleEvent extends Panel {
     Border border = BorderFactory.createLineBorder(MasterUI.hiPrioCol, 1);
     for (Component c : panel.getComponents()) {
 
-      if (c instanceof TextField && isBlankString( ((TextField) c).getText()) && c != searchUserField) {
+      if (c instanceof TextField && isBlankString(((TextField) c).getText()) && c != searchUserField) {
         ((TextField) c).setBorder(border);
         errorMsg.setText("Missing required fields.");
         valid = false;
@@ -391,80 +447,74 @@ public class ScheduleEvent extends Panel {
         errorPriority.setForeground(Color.RED);
         errorPriority.setHorizontalAlignment(SwingConstants.RIGHT);
         valid = false;
-      }
-      else {
+      } else {
         errorPriority.setText("");
       }
 
-      if((c == startField || c == endField) && !isValidTime(((TextField)c).getText())) {
+      if ((c == startField || c == endField) && !isValidTime(((TextField) c).getText())) {
         ((TextField) c).setBorder(border);
         valid = false;
       }
 
       if (c == titleField) {
-        if (isBlankString( ((TextField) c).getText())) {
+        if (isBlankString(((TextField) c).getText())) {
           errorTitle.setText("(Topic required)");
           errorTitle.setForeground(Color.RED);
           errorTitle.setHorizontalAlignment(SwingConstants.RIGHT);
-        }
-        else {
+        } else {
           errorTitle.setText("");
         }
       }
 
       if (c == dateField) {
-        if (isBlankString( ((TextField) c).getText())) {
+        if (isBlankString(((TextField) c).getText())) {
           errorDate.setText("(Select a date)");
           errorDate.setForeground(Color.RED);
           errorDate.setHorizontalAlignment(SwingConstants.RIGHT);
-        }
-        else {
+        } else {
           errorDate.setText("");
         }
       }
 
       if (c == startField) {
-        if ( isBlankString( ((TextField) c).getText()) || !isValidTime(((TextField)c).getText()) ) {
+        if (isBlankString(((TextField) c).getText()) || !isValidTime(((TextField) c).getText())) {
           errorStartTime.setText("(invalid)");
           errorStartTime.setForeground(Color.RED);
-          errorStartTime.setBounds(contentBox.x , contentBox.y + 132, startField.getWidth() , startField.getHeight());
+          errorStartTime.setBounds(contentBox.x, contentBox.y + 132, startField.getWidth(), startField.getHeight());
           errorStartTime.setHorizontalAlignment(SwingConstants.RIGHT);
-        }
-        else {
+        } else {
           errorStartTime.setText("");
         }
       }
 
       if (c == endField) {
-        if ( isBlankString( ((TextField) c).getText()) || !isValidTime(((TextField)c).getText()) ) {
+        if (isBlankString(((TextField) c).getText()) || !isValidTime(((TextField) c).getText())) {
           errorEndTime.setText("(invalid)");
           errorEndTime.setForeground(Color.RED);
-          errorEndTime.setBounds(contentBox.x + endField.getWidth() + 4, contentBox.y + 132, endField.getWidth(), endField.getHeight());
+          errorEndTime.setBounds(contentBox.x + endField.getWidth() + 4, contentBox.y + 132, endField.getWidth(),
+              endField.getHeight());
           errorEndTime.setHorizontalAlignment(SwingConstants.RIGHT);
-        }
-        else {
+        } else {
           errorEndTime.setText("");
         }
       }
 
       if (c == locationField) {
-        if (isBlankString( ((TextField) c).getText()) ) {
+        if (isBlankString(((TextField) c).getText())) {
           errorLocation.setText("(Location required)");
           errorLocation.setForeground(Color.RED);
           errorLocation.setHorizontalAlignment(SwingConstants.RIGHT);
-        }
-        else {
+        } else {
           errorLocation.setText("");
         }
       }
 
       if (c == reminderField) {
-        if (isBlankString( ((TextField) c).getText())) {
+        if (isBlankString(((TextField) c).getText())) {
           errorReminder.setText("(Select a reminder)");
           errorReminder.setForeground(Color.RED);
-          //errorReminder.setOpaque(true);
-        }
-        else {
+          // errorReminder.setOpaque(true);
+        } else {
           errorReminder.setText("");
         }
       }
@@ -475,14 +525,14 @@ public class ScheduleEvent extends Panel {
 
   /**
    * validate if given string is of pattern "H:mm"
+   * 
    * @param time - the string to be checked
    * @return Boolean whether form is valid or not
    */
   private boolean isValidTime(String time) {
-    try{
+    try {
       LocalTime.parse(time);
-    }
-    catch(DateTimeParseException e) {
+    } catch (DateTimeParseException e) {
       return false;
     }
     return true;
@@ -490,6 +540,7 @@ public class ScheduleEvent extends Panel {
 
   /**
    * Check if a string is blank or not
+   * 
    * @param string - the string to be checked
    * @return Boolean whether string is blanked or not
    */
@@ -506,14 +557,14 @@ public class ScheduleEvent extends Panel {
     Label errorMsg = new Label(40, 520, "");
     this.add(errorMsg);
 
-    errorPriority = new Label(contentBox.x + 50  , 100, "");
-    errorTitle = new Label(contentBox.x + 50  , contentBox.y , "");
-    errorDate = new Label(contentBox.x + 50  , contentBox.y + 70, "");
-    errorLocation = new Label(contentBox.x + 50  , contentBox.y + 210, "");
+    errorPriority = new Label(contentBox.x + 50, 100, "");
+    errorTitle = new Label(contentBox.x + 50, contentBox.y, "");
+    errorDate = new Label(contentBox.x + 50, contentBox.y + 70, "");
+    errorLocation = new Label(contentBox.x + 50, contentBox.y + 210, "");
 
-    errorStartTime = new Label(contentBox.x + 50, contentBox.y + 140 , "");
-    errorEndTime = new Label(contentBox.x + 221  , contentBox.y + 140 , "");
-    errorReminder = new Label(614  , 100, "");
+    errorStartTime = new Label(contentBox.x + 50, contentBox.y + 140, "");
+    errorEndTime = new Label(contentBox.x + 221, contentBox.y + 140, "");
+    errorReminder = new Label(614, 100, "");
 
     this.add(errorTitle);
     this.add(errorDate);
@@ -543,7 +594,7 @@ public class ScheduleEvent extends Panel {
         if (!validateForm(errorMsg, panel)) {
           return;
         }
-        HomeUI.confirmDialog(createAction, "Do you wish to proceed?");
+        HomeUI.confirmDialog(createAction, "Proceed with this event?");
       }
     });
   }
