@@ -1,12 +1,14 @@
 package controllers;
 
 import models.*;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
 
 public class DataBaseAPI {
 
@@ -113,6 +115,65 @@ public class DataBaseAPI {
     }
 
     return true;
+  }
+  
+  /**
+   * Edits a user in the database with the parameter user.
+   *
+   * @param user This user's attribute values are taken to edit the user in the DB with the same id 
+   * @return true, if successful
+   */
+  public static boolean editUser(User user) {
+	  String sql = "UPDATE UserAccount SET username = ?, password = ?, email = ? WHERE id = ?";
+	  Connection connection = connectDatabase();
+	  try {
+		  PreparedStatement statement = connection.prepareStatement(sql);
+	      statement.setString(1, user.getUsername());
+	      statement.setString(2, user.getPassword());
+	      statement.setString(3, user.getEmail());
+	      statement.setString(4, user.getId());
+	      statement.executeUpdate();
+	      statement.close();
+	      closeDatabase(connection);
+	  } catch(SQLException e) {
+		  e.printStackTrace();
+		  closeDatabase(connection);
+		  return false;
+	  }
+	  return true;
+  }
+  
+  /**
+   * Gets all users from DB
+   *
+   * @return all users as an arraylist
+   */
+  public static ArrayList<User> getAllUsers() {
+	  String sql = "SELECT * FROM UserAccount";
+	  Connection connection = connectDatabase();
+	  try {
+		  PreparedStatement statement = connection.prepareStatement(sql);
+	      
+		  ResultSet result = statement.executeQuery();
+		  ArrayList<User> allUsers = new ArrayList<User>();
+		  while(result.next()) {
+			  String username = result.getString("username");
+			  String password = result.getString("password");
+			  String email = result.getString("email");
+			  allUsers.add(new User(username,password,email));
+			  
+			  statement.close();
+		      closeDatabase(connection);
+		      return allUsers;
+		  }
+		  
+		  
+	      
+	  } catch(SQLException e) {
+		  e.printStackTrace();
+		  closeDatabase(connection);
+	  }
+	return null;
   }
 
   /**
