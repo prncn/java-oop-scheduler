@@ -92,12 +92,12 @@ public class FormatUtil {
 
 	/**
 	 * Parse LocalDate to readable string Format. 
-	 * For instance, <code>2021-03-01</code> gets parsed to <code>March 1st</code>.
+	 * For instance, <code>2021-03-05</code> gets parsed to <code>March 5</code>.
 	 * @param date - LocalDate object
 	 * @return String of date
 	 */
 	public static String readableDate(LocalDate date) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd");
 		return date.format(formatter);
 	}
 

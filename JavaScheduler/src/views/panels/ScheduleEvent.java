@@ -6,6 +6,7 @@ import javax.swing.SwingConstants;
 import controllers.ViewModelHandler;
 import models.User;
 import models.Priority;
+import models.Reminder;
 import models.Event;
 import models.Location;
 import views.HomeUI;
@@ -44,6 +45,7 @@ public class ScheduleEvent extends Panel {
   private int participantListPosition = 335;
   private ArrayList<User> participants = new ArrayList<>();
   private Priority selectedPriority;
+  private Location selectedLocation;
   private Point contentBox;
   public static Panel redpanel;
   public JScrollPane dpscroll;
@@ -62,27 +64,34 @@ public class ScheduleEvent extends Panel {
   private static Label errorReminder;
   private JFrame frame;
   private User user;
+  private Event editEvent;
 
-  public ScheduleEvent(JFrame frame, User user) {
+  public ScheduleEvent(JFrame frame, User user, Event editEvent) {
     super(frame);
     this.frame = frame;
     this.user = user;
+    this.editEvent = editEvent;
     participants.add(user);
 
     contentBox = new Point(40, 170);
     Label screenTitle = new Label(40, 40, "Schedule an Event");
     screenTitle.setHeading();
+    if(editEvent != null)  {
+      screenTitle.setText("Edit event");
+      screenTitle.setForeground(MasterUI.accentCol);
+    }
     String[] lbStrings = { "Topic", "When", "Start Time", "Where" };
 
     initDatePicker();
     initPageButtons();
     initFormContent(lbStrings);
+    setDefaultProperties();
     drawPrioritySection();
     initAddParticipant();
     drawReminderSection();
     processConfirm();
 
-    this.add(screenTitle);
+    add(screenTitle);
     MasterUI.setComponentStyles(this, "light");
   }
 
@@ -152,6 +161,7 @@ public class ScheduleEvent extends Panel {
           remove(dpscroll);
           dpscroll = null;
           repaint();
+          selectedLocation = location;
         }
       });
       dppanel.add(lcBtn);
@@ -175,7 +185,7 @@ public class ScheduleEvent extends Panel {
     Panel panel = this;
     Label reminderLabel = new Label(400, 100, "Remind me before event");
     reminderField = new TextField(400, 120);
-    reminderField.setText("Don't remind me");
+    reminderField.setText(Reminder.NONE.toString());
     reminderField.setEditable(false);
     Button dpdwn = new Button(700, 120, "", MasterUI.lightColAlt);
     dpdwn.setIcon(MasterUI.downIcon);
@@ -269,6 +279,11 @@ public class ScheduleEvent extends Panel {
       this.add(label);
       this.add(textfield);
       initialY += 70;
+      /**
+       * When clicking in on a text field, the panel of the date picker
+       * (redpanel) closes, if it has been open, so that a user
+       * does not have to manually close the panel.
+       */
       textfield.addFocusListener(new FocusListener() {
         public void focusGained(FocusEvent e) {
           redpanel.setSize(0, 0);
@@ -281,15 +296,31 @@ public class ScheduleEvent extends Panel {
         }
       });
     }
-    locationField.setText("Communications department");
-    dateField.setText("2021-01-12");
-    titleField.setText("Proxy Networking");
-    startField.setText("09:00");
-    endField.setText("10:35");
   }
 
   /**
-   * Search an user to add them to participants
+   * Set properties of event to defaul values. If editEvent exists
+   * the event to be edited to filled into form.
+   */
+  public void setDefaultProperties() {
+    if(editEvent == null){
+      titleField.setText("Proxy Networking");
+      locationField.setText("Communications department");
+      dateField.setText("2021-01-12");
+      startField.setText("09:00");
+      endField.setText("10:35");
+    } else {
+      titleField.setText(editEvent.getName());
+      locationField.setText(editEvent.getLocation().getName());
+      dateField.setText(editEvent.getDate().toString());
+      startField.setText(editEvent.getTime().toString());
+    }
+  }
+
+  /**
+   * Search a user to add them to participants.
+   * If the database search fails, an error label indicates the 
+   * query failure. 
    */
   public void searchParticipant() {
     Panel panel = this;
@@ -329,7 +360,6 @@ public class ScheduleEvent extends Panel {
         redpanel.setSize(0, 0);
         redpanel.isActive = false;
       }
-
       public void focusLost(FocusEvent e) {
         // System.out.println("focus lost");
       }
@@ -524,7 +554,7 @@ public class ScheduleEvent extends Panel {
   }
 
   /**
-   * validate if given string is of pattern "H:mm"
+   * Validate if given string is of pattern "H:mm"
    * 
    * @param time - the string to be checked
    * @return Boolean whether form is valid or not
@@ -581,9 +611,18 @@ public class ScheduleEvent extends Panel {
         Event event = ViewModelHandler.consumeEventForm(titleField, dateField, startField, endField, locationField);
         event.setParticipants(participants);
         event.setPriority(selectedPriority);
-        user.createEvent(event);
+        if(selectedLocation != null && selectedLocation.getName().equals(locationField.getText())){
+          event.setLocation(selectedLocation);
+        }
+        Panel createMeetingConfirm;
+        if (editEvent != null) {
+          editEvent.updateEvent(event);
+          createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, 1);
+        } else {
+          user.createEvent(event);
+          createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, 0);
+        }
 
-        Panel createMeetingConfirm = new ScheduleEventConfirm(frame, user, event);
         HomeUI.switchPanel(createMeetingConfirm);
         HomeUI.createTab.changeReferencePanel(createMeetingConfirm);
       }

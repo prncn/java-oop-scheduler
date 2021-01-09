@@ -37,6 +37,9 @@ public class Button extends JButton implements MouseListener {
     isTab = false;
     dark = true;
     filled = true;
+
+    setContentAreaFilled(false);
+    setOpaque(false);
   }
 
   public Button(int x, int y, String text) {
@@ -46,6 +49,7 @@ public class Button extends JButton implements MouseListener {
     this.setBackground(MasterUI.primaryCol);
     isTab = false;
     dark = true;
+    setContentAreaFilled(false);
     filled = false;
   }
 
@@ -60,6 +64,7 @@ public class Button extends JButton implements MouseListener {
     color = MasterUI.primaryColAlt;
     isTab = true;
     dark = true;
+    setContentAreaFilled(false);
     filled = true;
   }
 

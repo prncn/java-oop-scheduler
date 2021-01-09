@@ -17,6 +17,7 @@ import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
 import views.panels.Dashboard;
+import views.panels.ProfilePanel;
 
 public class ViewModelHandler {
 
@@ -57,6 +58,7 @@ public class ViewModelHandler {
    */
   public static void updateDashboard(User user) {
     Dashboard.drawEventData(user);
+    ProfilePanel.updateProfileStats(user);
   }
 
   /**

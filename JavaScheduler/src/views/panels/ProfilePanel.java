@@ -34,6 +34,7 @@ public class ProfilePanel extends Panel {
   private Button lcClrBtn;
   private Button lcAddBtn;
 
+  private static Label stats_1;
   private Panel lclistpanel;
 
   private User user;
@@ -66,12 +67,23 @@ public class ProfilePanel extends Panel {
     cnclBtn.setSmall();
     cnclBtn.addActionListener(infoPanel.setStaticAction());
 
+    stats_1 = new Label(40, 600, "You're partaking in " + user.getAcceptedEvents().size() + " meetings.");
+
+    add(stats_1);
     add(editBtn);
     add(cnclBtn);
     add(profileTitle);
     add(infoPanel);
 
     MasterUI.setComponentStyles(this, "light");
+    stats_1.setForeground(MasterUI.accentCol);
+  }
+
+  /**
+   * Update current user profile statistics.
+   */
+  public static void updateProfileStats(User user) {
+    stats_1.setText("You're partaking in " + user.getAcceptedEvents().size() + " meetings.");
   }
 
   /**
@@ -122,7 +134,9 @@ public class ProfilePanel extends Panel {
   }
 
   /**
-   * Draw list panel of locations of user
+   * Draw list panel of locations of user. Per default the location
+   * lets the user create a new location with the <code>add</code> button.
+   * If a existing location is selected, the form is in editor mode.
    * 
    * @param lcpanel - Location panel for the list panel to be placed on
    */
@@ -162,6 +176,7 @@ public class ProfilePanel extends Panel {
 
   /**
    * Remove location save and clear buttons.
+   * Push add button to foreground.
    */
   private void removeEditLocationButtons() {
     remove(lcSaveBtn);

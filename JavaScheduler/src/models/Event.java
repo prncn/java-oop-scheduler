@@ -32,6 +32,43 @@ public class Event implements Comparable<Event> {
   }
 
   /**
+   * Copy constructor
+   * @param other - Event to be copied from
+   */
+  public Event(Event other) {
+    name = other.name;
+    date = other.date;
+    time = other.time;
+    durationMinutes = other.durationMinutes;
+    location = other.location;
+    host = other.host;
+    participants = other.participants;
+    priority = other.priority;
+    attachment = other.attachment;
+    reminder = other.reminder;
+    description = other.description;
+  }
+  
+  /**
+   * Overwrite all attributes of other event into
+   * current event. Used to update edited event.
+   * @param other - Event to be copied from
+   */
+  public void updateEvent(Event other) {
+    name = other.name;
+    date = other.date;
+    time = other.time;
+    durationMinutes = other.durationMinutes;
+    location = other.location;
+    host = other.host;
+    participants = other.participants;
+    priority = other.priority;
+    attachment = other.attachment;
+    reminder = other.reminder;
+    description = other.description;
+  }
+
+  /**
    * Get event ID
    * @return Event ID
    */

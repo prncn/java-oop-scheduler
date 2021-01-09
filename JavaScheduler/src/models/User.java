@@ -72,6 +72,15 @@ public class User {
   }
 
   /**
+   * Remove event from user
+   * 
+   * @param event - Event to be removed
+   */
+  public void removeEvent(Event event) {
+    events.remove(event);
+  }
+
+  /**
    * Get accepted events
    * 
    * @return List of accepted events from user

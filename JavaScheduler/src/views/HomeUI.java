@@ -29,7 +29,7 @@ public class HomeUI extends MasterUI {
   private static JFrame frame;
   private Point tabsBox;
 
-  private Dashboard dashPanel;
+  public static Dashboard dashPanel;
   private ScheduleEvent createPanel;
   public static CalendarPanel calendarPanel;
   private ProfilePanel profilePanel;
@@ -51,7 +51,7 @@ public class HomeUI extends MasterUI {
 
     tabsBox = new Point(0, 200);
     dashPanel = new Dashboard(frame, user);
-    createPanel = new ScheduleEvent(frame, user);
+    createPanel = new ScheduleEvent(frame, user, null);
     calendarPanel = new CalendarPanel(frame, 95, false, user);
     profilePanel = new ProfilePanel(frame, user);
     currentPanel = dashPanel;
