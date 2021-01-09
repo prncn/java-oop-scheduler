@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
 import controllers.FormatUtil;
+import controllers.ViewModelHandler;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -14,40 +15,39 @@ import java.util.List;
 
 import models.Event;
 import models.User;
+import views.HomeUI;
 import views.MasterUI;
+import views.components.Button;
 import views.components.Label;
 import views.components.Panel;
 
-public class Dashboard extends Panel {
+public class Dashboard extends Panel implements CardModes {
 
   private static final long serialVersionUID = 1L;
   private static Panel redpanel;
   private static Panel upSectionInner;
   private static Panel allSectionInner;
-  public static Label eventData;
+  private static Label eventData;
+
+  private static JFrame frame;
+  private static User user;
 
   public Dashboard(JFrame frame, User user) {
     super(frame);
+    Dashboard.frame = frame;
+    Dashboard.user = user;
     redpanel = new Panel();
     redpanel.setPreferredSize(new Dimension(getWidth(), getHeight() * 2 - 150));
     redpanel.setBackground(MasterUI.lightCol);
+
     createDashboardTab(user);
     JScrollPane scroller = createScroller();
-
-    allSectionInner = new Panel();
-    allSectionInner.setBackground(MasterUI.lightCol);
-    allSectionInner.setBounds(40, 520, upSectionInner.getWidth(), upSectionInner.getHeight());
-    redpanel.add(allSectionInner);
-
-    Label allEventsTitle = new Label(0, 70, "All Events");
-    allEventsTitle.setHeading();
-    allSectionInner.add(allEventsTitle);
 
     Label scrollHintIcon = new Label();
     scrollHintIcon.setBounds(getWidth() / 2 - 50, 600, 24, 24);
     scrollHintIcon.setIcon(MasterUI.downIconDark);
 
-    add(scrollHintIcon);
+    // add(scrollHintIcon);
     add(scroller);
   }
 
@@ -74,7 +74,13 @@ public class Dashboard extends Panel {
 
     upSectionInner = new Panel();
     upSectionInner.setBackground(MasterUI.lightCol);
-    upSectionInner.setBounds(40, 80, getWidth() - 100, getHeight() - 260);
+    upSectionInner.setBounds(40, 80, getWidth() - 100, getHeight() - 200);
+
+    Label allEventsTitle = new Label(40, 600, "All Events");
+    allEventsTitle.setHeading();
+    allSectionInner = new Panel();
+    allSectionInner.setBackground(MasterUI.lightCol);
+    allSectionInner.setBounds(40, 650, upSectionInner.getWidth(), upSectionInner.getHeight());
 
     Label dashImage = new Label(600, 400, "");
     dashImage.setSize(339, 242);
@@ -96,6 +102,8 @@ public class Dashboard extends Panel {
     drawEventData(user);
     redpanel.add(screenTitle);
     redpanel.add(upSectionInner);
+    redpanel.add(allEventsTitle);
+    redpanel.add(allSectionInner);
   }
 
   /**
@@ -105,20 +113,32 @@ public class Dashboard extends Panel {
    */
   public static void drawEventData(User user) {
     upSectionInner.removeAll();
+    allSectionInner.removeAll();
     Point content = new Point(0, 10);
     if (user.getAcceptedEvents().isEmpty()) {
       eventData = new Label(content.x, 40,
-          "<html><p>No events planned :( <br>Schedule a new event on the tab on the left</p><html>");
+          "<html><p>No events :(<br>Schedule new events on the left</p><html>");
       eventData.setHeading();
       eventData.setSize(500, 120);
-      eventData.setForeground(Color.LIGHT_GRAY);
+      eventData.setForeground(MasterUI.lightColAlt);
       upSectionInner.add(eventData);
 
       return;
     }
 
+    sectionUpcomingEventsCards(user, new Point(0, 10));
+    sectionAllEventsCards(user, new Point(0, 10));
+  }
+
+  /**
+   * Draw all cards onto upcoming events section. This will filter for up to 8
+   * coming events.
+   * 
+   * @param user
+   * @param content
+   */
+  private static void sectionUpcomingEventsCards(User user, Point content) {
     List<Event> upcomingEvents = user.getAcceptedEvents();
-    List<Event> allEvents = user.getAcceptedEvents();
     Collections.sort(upcomingEvents);
     upcomingEvents.removeIf(e -> e.hasPassed()); // filter passed events
 
@@ -127,17 +147,7 @@ public class Dashboard extends Panel {
       if (i > 8)
         break; // slice list after 8 entries
       int mgn = 15; // margin in pixels
-      Panel card = drawEventCard(content, event, upSectionInner);
-
-      content.y += card.getHeight() + mgn;
-      if (i == 3)
-        content.setLocation(310, mgn);
-    }
-
-    for (int i = 0; i < allEvents.size(); i++) {
-      Event event = allEvents.get(i);
-      int mgn = 15;
-      Panel card = drawEventCard(content, event, allSectionInner);
+      Panel card = drawEventCard(content, event, upSectionInner, UPCOMING);
 
       content.y += card.getHeight() + mgn;
       if (i == 3)
@@ -145,7 +155,40 @@ public class Dashboard extends Panel {
     }
   }
 
-  private static Panel drawEventCard(Point p, Event event, Panel panel) {
+  /**
+   * Draw all cards onto all events section. This will place all events. This
+   * unlocks the option to edit and delete events. Deletion prompts confirmation
+   * and edit directs the user to schedule form.
+   * 
+   * @param user    - User to be read events from
+   * @param content - Point pixel coordinate to place the card
+   */
+  private static void sectionAllEventsCards(User user, Point content) {
+    List<Event> allEvents = user.getAcceptedEvents();
+    for (int i = 0; i < allEvents.size(); i++) {
+      Event event = allEvents.get(i);
+      int mgn = 15;
+      Panel card = drawEventCard(content, event, allSectionInner, ALL);
+
+      content.y += card.getHeight() + mgn;
+      if (i == 3)
+        content.setLocation(310, mgn);
+    }
+  }
+
+  /**
+   * Draw card layout for a single event. The layout of the event card is
+   * specified with the card mode paramater. Depending on panel, the card should
+   * look different or give access to different features.
+   * 
+   * @param p        - Point pixel coordinate to place the card
+   * @param event    - Event to be drawn
+   * @param panel    - Panel for the card to be placed on
+   * @param cardMode - Layout mode for card. <code>UPCOMING</code>,
+   *                 <code>ALL</code>, <code>NOTIF</code> or <code>CALENDAR</code>
+   * @return Card as panel object
+   */
+  private static Panel drawEventCard(Point p, Event event, Panel panel, int cardMode) {
     Panel card = new Panel();
     Point c = new Point(15, 10);
     card.setRounded(true);
@@ -161,6 +204,34 @@ public class Dashboard extends Panel {
     prio.setSize(24, 24);
     prio.setIcon(event.getPriority().getIcon());
 
+    int margin = 6;
+
+    if (checkCardModeKey(cardMode) == ALL) {
+      Button edit = new Button(prio.getX() - (prio.getWidth() + margin), prio.getY(), "");
+      edit.setSmall();
+      edit.setSize(24, 24);
+      edit.setColor(MasterUI.lightColAlt);
+      edit.setIcon(MasterUI.editIcon);
+      edit.addActionListener(e -> {
+        Panel editEvent = new ScheduleEvent(frame, user, event);
+        HomeUI.switchPanel(editEvent);
+      });
+
+      Button remove = new Button(edit.getX() - (edit.getWidth() + margin), edit.getY(), "");
+      remove.setSmall();
+      remove.setSize(24, 24);
+      remove.setColor(MasterUI.lightColAlt);
+      remove.setIcon(MasterUI.removeIcon);
+      remove.addActionListener(e -> {
+        user.removeEvent(event);
+        ViewModelHandler.updateDashboard(user);
+        panel.repaint();
+      });
+
+      card.add(remove);
+      card.add(edit);
+    }
+
     card.add(prio);
     card.add(name);
     card.add(location);
@@ -168,6 +239,23 @@ public class Dashboard extends Panel {
     card.add(time);
     panel.add(card);
 
+    MasterUI.setComponentStyles(card, "light");
+
     return card;
+  }
+
+  /**
+   * Check if card layout mode key is valid.
+   * 
+   * @param key - Card layout mode
+   * @return Returns <code>key</code> on valid card layout.
+   * @throws IllegalArgumentException on incorrect layout mode.
+   */
+  private static int checkCardModeKey(int key) {
+    if (key == UPCOMING || key == ALL || key == NOTIF || key == CALENDAR) {
+      return key;
+    } else {
+      throw new IllegalArgumentException("Invalid layout mode for event card.");
+    }
   }
 }

@@ -12,6 +12,7 @@ import views.components.Panel;
 import views.components.TextField;
 
 import java.awt.event.ActionListener;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 
 public class AdminPanel extends Panel {
@@ -35,10 +36,10 @@ public class AdminPanel extends Panel {
     searchTitle.setSize(450, 75);
 
     TextField searchField = new TextField(50, 150);
-    Button searchBtn = new Button(searchField.getX() + 300, searchField.getY(), "");
+    Button searchBtn = new Button(searchField.getX() + 300, searchField.getY(), "", MasterUI.lightColAlt);
     Label userQueryResult = new Label(searchField.getX(), searchField.getY() + 60, "");
     Panel panel = this;
-    searchBtn.setSize(searchBtn.getHeight(), searchBtn.getHeight());
+    searchBtn.setSize(searchField.getHeight(), searchField.getHeight());
     searchBtn.setIcon(MasterUI.searchIcon);
     searchBtn.setColor(MasterUI.lightColAlt);
 
@@ -49,21 +50,21 @@ public class AdminPanel extends Panel {
           if(profileInfo != null){
             panel.remove(profileInfo);
           }
-          profileInfo = new ProfilePanelInfo(user);
-          profileInfo.setEdit();
+          profileInfo = new ProfilePanelInfo(user, true);
           panel.add(profileInfo);
           panel.repaint();
         }
       }
     });
 
-    MasterUI.setComponentStyles(this, "light");
-    
-    searchBack.add(userQueryResult);
     searchBack.add(searchBtn);
+    searchBack.add(userQueryResult);
     searchBack.add(searchField);
     searchBack.add(searchTitle);
     add(adminTitle);
     add(searchBack);
+    
+    MasterUI.setComponentStyles(searchBack, "light");
+    MasterUI.setComponentStyles(this, "light");
   }
 }

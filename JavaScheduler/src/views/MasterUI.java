@@ -82,6 +82,8 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon logoutIcon = new ImageIcon(fileRoot + iconsRoot + "log-out-solid-24.png");
   public static ImageIcon bellIcon = new ImageIcon(fileRoot + iconsRoot + "bell-solid-24.png");
   public static ImageIcon searchIcon = new ImageIcon(fileRoot + iconsRoot + "search-regular-24.png");
+  public static ImageIcon editIcon = new ImageIcon(fileRoot + iconsRoot + "edit-solid-24.png");
+  public static ImageIcon removeIcon = new ImageIcon(fileRoot + iconsRoot + "trash-alt-regular-24.png");
   public static ImageIcon hiPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-rd.png");
   public static ImageIcon midPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-ylw.png");
   public static ImageIcon loPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-grn.png");
@@ -140,12 +142,14 @@ abstract public class MasterUI extends JFrame {
     }
 
     for (Component c : panel.getComponents()) {
-      if (c instanceof JLabel || c instanceof JTextField) {
+      if (c instanceof JLabel) {
+        if(!((Label ) c).getHeading())
         c.setForeground(foreground);
       }
       if (c instanceof JTextField) {
         c.setFont(robotoFont);
         c.setBackground(background);
+        c.setForeground(foreground);
       }
       if (c instanceof JButton) {
         c.setFont(monoFont);

@@ -5,9 +5,10 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.Component;
 import java.awt.Point;
 
@@ -28,7 +29,7 @@ public class HomeUI extends MasterUI {
   private static JFrame frame;
   private Point tabsBox;
 
-  private Dashboard dashPanel;
+  public static Dashboard dashPanel;
   private ScheduleEvent createPanel;
   public static CalendarPanel calendarPanel;
   private ProfilePanel profilePanel;
@@ -47,10 +48,10 @@ public class HomeUI extends MasterUI {
     frame.setTitle("Meetings Scheduler");
     this.setSize(1200, 700);
     this.remove(panel);
-    
+
     tabsBox = new Point(0, 200);
     dashPanel = new Dashboard(frame, user);
-    createPanel = new ScheduleEvent(frame, user);
+    createPanel = new ScheduleEvent(frame, user, null);
     calendarPanel = new CalendarPanel(frame, 95, false, user);
     profilePanel = new ProfilePanel(frame, user);
     currentPanel = dashPanel;
@@ -68,10 +69,9 @@ public class HomeUI extends MasterUI {
     setLocationRelativeTo(null);
   }
 
-  
-
   /**
-   * Create tab buttons on sidebar
+   * Create tab buttons on sidebar. Initialises the buttons 
+   * and appends icons to them.
    */
   private void createSidebarTabs() {
     dashboardTab = new Button(tabsBox.x, tabsBox.y, "Dashboard", dashPanel);
@@ -113,7 +113,8 @@ public class HomeUI extends MasterUI {
   }
 
   /**
-   * Create and initialise logout tab
+   * Create and initialise logout tab. Logging out prompts the user for
+   * confirmation and then directs them to login page.
    */
   private void initLogoutTab() {
     logoutTab = new Button(tabsBox.x, tabsBox.y + 300, "Logout", primaryColAlt);
@@ -129,15 +130,13 @@ public class HomeUI extends MasterUI {
       }
     };
 
-    logoutTab.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        confirmDialog(logoutAction, "Are you sure you want to logout?");
-      }
-    });
+    logoutTab.addActionListener(confirmDialogAction(logoutAction, "Are you sure you want to logout?"));
   }
 
   /**
-   * Open a dialog prompt asking the user to confirm their action
+   * Open a dialog prompt asking the user to confirm their action. This window
+   * blocks action on the background until a selection (or exit) is given. On selecting
+   * yes, an action listener will be triggered.
    * 
    * @param action - ActionListener object to be passed to "YES" button
    * @param prompt - String prompt the user is asked
@@ -145,6 +144,16 @@ public class HomeUI extends MasterUI {
   public static void confirmDialog(ActionListener action, String prompt) {
     JDialog confirmDialog = new JDialog(frame, "Confirm action");
     frame.setEnabled(false);
+
+    /**
+     * Prevent app frame from staying disabled when user closes dialog
+     */
+    confirmDialog.addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        frame.setEnabled(true);
+      }
+    });
+
     Label logoutlabel = new Label(20, 20, prompt);
     Button yes = new Button(30, 60, "Yes", secondaryCol);
     Button no = new Button(140, 60, "No", lightColAlt);
@@ -176,8 +185,28 @@ public class HomeUI extends MasterUI {
     no.addActionListener(closeDialog);
   }
 
+
   /**
-   * Set styles for sidebar
+   * Bind {@link #confirmDialog(ActionListener, String)} to action listener.
+   * This design to wrap and bind methods into action listeners is later replaced with
+   * lambda expressions, as they functionally make these wrappers obsolete.
+   * I. e. <code>addActionListener(e -> confirmDialog())</code> could have replaced this wrapper.
+   * 
+   * @param action - Action to triggered on mouse event.
+   * @param prompt - String prompt to be displayed.
+   * @return ActionListener wrapping into single action
+   */
+  public static ActionListener confirmDialogAction(ActionListener action, String prompt) {
+    return new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        confirmDialog(action, prompt);
+      }
+    };
+  }
+
+  /**
+   * Set styles for sidebar. Place header with user info and basic
+   * styles and sizes for left sidebar.
    */
   private void styleSidebar() {
     Label headerinfoUser = new Label(20, 30, "Logged as " + user.getUsername());
@@ -193,7 +222,8 @@ public class HomeUI extends MasterUI {
   }
 
   /**
-   * Switch current active panel to another
+   * Switch current active panel to another. This is removes the currently
+   * viewed panel and adds a new one.
    * 
    * @param newPanel - Selected panel to be switched to
    */
@@ -205,7 +235,25 @@ public class HomeUI extends MasterUI {
   }
 
   /**
-   * Make admin panel visible when current user is admin
+   * Bind {@link #switchPanel(JPanel)} to action listener. @see {@link #confirmDialog(ActionListener, String)}
+   * function. This could as well just been <code>addActionListener(e -> switchPanel())</code>.
+   * 
+   * @param newPanel - Selected panel to be switched to
+   * @return ActionListener object triggering function
+   * @see #switchPanel(JPanel)
+   */
+  public static ActionListener switchPanelAction(JPanel newPanel) {
+    return new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        switchPanel(newPanel);
+      }
+    };
+  }
+
+  /**
+   * Make admin panel visible when current user is admin. By making 
+   * the admin panel not show up to regular users, this method functionally
+   * controls permissions for user "roles".
    */
   private void showAdminPanel() {
     if (user.getUsername() == "admin") {
