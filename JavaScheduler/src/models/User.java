@@ -18,8 +18,8 @@ public class User {
   /**
    * Constructor for fetching user from database and creating model class from it
    */
-  public User(String id, String username, String firstname, String lastname, String email,
-      ArrayList<Event> acceptEvents, ArrayList<Event> pendingEvents, ArrayList<Location> customLocations) {
+  public User(String id, String username, Stringa firstname, String lastname, String email,
+      ArrayList<Event> acceptEvents, ArrayList<Location> customLocations) {
     this.id = id;
     this.username = username;
     this.firstname = firstname;
@@ -191,7 +191,7 @@ public class User {
   /**
    * Set locations
    * 
-   * @param customLocations
+   * @param locations
    */
   public void setLocations(ArrayList<Location> locations) {
     this.locations = locations;
@@ -245,7 +245,7 @@ public class User {
   /**
    * Set accepted events
    * 
-   * @param acceptedEvents
+   * @param events
    */
   public void setEvents(ArrayList<Event> events) {
     this.events = events;
