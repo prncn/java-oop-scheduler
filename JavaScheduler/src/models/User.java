@@ -18,11 +18,11 @@ public class User {
   /**
    * Constructor for fetching user from database and creating model class from it
    */
-  public User(String id, String username, Stringa firstname, String lastname, String email,
+  public User(String id, String username, String firstname, String lastname, String email,
       ArrayList<Event> acceptEvents, ArrayList<Location> customLocations) {
     this.id = id;
     this.username = username;
-    this.firstname = firstname;
+    this.firstname = firstname;#
     this.lastname = lastname;
     this.email = email;
     this.events = acceptEvents;
