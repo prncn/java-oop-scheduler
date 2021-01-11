@@ -11,6 +11,15 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Component;
 import java.awt.Point;
+import java.sql.Time;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.time.LocalTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+
 
 import views.components.Button;
 import views.components.Label;
@@ -20,6 +29,8 @@ import views.panels.Dashboard;
 import views.panels.ProfilePanel;
 import views.panels.ScheduleEvent;
 import models.User;
+
+
 
 public class HomeUI extends MasterUI {
   private static final long serialVersionUID = -771654490802003766L;
@@ -222,11 +233,26 @@ public class HomeUI extends MasterUI {
   }
 
   /**
-   * Switch current active panel to another. This is removes the currently
-   * viewed panel and adds a new one.
-   * 
-   * @param newPanel - Selected panel to be switched to
+   * Set time and date for sidebar, updating itself every Minute
    */
+  private void createTime(){
+        LocalDate date = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        String formattedDate = date.format(formatter);
+        LocalTime time = LocalTime.now();
+        //LocalTime t = LocalTime.of(time.getHour(), time.getMinute());
+        Label footerTime = new Label(20, 615, time.toString());
+        Label footerDate = new Label(100, 638, formattedDate);
+
+        sidebar.add(footerDate);
+        sidebar.add(footerTime);
+      }
+      /**
+         * Switch current active panel to another. This is removes the currently
+         * viewed panel and adds a new one.
+         *
+         * @param newPanel - Selected panel to be switched to
+       * */
   public static void switchPanel(JPanel newPanel) {
     frame.remove(currentPanel);
     currentPanel = newPanel;
