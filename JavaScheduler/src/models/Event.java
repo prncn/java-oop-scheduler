@@ -18,21 +18,21 @@ public class Event implements Comparable<Event> {
   private Reminder reminder;
   private String description;
 
-  public Event(ArrayList<User> participants, Priority priority) {
-    this.participants = participants;
-    this.priority = priority;
-  }
-
-  public Event(String name, LocalDate date, LocalTime time, int durationMinutes, Location location) {
+  public Event(String name, LocalDate date, LocalTime time, int durationMinutes, Location location,
+      ArrayList<User> participants, Priority priority, String attachment) {
     this.name = name;
     this.date = date;
     this.time = time;
     this.durationMinutes = durationMinutes;
     this.location = location;
+    this.participants = participants;
+    this.priority = priority;
+    this.attachment = attachment;
   }
 
   /**
    * Copy constructor
+   * 
    * @param other - Event to be copied from
    */
   public Event(Event other) {
@@ -48,10 +48,11 @@ public class Event implements Comparable<Event> {
     reminder = other.reminder;
     description = other.description;
   }
-  
+
   /**
-   * Overwrite all attributes of other event into
-   * current event. Used to update edited event.
+   * Overwrite all attributes of other event into current event. Used to update
+   * edited event.
+   * 
    * @param other - Event to be copied from
    */
   public void updateEvent(Event other) {
@@ -70,6 +71,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Get event ID
+   * 
    * @return Event ID
    */
   public String getId() {
@@ -78,6 +80,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Set event ID
+   * 
    * @param id - Event ID
    */
   public void setId(String id) {
@@ -86,6 +89,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Get name
+   * 
    * @return Title of event
    */
   public String getName() {
@@ -93,7 +97,8 @@ public class Event implements Comparable<Event> {
   }
 
   /**
-   * Set name 
+   * Set name
+   * 
    * @param name - Title of event
    */
   public void setName(String name) {
@@ -102,6 +107,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Get participants
+   * 
    * @return participants
    */
   public ArrayList<User> getParticipants() {
@@ -110,6 +116,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Set participants
+   * 
    * @param participants - List of participants
    */
   public void setParticipants(ArrayList<User> participants) {
@@ -118,6 +125,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Get Priority
+   * 
    * @return Enum level of priority
    */
   public Priority getPriority() {
@@ -126,22 +134,25 @@ public class Event implements Comparable<Event> {
 
   /**
    * Set Priority
+   * 
    * @param level - Enum of priority
    */
   public void setPriority(Priority level) {
     this.priority = level;
   }
-  
+
   /**
    * Get reminder
+   * 
    * @return Enum time of reminder
    */
   public Reminder getReminder() {
     return reminder;
   }
-  
+
   /**
    * Set reminder
+   * 
    * @param reminder Enum time of reminder
    */
   public void setReminder(Reminder reminder) {
@@ -150,6 +161,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Get date of event
+   * 
    * @return - LocalDate object of event
    */
   public LocalDate getDate() {
@@ -158,6 +170,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Set date of event
+   * 
    * @param date - LocalDate object of event
    */
   public void setDate(LocalDate date) {
@@ -166,6 +179,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Get starting time of event
+   * 
    * @return LocalTime object of event
    */
   public LocalTime getTime() {
@@ -174,6 +188,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Set starting time of event
+   * 
    * @param time LocalTime object of event
    */
   public void setTime(LocalTime time) {
@@ -182,22 +197,25 @@ public class Event implements Comparable<Event> {
 
   /**
    * Get duration of event in minutes
+   * 
    * @return - Integer of duration
    */
   public int getDurationMinutes() {
     return durationMinutes;
   }
-  
+
   /**
    * Set duration of event in minutes
+   * 
    * @param durationMinutes - Integer of duration
    */
   public void setDurationMinutes(int durationMinutes) {
     this.durationMinutes = durationMinutes;
   }
-  
+
   /**
    * Get description
+   * 
    * @return Description of event
    */
   public String getDescription() {
@@ -205,7 +223,8 @@ public class Event implements Comparable<Event> {
   }
 
   /**
-   * Set description 
+   * Set description
+   * 
    * @param description - Description of event
    */
   public void setDescription(String description) {
@@ -214,6 +233,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Set location
+   * 
    * @return - Location of event
    */
   public Location getLocation() {
@@ -222,6 +242,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Set location
+   * 
    * @param location - Location of event
    */
   public void setLocation(Location location) {
@@ -230,6 +251,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Get host
+   * 
    * @return - User host
    */
   public User getHost() {
@@ -238,6 +260,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Set host
+   * 
    * @param host - User to be set to host
    */
   public void setHost(User host) {
@@ -246,6 +269,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Check if event is in the past
+   * 
    * @return
    */
   public boolean hasPassed() {
@@ -256,7 +280,7 @@ public class Event implements Comparable<Event> {
    * todo
    *
    * @param user - User to be added
-   * @return <code>true</code> on successful addition 
+   * @return <code>true</code> on successful addition
    */
   public boolean addParticipant(User user) {
     return false;

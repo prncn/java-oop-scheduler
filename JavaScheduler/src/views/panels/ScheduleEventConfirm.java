@@ -5,9 +5,6 @@ import controllers.*;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import models.Event;
 import models.User;
 import views.components.Button;
@@ -34,9 +31,10 @@ public class ScheduleEventConfirm extends Panel {
     backCreate.setIcon(MasterUI.backIcon);
     backCreate.setColor(MasterUI.secondaryCol);
     backCreate.setVerticalAlignment(SwingConstants.CENTER);
-    backCreate.setVerticalTextPosition(SwingConstants.BOTTOM);
+    backCreate.setVerticalTextPosition(SwingConstants.CENTER);
     backCreate.addActionListener(e -> HomeUI.createTab.changeReferencePanel(createMeetingPanel));
-    
+    backCreate.setRounded(true);
+
     Label screenTitle = new Label(40, 40, "Created.");
     Label successMsg = new Label(40, 150, "");
     Label secondaryMsg = new Label(40, 290, "All participants have been notified.");
@@ -52,11 +50,11 @@ public class ScheduleEventConfirm extends Panel {
       secondaryMsg.setText("Your personal activity has been added.");
     }
 
-    this.add(heroImage);
-    this.add(backCreate);
-    this.add(screenTitle);
-    this.add(successMsg);
-    this.add(secondaryMsg);
+    add(heroImage);
+    add(backCreate);
+    add(screenTitle);
+    add(successMsg);
+    add(secondaryMsg);
     MasterUI.setComponentStyles(this, "light");
 
     screenTitle.setHeading();

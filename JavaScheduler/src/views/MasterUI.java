@@ -100,11 +100,11 @@ abstract public class MasterUI extends JFrame {
     try {
       bodyFont = Font
           .createFont(Font.TRUETYPE_FONT, new File(fileRoot + "/JavaScheduler/assets/fonts/UniversLTStd.otf"))
-          .deriveFont(15f);
+          .deriveFont(13f);
 
       robotoFont = Font
           .createFont(Font.TRUETYPE_FONT, new File(fileRoot + "/JavaScheduler/assets/fonts/Roboto-Regular.ttf"))
-          .deriveFont(15f);
+          .deriveFont(13f);
     } catch (IOException | FontFormatException e) {
       System.out.println(e);
       bodyFont = bodyFontAlt; // if font asset import failed, fall back to Arial

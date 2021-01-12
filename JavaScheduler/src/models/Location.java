@@ -75,7 +75,7 @@ public class Location {
     }
 
     public void setRoomNr(String roomNr) {
-        roomNr = roomNr;
+        this.roomNr = roomNr;
     }
 
     public String getName() {

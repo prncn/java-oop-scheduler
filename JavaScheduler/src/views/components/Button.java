@@ -4,6 +4,9 @@ import views.MasterUI;
 import views.HomeUI;
 
 import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Insets;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -11,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import java.awt.Color;
+
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -22,33 +26,29 @@ public class Button extends JButton implements MouseListener {
   private Color color;
   private int width = 100;
   private int height = 40;
-  private boolean dark;
+  private boolean dark = true;
   private boolean filled;
-  private boolean isTab;
+  private boolean rounded = false;
+  private boolean isTab = false;
   private ActionListener switchPanelAction;
   private Color prevColor;
 
   public Button(int x, int y, String text, Color color) {
     super(text);
     drawDefaultStyle();
-    this.color = color;
+    setColor(color);
     setPosition(x, y);
     setBackground(color);
-    isTab = false;
-    dark = true;
+    setDark(true);
     filled = true;
-
-    setContentAreaFilled(false);
-    setOpaque(false);
   }
 
   public Button(int x, int y, String text) {
     super(text);
     drawDefaultStyle();
-    this.setPosition(x, y);
-    this.setBackground(MasterUI.primaryCol);
-    isTab = false;
-    dark = true;
+    setPosition(x, y);
+    setBackground(MasterUI.primaryCol);
+    setDark(true);
     setContentAreaFilled(false);
     filled = false;
   }
@@ -59,17 +59,14 @@ public class Button extends JButton implements MouseListener {
     switchPanelAction = HomeUI.switchPanelAction(switchTo);
     addActionListener(switchPanelAction);
     setPosition(x, y);
-    setBackground(MasterUI.primaryColAlt);
     setTab();
-    color = MasterUI.primaryColAlt;
-    isTab = true;
-    dark = true;
-    setContentAreaFilled(false);
+    setColor(MasterUI.primaryColAlt);
     filled = true;
   }
 
   /**
    * Change reference of Panel to which the button should link to
+   * 
    * @param switchTo - Panel object to be set
    */
   public void changeReferencePanel(JPanel switchTo) {
@@ -119,7 +116,8 @@ public class Button extends JButton implements MouseListener {
    * @param value - Boolean <code>true</code> if dark mode should be enabled
    */
   public void setDark(boolean value) {
-    if(getDark() == value) return;
+    if (getDark() == value)
+      return;
     this.dark = value;
     if (value)
       this.setForeground(Color.WHITE);
@@ -127,9 +125,9 @@ public class Button extends JButton implements MouseListener {
       this.setForeground(Color.BLACK);
   }
 
-
   /**
    * Get previously set color
+   * 
    * @return Color
    */
   public Color getPrevColor() {
@@ -138,6 +136,7 @@ public class Button extends JButton implements MouseListener {
 
   /**
    * Store current color, to be accessed later
+   * 
    * @param color - Current color
    */
   public void setPrevColor(Color color) {
@@ -159,10 +158,12 @@ public class Button extends JButton implements MouseListener {
   }
 
   /**
-   * Transform button to tab button. Tabs are wider
-   * and uncolored. Mainly used for panel navigation.
+   * Transform button to tab button. Tabs are wider and uncolored. Mainly used for
+   * panel navigation.
    */
   public void setTab() {
+    if (getTab())
+      return;
     setSize(200, 50);
     setHorizontalAlignment(SwingConstants.LEFT);
     setMargin(new Insets(5, 5, 10, 10));
@@ -175,8 +176,7 @@ public class Button extends JButton implements MouseListener {
   }
 
   /**
-   * Transform button to small button. Small button are
-   * uncolored.
+   * Transform button to small button. Small button are uncolored.
    */
   public void setSmall() {
     setMargin(new Insets(0, 0, 0, 0));
@@ -203,6 +203,39 @@ public class Button extends JButton implements MouseListener {
     setVerticalAlignment(SwingConstants.CENTER);
   }
 
+  /**
+   * Get whether button is rounded
+   * 
+   * @return Boolean value of rounded
+   */
+  public boolean getRounded() {
+    return rounded;
+  }
+
+  /**
+   * Set whether button is rounded
+   * 
+   * @param value Boolean value to be set of rounded
+   */
+  public void setRounded(boolean value) {
+    if (getRounded() == value)
+      return;
+    setOpaque(!value);
+    rounded = value;
+    repaint();
+  }
+
+  @Override
+  protected void paintComponent(Graphics g) {
+    Graphics2D g2d = (Graphics2D) g.create();
+    g2d.setColor(getBackground());
+    if(getRounded()) {
+      g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+      g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 50, 50);
+    }
+    super.paintComponent(g2d);
+  }
+
   @Override
   public void mouseEntered(MouseEvent e) {
     if (this.filled) {
@@ -222,7 +255,10 @@ public class Button extends JButton implements MouseListener {
     this.setBackground(color);
   }
 
-  public void mouseReleased(MouseEvent e) {}
-  public void mouseClicked(MouseEvent e) {}
+  public void mouseReleased(MouseEvent e) {
+  }
+
+  public void mouseClicked(MouseEvent e) {
+  }
 
 }
