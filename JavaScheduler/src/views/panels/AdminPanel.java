@@ -12,7 +12,6 @@ import views.components.Panel;
 import views.components.TextField;
 
 import java.awt.event.ActionListener;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 
 public class AdminPanel extends Panel {

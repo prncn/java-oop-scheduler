@@ -203,6 +203,7 @@ public class Dashboard extends Panel implements CardModes {
     Label prio = new Label(card.getWidth() - 34, 10, "");
     prio.setSize(24, 24);
     prio.setIcon(event.getPriority().getIcon());
+    name.setFont(name.getFont().deriveFont(15f));
 
     int margin = 6;
 

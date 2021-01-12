@@ -99,6 +99,7 @@ public class ProfilePanel extends Panel {
 
     Label lcNameLabel = new Label(0, 0, "Location name");
     lcNameField = new TextField(0, 20);
+    lcNameField.setText("Test");
     lcpanel.add(lcNameLabel);
     lcpanel.add(lcNameField);
 
@@ -125,10 +126,9 @@ public class ProfilePanel extends Panel {
     });
     add(lcAddBtn);
     setComponentZOrder(lcAddBtn, 0);
-
     drawLocationListPanel(lcpanel);
 
-    MasterUI.setComponentStyles(this, "light");
+    MasterUI.setComponentStyles(lcpanel, "light");
     add(lcpanel);
     add(locationTitle);
   }
@@ -305,18 +305,18 @@ public class ProfilePanel extends Panel {
     for (int i = 0; i < lcLabels.length; i++) {
       String labelStr = lcLabels[i];
       TextField field = lcFields[i];
-      int mid = field.getWidth() / 2 - 5;
-      field.setSize(mid, field.getHeight());
       field.setName(labelStr);
-
+      
       if (i % 2 == 0) {
         Label label = new Label(0, y, labelStr);
+        field.setSize(200, field.getHeight());
         field.setPosition(0, y + 20);
         lcpanel.add(field);
         lcpanel.add(label);
       } else {
-        Label label = new Label(mid + 10, y, labelStr);
-        field.setPosition(mid + 10, y + 20);
+        Label label = new Label(210, y, labelStr);
+        field.setSize(100, field.getHeight());
+        field.setPosition(210, y + 20);
         lcpanel.add(field);
         lcpanel.add(label);
         y += 80;

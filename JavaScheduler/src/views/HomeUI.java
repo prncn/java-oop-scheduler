@@ -55,7 +55,7 @@ public class HomeUI extends MasterUI {
     calendarPanel = new CalendarPanel(frame, 95, false, user);
     profilePanel = new ProfilePanel(frame, user);
     currentPanel = dashPanel;
-    this.add(dashPanel);
+    add(dashPanel);
 
     styleSidebar();
     showAdminPanel();
@@ -211,8 +211,6 @@ public class HomeUI extends MasterUI {
   private void styleSidebar() {
     Label headerinfoUser = new Label(20, 30, "Logged as " + user.getUsername());
     Label headerinfoEmail = new Label(20, 55, user.getEmail());
-    headerinfoEmail.setFont(monoFont);
-    headerinfoUser.setFont(monoFont);
 
     sidebar.setBackground(primaryColAlt);
     sidebar.setBounds(0, 0, 200, this.getHeight());

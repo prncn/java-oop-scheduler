@@ -18,6 +18,8 @@ import views.components.TextField;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileFilter;
+
 import java.awt.Point;
 import java.awt.Color;
 import java.awt.Component;
@@ -26,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.File;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -42,7 +45,7 @@ public class ScheduleEvent extends Panel {
   private Button loPrioBtn;
   private TextField searchUserField;
   private Label userQueryResult;
-  private int participantListPosition = 335;
+  private int participantListPosition;
   private ArrayList<User> participants = new ArrayList<>();
   private Priority selectedPriority;
   private Location selectedLocation;
@@ -55,6 +58,7 @@ public class ScheduleEvent extends Panel {
   public static TextField endField;
   public static TextField locationField;
   public static TextField reminderField;
+  public static TextField attachField;
   private static Label errorPriority;
   private static Label errorTitle;
   private static Label errorDate;
@@ -76,7 +80,7 @@ public class ScheduleEvent extends Panel {
     contentBox = new Point(40, 170);
     Label screenTitle = new Label(40, 40, "Schedule an Event");
     screenTitle.setHeading();
-    if(editEvent != null)  {
+    if (editEvent != null) {
       screenTitle.setText("Edit event");
       screenTitle.setForeground(MasterUI.accentCol);
     }
@@ -87,8 +91,9 @@ public class ScheduleEvent extends Panel {
     initFormContent(lbStrings);
     setDefaultProperties();
     drawPrioritySection();
-    initAddParticipant();
     drawReminderSection();
+    drawAttachmentSection();
+    drawParticipantSection();
     processConfirm();
 
     add(screenTitle);
@@ -136,7 +141,8 @@ public class ScheduleEvent extends Panel {
 
   /**
    * Build dropdown options as to which custom location to select
-   * @param textfield - Location TextField object to reference 
+   * 
+   * @param textfield - Location TextField object to reference
    */
   private void locationDropdownSelection(TextField textfield) {
     if (dpscroll != null) {
@@ -206,10 +212,10 @@ public class ScheduleEvent extends Panel {
       }
     });
 
-    this.add(rp);
-    this.add(dpdwn);
-    this.add(reminderField);
-    this.add(reminderLabel);
+    add(rp);
+    add(dpdwn);
+    add(reminderField);
+    add(reminderLabel);
   }
 
   /**
@@ -217,14 +223,12 @@ public class ScheduleEvent extends Panel {
    */
   private void initPageButtons() {
     confirmBtn = new Button(40, 550, "Confirm", MasterUI.secondaryCol);
-    addUserBtn = new Button(700, 190, "", MasterUI.lightColAlt);
-    addUserBtn.setSize(40, 40);
-    addUserBtn.setIcon(MasterUI.addUserIcon);
+
     confirmBtn.setTab();
     confirmBtn.centerText();
+    confirmBtn.setRounded(true);
 
-    this.add(confirmBtn);
-    this.add(addUserBtn);
+    add(confirmBtn);
   }
 
   /**
@@ -280,9 +284,9 @@ public class ScheduleEvent extends Panel {
       this.add(textfield);
       initialY += 70;
       /**
-       * When clicking in on a text field, the panel of the date picker
-       * (redpanel) closes, if it has been open, so that a user
-       * does not have to manually close the panel.
+       * When clicking in on a text field, the panel of the date picker (redpanel)
+       * closes, if it has been open, so that a user does not have to manually close
+       * the panel.
        */
       textfield.addFocusListener(new FocusListener() {
         public void focusGained(FocusEvent e) {
@@ -299,11 +303,11 @@ public class ScheduleEvent extends Panel {
   }
 
   /**
-   * Set properties of event to defaul values. If editEvent exists
-   * the event to be edited to filled into form.
+   * Set properties of event to defaul values. If editEvent exists the event to be
+   * edited to filled into form.
    */
   public void setDefaultProperties() {
-    if(editEvent == null){
+    if (editEvent == null) {
       titleField.setText("Proxy Networking");
       locationField.setText("Communications department");
       dateField.setText("2021-01-12");
@@ -318,9 +322,8 @@ public class ScheduleEvent extends Panel {
   }
 
   /**
-   * Search a user to add them to participants.
-   * If the database search fails, an error label indicates the 
-   * query failure. 
+   * Search a user to add them to participants. If the database search fails, an
+   * error label indicates the query failure.
    */
   public void searchParticipant() {
     Panel panel = this;
@@ -342,13 +345,63 @@ public class ScheduleEvent extends Panel {
   }
 
   /**
+   * Create and initialise attachment section
+   */
+  private void drawAttachmentSection() {
+    Label attachLabel = new Label(400, reminderField.getY() + 50, "Attachment (optional)");
+    attachField = new TextField(attachLabel.getX(), attachLabel.getY() + 20);
+    Button attachBtn = new Button(attachField.getX() + attachField.getWidth(), attachField.getY(), "...",
+        MasterUI.lightColAlt);
+    attachBtn.setDark(false);
+    attachBtn.setForeground(MasterUI.accentCol);
+    attachBtn.setSize(attachField.getHeight(), attachField.getHeight());
+    attachBtn.addActionListener(e -> {
+      JFileChooser chooser = new JFileChooser();
+      chooser.setAcceptAllFileFilterUsed(false);
+      chooser.setFileFilter(new FileFilter() {
+        public String getDescription() {
+          return "PDF files and image files";
+        }
+
+        public boolean accept(File f) {
+          if (f.isDirectory()) {
+            return true;
+          } else {
+            String filename = f.getName().toLowerCase();
+            return filename.endsWith(".pdf") || filename.endsWith(".jpg") || filename.endsWith(".jpeg")
+                || filename.endsWith(".png");
+          }
+        }
+      });
+      if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+        attachField.setText(chooser.getSelectedFile().toPath().toString());
+      }
+    });
+
+    try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+        | UnsupportedLookAndFeelException ex) {
+    }
+
+    add(attachBtn);
+    add(attachLabel);
+    add(attachField);
+  }
+
+  /**
    * Create and initialise add-participant section
    */
-  private void initAddParticipant() {
-    Label searchUserLabel = new Label(400, 170, "People to invite");
-    searchUserField = new TextField(400, 190);
+  private void drawParticipantSection() {
+    Label searchUserLabel = new Label(400, 240, "People to invite");
+    searchUserField = new TextField(searchUserLabel.getX(), searchUserLabel.getY() + 20);
 
-    userQueryResult = new Label(400, 250, "");
+    addUserBtn = new Button(700, searchUserField.getY(), "", MasterUI.lightColAlt);
+    addUserBtn.setSize(40, 40);
+    addUserBtn.setIcon(MasterUI.addUserIcon);
+
+    userQueryResult = new Label(400, searchUserField.getY() + 100, "");
+    participantListPosition = userQueryResult.getY() + 50;
     addUserBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         searchParticipant();
@@ -360,19 +413,21 @@ public class ScheduleEvent extends Panel {
         redpanel.setSize(0, 0);
         redpanel.isActive = false;
       }
+
       public void focusLost(FocusEvent e) {
         // System.out.println("focus lost");
       }
     });
 
-    Label hostUser = new Label(400, 300, user.getUsername() + " (Me)");
+    Label hostUser = new Label(400, participantListPosition - 35, user.getUsername() + " (Me)");
     hostUser.setIcon(MasterUI.circleUserIcon);
     hostUser.setVerticalTextPosition(SwingConstants.BOTTOM);
 
-    this.add(hostUser);
-    this.add(searchUserLabel);
-    this.add(searchUserField);
-    this.add(userQueryResult);
+    add(addUserBtn);
+    add(hostUser);
+    add(searchUserLabel);
+    add(searchUserField);
+    add(userQueryResult);
   }
 
   /**
@@ -608,10 +663,9 @@ public class ScheduleEvent extends Panel {
       public void actionPerformed(ActionEvent e) {
         panel.removeAll();
 
-        Event event = ViewModelHandler.consumeEventForm(titleField, dateField, startField, endField, locationField);
-        event.setParticipants(participants);
-        event.setPriority(selectedPriority);
-        if(selectedLocation != null && selectedLocation.getName().equals(locationField.getText())){
+        Event event = ViewModelHandler.consumeEventForm(titleField, dateField, startField, endField, locationField,
+            participants, selectedPriority, attachField);
+        if (selectedLocation != null && selectedLocation.getName().equals(locationField.getText())) {
           event.setLocation(selectedLocation);
         }
         Panel createMeetingConfirm;
