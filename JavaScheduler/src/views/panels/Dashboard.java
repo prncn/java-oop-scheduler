@@ -10,6 +10,7 @@ import controllers.ViewModelHandler;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -138,7 +139,7 @@ public class Dashboard extends Panel implements CardModes {
    * @param content
    */
   private static void sectionUpcomingEventsCards(User user, Point content) {
-    List<Event> upcomingEvents = user.getAcceptedEvents();
+    List<Event> upcomingEvents = new ArrayList<>(user.getAcceptedEvents());
     Collections.sort(upcomingEvents);
     upcomingEvents.removeIf(e -> e.hasPassed()); // filter passed events
 
@@ -147,7 +148,7 @@ public class Dashboard extends Panel implements CardModes {
       if (i > 8)
         break; // slice list after 8 entries
       int mgn = 15; // margin in pixels
-      Panel card = drawEventCard(content, event, upSectionInner, UPCOMING);
+      Panel card = drawEventCard(content, event, upSectionInner, VIEW);
 
       content.y += card.getHeight() + mgn;
       if (i == 3)
@@ -164,11 +165,16 @@ public class Dashboard extends Panel implements CardModes {
    * @param content - Point pixel coordinate to place the card
    */
   private static void sectionAllEventsCards(User user, Point content) {
-    List<Event> allEvents = user.getAcceptedEvents();
+    List<Event> allEvents = new ArrayList<>(user.getAcceptedEvents());
     for (int i = 0; i < allEvents.size(); i++) {
       Event event = allEvents.get(i);
       int mgn = 15;
-      Panel card = drawEventCard(content, event, allSectionInner, ALL);
+      Panel card = null;
+      if(event.getHost().equals(user)){
+        card = drawEventCard(content, event, allSectionInner, EDIT);
+      } else {
+        card = drawEventCard(content, event, allSectionInner, VIEW);
+      }
 
       content.y += card.getHeight() + mgn;
       if (i == 3)
@@ -207,7 +213,7 @@ public class Dashboard extends Panel implements CardModes {
 
     int margin = 6;
 
-    if (checkCardModeKey(cardMode) == ALL) {
+    if (checkCardModeKey(cardMode) == EDIT) {
       Button edit = new Button(prio.getX() - (prio.getWidth() + margin), prio.getY(), "");
       edit.setSmall();
       edit.setSize(24, 24);
@@ -253,7 +259,7 @@ public class Dashboard extends Panel implements CardModes {
    * @throws IllegalArgumentException on incorrect layout mode.
    */
   private static int checkCardModeKey(int key) {
-    if (key == UPCOMING || key == ALL || key == NOTIF || key == CALENDAR) {
+    if (key == VIEW || key == EDIT || key == NOTIF || key == CALENDAR) {
       return key;
     } else {
       throw new IllegalArgumentException("Invalid layout mode for event card.");

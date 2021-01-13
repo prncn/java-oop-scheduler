@@ -63,11 +63,21 @@ public class User {
   }
 
   /**
-   * Create new event
+   * Set self to event host and add event
    * 
    * @param event - Newly created event
    */
   public void createEvent(Event event) {
+    event.setHost(this);
+    addEvent(event);
+  }
+
+  /**
+   * Add new event to event list
+   * 
+   * @param event - Newly created event
+   */
+  public void addEvent(Event event) {
     events.add(event);
   }
 

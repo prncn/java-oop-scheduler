@@ -34,7 +34,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScheduleEvent extends Panel {
+public class ScheduleEvent extends Panel implements ScheduleModes {
 
   private static final long serialVersionUID = 1L;
   private Button addUserBtn;
@@ -310,7 +310,7 @@ public class ScheduleEvent extends Panel {
     if (editEvent == null) {
       titleField.setText("Proxy Networking");
       locationField.setText("Communications department");
-      dateField.setText("2021-01-12");
+      dateField.setText("2021-02-12");
       startField.setText("09:00");
       endField.setText("10:35");
     } else {
@@ -521,11 +521,11 @@ public class ScheduleEvent extends Panel {
     Border border = BorderFactory.createLineBorder(MasterUI.hiPrioCol, 1);
     for (Component c : panel.getComponents()) {
 
-      if (c instanceof TextField && isBlankString(((TextField) c).getText()) && c != searchUserField) {
-        ((TextField) c).setBorder(border);
-        errorMsg.setText("Missing required fields.");
-        valid = false;
-      }
+      // if (c instanceof TextField && isBlankString(((TextField) c).getText()) && c != searchUserField) {
+      //   ((TextField) c).setBorder(border);
+      //   errorMsg.setText("Missing required fields.");
+      //   valid = false;
+      // }
 
       if (selectedPriority == null) {
         errorPriority.setText("(Select Priority)");
@@ -671,10 +671,10 @@ public class ScheduleEvent extends Panel {
         Panel createMeetingConfirm;
         if (editEvent != null) {
           editEvent.updateEvent(event);
-          createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, 1);
+          createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, EDIT);
         } else {
           user.createEvent(event);
-          createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, 0);
+          createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, CREATE);
         }
 
         HomeUI.switchPanel(createMeetingConfirm);

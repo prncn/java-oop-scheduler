@@ -3,10 +3,10 @@ package views.panels;
 public interface CardModes {
 
   /** Card layout for upcoming events */
-  public static final int UPCOMING  = 0;
+  public static final int VIEW  = 0;
 
   /** Card layout for all events. Unlocks edit and delete options */
-  public static final int ALL       = 1;
+  public static final int EDIT       = 1;
 
   /** Card layout for notifaction panel. Minimises content. */
   public static final int NOTIF     = 2;

@@ -1,5 +1,6 @@
 package models;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -14,12 +15,12 @@ public class Event implements Comparable<Event> {
   private User host;
   private ArrayList<User> participants;
   private Priority priority;
-  private String attachment;
+  private File attachment;
   private Reminder reminder;
   private String description;
 
   public Event(String name, LocalDate date, LocalTime time, int durationMinutes, Location location,
-      ArrayList<User> participants, Priority priority, String attachment) {
+      ArrayList<User> participants, Priority priority, File attachment) {
     this.name = name;
     this.date = date;
     this.time = time;
@@ -61,7 +62,6 @@ public class Event implements Comparable<Event> {
     time = other.time;
     durationMinutes = other.durationMinutes;
     location = other.location;
-    host = other.host;
     participants = other.participants;
     priority = other.priority;
     attachment = other.attachment;
