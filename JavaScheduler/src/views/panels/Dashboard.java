@@ -200,19 +200,26 @@ public class Dashboard extends Panel implements CardModes {
     card.setRounded(true);
     card.setBounds(p.x, p.y, 300, 100);
     card.setBackground(MasterUI.lightColAlt);
-
+    Button view = new Button(p.x, p.y + 40, "");
+    view.setSize(300, 60);
+    view.setOpaque(false);
+    view.addActionListener(e -> {
+      Panel editEvent = new ScheduleEvent(frame, user, event, ScheduleModes.VIEW);
+      HomeUI.switchPanel(editEvent);
+    });
+    
     Label name = new Label(c.x, c.y, "<html><strong>" + event.getName() + "<strong><html>");
     Label location = new Label(c.x, c.y + 30, event.getLocation().getName());
     Label date = new Label(c.x, c.y + 55, FormatUtil.readableDate(event.getDate()));
     Label time = new Label(c.x + 60, c.y + 55, event.getTime().toString());
-
+    
     Label prio = new Label(card.getWidth() - 34, 10, "");
     prio.setSize(24, 24);
     prio.setIcon(event.getPriority().getIcon());
     name.setFont(name.getFont().deriveFont(15f));
-
+    
     int margin = 6;
-
+    
     if (checkCardModeKey(cardMode) == EDIT) {
       Button edit = new Button(prio.getX() - (prio.getWidth() + margin), prio.getY(), "");
       edit.setSmall();
@@ -220,10 +227,10 @@ public class Dashboard extends Panel implements CardModes {
       edit.setColor(MasterUI.lightColAlt);
       edit.setIcon(MasterUI.editIcon);
       edit.addActionListener(e -> {
-        Panel editEvent = new ScheduleEvent(frame, user, event);
+        Panel editEvent = new ScheduleEvent(frame, user, event, ScheduleModes.EDIT);
         HomeUI.switchPanel(editEvent);
       });
-
+      
       Button remove = new Button(edit.getX() - (edit.getWidth() + margin), edit.getY(), "");
       remove.setSmall();
       remove.setSize(24, 24);
@@ -234,16 +241,17 @@ public class Dashboard extends Panel implements CardModes {
         ViewModelHandler.updateDashboard(user);
         panel.repaint();
       });
-
+      
       card.add(remove);
       card.add(edit);
     }
-
+    
     card.add(prio);
     card.add(name);
     card.add(location);
     card.add(date);
     card.add(time);
+    panel.add(view);
     panel.add(card);
 
     MasterUI.setComponentStyles(card, "light");

@@ -33,15 +33,14 @@ public class ViewModelHandler {
    * @return Event object from given data
    */
   public static Event consumeEventForm(TextField titleField, TextField dateField, TextField startField,
-      TextField endField, TextField locationField, ArrayList<User> participants, Priority priority, TextField attachField) {
+      TextField endField, TextField locationField, ArrayList<User> participants, Priority priority, ArrayList<File> attachments) {
     String eventName = titleField.getText();
     LocalDate eventDate = LocalDate.parse(dateField.getText());
     LocalTime eventTime = LocalTime.parse(startField.getText());
     int eventDuration = FormatUtil.parseDuration(startField.getText(), endField.getText());
     String locationName = locationField.getText();
     Location location = new Location(locationName);
-    File attachment = new File(attachField.getText());
-    return new Event(eventName, eventDate, eventTime, eventDuration, location, participants, priority, attachment);
+    return new Event(eventName, eventDate, eventTime, eventDuration, location, participants, priority, attachments);
   }
 
   /**

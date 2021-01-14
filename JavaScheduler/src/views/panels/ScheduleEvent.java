@@ -3,6 +3,7 @@ package views.panels;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 
+import controllers.FormatUtil;
 import controllers.ViewModelHandler;
 import models.User;
 import models.Priority;
@@ -46,7 +47,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private TextField searchUserField;
   private Label userQueryResult;
   private int participantListPosition;
-  private ArrayList<User> participants = new ArrayList<>();
+  private ArrayList<User> participants;
+  private ArrayList<File> selectedAttachments;
   private Priority selectedPriority;
   private Location selectedLocation;
   private Point contentBox;
@@ -69,35 +71,48 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private JFrame frame;
   private User user;
   private Event editEvent;
+  private int mode;
 
-  public ScheduleEvent(JFrame frame, User user, Event editEvent) {
+  public ScheduleEvent(JFrame frame, User user, Event editEvent, int mode) {
     super(frame);
     this.frame = frame;
     this.user = user;
     this.editEvent = editEvent;
-    participants.add(user);
+    this.mode = mode;
 
     contentBox = new Point(40, 170);
-    Label screenTitle = new Label(40, 40, "Schedule an Event");
+    Label screenTitle = new Label(40, 40, "");
     screenTitle.setHeading();
-    if (editEvent != null) {
+    if (mode == CREATE) {
+      screenTitle.setText("Schedule an Event");
+      participants = new ArrayList<>();
+      selectedAttachments = new ArrayList<>();
+      participants.add(user);
+    } else if (mode == EDIT) {
       screenTitle.setText("Edit event");
       screenTitle.setForeground(MasterUI.accentCol);
+      participants = editEvent.getParticipants();
+      selectedAttachments = editEvent.getAttachments();
+    } else if (mode == VIEW) {
+      screenTitle.setText(editEvent.getName());
+      selectedAttachments = editEvent.getAttachments();
+      participants = editEvent.getParticipants();
     }
-    String[] lbStrings = { "Topic", "When", "Start Time", "Where" };
 
-    initDatePicker();
+    if (mode != VIEW) {
+      initDatePicker();
+    }
     initPageButtons();
-    initFormContent(lbStrings);
-    setDefaultProperties();
+    initFormContent();
     drawPrioritySection();
     drawReminderSection();
     drawAttachmentSection();
     drawParticipantSection();
     processConfirm();
-
+    
     add(screenTitle);
     MasterUI.setComponentStyles(this, "light");
+    setDefaultProperties();
   }
 
   /**
@@ -213,7 +228,9 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     });
 
     add(rp);
-    add(dpdwn);
+    if (mode != VIEW) {
+      add(dpdwn);
+    }
     add(reminderField);
     add(reminderLabel);
   }
@@ -232,11 +249,12 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   }
 
   /**
-   * Create and initialise text forms. This method is designed as a loop instead
-   * of statically for developemental purposes.
+   * Create and initialise text forms. This method is designed as a loop and
+   * not statically for developemental purposes.
    *
    */
-  private void initFormContent(String[] lbStrings) {
+  private void initFormContent() {
+    String[] lbStrings = { "Topic", "When", "Start Time", "Where" };
     int initialY = contentBox.y;
     for (String lbString : lbStrings) {
       Label label = new Label(contentBox.x, initialY, lbString);
@@ -274,31 +292,33 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
           dpdwn.setIcon(MasterUI.downIcon);
           dpdwn.setSize(40, 40);
           dpdwn.addActionListener(e -> locationDropdownSelection(textfield));
-          this.add(dpdwn);
+          if (mode != VIEW) add(dpdwn);
           break;
         default:
           textfield = new TextField(contentBox.x, initialY + 20);
           break;
       }
-      this.add(label);
-      this.add(textfield);
+      add(label);
+      add(textfield);
       initialY += 70;
       /**
        * When clicking in on a text field, the panel of the date picker (redpanel)
        * closes, if it has been open, so that a user does not have to manually close
        * the panel.
        */
-      textfield.addFocusListener(new FocusListener() {
-        public void focusGained(FocusEvent e) {
-          redpanel.setSize(0, 0);
-          redpanel.isActive = false;
-          textfield.setText("");
-        }
-
-        public void focusLost(FocusEvent e) {
-          // unchanged
-        }
-      });
+      if (mode != VIEW) {
+        textfield.addFocusListener(new FocusListener() {
+          public void focusGained(FocusEvent e) {
+            redpanel.setSize(0, 0);
+            redpanel.isActive = false;
+            textfield.setText("");
+          }
+  
+          public void focusLost(FocusEvent e) {
+            // unchanged
+          }
+        });
+      }
     }
   }
 
@@ -314,10 +334,30 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       startField.setText("09:00");
       endField.setText("10:35");
     } else {
+      prioBtnAction(editEvent.getPriority());
       titleField.setText(editEvent.getName());
       locationField.setText(editEvent.getLocation().getName());
       dateField.setText(editEvent.getDate().toString());
       startField.setText(editEvent.getTime().toString());
+      endField.setText(FormatUtil.getEndTime(editEvent.getTime(), editEvent.getDurationMinutes()).toString());
+      String attachStr = "";
+      for (File f : editEvent.getAttachments()) {
+        attachStr += f.getName() + " ";
+      }
+
+      System.out.println(attachStr);
+      attachField.setText(attachStr);
+    }
+
+    if (mode == VIEW) {
+      TextField[] fields = { titleField, locationField, dateField, startField, endField, attachField, reminderField };
+      for (TextField field : fields) {
+        field.setBackground(MasterUI.lightCol);
+        field.setEditable(false);
+        field.setEqualPadding(0);
+      }
+
+      repaint();
     }
   }
 
@@ -338,8 +378,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       Label participantLabel = new Label(400, participantListPosition, "");
       participantLabel.setText(user.getUsername());
       participantLabel.setIcon(MasterUI.circleUserIcon);
-      this.add(participantLabel);
-      this.repaint();
+      add(participantLabel);
+      repaint();
       participantListPosition += 35;
     }
   }
@@ -348,7 +388,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * Create and initialise attachment section
    */
   private void drawAttachmentSection() {
-    Label attachLabel = new Label(400, reminderField.getY() + 50, "Attachment (optional)");
+    Label attachLabel = new Label(400, reminderField.getY() + 50, "Attachments (optional)");
     attachField = new TextField(attachLabel.getX(), attachLabel.getY() + 20);
     Button attachBtn = new Button(attachField.getX() + attachField.getWidth(), attachField.getY(), "...",
         MasterUI.lightColAlt);
@@ -374,7 +414,12 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         }
       });
       if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-        attachField.setText(chooser.getSelectedFile().toPath().toString());
+        File file = chooser.getSelectedFile();
+        String join = " ";
+        if (selectedAttachments.isEmpty())
+          join = "";
+        attachField.setText(attachField.getText() + join + file.getName());
+        selectedAttachments.add(file);
       }
     });
 
@@ -384,7 +429,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         | UnsupportedLookAndFeelException ex) {
     }
 
-    add(attachBtn);
+    if (mode != VIEW) add(attachBtn);
     add(attachLabel);
     add(attachField);
   }
@@ -401,7 +446,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     addUserBtn.setIcon(MasterUI.addUserIcon);
 
     userQueryResult = new Label(400, searchUserField.getY() + 100, "");
-    participantListPosition = userQueryResult.getY() + 50;
+    participantListPosition = userQueryResult.getY() + 15;
     addUserBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         searchParticipant();
@@ -419,15 +464,22 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       }
     });
 
-    Label hostUser = new Label(400, participantListPosition - 35, user.getUsername() + " (Me)");
-    hostUser.setIcon(MasterUI.circleUserIcon);
-    hostUser.setVerticalTextPosition(SwingConstants.BOTTOM);
+    for (User part : participants) {
+      Label partLabel = new Label(400, participantListPosition, part.getUsername());
+      if (part.equals(user))
+        partLabel.setText(partLabel.getText() + " (Me)");
+      partLabel.setIcon(MasterUI.circleUserIcon);
+      partLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+      add(partLabel);
+      participantListPosition += 35;
+    }
 
-    add(addUserBtn);
-    add(hostUser);
-    add(searchUserLabel);
-    add(searchUserField);
-    add(userQueryResult);
+    if (mode != VIEW) {
+      add(addUserBtn);
+      add(searchUserLabel);
+      add(searchUserField);
+      add(userQueryResult);
+    }
   }
 
   /**
@@ -439,14 +491,14 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     midPrioBtn = new Button(140, 120, "MEDIUM", new Color(129, 109, 254));
     hiPrioBtn = new Button(240, 120, "HIGH", MasterUI.accentCol);
 
-    loPrioBtn.addActionListener(prioBtnAction(Priority.LOW, loPrioBtn));
-    midPrioBtn.addActionListener(prioBtnAction(Priority.MEDIUM, midPrioBtn));
-    hiPrioBtn.addActionListener(prioBtnAction(Priority.HIGH, hiPrioBtn));
+    loPrioBtn.addActionListener(e -> prioBtnAction(Priority.LOW));
+    midPrioBtn.addActionListener(e -> prioBtnAction(Priority.MEDIUM));
+    hiPrioBtn.addActionListener(e -> prioBtnAction(Priority.HIGH));
 
-    this.add(priorityLabel);
-    this.add(loPrioBtn);
-    this.add(midPrioBtn);
-    this.add(hiPrioBtn);
+    add(priorityLabel);
+    add(loPrioBtn);
+    add(midPrioBtn);
+    add(hiPrioBtn);
   }
 
   /**
@@ -465,18 +517,27 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * Get button action for priority buttons
    * 
    * @param prio - Priority enum
-   * @param btn  - Button for priority
-   * @return ActionListener styling priority button
    */
-  public ActionListener prioBtnAction(Priority prio, Button btn) {
-    return new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        styleDefaultPriorityBtns();
-        btn.setColor(prio.getColor());
-        btn.setText(prio.toString());
-        selectedPriority = prio;
-      }
-    };
+  public void prioBtnAction(Priority prio) {
+    Button btn;
+    switch (prio) {
+      case HIGH:
+        btn = hiPrioBtn;
+        break;
+      case MEDIUM:
+        btn = midPrioBtn;
+        break;
+      case LOW:
+        btn = loPrioBtn;
+        break;
+      default:
+        btn = loPrioBtn;
+        break;
+    }
+    styleDefaultPriorityBtns();
+    btn.setColor(prio.getColor());
+    btn.setText(prio.toString());
+    selectedPriority = prio;
   }
 
   /**
@@ -505,9 +566,10 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       }
     });
 
-    this.add(openDatePicker);
-    this.add(redpanel);
-    this.setComponentZOrder(redpanel, 0);
+    add(openDatePicker);
+    add(redpanel);
+    setComponentZOrder(openDatePicker, 0);
+    setComponentZOrder(redpanel, 1);
   }
 
   /**
@@ -521,10 +583,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     Border border = BorderFactory.createLineBorder(MasterUI.hiPrioCol, 1);
     for (Component c : panel.getComponents()) {
 
-      // if (c instanceof TextField && isBlankString(((TextField) c).getText()) && c != searchUserField) {
-      //   ((TextField) c).setBorder(border);
-      //   errorMsg.setText("Missing required fields.");
-      //   valid = false;
+      // if (c instanceof TextField && isBlankString(((TextField) c).getText()) && c
+      // != searchUserField) {
+      // ((TextField) c).setBorder(border);
+      // errorMsg.setText("Missing required fields.");
+      // valid = false;
       // }
 
       if (selectedPriority == null) {
@@ -640,7 +703,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private void processConfirm() {
     Panel panel = this;
     Label errorMsg = new Label(40, 520, "");
-    this.add(errorMsg);
+    add(errorMsg);
 
     errorPriority = new Label(contentBox.x + 50, 100, "");
     errorTitle = new Label(contentBox.x + 50, contentBox.y, "");
@@ -651,40 +714,51 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     errorEndTime = new Label(contentBox.x + 221, contentBox.y + 140, "");
     errorReminder = new Label(614, 100, "");
 
-    this.add(errorTitle);
-    this.add(errorDate);
-    this.add(errorStartTime);
-    this.add(errorEndTime);
-    this.add(errorLocation);
-    this.add(errorReminder);
-    this.add(errorPriority);
+    add(errorTitle);
+    add(errorDate);
+    add(errorStartTime);
+    add(errorEndTime);
+    add(errorLocation);
+    add(errorReminder);
+    add(errorPriority);
 
     ActionListener createAction = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         panel.removeAll();
 
         Event event = ViewModelHandler.consumeEventForm(titleField, dateField, startField, endField, locationField,
-            participants, selectedPriority, attachField);
+            participants, selectedPriority, selectedAttachments);
         if (selectedLocation != null && selectedLocation.getName().equals(locationField.getText())) {
           event.setLocation(selectedLocation);
         }
         Panel createMeetingConfirm;
-        if (editEvent != null) {
-          editEvent.updateEvent(event);
-          createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, EDIT);
-        } else {
-          user.createEvent(event);
-          createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, CREATE);
+        switch (mode) {
+          case CREATE:
+            user.createEvent(event);
+            createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, CREATE);
+            HomeUI.switchPanel(createMeetingConfirm);
+            HomeUI.createTab.changeReferencePanel(createMeetingConfirm);
+            break;
+          case EDIT:
+            editEvent.updateEvent(event);
+            createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, EDIT);
+            HomeUI.switchPanel(HomeUI.dashPanel);
+            HomeUI.createPanel = new ScheduleEvent(frame, user, null, ScheduleModes.CREATE);
+            HomeUI.createTab.changeReferencePanel(HomeUI.createPanel);
+            break;
+          case VIEW:
+            HomeUI.switchPanel(HomeUI.dashPanel);
+            break;
         }
 
-        HomeUI.switchPanel(createMeetingConfirm);
-        HomeUI.createTab.changeReferencePanel(createMeetingConfirm);
       }
     };
 
     confirmBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        if (!validateForm(errorMsg, panel)) {
+        if (!validateForm(errorMsg, panel)) return;
+        if (mode == VIEW) {
+          HomeUI.switchPanel(HomeUI.dashPanel);
           return;
         }
         HomeUI.confirmDialog(createAction, "Proceed with this event?");

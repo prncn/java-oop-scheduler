@@ -36,9 +36,6 @@ abstract public class MasterUI extends JFrame {
   public static Color fontCol = Color.WHITE;
   public static Color lightCol = new Color(250, 250, 255);
   public static Color lightColAlt = new Color(240, 240, 245);
-  // protected static Color primaryCol = new Color(250, 250, 255);
-  // protected static Color primaryColAlt = new Color(240, 240, 245);
-  // protected static Color foregroundCol = Color.BLACK;
 
   public static Color secondaryCol = new Color(116, 207, 183);
   public static Color secondaryColAlt = secondaryCol.darker();
@@ -72,6 +69,7 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon backIcon = new ImageIcon(fileRoot + iconsRoot + "left-arrow-alt-solid-24.png");
   public static ImageIcon downIcon = new ImageIcon(fileRoot + iconsRoot + "chevron-down-solid-24.png");
   public static ImageIcon downIconDark = new ImageIcon(fileRoot + iconsRoot + "chevron-down-solid-24-dark.png");
+
   public static ImageIcon dashboardIcon = new ImageIcon(fileRoot + iconsRoot + "category-regular-24.png");
   public static ImageIcon addUserIcon = new ImageIcon(fileRoot + iconsRoot + "user-plus-solid-24.png");
   public static ImageIcon circleUserIcon = new ImageIcon(fileRoot + iconsRoot + "user-circle-regular-36.png");
@@ -84,9 +82,13 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon searchIcon = new ImageIcon(fileRoot + iconsRoot + "search-regular-24.png");
   public static ImageIcon editIcon = new ImageIcon(fileRoot + iconsRoot + "edit-solid-24.png");
   public static ImageIcon removeIcon = new ImageIcon(fileRoot + iconsRoot + "trash-alt-regular-24.png");
+  
   public static ImageIcon hiPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-rd.png");
   public static ImageIcon midPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-ylw.png");
   public static ImageIcon loPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-grn.png");
+  public static ImageIcon pdfIcon = new ImageIcon(fileRoot + iconsRoot + "file-pdf-solid-24.png");
+  public static ImageIcon jpgIcon = new ImageIcon(fileRoot + iconsRoot + "file-jpg-solid-24.png");
+  public static ImageIcon pngIcon = new ImageIcon(fileRoot + iconsRoot + "file-png-solid-24.png");
 
   public MasterUI() {
     this.setIconImage(favicon.getImage());

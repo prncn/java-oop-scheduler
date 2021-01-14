@@ -15,12 +15,12 @@ public class Event implements Comparable<Event> {
   private User host;
   private ArrayList<User> participants;
   private Priority priority;
-  private File attachment;
+  private ArrayList<File> attachments;
   private Reminder reminder;
   private String description;
 
   public Event(String name, LocalDate date, LocalTime time, int durationMinutes, Location location,
-      ArrayList<User> participants, Priority priority, File attachment) {
+      ArrayList<User> participants, Priority priority, ArrayList<File> attachments) {
     this.name = name;
     this.date = date;
     this.time = time;
@@ -28,7 +28,7 @@ public class Event implements Comparable<Event> {
     this.location = location;
     this.participants = participants;
     this.priority = priority;
-    this.attachment = attachment;
+    this.attachments = attachments;
   }
 
   /**
@@ -45,7 +45,7 @@ public class Event implements Comparable<Event> {
     host = other.host;
     participants = other.participants;
     priority = other.priority;
-    attachment = other.attachment;
+    attachments = other.attachments;
     reminder = other.reminder;
     description = other.description;
   }
@@ -64,7 +64,7 @@ public class Event implements Comparable<Event> {
     location = other.location;
     participants = other.participants;
     priority = other.priority;
-    attachment = other.attachment;
+    attachments = other.attachments;
     reminder = other.reminder;
     description = other.description;
   }
@@ -105,6 +105,176 @@ public class Event implements Comparable<Event> {
     this.name = name;
   }
 
+  
+  /**
+   * Get Priority
+   * 
+   * @return Enum level of priority
+   */
+  public Priority getPriority() {
+    return this.priority;
+  }
+  
+  /**
+   * Set Priority
+   * 
+   * @param level - Enum of priority
+   */
+  public void setPriority(Priority level) {
+    this.priority = level;
+  }
+  
+  /**
+   * Get reminder
+   * 
+   * @return Enum time of reminder
+   */
+  public Reminder getReminder() {
+    return reminder;
+  }
+  
+  /**
+   * Set reminder
+   * 
+   * @param reminder Enum time of reminder
+   */
+  public void setReminder(Reminder reminder) {
+    this.reminder = reminder;
+  }
+  
+  /**
+   * Get date of event
+   * 
+   * @return - LocalDate object of event
+   */
+  public LocalDate getDate() {
+    return date;
+  }
+  
+  /**
+   * Set date of event
+   * 
+   * @param date - LocalDate object of event
+   */
+  public void setDate(LocalDate date) {
+    this.date = date;
+  }
+  
+  /**
+   * Get starting time of event
+   * 
+   * @return LocalTime object of event
+   */
+  public LocalTime getTime() {
+    return time;
+  }
+  
+  /**
+   * Set starting time of event
+   * 
+   * @param time LocalTime object of event
+   */
+  public void setTime(LocalTime time) {
+    this.time = time;
+  }
+  
+  /**
+   * Get duration of event in minutes
+   * 
+   * @return - Integer of duration
+   */
+  public int getDurationMinutes() {
+    return durationMinutes;
+  }
+  
+  /**
+   * Set duration of event in minutes
+   * 
+   * @param durationMinutes - Integer of duration
+   */
+  public void setDurationMinutes(int durationMinutes) {
+    this.durationMinutes = durationMinutes;
+  }
+  
+  /**
+   * Get description
+   * 
+   * @return Description of event
+   */
+  public String getDescription() {
+    return description;
+  }
+  
+  /**
+   * Set description
+   * 
+   * @param description - Description of event
+   */
+  public void setDescription(String description) {
+    this.description = description;
+  }
+  
+  /**
+   * Set location
+   * 
+   * @return - Location of event
+   */
+  public Location getLocation() {
+    return location;
+  }
+  
+  /**
+   * Set location
+   * 
+   * @param location - Location of event
+   */
+  public void setLocation(Location location) {
+    this.location = location;
+  }
+  
+  /**
+   * Get host
+   * 
+   * @return - User host
+   */
+  public User getHost() {
+    return host;
+  }
+  
+  /**
+   * Set host
+   * 
+   * @param host - User to be set to host
+   */
+  public void setHost(User host) {
+    this.host = host;
+  }
+  
+  /**
+   * Check if event is in the past
+   * 
+   * @return
+   */
+  public boolean hasPassed() {
+    return date.isBefore(LocalDate.now());
+  }
+
+  /**
+   * Get attachments
+   * @return attachments list
+   */
+  public ArrayList<File> getAttachments() {
+    return attachments;
+  }
+
+  /**
+   * Set attachments
+   * @param attachments attachments list
+   */
+  public void setAttachments(ArrayList<File> attachments) {
+    this.attachments = attachments;
+  }
+
   /**
    * Get participants
    * 
@@ -122,160 +292,7 @@ public class Event implements Comparable<Event> {
   public void setParticipants(ArrayList<User> participants) {
     this.participants = participants;
   }
-
-  /**
-   * Get Priority
-   * 
-   * @return Enum level of priority
-   */
-  public Priority getPriority() {
-    return this.priority;
-  }
-
-  /**
-   * Set Priority
-   * 
-   * @param level - Enum of priority
-   */
-  public void setPriority(Priority level) {
-    this.priority = level;
-  }
-
-  /**
-   * Get reminder
-   * 
-   * @return Enum time of reminder
-   */
-  public Reminder getReminder() {
-    return reminder;
-  }
-
-  /**
-   * Set reminder
-   * 
-   * @param reminder Enum time of reminder
-   */
-  public void setReminder(Reminder reminder) {
-    this.reminder = reminder;
-  }
-
-  /**
-   * Get date of event
-   * 
-   * @return - LocalDate object of event
-   */
-  public LocalDate getDate() {
-    return date;
-  }
-
-  /**
-   * Set date of event
-   * 
-   * @param date - LocalDate object of event
-   */
-  public void setDate(LocalDate date) {
-    this.date = date;
-  }
-
-  /**
-   * Get starting time of event
-   * 
-   * @return LocalTime object of event
-   */
-  public LocalTime getTime() {
-    return time;
-  }
-
-  /**
-   * Set starting time of event
-   * 
-   * @param time LocalTime object of event
-   */
-  public void setTime(LocalTime time) {
-    this.time = time;
-  }
-
-  /**
-   * Get duration of event in minutes
-   * 
-   * @return - Integer of duration
-   */
-  public int getDurationMinutes() {
-    return durationMinutes;
-  }
-
-  /**
-   * Set duration of event in minutes
-   * 
-   * @param durationMinutes - Integer of duration
-   */
-  public void setDurationMinutes(int durationMinutes) {
-    this.durationMinutes = durationMinutes;
-  }
-
-  /**
-   * Get description
-   * 
-   * @return Description of event
-   */
-  public String getDescription() {
-    return description;
-  }
-
-  /**
-   * Set description
-   * 
-   * @param description - Description of event
-   */
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  /**
-   * Set location
-   * 
-   * @return - Location of event
-   */
-  public Location getLocation() {
-    return location;
-  }
-
-  /**
-   * Set location
-   * 
-   * @param location - Location of event
-   */
-  public void setLocation(Location location) {
-    this.location = location;
-  }
-
-  /**
-   * Get host
-   * 
-   * @return - User host
-   */
-  public User getHost() {
-    return host;
-  }
-
-  /**
-   * Set host
-   * 
-   * @param host - User to be set to host
-   */
-  public void setHost(User host) {
-    this.host = host;
-  }
-
-  /**
-   * Check if event is in the past
-   * 
-   * @return
-   */
-  public boolean hasPassed() {
-    return date.isBefore(LocalDate.now());
-  }
-
+  
   /**
    * todo
    *
@@ -285,7 +302,7 @@ public class Event implements Comparable<Event> {
   public boolean addParticipant(User user) {
     return false;
   }
-
+  
   /**
    * todo
    *
@@ -295,7 +312,7 @@ public class Event implements Comparable<Event> {
   public boolean removeParticipant(User user) {
     return false;
   }
-
+  
   @Override
   public int compareTo(Event other) {
     if (getDate() == null || other.getDate() == null) {
@@ -303,5 +320,5 @@ public class Event implements Comparable<Event> {
     }
     return getDate().compareTo(other.getDate());
   }
-
+  
 }
