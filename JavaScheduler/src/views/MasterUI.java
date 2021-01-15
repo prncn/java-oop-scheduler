@@ -69,6 +69,7 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon backIcon = new ImageIcon(fileRoot + iconsRoot + "left-arrow-alt-solid-24.png");
   public static ImageIcon downIcon = new ImageIcon(fileRoot + iconsRoot + "chevron-down-solid-24.png");
   public static ImageIcon downIconDark = new ImageIcon(fileRoot + iconsRoot + "chevron-down-solid-24-dark.png");
+  public static ImageIcon xIcon = new ImageIcon(fileRoot + iconsRoot + "x-regular-24.png");
 
   public static ImageIcon dashboardIcon = new ImageIcon(fileRoot + iconsRoot + "category-regular-24.png");
   public static ImageIcon addUserIcon = new ImageIcon(fileRoot + iconsRoot + "user-plus-solid-24.png");
@@ -86,9 +87,9 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon hiPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-rd.png");
   public static ImageIcon midPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-ylw.png");
   public static ImageIcon loPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-grn.png");
-  public static ImageIcon pdfIcon = new ImageIcon(fileRoot + iconsRoot + "file-pdf-solid-24.png");
-  public static ImageIcon jpgIcon = new ImageIcon(fileRoot + iconsRoot + "file-jpg-solid-24.png");
-  public static ImageIcon pngIcon = new ImageIcon(fileRoot + iconsRoot + "file-png-solid-24.png");
+  public static ImageIcon pdfIcon = new ImageIcon(fileRoot + iconsRoot + "file-pdf-solid-48.png");
+  public static ImageIcon jpgIcon = new ImageIcon(fileRoot + iconsRoot + "file-jpg-solid-48.png");
+  public static ImageIcon pngIcon = new ImageIcon(fileRoot + iconsRoot + "file-png-solid-48.png");
 
   public MasterUI() {
     this.setIconImage(favicon.getImage());

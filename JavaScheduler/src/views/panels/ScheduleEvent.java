@@ -24,12 +24,14 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.Point;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -109,7 +111,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     drawAttachmentSection();
     drawParticipantSection();
     processConfirm();
-    
+
     add(screenTitle);
     MasterUI.setComponentStyles(this, "light");
     setDefaultProperties();
@@ -249,8 +251,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   }
 
   /**
-   * Create and initialise text forms. This method is designed as a loop and
-   * not statically for developemental purposes.
+   * Create and initialise text forms. This method is designed as a loop and not
+   * statically for developemental purposes.
    *
    */
   private void initFormContent() {
@@ -292,7 +294,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
           dpdwn.setIcon(MasterUI.downIcon);
           dpdwn.setSize(40, 40);
           dpdwn.addActionListener(e -> locationDropdownSelection(textfield));
-          if (mode != VIEW) add(dpdwn);
+          if (mode != VIEW)
+            add(dpdwn);
           break;
         default:
           textfield = new TextField(contentBox.x, initialY + 20);
@@ -313,7 +316,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
             redpanel.isActive = false;
             textfield.setText("");
           }
-  
+
           public void focusLost(FocusEvent e) {
             // unchanged
           }
@@ -388,6 +391,9 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * Create and initialise attachment section
    */
   private void drawAttachmentSection() {
+    Panel attachpanel = new Panel();
+    attachpanel.setBounds(750, 40, 220, 500);
+    attachpanel.setBackground(MasterUI.lightCol);
     Label attachLabel = new Label(400, reminderField.getY() + 50, "Attachments (optional)");
     attachField = new TextField(attachLabel.getX(), attachLabel.getY() + 20);
     Button attachBtn = new Button(attachField.getX() + attachField.getWidth(), attachField.getY(), "...",
@@ -420,6 +426,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
           join = "";
         attachField.setText(attachField.getText() + join + file.getName());
         selectedAttachments.add(file);
+        addAttachmentCard(attachpanel);
       }
     });
 
@@ -429,9 +436,54 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         | UnsupportedLookAndFeelException ex) {
     }
 
-    if (mode != VIEW) add(attachBtn);
+    addAttachmentCard(attachpanel);
+
+    if (mode != VIEW)
+      add(attachBtn);
     add(attachLabel);
     add(attachField);
+    add(attachpanel);
+  }
+
+  private void addAttachmentCard(Panel panel) {
+    panel.removeAll();
+    int y = 0;
+    for (File file : selectedAttachments) {
+      Panel fcard = new Panel();
+      fcard.setBounds(0, y, panel.getWidth(), 60);
+      fcard.setBackground(MasterUI.lightCol);
+      fcard.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+      Label ficon = new Label(5, 5, "");
+      Label fname = new Label(55, 10, file.getName());
+      Label fsize = new Label(fname.getX(), fname.getY() + 15, String.valueOf((int) file.length() / 1024) + " KB");
+      Button del = new Button(fcard.getWidth() - 25, 10, "");
+      Button open = new Button(0, 0, "");
+      open.setSize(fcard.getWidth() - 30, fcard.getHeight());
+      open.addActionListener(e -> {
+        try {
+          Desktop.getDesktop().open(file);
+        } catch (IOException exp) {
+          exp.printStackTrace();
+        }
+      });
+      ficon.setIcon(MasterUI.pdfIcon);
+      ficon.setSize(48, 48);
+      fname.setFont(MasterUI.robotoFont.deriveFont(14f));
+      fsize.setFont(MasterUI.robotoFont.deriveFont(11f));
+      del.addActionListener(e -> { panel.remove(fcard); selectedAttachments.remove(file); panel.repaint(); });
+      del.setIcon(MasterUI.xIcon);
+      del.setSize(15, 13);
+
+      fcard.add(open);
+      if(mode != VIEW) fcard.add(del);
+      fcard.add(ficon);
+      fcard.add(fname);
+      fcard.add(fsize);
+
+      panel.add(fcard);
+      panel.repaint();
+      y += fcard.getHeight() + 7;
+    }
   }
 
   /**
