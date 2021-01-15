@@ -5,10 +5,14 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import controllers.PDF_Document;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
 import java.awt.Component;
 import java.awt.Point;
 
@@ -62,6 +66,7 @@ public class HomeUI extends MasterUI {
     showAdminPanel();
     createSidebarTabs();
     initLogoutTab();
+    initExportTab();
 
     setComponentStyles(sidebar, "dark");
     setComponentStyles(panel, "light");
@@ -134,6 +139,33 @@ public class HomeUI extends MasterUI {
     logoutTab.addActionListener(confirmDialogAction(logoutAction, "Are you sure you want to logout?"));
   }
 
+  private void initExportTab() {
+	    ActionListener exportAction = new ActionListener() {
+	      public void actionPerformed(ActionEvent actionEvent) {
+
+	        String dest = "C:/Users/User/Desktop/WeeklyCalendar.pdf";
+	        if(isValidPath(dest)) {
+	        	System.out.println("Path is valid");
+	        	calendarPanel.CreatePDFWeekly();
+	        	PDF_Document.create(user, CalendarPanel.GetWeekly(), dest);
+	        }
+	        else System.out.println("Path is invalid");
+
+	      }
+	    };
+
+	    exportTab.addActionListener(confirmDialogAction(exportAction, "Momentan ist der Path nicht richtig, muss im Code geändert werden!"));
+	  }
+  
+  public static boolean isValidPath(String path) {
+	    try {
+	        Paths.get(path);
+	    } catch (InvalidPathException | NullPointerException ex) {
+	        return false;
+	    }
+	    return true;
+	}
+  
   /**
    * Open a dialog prompt asking the user to confirm their action. This window
    * blocks action on the background until a selection (or exit) is given. On selecting

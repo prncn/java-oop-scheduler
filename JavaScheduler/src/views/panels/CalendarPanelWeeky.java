@@ -68,7 +68,27 @@ public class CalendarPanelWeeky extends Panel {
 
     MasterUI.setComponentStyles(this, "light");
   }
+  
+  public CalendarPanelWeeky(JFrame frame, CalendarPanel origin, User user, Boolean IsOriginalSize) {
+	  super(frame);
+	    this.origin = origin;
+	    this.user = user;
+	    date = ((CalendarPanel) origin).parseDateFromTextField();
 
+	    dayNums = new Panel();
+	    dayNums.setBounds(initialX + 90, initialY, (d_wdth - 2) * 7, 70);
+	    drawDisplayModeBtns(frame);
+
+	    createStaticPanelFullSize();
+	    drawWeekDaysBar(date);
+
+	    this.add(dispModeMonth);
+	    this.add(dispModeWeek);
+	    this.add(dayNums);
+
+	    MasterUI.setComponentStyles(this, "light");
+  }
+  
   /**
    * Replace static calendar panel with the dynamic panel when the user scrolls
    */
@@ -117,7 +137,15 @@ public class CalendarPanelWeeky extends Panel {
     this.add(greenpanel);
     drawGrid(greenpanel);
   }
-
+  
+  private void createStaticPanelFullSize() {
+	    greenpanel = new Panel();
+	    greenpanel.setBounds(10, 120, this.getWidth() - 40, this.getHeight() +80);
+	    greenpanel.setBackground(MasterUI.lightCol);
+	    this.add(greenpanel);
+	    drawGrid(greenpanel);
+	  }
+  
   /**
    * Work-around for java swing limitations. Wrapping this function fixes
    * visibility bugs in scroll component.
