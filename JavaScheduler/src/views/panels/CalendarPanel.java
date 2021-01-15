@@ -1,13 +1,20 @@
 package views.panels;
 
 import java.awt.Color;
+import java.awt.Dimension;
 
 import controllers.FormatUtil;
 import models.Event;
 import models.User;
 
 import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.awt.event.ActionEvent;
@@ -17,6 +24,8 @@ import java.time.YearMonth;
 import java.util.Date;
 import java.util.Locale;
 
+import javax.imageio.ImageIO;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 
@@ -40,6 +49,7 @@ public class CalendarPanel extends Panel {
 
   private Panel redpanel = new Panel();
   private CalendarPanelWeeky weeklyDisplay;
+  private static CalendarPanelWeeky weeklyDisplay_PDF;
   private Button prevActive = null;
   private Button highlightToday;
   public LocalDate today;
@@ -53,6 +63,7 @@ public class CalendarPanel extends Panel {
 
   private boolean isMinified;
   private JFrame frame;
+  private static JFrame original_size;
   public User user;
 
   public CalendarPanel(JFrame frame, int d_wdth, boolean isMinified, User user) {
@@ -519,4 +530,43 @@ public class CalendarPanel extends Panel {
 
     prevActive = dayBtn;
   }
+  
+  public void CreatePDFWeekly() {
+	  original_size = new JFrame();
+	  original_size.setSize(1200,900);
+	  CalendarPanel origin = this;
+	  weeklyDisplay_PDF = new CalendarPanelWeeky(original_size, origin, user, true);
+  }
+  
+	public static BufferedImage createImage(JComponent component)
+	{
+		Dimension d = component.getSize();
+		Rectangle region = new Rectangle(0, 0, d.width, d.height);
+		BufferedImage image = new BufferedImage(region.width, region.height, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2d = image.createGraphics();
+
+
+
+		g2d.translate(-region.x, -region.y);
+		component.print( g2d );
+		g2d.dispose();
+		return image;
+	}
+  
+  public static byte[] GetWeekly() {
+	  	try {
+	          BufferedImage bi = createImage(weeklyDisplay_PDF);  // retrieve image
+	         
+	          ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	          
+	          ImageIO.write(bi, "jpg", baos);
+	          byte[] bytes = baos.toByteArray();
+	          baos.close();
+	          original_size.dispose();
+	          return bytes;
+	      } catch (IOException e) {
+	          e.printStackTrace();
+	      }return null;
+	  }
+  
 }
