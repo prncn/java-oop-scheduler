@@ -13,7 +13,6 @@ import java.awt.Rectangle;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,17 +38,17 @@ import views.MasterUI;
 public class CalendarPanel extends Panel {
 
   private static final long serialVersionUID = 1L;
-  public int d_wdth; // 95
-  final static int initialX = 10; // 20
-  private final int initialY = 100; // 120
+  public int d_wdth; 
+  final static int initialX = 10; 
+  private final int initialY = 100; 
 
   private TextField yearField;
   private TextField monthField;
   private TextField dayField;
 
   private Panel redpanel = new Panel();
-  private CalendarPanelWeeky weeklyDisplay;
-  private static CalendarPanelWeeky weeklyDisplay_PDF;
+  private CalendarPanelWeekly weeklyDisplay;
+  private static CalendarPanelWeekly weeklyDisplay_PDF;
   private Button prevActive = null;
   private Button highlightToday;
   public LocalDate today;
@@ -75,10 +74,10 @@ public class CalendarPanel extends Panel {
     this.user = user;
 
     drawDisplayModeBtns();
-
     meetingsInfo = new Label(700, 250, noMeetingStr);
-    this.add(meetingsInfo);
+    add(meetingsInfo);
     drawWeekDaysBar();
+
     today = LocalDate.now();
     initDateTextFields(today);
     setDisplayAction();
@@ -89,9 +88,9 @@ public class CalendarPanel extends Panel {
 
     redpanel.setBounds(initialX, initialY, 7 * d_wdth, 5 * d_wdth);
     redpanel.setBackground(MasterUI.lightCol);
-    this.add(redpanel);
-    this.add(dispModeWeek);
-    this.add(dispModeMonth);
+    add(redpanel);
+    add(dispModeWeek);
+    add(dispModeMonth);
 
     MasterUI.setComponentStyles(redpanel, "light");
     MasterUI.setComponentStyles(this, "light");
@@ -100,7 +99,8 @@ public class CalendarPanel extends Panel {
   }
 
   /**
-   * Minify panel and shrink/strip components
+   * Minify panel and shrink/strip components.
+   * This is used for the datepicker version of the calendar.
    */
   public void stripComponents() {
     this.remove(yearField);
@@ -119,7 +119,8 @@ public class CalendarPanel extends Panel {
   }
 
   /**
-   * Draw buttons to switch display modes
+   * Draw buttons to switch display modes.
+   * <code>Week</code> shows weekly calendar, <code>Month</code> show regular monthly calendar.
    */
   private static void drawDisplayModeBtns() {
     dispModeWeek = new Button(initialX, 10, "Week", MasterUI.lightColAlt);
@@ -152,11 +153,11 @@ public class CalendarPanel extends Panel {
   private void setDisplayAction() {
     dispModeMonth.setColor(MasterUI.secondaryCol);
     CalendarPanel origin = this;
-    weeklyDisplay = new CalendarPanelWeeky(frame, origin, user);
+    weeklyDisplay = new CalendarPanelWeekly(frame, origin, user);
 
     dispModeWeek.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        weeklyDisplay = new CalendarPanelWeeky(frame, origin, user);
+        weeklyDisplay = new CalendarPanelWeekly(frame, origin, user);
         HomeUI.switchPanel(weeklyDisplay);
         HomeUI.calendarTab.changeReferencePanel(weeklyDisplay);
       }
@@ -164,7 +165,9 @@ public class CalendarPanel extends Panel {
   }
 
   /**
-   * Draw bar containing week day names on calendar
+   * Draw bar containing week day names on calendar.
+   * Weekday names are written out on normal display, and are shortened on 
+   * datepicker.
    */
   private void drawWeekDaysBar() {
     String[] daysFull = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
@@ -258,20 +261,11 @@ public class CalendarPanel extends Panel {
     nextMonthBtn.setIcon(MasterUI.nextIcon);
     prevMonthBtn.setIcon(MasterUI.prevIcon);
 
-    prevMonthBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        navigateMonth("prev", frame);
-      }
-    });
+    prevMonthBtn.addActionListener(e -> navigateMonth("prev", frame));
+    nextMonthBtn.addActionListener(e -> navigateMonth("next", frame)); 
 
-    nextMonthBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        navigateMonth("next", frame);
-      }
-    });
-
-    this.add(nextMonthBtn);
-    this.add(prevMonthBtn);
+    add(nextMonthBtn);
+    add(prevMonthBtn);
   }
 
   /**
@@ -323,7 +317,6 @@ public class CalendarPanel extends Panel {
         dayBtn.setVerticalAlignment(SwingConstants.TOP);
         dayBtn.setDark(true);
 
-        // dayBtn.setIcon(MasterUI.profileIcon);
       } else {
         dayBtn.addActionListener(setInfoAction(noMeetingStr));
       }
@@ -415,7 +408,7 @@ public class CalendarPanel extends Panel {
           switchActiveDayBtn(dayBtn, currentYear, currentMonth, dayNum);
           sendToScheduleForm();
           if (!isMinified) {
-            weeklyDisplay.drawWeekDaysBar(FormatUtil.parseDate(currentYear, currentMonth.getValue(), dayNum));
+            weeklyDisplay.updateWeekDaysBar(FormatUtil.parseDate(currentYear, currentMonth.getValue(), dayNum));
           }
         }
       });
@@ -456,7 +449,8 @@ public class CalendarPanel extends Panel {
   }
 
   /**
-   * Set styles for display mode buttons and navigation buttons
+   * Set styles for display mode buttons
+   * and navigation buttons
    */
   private void styleTopIcons() {
     nextMonthBtn.setSize(60, 35);
@@ -530,43 +524,40 @@ public class CalendarPanel extends Panel {
 
     prevActive = dayBtn;
   }
-  
-  public void CreatePDFWeekly() {
-	  original_size = new JFrame();
-	  original_size.setSize(1200,900);
-	  CalendarPanel origin = this;
-	  weeklyDisplay_PDF = new CalendarPanelWeeky(original_size, origin, user, true);
+
+  public CalendarPanelWeekly createPDFWeekly() {
+    original_size = new JFrame();
+    original_size.setSize(1200, 900);
+    weeklyDisplay_PDF = new CalendarPanelWeekly(original_size, parseDateFromTextField(), user);
+    return weeklyDisplay_PDF;
   }
-  
-	public static BufferedImage createImage(JComponent component)
-	{
-		Dimension d = component.getSize();
-		Rectangle region = new Rectangle(0, 0, d.width, d.height);
-		BufferedImage image = new BufferedImage(region.width, region.height, BufferedImage.TYPE_INT_RGB);
-		Graphics2D g2d = image.createGraphics();
 
+  public static BufferedImage createImage(JComponent component) {
+    Dimension d = component.getSize();
+    Rectangle region = new Rectangle(0, 0, d.width, d.height);
+    BufferedImage image = new BufferedImage(region.width, region.height, BufferedImage.TYPE_INT_RGB);
+    Graphics2D g2d = image.createGraphics();
 
+    g2d.translate(-region.x, -region.y);
+    component.print(g2d);
+    g2d.dispose();
+    return image;
+  }
 
-		g2d.translate(-region.x, -region.y);
-		component.print( g2d );
-		g2d.dispose();
-		return image;
-	}
-  
-  public static byte[] GetWeekly() {
-	  	try {
-	          BufferedImage bi = createImage(weeklyDisplay_PDF);  // retrieve image
-	         
-	          ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	          
-	          ImageIO.write(bi, "jpg", baos);
-	          byte[] bytes = baos.toByteArray();
-	          baos.close();
-	          original_size.dispose();
-	          return bytes;
-	      } catch (IOException e) {
-	          e.printStackTrace();
-	      }return null;
-	  }
-  
+  public static byte[] getWeekly() {
+    try {
+      BufferedImage bi = createImage(weeklyDisplay_PDF); // retrieve image
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+      ImageIO.write(bi, "jpg", baos);
+      byte[] bytes = baos.toByteArray();
+      baos.close();
+      original_size.dispose();
+      return bytes;
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
 }

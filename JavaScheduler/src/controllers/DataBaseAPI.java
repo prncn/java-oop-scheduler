@@ -232,7 +232,7 @@ public class DataBaseAPI {
       String id = result.getString("id");
       String name = result.getString("username");
       String email = result.getString("email");
-      User user = new User(id, name, "", "", email, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+      User user = new User(id, name, "", "", email, new ArrayList<>(), new ArrayList<>());
       closeDatabase(connection);
       return user;
     } catch (SQLException e) {

@@ -24,7 +24,7 @@ import views.components.Button;
 import views.components.Label;
 import views.components.Panel;
 
-public class CalendarPanelWeeky extends Panel {
+public class CalendarPanelWeekly extends Panel {
 
   private static final long serialVersionUID = -8947171452870363548L;
   private Button dispModeWeek;
@@ -38,57 +38,49 @@ public class CalendarPanelWeeky extends Panel {
   private static Label dayName;
   private static Panel scrollpanel;
   private static Panel greenpanel;
+  private Color background;
   private Panel dayNums;
 
   public LocalDate date;
   private CalendarPanel origin;
   private User user;
 
-  public CalendarPanelWeeky(JFrame frame, CalendarPanel origin, User user) {
+  public CalendarPanelWeekly(JFrame frame, CalendarPanel origin, User user) {
     super(frame);
     this.origin = origin;
     this.user = user;
+    background = MasterUI.lightCol;
     date = ((CalendarPanel) origin).parseDateFromTextField();
 
-    dayNums = new Panel();
-    dayNums.setBounds(initialX + 90, initialY, (d_wdth - 2) * 7, 70);
+    drawWeekDaysBar();
     drawDisplayModeBtns(frame);
 
     JScrollPane scroller = createScrollPane();
     scroller.getViewport().add(scrollpanel);
     createDynamicPanel();
     createStaticPanel();
-    drawWeekDaysBar(date);
+    updateWeekDaysBar(date);
     replaceStaticPanel(scroller);
+    add(scroller);
     
-    this.add(scroller);
-    this.add(dispModeMonth);
-    this.add(dispModeWeek);
-    this.add(dayNums);
+    MasterUI.setComponentStyles(this, "light");
+  }
+
+  public CalendarPanelWeekly(JFrame frame, LocalDate date, User user) {
+    super(frame);
+    this.date = date;
+    this.user = user;
+    background = Color.WHITE;
+    setBackground(background);
+
+    drawWeekDaysBar();
+    createStaticPanel();
+    greenpanel.setSize(getWidth() - 40, getHeight() + 80);
+    updateWeekDaysBar(date);
 
     MasterUI.setComponentStyles(this, "light");
   }
-  
-  public CalendarPanelWeeky(JFrame frame, CalendarPanel origin, User user, Boolean IsOriginalSize) {
-	  super(frame);
-	    this.origin = origin;
-	    this.user = user;
-	    date = ((CalendarPanel) origin).parseDateFromTextField();
 
-	    dayNums = new Panel();
-	    dayNums.setBounds(initialX + 90, initialY, (d_wdth - 2) * 7, 70);
-	    drawDisplayModeBtns(frame);
-
-	    createStaticPanelFullSize();
-	    drawWeekDaysBar(date);
-
-	    this.add(dispModeMonth);
-	    this.add(dispModeWeek);
-	    this.add(dayNums);
-
-	    MasterUI.setComponentStyles(this, "light");
-  }
-  
   /**
    * Replace static calendar panel with the dynamic panel when the user scrolls
    */
@@ -104,6 +96,7 @@ public class CalendarPanelWeeky extends Panel {
 
   /**
    * Create scroll pane
+   * 
    * @return JScrollPane object
    */
   private JScrollPane createScrollPane() {
@@ -123,7 +116,7 @@ public class CalendarPanelWeeky extends Panel {
     scrollpanel = new Panel();
     scrollpanel.setPreferredSize(new Dimension(this.getWidth() - 80, 30 * 26));
     scrollpanel.setBounds(10, 120, this.getWidth() - 40, this.getHeight() - 170);
-    scrollpanel.setBackground(MasterUI.lightCol);
+    scrollpanel.setBackground(background);
     drawGrid(scrollpanel);
   }
 
@@ -133,19 +126,11 @@ public class CalendarPanelWeeky extends Panel {
   private void createStaticPanel() {
     greenpanel = new Panel();
     greenpanel.setBounds(10, 120, this.getWidth() - 40, this.getHeight() - 170);
-    greenpanel.setBackground(MasterUI.lightCol);
-    this.add(greenpanel);
+    greenpanel.setBackground(background);
+    add(greenpanel);
     drawGrid(greenpanel);
   }
-  
-  private void createStaticPanelFullSize() {
-	    greenpanel = new Panel();
-	    greenpanel.setBounds(10, 120, this.getWidth() - 40, this.getHeight() +80);
-	    greenpanel.setBackground(MasterUI.lightCol);
-	    this.add(greenpanel);
-	    drawGrid(greenpanel);
-	  }
-  
+
   /**
    * Work-around for java swing limitations. Wrapping this function fixes
    * visibility bugs in scroll component.
@@ -169,17 +154,18 @@ public class CalendarPanelWeeky extends Panel {
     bluepanel.setBackground(FormatUtil.colorLowerAlpha(eventCol, 80));
     bluepanel.setAlpha(0.93f);
 
-    Label eventInfo = new Label(2, 2, "<html><p><strong>" + event.getName() + "</strong><br>" + event.getTime() + "</p><html>");
+    Label eventInfo = new Label(2, 2,
+        "<html><p><strong>" + event.getName() + "</strong><br>" + event.getTime() + "</p><html>");
     eventInfo.setSize(d_wdth - 10, bluepanel.getHeight());
     eventInfo.setFont(MasterUI.robotoFont);
     eventInfo.setVerticalAlignment(SwingConstants.TOP);
     eventInfo.setHorizontalAlignment(SwingConstants.LEFT);
     eventInfo.setForeground(eventCol.darker());
     bluepanel.add(eventInfo);
-    
+
     panel.add(bluepanel);
     panel.setComponentZOrder(bluepanel, 0);
-    
+
     panel.revalidate();
     panel.repaint();
   }
@@ -209,7 +195,9 @@ public class CalendarPanelWeeky extends Panel {
   }
 
   /**
-   * Draw weekly calendar layout grid
+   * Draw weekly calendar layout grid. The cells of the grid
+   * correspond to a 30-minute time frame. Event panel will be placed
+   * on the grid.
    * 
    * @param redpanel - Panel the grid is placed on
    */
@@ -242,29 +230,44 @@ public class CalendarPanelWeeky extends Panel {
   }
 
   /**
-   * Draw buttons to switch display modes
+   * Draw buttons to switch display modes.
+   * <code>Week</code> shows weekly calendar, <code>Month</code> show regular monthly calendar.
    */
   private void drawDisplayModeBtns(JFrame frame) {
     dispModeWeek = new Button(initialX, 10, "Week", MasterUI.secondaryCol);
     dispModeMonth = new Button(70, 10, "Month", MasterUI.lightColAlt);
 
     dispModeMonth.addActionListener(CalendarPanel.getDisplayAction(origin));
-
     dispModeWeek.setDark(true);
     dispModeWeek.setSize(60, 35);
     dispModeMonth.setDark(false);
     dispModeMonth.setSize(60, 35);
+
+    add(dispModeMonth);
+    add(dispModeWeek);
+  }
+  
+  /**
+   * Draw initial week day bar
+   */
+  private void drawWeekDaysBar() {
+    dayNums = new Panel();
+    dayNums.setBackground(background);
+    dayNums.setAlpha(1f);
+    dayNums.setBounds(initialX + 90, initialY, (d_wdth - 2) * 7, 70);
+    add(dayNums);
   }
 
   /**
-   * Draw bar containing week day names on calendar
+   * Update the data on the week day bar, depending on currently
+   * selected day on the monthly calendar
+   * @param date
    */
-  public void drawWeekDaysBar(LocalDate date) {
+  public void updateWeekDaysBar(LocalDate date) {
     String[] days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
     dayNums.removeAll();
-    dayNums.setBackground(MasterUI.lightCol);
     int incremX = 0;
-   
+
     date = date.with(DayOfWeek.MONDAY);
 
     for (String day : days) {
@@ -272,24 +275,41 @@ public class CalendarPanelWeeky extends Panel {
       dayName = new Label(incremX, 40, day);
       dayNum.setSize(d_wdth - 2, 40);
       dayNum.setHeading();
-      if(date.equals(LocalDate.now())){
+      if (date.equals(LocalDate.now())) {
         dayNum.setForeground(MasterUI.accentCol);
       }
       dayName.setSize(d_wdth - 2, 20);
-      
+
       dayNums.add(dayName);
       dayNums.add(dayNum);
       incremX += d_wdth;
 
-      if(user != null){
-        for(Event event : user.getAcceptedEvents()){
-          if(event.getDate().equals(date)){
+      if (user != null) {
+        for (Event event : user.getAcceptedEvents()) {
+          if (event.getDate().equals(date)) {
             placeEventDriver(event);
           }
         }
       }
-      
+
       date = date.plusDays(1);
     }
+  }
+
+  /**
+   * Get origin panel, monthly calendar, of 
+   * current weekly panel
+   * @return CalendarPanel object of calendar
+   */
+  public CalendarPanel getOrigin() {
+    return origin;
+  }
+
+  /**
+   * Get date currently selected in calendar
+   * @return LocalDate object of date
+   */
+  public LocalDate getDate() {
+    return date;
   }
 }
