@@ -22,7 +22,7 @@ public class User {
       ArrayList<Event> acceptEvents, ArrayList<Location> customLocations) {
     this.id = id;
     this.username = username;
-    this.firstname = firstname;#
+    this.firstname = firstname;
     this.lastname = lastname;
     this.email = email;
     this.events = acceptEvents;
