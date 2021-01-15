@@ -445,6 +445,12 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     add(attachpanel);
   }
 
+  /**
+   * When the attachment form receives a new file, a card panel respresenting the
+   * file is added to the right. The card allows the removal and opening of the file.
+   * 
+   * @param panel - Panel that holds the file cards
+   */
   private void addAttachmentCard(Panel panel) {
     panel.removeAll();
     int y = 0;

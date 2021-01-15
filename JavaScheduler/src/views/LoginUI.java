@@ -43,7 +43,7 @@ public class LoginUI extends MasterUI {
     loginBtnAction();
     registerBtnAction();
     
-    setComponentStyles(panel, null);
+    setComponentStyles(panel, "dark");
     screenTitle.setHeading();
     setLocationRelativeTo(null);
     setVisible(true);

@@ -1,6 +1,8 @@
 package views;
 
-import views.components.*;
+import views.components.Label;
+import views.components.Button;
+import views.components.Panel;
 import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -146,7 +148,7 @@ abstract public class MasterUI extends JFrame {
 
     for (Component c : panel.getComponents()) {
       if (c instanceof JLabel) {
-        if(!((Label ) c).getHeading())
+        if(c instanceof Label && !((Label ) c).getHeading())
         c.setForeground(foreground);
       }
       if (c instanceof JTextField) {
