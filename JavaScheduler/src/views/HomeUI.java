@@ -19,6 +19,7 @@ import views.panels.CalendarPanel;
 import views.panels.Dashboard;
 import views.panels.ProfilePanel;
 import views.panels.ScheduleEvent;
+import views.panels.ScheduleModes;
 import models.User;
 
 public class HomeUI extends MasterUI {
@@ -30,7 +31,7 @@ public class HomeUI extends MasterUI {
   private Point tabsBox;
 
   public static Dashboard dashPanel;
-  private ScheduleEvent createPanel;
+  public static ScheduleEvent createPanel;
   public static CalendarPanel calendarPanel;
   private ProfilePanel profilePanel;
   private Button exportTab;
@@ -51,7 +52,7 @@ public class HomeUI extends MasterUI {
 
     tabsBox = new Point(0, 200);
     dashPanel = new Dashboard(frame, user);
-    createPanel = new ScheduleEvent(frame, user, null);
+    createPanel = new ScheduleEvent(frame, user, null, ScheduleModes.CREATE);
     calendarPanel = new CalendarPanel(frame, 95, false, user);
     profilePanel = new ProfilePanel(frame, user);
     currentPanel = dashPanel;

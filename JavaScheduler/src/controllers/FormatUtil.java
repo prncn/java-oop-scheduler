@@ -91,14 +91,26 @@ public class FormatUtil {
 	}
 
 	/**
-	 * Parse LocalDate to readable string Format. 
-	 * For instance, <code>2021-03-05</code> gets parsed to <code>March 5</code>.
+	 * Parse LocalDate to readable string Format. For instance,
+	 * <code>2021-03-05</code> gets parsed to <code>March 5</code>.
+	 * 
 	 * @param date - LocalDate object
 	 * @return String of date
 	 */
 	public static String readableDate(LocalDate date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd");
 		return date.format(formatter);
+	}
+
+	/**
+	 * Get ending time from a giving starting time and duration.
+	 * 
+	 * @param startTime    - Starting LocalTime of event
+	 * @param durationMins - Duration in minutes
+	 * @return LocalTime of ending time
+	 */
+	public static LocalTime getEndTime(LocalTime startTime, int durationMins) {
+		return startTime.plusMinutes((long) durationMins);
 	}
 
 }

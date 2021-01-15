@@ -1,5 +1,6 @@
 package controllers;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -32,15 +33,14 @@ public class ViewModelHandler {
    * @return Event object from given data
    */
   public static Event consumeEventForm(TextField titleField, TextField dateField, TextField startField,
-      TextField endField, TextField locationField, ArrayList<User> participants, Priority priority, TextField attachField) {
+      TextField endField, TextField locationField, ArrayList<User> participants, Priority priority, ArrayList<File> attachments) {
     String eventName = titleField.getText();
     LocalDate eventDate = LocalDate.parse(dateField.getText());
     LocalTime eventTime = LocalTime.parse(startField.getText());
     int eventDuration = FormatUtil.parseDuration(startField.getText(), endField.getText());
     String locationName = locationField.getText();
     Location location = new Location(locationName);
-    String attachment = attachField.getText();
-    return new Event(eventName, eventDate, eventTime, eventDuration, location, participants, priority, attachment);
+    return new Event(eventName, eventDate, eventTime, eventDuration, location, participants, priority, attachments);
   }
 
   /**
@@ -75,7 +75,7 @@ public class ViewModelHandler {
     LocalTime time = LocalTime.parse(String.valueOf(rand.nextInt(17-9) + 9) + ":00", timeFormat);
     int duration = rand.nextInt(190 - 30) + 30;
     System.out.println(duration);
-    Event event = new Event("Test", date, time, duration, new Location("Testtown"), null, Priority.LOW, "");
+    Event event = new Event("Test", date, time, duration, new Location("Testtown"), null, Priority.LOW, null);
     return event;
   }
 
