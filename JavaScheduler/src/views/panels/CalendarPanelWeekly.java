@@ -56,8 +56,8 @@ public class CalendarPanelWeekly extends Panel {
     drawDisplayModeBtns(frame);
 
     JScrollPane scroller = createScrollPane();
-    scroller.getViewport().add(scrollpanel);
     createDynamicPanel();
+    scroller.getViewport().add(scrollpanel);
     createStaticPanel();
     updateWeekDaysBar(date);
     replaceStaticPanel(scroller);
@@ -95,7 +95,8 @@ public class CalendarPanelWeekly extends Panel {
   }
 
   /**
-   * Create scroll pane
+   * Create scroll panel that will hold the scrollable
+   * calendar grid
    * 
    * @return JScrollPane object
    */
