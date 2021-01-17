@@ -4,7 +4,6 @@ import models.*;
 import views.components.Label;
 import views.components.TextField;
 import controllers.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JPasswordField;
