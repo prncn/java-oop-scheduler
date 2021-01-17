@@ -160,7 +160,7 @@ public class HomeUI extends MasterUI {
             CalendarPanelWeekly cpw = calendarPanel.createPDFWeekly();
             LocalDate date = cpw.getDate();
             TemporalField tf = WeekFields.of(Locale.getDefault()).weekOfMonth();
-            String week = tf.toString();
+            // String week = date.
             dest += "\\weekly_schedule_" + date.with(DayOfWeek.MONDAY).toString() + ".pdf";
             File file = PDF_Document.create(user, CalendarPanel.getWeekly(), dest, date);
             try {

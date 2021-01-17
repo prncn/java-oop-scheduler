@@ -143,16 +143,16 @@ public class Dashboard extends Panel implements CardModes {
     Collections.sort(upcomingEvents);
     upcomingEvents.removeIf(e -> e.hasPassed()); // filter passed events
 
-    for (int i = 0; i < upcomingEvents.size(); i++) {
+    for (int i = 0; i < Math.min(8, upcomingEvents.size()); i++) {
       Event event = upcomingEvents.get(i);
-      if (i > 8)
-        break; // slice list after 8 entries
       int mgn = 15; // margin in pixels
       Panel card = drawEventCard(content, event, upSectionInner, VIEW);
 
       content.y += card.getHeight() + mgn;
-      if (i == 3)
-        content.setLocation(310, mgn);
+      if (i == 3) {
+        content.x += card.getWidth() + mgn;
+        content.y = 10;
+      }
     }
   }
 
@@ -176,9 +176,22 @@ public class Dashboard extends Panel implements CardModes {
         card = drawEventCard(content, event, allSectionInner, VIEW);
       }
 
-      content.y += card.getHeight() + mgn;
-      if (i == 3)
-        content.setLocation(310, mgn);
+      if (i % 2 == 0) {
+        content.x += card.getWidth() + mgn;
+      } else {
+        content.x = 0;
+        content.y += card.getHeight() + mgn; 
+      }
+
+      if (i % 7 == 0) {
+        allSectionInner.setSize(allSectionInner.getWidth(), allSectionInner.getHeight() + 500);
+        allSectionInner.revalidate();
+        allSectionInner.repaint();
+
+        redpanel.setSize(redpanel.getWidth(), redpanel.getHeight() + 500);
+        redpanel.revalidate();
+        redpanel.repaint();
+      }
     }
   }
 
@@ -203,6 +216,8 @@ public class Dashboard extends Panel implements CardModes {
     Button view = new Button(p.x, p.y + 40, "");
     view.setSize(300, 60);
     view.setOpaque(false);
+    view.setContentAreaFilled(false);
+    view.setBorderPainted(false);
     view.addActionListener(e -> {
       Panel editEvent = new ScheduleEvent(frame, user, event, ScheduleModes.VIEW);
       HomeUI.switchPanel(editEvent);
