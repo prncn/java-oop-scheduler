@@ -32,6 +32,15 @@ import models.User;
 
 public class PDF_Document {
 
+	/**
+	 * Creates the.
+	 *
+	 * @param user the user for which the weekly calendar is to be created
+	 * @param img the image of the chosen weekly calendar stored in a byte array
+	 * @param dest the path destination where the pdf is stored	
+	 * @param date the date of the week that is to be created
+	 * @return the pdf file which consists of the events and an image of the weekly calendar
+	 */
 	public static File create(User user, byte[] img, String dest, LocalDate date) {
 		org.apache.log4j.BasicConfigurator.configure(new NullAppender());
 
@@ -39,20 +48,21 @@ public class PDF_Document {
 		File file;
 		try {
 			file = new File(dest);
-
+			
 			if (!file.exists()) {
-				writer = new PdfWriter(dest); // file is directory
+				writer = new PdfWriter(dest);
 				System.out.println("file was not yet in directory");
 			} else {
 				int dest_counter = 1;
+				dest = dest.substring(0, dest.length() - 4);
+				String dest_tmp = "";
 				while (file.exists()) {
-					dest = dest + String.valueOf(dest_counter++) + ".pdf";
-					file = new File(dest);
+					dest_tmp = dest + " (" + String.valueOf(dest_counter++) + ")" + ".pdf";
+					file = new File(dest_tmp);
 				}
 				System.out.println("file was already in directory");
-				writer = new PdfWriter(dest);
+				writer = new PdfWriter(dest_tmp);
 			}
-
 			PdfDocument pdfDoc = new PdfDocument(writer);
 			pdfDoc.addNewPage();
 			Document document = new Document(pdfDoc);
@@ -94,6 +104,13 @@ public class PDF_Document {
 		return file;
 	}
 
+	/**
+	 * Adds the days with the according tables to the pdf document.
+	 *
+	 * @param document the document that is used for the file
+	 * @param date the date of the day for which the table is created
+	 * @param user the user for which the pdf file is created
+	 */
 	public static void addDay(Document document, LocalDate date, User user) {
 		String weekday = date.getDayOfWeek().toString();
 		Text curr_day = new Text(weekday);
@@ -125,11 +142,21 @@ public class PDF_Document {
 		addBreak(document);
 	}
 
+	/**
+	 * Adds a break to the pdf document.
+	 *
+	 * @param document the document
+	 */
 	public static void addBreak(Document document) {
 		Paragraph break_n = new Paragraph("\n");
 		document.add(break_n);
 	}
 
+	/**
+	 * Gets the font which is used for the paragraphs.
+	 *
+	 * @return the font
+	 */
 	public static PdfFont getFont() {
 		try {
 			PdfFont font;
@@ -141,6 +168,13 @@ public class PDF_Document {
 		return null;
 	}
 
+	/**
+	 * Adds a paragraph to the document.
+	 *
+	 * @param document the document in which the paragraph is added
+	 * @param text the text that is inserted
+	 * @param big sets the size of the text. 20f for headers, 15f for regular text
+	 */
 	public static void addParagraph(Document document, Text text, boolean big) {
 		text.setFont(getFont());
 		if (big)
