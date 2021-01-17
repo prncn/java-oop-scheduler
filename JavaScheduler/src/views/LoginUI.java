@@ -30,7 +30,7 @@ public class LoginUI extends MasterUI {
   protected static Label success;
   protected JLabel backIconHero;
   protected Label screenTitle;
-  protected static Point lgnBox = new Point(100, 70);
+  protected static Point lgnBox = new Point(70, 70);
 
 
   public LoginUI() {

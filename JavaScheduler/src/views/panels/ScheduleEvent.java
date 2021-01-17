@@ -245,6 +245,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    */
   private void initPageButtons() {
     confirmBtn = new Button(40, 550, "Confirm", MasterUI.secondaryCol);
+    switch (mode) {
+      case VIEW : confirmBtn.setText("Back"); break;
+      case EDIT : confirmBtn.setText("Save Changes"); break;
+      default : confirmBtn.setText("Confirm");
+    }
 
     confirmBtn.setTab();
     confirmBtn.centerText();
