@@ -10,11 +10,14 @@ import controllers.ViewModelHandler;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import models.Event;
+import models.Priority;
 import models.User;
 import views.HomeUI;
 import views.MasterUI;
@@ -28,6 +31,7 @@ public class Dashboard extends Panel implements CardModes {
   private static Panel redpanel;
   private static Panel upSectionInner;
   private static Panel allSectionInner;
+  private static JScrollPane scroller;
   private static Label eventData;
 
   private static JFrame frame;
@@ -42,7 +46,7 @@ public class Dashboard extends Panel implements CardModes {
     redpanel.setBackground(MasterUI.lightCol);
 
     createDashboardTab(user);
-    JScrollPane scroller = createScroller();
+    scroller = createScroller();
 
     Label scrollHintIcon = new Label();
     scrollHintIcon.setBounds(getWidth() / 2 - 50, 600, 24, 24);
@@ -75,7 +79,7 @@ public class Dashboard extends Panel implements CardModes {
 
     upSectionInner = new Panel();
     upSectionInner.setBackground(MasterUI.lightCol);
-    upSectionInner.setBounds(40, 80, getWidth() - 100, getHeight() - 200);
+    upSectionInner.setBounds(40, 80, getWidth() - 380, getHeight() - 200);
 
     Label allEventsTitle = new Label(40, 600, "All Events");
     allEventsTitle.setHeading();
@@ -97,14 +101,25 @@ public class Dashboard extends Panel implements CardModes {
     emptyNotif.setFont(MasterUI.monoFont);
     emptyNotif.setForeground(Color.LIGHT_GRAY);
 
+    Panel filterPanel = new Panel();
+    filterPanel.setBounds(680, 700, 280, 200);
+    filterPanel.setBackground(MasterUI.primaryColAlt);
+    filterPanel.setRounded(true);
+
+    Label filterLabel = new Label(20, 20, "Filter");
+    filterLabel.setHeading();
+    filterLabel.setForeground(Color.WHITE);
+    filterPanel.add(filterLabel);
+
     redpanel.add(emptyNotif);
     redpanel.add(notifLabel);
-
+    
     drawEventData(user);
     redpanel.add(screenTitle);
     redpanel.add(upSectionInner);
     redpanel.add(allEventsTitle);
     redpanel.add(allSectionInner);
+    redpanel.add(filterPanel);
   }
 
   /**
@@ -175,23 +190,18 @@ public class Dashboard extends Panel implements CardModes {
       } else {
         card = drawEventCard(content, event, allSectionInner, VIEW);
       }
-
+      
       if (i % 2 == 0) {
         content.x += card.getWidth() + mgn;
       } else {
         content.x = 0;
         content.y += card.getHeight() + mgn; 
-      }
-
-      if (i % 7 == 0) {
-        allSectionInner.setSize(allSectionInner.getWidth(), allSectionInner.getHeight() + 500);
-        allSectionInner.revalidate();
-        allSectionInner.repaint();
-
-        redpanel.setSize(redpanel.getWidth(), redpanel.getHeight() + 500);
-        redpanel.revalidate();
-        redpanel.repaint();
-      }
+      }  
+    }
+    if (allEvents.size() % 8 == 0) {
+      allSectionInner.setSize(allSectionInner.getWidth(), allSectionInner.getHeight() + 500);
+      redpanel.setSize(redpanel.getWidth(), redpanel.getHeight() + 500);
+      redpanel.setPreferredSize(new Dimension(redpanel.getWidth(), redpanel.getHeight() + 500));
     }
   }
 
@@ -251,16 +261,19 @@ public class Dashboard extends Panel implements CardModes {
       remove.setSize(24, 24);
       remove.setColor(MasterUI.lightColAlt);
       remove.setIcon(MasterUI.removeIcon);
-      remove.addActionListener(e -> {
-        user.removeEvent(event);
-        ViewModelHandler.updateDashboard(user);
-        panel.repaint();
-      });
+      ActionListener removeAction = new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          user.removeEvent(event);
+          ViewModelHandler.updateDashboard(user);
+          panel.repaint();
+        }
+      };
+      remove.addActionListener(e -> HomeUI.confirmDialog(removeAction, "Remove this event?"));
       
       card.add(remove);
       card.add(edit);
     }
-    
+
     card.add(prio);
     card.add(name);
     card.add(location);
@@ -268,9 +281,17 @@ public class Dashboard extends Panel implements CardModes {
     card.add(time);
     panel.add(view);
     panel.add(card);
-
+    
     MasterUI.setComponentStyles(card, "light");
-
+    
+    if (checkCardModeKey(cardMode) == VIEW && event.getPriority() == Priority.HIGH) {
+      card.setBackground(MasterUI.hiPrioCol);
+      Label[] labels = { name, location, date, time };
+      for (Label label : labels) {
+        label.setForeground(MasterUI.lightColAlt);
+      }
+    }
+    
     return card;
   }
 
