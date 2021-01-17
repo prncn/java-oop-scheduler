@@ -2,11 +2,7 @@ package controllers;
 
 import models.*;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 
@@ -18,7 +14,7 @@ public class DataBaseAPI {
 
   /**
    * Build a connection to the application database
-   * @return <code>null</code> on failed connection, else return {@link #Connection} object
+   * @return <code>null</code> on failed connection, else return connection object
    */
   private static Connection connectDatabase() {
     try {
@@ -75,7 +71,7 @@ public class DataBaseAPI {
    * @return SQL result of data entry or <code>null</code> if user doesn't exist
    */
   private static ResultSet fetchUserData(Connection connection, String username) {
-    String sql = "SELECT * FROM UserAccount WHERE username = ?";
+    String sql = "SELECT * FROM User WHERE username = ?";
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.setString(1, username);
@@ -84,6 +80,23 @@ public class DataBaseAPI {
       if (result.next())
         return result;
       return null;
+    } catch (SQLException e) {
+      e.printStackTrace();
+      System.out.println(e);
+      return null;
+    }
+  }
+
+  private static ResultSet fetchEventData(Connection connection, String eventID){
+    String sql = "SELECT * FROM Event WHERE eventID = ?";
+    try{
+      PreparedStatement statement = connection.prepareStatement(sql);
+      statement.setString(1 , eventID);
+      ResultSet result = statement.executeQuery();
+
+      if(result.next()) return result;
+      else return null;
+
     } catch (SQLException e) {
       e.printStackTrace();
       System.out.println(e);
@@ -164,9 +177,8 @@ public class DataBaseAPI {
 			  
 			  statement.close();
 		      closeDatabase(connection);
-		      return allUsers;
 		  }
-		  
+        return allUsers;
 		  
 	      
 	  } catch(SQLException e) {
@@ -232,12 +244,47 @@ public class DataBaseAPI {
       String id = result.getString("id");
       String name = result.getString("username");
       String email = result.getString("email");
-      User user = new User(id, name, "", "", email, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+      // TODO succesfully create the new user
+      User user = new User(id, name, " " , " ", email, new ArrayList<Event>(), new ArrayList<Location>());
       closeDatabase(connection);
       return user;
     } catch (SQLException e) {
       e.printStackTrace();
       return null;
     }
+  }
+
+    /**
+     * Create table entry of new event in database.
+     * @param event Object of new entry.
+     * @return true on successful creation, return false on failed creation
+     */
+  public static boolean createEvent(Event event){
+      String sql = "INSERT INTO Event (id, reminder, priority, name, date, time, durationMinutes, description, hostId, location)" + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      Connection connection = connectDatabase();
+
+      try{
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1 , event.getId());
+        statement.setString(2 , event.getReminder().name());
+        statement.setString(3 , event.getPriority().name());
+        statement.setString(4 , event.getName());
+        statement.setDate(5 , Date.valueOf(event.getDate() ));
+        statement.setTime(6 , Time.valueOf(event.getTime() ));
+        statement.setInt(7 , event.getDurationMinutes());
+        statement.setString(8 , event.getDescription());
+        statement.setString(9 , event.getHost().getId());
+        statement.setString(10 , event.getLocation().getId());
+
+        statement.executeUpdate();
+
+        statement.close();
+        closeDatabase(connection);
+        return true;
+
+      } catch (SQLException e) {
+          e.printStackTrace();
+          return false;
+      }
   }
 }

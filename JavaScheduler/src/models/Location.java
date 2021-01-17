@@ -1,6 +1,7 @@
 package models;
 
 public class Location {
+    private String id;
     private String name;
     private String city;
     private String zip;
@@ -28,6 +29,14 @@ public class Location {
         this.streetNr = streetNr;
         this.building = building;
         this.roomNr = roomNr;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getCity() {

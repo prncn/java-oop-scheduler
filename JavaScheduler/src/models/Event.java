@@ -272,6 +272,10 @@ public class Event implements Comparable<Event> {
     return false;
   }
 
+  public String getAttachment() {
+    return attachment;
+  }
+
   @Override
   public int compareTo(Event other) {
     if (getDate() == null || other.getDate() == null) {
