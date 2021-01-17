@@ -71,9 +71,9 @@ public class PDF_Document {
 
 			addParagraph(document, title, true);
 
-			LocalDate date_mon = LocalDate.now();
+			LocalDate date_mon = date;
 			date_mon = date_mon.with(DayOfWeek.MONDAY);
-			LocalDate date_sun = LocalDate.now();
+			LocalDate date_sun = date;
 			date_sun = date_sun.with(DayOfWeek.SUNDAY);
 
 			Text from_to = new Text(date_mon.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " - "
@@ -119,7 +119,7 @@ public class PDF_Document {
 		float[] pointColumnWidths = { 150F, 150F, 150F, 150F };
 		Table table = new Table(pointColumnWidths);
 		table.addCell(new Cell().add("Name"));
-		table.addCell(new Cell().add("Date"));
+		table.addCell(new Cell().add("Location"));
 		table.addCell(new Cell().add("Time"));
 		table.addCell(new Cell().add("Duration"));
 		for (Event event : user.getAcceptedEvents()) {
@@ -127,7 +127,10 @@ public class PDF_Document {
 				Cell cell = new Cell().add(event.getName());
 				cell.setBackgroundColor(new DeviceGray(0.93f));
 				table.addCell(cell);
-				cell = new Cell().add(event.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+				//cell = new Cell().add(event.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+				//cell.setBackgroundColor(new DeviceGray(0.93f));
+				//table.addCell(cell);
+				cell = new Cell().add(event.getLocation().getName());
 				cell.setBackgroundColor(new DeviceGray(0.93f));
 				table.addCell(cell);
 				cell = new Cell().add(event.getTime().format(DateTimeFormatter.ofPattern("HH:mm")));
