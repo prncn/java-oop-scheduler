@@ -525,6 +525,12 @@ public class CalendarPanel extends Panel {
     prevActive = dayBtn;
   }
 
+  /**
+   * Creates the weekly Calendar for the pdf Document in the original size
+   * on a separate frame.
+   *
+   * @return the weekly calendar in original size 
+   */
   public CalendarPanelWeekly createPDFWeekly() {
     original_size = new JFrame();
     original_size.setSize(1200, 900);
@@ -532,6 +538,12 @@ public class CalendarPanel extends Panel {
     return weeklyDisplay_PDF;
   }
 
+  /**
+   * Creates an image of a component entered.
+   *
+   * @param component the component's image will be created
+   * @return the created image
+   */
   public static BufferedImage createImage(JComponent component) {
     Dimension d = component.getSize();
     Rectangle region = new Rectangle(0, 0, d.width, d.height);
@@ -544,6 +556,12 @@ public class CalendarPanel extends Panel {
     return image;
   }
 
+  /**
+   * Gets the weekly calendar for the pdf document. It also puts the image of
+   * the weekly in a byte array so that it can be added to the document later on.
+   *
+   * @return an image of the weekly calendar as a byte array.
+   */
   public static byte[] getWeekly() {
     try {
       BufferedImage bi = createImage(weeklyDisplay_PDF); // retrieve image

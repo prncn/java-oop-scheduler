@@ -164,8 +164,8 @@ public class DataBaseAPI {
 			  
 			  statement.close();
 		      closeDatabase(connection);
-		      return allUsers;
 		  }
+		  return allUsers;
 		  
 		  
 	      

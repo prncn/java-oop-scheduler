@@ -1,15 +1,9 @@
 package views.panels;
 
-import javax.swing.JFrame;
-import javax.swing.SwingConstants;
-
 import controllers.FormatUtil;
 import controllers.ViewModelHandler;
-import models.User;
-import models.Priority;
-import models.Reminder;
 import models.Event;
-import models.Location;
+import models.*;
 import views.HomeUI;
 import views.MasterUI;
 import views.components.Button;
@@ -23,7 +17,6 @@ import javax.swing.filechooser.FileFilter;
 
 import java.awt.Point;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -48,6 +41,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private Button hiPrioBtn;
   private Button midPrioBtn;
   private Button loPrioBtn;
+  private Button dpdwn;
   private TextField searchUserField;
   private Label userQueryResult;
   private int participantListPosition;
@@ -72,6 +66,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private static Label errorEndTime;
   private static Label errorLocation;
   private static Label errorReminder;
+  private static Label WhereLabel;
   private JFrame frame;
   private User user;
   private Event editEvent;
@@ -273,6 +268,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       switch (lbString) {
         case "Topic":
           textfield = new TextField(contentBox.x, initialY + 20);
+          textfield.setMaximumLength(25);
           titleField = textfield;
           break;
         case "When":
@@ -284,11 +280,13 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         case "Start Time":
           textfield = new TextField(contentBox.x, initialY + 20);
           textfield.setSize((textfield.getWidth() / 2) - 2, textfield.getHeight());
+          textfield.setMaximumLength(5);
           startField = textfield;
 
           Label timelb = new Label(contentBox.x + textfield.getWidth() + 4, initialY, "End Time");
           secondField = new TextField(contentBox.x + textfield.getWidth() + 4, initialY + 20);
           secondField.setSize(textfield.getWidth(), textfield.getHeight());
+          secondField.setMaximumLength(5);
           if (mode == VIEW) {
             Label memberLabel = new Label(400, timelb.getY(), "Participants: ");
             add(memberLabel);
@@ -300,9 +298,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         case "Where":
           textfield = new TextField(contentBox.x, initialY + 20);
           textfield.setSize(textfield.getWidth() - 40, textfield.getHeight());
+          textfield.setMaximumLength(25);
           locationField = textfield;
+          WhereLabel = label;
 
-          Button dpdwn = new Button(contentBox.x + textfield.getWidth(), initialY + 20, "", MasterUI.lightColAlt);
+          dpdwn = new Button(contentBox.x + textfield.getWidth(), initialY + 20, "", MasterUI.lightColAlt);
           dpdwn.setIcon(MasterUI.downIcon);
           dpdwn.setSize(40, 40);
           dpdwn.addActionListener(e -> locationDropdownSelection(textfield));
@@ -658,92 +658,110 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private boolean validateForm(Label errorMsg, Panel panel) {
     boolean valid = true;
     Border border = BorderFactory.createLineBorder(MasterUI.hiPrioCol, 1);
-    for (Component c : panel.getComponents()) {
 
-      // if (c instanceof TextField && isBlankString(((TextField) c).getText()) && c
-      // != searchUserField) {
-      // ((TextField) c).setBorder(border);
-      // errorMsg.setText("Missing required fields.");
-      // valid = false;
-      // }
+    if (selectedPriority == null) {
+      errorPriority.setText("(Select Priority)");
+      errorPriority.setForeground(Color.RED);
+      errorPriority.setHorizontalAlignment(SwingConstants.RIGHT);
+      valid = false;
+    } else {
+      errorPriority.setText("");
+    }
 
-      if (selectedPriority == null) {
-        errorPriority.setText("(Select Priority)");
-        errorPriority.setForeground(Color.RED);
-        errorPriority.setHorizontalAlignment(SwingConstants.RIGHT);
+    if (isBlankString(titleField.getText())) {
+      titleField.setBorder(border);
+      errorTitle.setText("(Topic required)");
+      errorTitle.setForeground(Color.RED);
+      errorTitle.setHorizontalAlignment(SwingConstants.RIGHT);
+      valid = false;
+    } else {
+      errorTitle.setText("");
+      titleField.setBorder(BorderFactory.createEmptyBorder());
+    }
+
+
+    if (isBlankString(dateField.getText())) {
+      dateField.setBorder(border);
+      errorDate.setText("(Select a date)");
+      errorDate.setForeground(Color.RED);
+      errorDate.setHorizontalAlignment(SwingConstants.RIGHT);
+      valid = false;
+    } else {
+      errorDate.setText("");
+      dateField.setBorder(BorderFactory.createEmptyBorder());
+    }
+
+    if (isBlankString(startField.getText()) || !isValidTime(startField.getText())) {
+      startField.setBorder(border);
+      errorStartTime.setText("(invalid time)");
+      errorStartTime.setForeground(Color.RED);
+      errorStartTime.setBounds(contentBox.x, contentBox.y + 132, startField.getWidth(), startField.getHeight());
+      errorStartTime.setHorizontalAlignment(SwingConstants.RIGHT);
+      valid = false;
+    } else {
+      errorStartTime.setText("");
+      startField.setBorder(BorderFactory.createEmptyBorder());
+    }
+
+    if (isBlankString(endField.getText()) || !isValidTime(endField.getText())) {
+      endField.setBorder(border);
+      errorEndTime.setText("(invalid Time)");
+      errorEndTime.setForeground(Color.RED);
+      errorEndTime.setBounds(contentBox.x + endField.getWidth() + 4, contentBox.y + 132, endField.getWidth(),
+          endField.getHeight());
+      errorEndTime.setHorizontalAlignment(SwingConstants.RIGHT);
+      valid = false;
+    } else {
+      errorEndTime.setText("");
+      endField.setBorder(BorderFactory.createEmptyBorder());
+    }
+
+    if(isValidTime(startField.getText()) && isValidTime(endField.getText())) {
+      if(LocalTime.parse(startField.getText()).isAfter(LocalTime.parse(endField.getText()))) {
+        int y = 20;
+        startField.setBorder(border);
+        endField.setBorder(border);
+        errorMsg.setLocation(contentBox.x, contentBox.y + 200);
+        errorMsg.setForeground(Color.RED);
+        errorMsg.setText("Start Time can't be after End Time");
+
+        WhereLabel.setLocation(contentBox.x, contentBox.y +210 +y);
+        errorLocation.setLocation(contentBox.x +50, contentBox.y +210 +y);
+        locationField.setLocation(contentBox.x, contentBox.y + 210 + 2*y);
+        dpdwn.setLocation(contentBox.x + locationField.getWidth(), contentBox.y + 210 + 2*y);
         valid = false;
       } else {
-        errorPriority.setText("");
-      }
+        startField.setBorder(BorderFactory.createEmptyBorder());
+        endField.setBorder(BorderFactory.createEmptyBorder());
+        errorMsg.setText("");
 
-      if ((c == startField || c == endField) && !isValidTime(((TextField) c).getText())) {
-        ((TextField) c).setBorder(border);
-        valid = false;
+        WhereLabel.setLocation(contentBox.x, contentBox.y +210);
+        errorLocation.setLocation(contentBox.x +50, contentBox.y +210);
+        locationField.setLocation(contentBox.x, contentBox.y + 210+20 );
+        dpdwn.setLocation(contentBox.x + locationField.getWidth(), contentBox.y + 210 +20);
       }
+    }
 
-      if (c == titleField) {
-        if (isBlankString(((TextField) c).getText())) {
-          errorTitle.setText("(Topic required)");
-          errorTitle.setForeground(Color.RED);
-          errorTitle.setHorizontalAlignment(SwingConstants.RIGHT);
-        } else {
-          errorTitle.setText("");
-        }
-      }
+    if (isBlankString(locationField.getText())) {
+      locationField.setBorder(border);
+      errorLocation.setText("(Location required)");
+      errorLocation.setForeground(Color.RED);
+      errorLocation.setHorizontalAlignment(SwingConstants.RIGHT);
+      valid = false;
+    } else {
+      errorLocation.setText("");
+      locationField.setBorder(BorderFactory.createEmptyBorder());
+    }
 
-      if (c == dateField) {
-        if (isBlankString(((TextField) c).getText())) {
-          errorDate.setText("(Select a date)");
-          errorDate.setForeground(Color.RED);
-          errorDate.setHorizontalAlignment(SwingConstants.RIGHT);
-        } else {
-          errorDate.setText("");
-        }
-      }
 
-      if (c == startField) {
-        if (isBlankString(((TextField) c).getText()) || !isValidTime(((TextField) c).getText())) {
-          errorStartTime.setText("(invalid)");
-          errorStartTime.setForeground(Color.RED);
-          errorStartTime.setBounds(contentBox.x, contentBox.y + 132, startField.getWidth(), startField.getHeight());
-          errorStartTime.setHorizontalAlignment(SwingConstants.RIGHT);
-        } else {
-          errorStartTime.setText("");
-        }
-      }
-
-      if (c == endField) {
-        if (isBlankString(((TextField) c).getText()) || !isValidTime(((TextField) c).getText())) {
-          errorEndTime.setText("(invalid)");
-          errorEndTime.setForeground(Color.RED);
-          errorEndTime.setBounds(contentBox.x + endField.getWidth() + 4, contentBox.y + 132, endField.getWidth(),
-              endField.getHeight());
-          errorEndTime.setHorizontalAlignment(SwingConstants.RIGHT);
-        } else {
-          errorEndTime.setText("");
-        }
-      }
-
-      if (c == locationField) {
-        if (isBlankString(((TextField) c).getText())) {
-          errorLocation.setText("(Location required)");
-          errorLocation.setForeground(Color.RED);
-          errorLocation.setHorizontalAlignment(SwingConstants.RIGHT);
-        } else {
-          errorLocation.setText("");
-        }
-      }
-
-      if (c == reminderField) {
-        if (isBlankString(((TextField) c).getText())) {
-          errorReminder.setText("(Select a reminder)");
-          errorReminder.setForeground(Color.RED);
-          // errorReminder.setOpaque(true);
-        } else {
-          errorReminder.setText("");
-        }
-      }
-
+    if (isBlankString(reminderField.getText())) {
+      reminderField.setBorder(border);
+      errorReminder.setText("(Select a reminder)");
+      errorReminder.setForeground(Color.RED);
+      valid = false;
+    } else {
+      errorReminder.setText("");
+      reminderField.setBorder(BorderFactory.createEmptyBorder());
     }
     return valid;
   }
