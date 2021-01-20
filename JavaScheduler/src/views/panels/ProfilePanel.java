@@ -9,11 +9,15 @@ import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
 public class ProfilePanel extends Panel {
@@ -26,6 +30,7 @@ public class ProfilePanel extends Panel {
   private TextField lcStreetNrField;
   private TextField lcBuildingField;
   private TextField lcRoomField;
+  private TextField selectLocation;
 
   private Button editBtn;
   private Button cnclBtn;
@@ -35,7 +40,8 @@ public class ProfilePanel extends Panel {
   private Button lcAddBtn;
 
   private static Label stats_1;
-  private Panel lclistpanel;
+  private JScrollPane lcscroll;
+  private Panel lcpanel;
 
   private User user;
 
@@ -68,6 +74,7 @@ public class ProfilePanel extends Panel {
     cnclBtn.addActionListener(infoPanel.setStaticAction());
 
     stats_1 = new Label(40, 600, "You're partaking in " + user.getAcceptedEvents().size() + " meetings.");
+    stats_1.setUnset(true);
 
     add(stats_1);
     add(editBtn);
@@ -93,12 +100,13 @@ public class ProfilePanel extends Panel {
     Label locationTitle = new Label(450, 40, "Custom Locations");
     locationTitle.setHeading();
 
-    Panel lcpanel = new Panel();
+    lcpanel = new Panel();
     lcpanel.setBackground(MasterUI.lightCol);
     lcpanel.setBounds(450, 100, 300, 520);
 
     Label lcNameLabel = new Label(0, 0, "Location name");
     lcNameField = new TextField(0, 20);
+    lcNameField.setText("Test");
     lcpanel.add(lcNameLabel);
     lcpanel.add(lcNameField);
 
@@ -125,58 +133,74 @@ public class ProfilePanel extends Panel {
     });
     add(lcAddBtn);
     setComponentZOrder(lcAddBtn, 0);
+    selectLocation = new TextField(0, lcpanel.getHeight() - 200);
+    selectLocation.setSize(selectLocation.getWidth() - 40, selectLocation.getHeight());
+    Button dpdwn = new Button(selectLocation.getWidth(), selectLocation.getY(), "", MasterUI.lightColAlt);
+    dpdwn.setIcon(MasterUI.downIcon);
+    dpdwn.setSize(40, 40);
+    dpdwn.addActionListener(e -> drawLocationListPanel(lcpanel));
 
-    drawLocationListPanel(lcpanel);
-
-    MasterUI.setComponentStyles(this, "light");
+    lcpanel.add(selectLocation);
+    lcpanel.add(dpdwn);
     add(lcpanel);
     add(locationTitle);
+    MasterUI.setComponentStyles(lcpanel, "light");
+    MasterUI.setComponentStyles(this, "light");
   }
 
   /**
-   * Draw list panel of locations of user. Per default the location
-   * lets the user create a new location with the <code>add</code> button.
-   * If a existing location is selected, the form is in editor mode.
+   * Draw list panel of locations of user. Per default the location lets the user
+   * create a new location with the <code>add</code> button. If a existing
+   * location is selected, the form is in editor mode.
    * 
    * @param lcpanel - Location panel for the list panel to be placed on
    */
   private void drawLocationListPanel(Panel lcpanel) {
-    if (lclistpanel != null) {
-      lcpanel.remove(lclistpanel);
+    if (lcscroll != null) {
+      lcpanel.remove(lcscroll);
+      lcpanel.repaint();
+      lcscroll = null;
+      return;
     }
-    lclistpanel = new Panel();
-    lclistpanel.setBounds(0, lcpanel.getHeight() - 200, lcpanel.getWidth(), 200);
-    lclistpanel.setBackground(MasterUI.lightCol);
-    lcpanel.add(lclistpanel);
-
+    Panel dppanel = new Panel();
     List<Location> locations = user.getLocations();
+    dppanel.setBounds(0, 0, selectLocation.getWidth() + 30, 40 * locations.size());
+    dppanel.setPreferredSize(new Dimension(selectLocation.getWidth(), 40 * locations.size()));
     int y = 0;
-    int lcBtnHght = 40;
     for (Location location : locations) {
       Button lcBtn = new Button(0, y, location.getName(), MasterUI.lightColAlt);
-      lcBtn.setSize(lclistpanel.getWidth(), lcBtnHght);
+      lcBtn.setSize(dppanel.getWidth(), 40);
       lcBtn.setDark(false);
       lcBtn.setHorizontalAlignment(SwingConstants.LEFT);
       lcBtn.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          if (lcSaveBtn != null || lcClrBtn != null) {
-            remove(lcSaveBtn);
-            remove(lcClrBtn);
-          }
-          sendLocationForm(location);
           addEditLocationButtons(location);
+          selectLocation.setText(location.getName());
+          sendLocationForm(location);
+          lcpanel.remove(lcscroll);
+          lcpanel.repaint();
+          lcscroll = null;
         }
       });
-      lclistpanel.add(lcBtn);
-      y += lcBtnHght;
+      dppanel.add(lcBtn);
+      y += lcBtn.getHeight();
     }
-    MasterUI.setComponentStyles(lclistpanel, "light");
+    lcscroll = new JScrollPane(dppanel);
+    lcscroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    lcscroll.getVerticalScrollBar().setUnitIncrement(15);
+    lcscroll.setBorder(BorderFactory.createEmptyBorder());
+    lcscroll.setBounds(selectLocation.getX(), selectLocation.getY() + selectLocation.getHeight(),
+        selectLocation.getWidth() + 40, 40 * 2);
+    MasterUI.setComponentStyles(dppanel, "light");
+
+    lcpanel.add(selectLocation);
+    lcpanel.add(lcscroll);
+    revalidate();
     repaint();
   }
 
   /**
-   * Remove location save and clear buttons.
-   * Push add button to foreground.
+   * Remove location save and clear buttons. Push add button to foreground.
    */
   private void removeEditLocationButtons() {
     remove(lcSaveBtn);
@@ -194,6 +218,12 @@ public class ProfilePanel extends Panel {
   private void addEditLocationButtons(Location location) {
     if (lcAddBtn != null) {
       remove(lcAddBtn);
+    }
+    if (lcSaveBtn != null || lcClrBtn != null) {
+      remove(lcSaveBtn);
+      remove(lcClrBtn);
+      lcSaveBtn = null;
+      lcClrBtn = null;
     }
     lcSaveBtn = new Button(730, 35, "Save");
     lcSaveBtn.setSmall();
@@ -305,18 +335,18 @@ public class ProfilePanel extends Panel {
     for (int i = 0; i < lcLabels.length; i++) {
       String labelStr = lcLabels[i];
       TextField field = lcFields[i];
-      int mid = field.getWidth() / 2 - 5;
-      field.setSize(mid, field.getHeight());
       field.setName(labelStr);
 
       if (i % 2 == 0) {
         Label label = new Label(0, y, labelStr);
+        field.setSize(200, field.getHeight());
         field.setPosition(0, y + 20);
         lcpanel.add(field);
         lcpanel.add(label);
       } else {
-        Label label = new Label(mid + 10, y, labelStr);
-        field.setPosition(mid + 10, y + 20);
+        Label label = new Label(210, y, labelStr);
+        field.setSize(100, field.getHeight());
+        field.setPosition(210, y + 20);
         lcpanel.add(field);
         lcpanel.add(label);
         y += 80;

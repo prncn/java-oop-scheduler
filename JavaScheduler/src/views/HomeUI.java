@@ -1,25 +1,39 @@
 package views;
 
+import java.awt.Component;
+import java.awt.Point;
+import java.awt.Desktop;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
+import java.util.Locale;
+
 import javax.swing.AbstractButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.Component;
-import java.awt.Point;
-
+import controllers.PDF_Document;
+import models.User;
 import views.components.Button;
 import views.components.Label;
 import views.panels.AdminPanel;
 import views.panels.CalendarPanel;
+import views.panels.CalendarPanelWeekly;
 import views.panels.Dashboard;
 import views.panels.ProfilePanel;
 import views.panels.ScheduleEvent;
-import models.User;
+import views.panels.ScheduleModes;
 
 public class HomeUI extends MasterUI {
   private static final long serialVersionUID = -771654490802003766L;
@@ -30,7 +44,7 @@ public class HomeUI extends MasterUI {
   private Point tabsBox;
 
   public static Dashboard dashPanel;
-  private ScheduleEvent createPanel;
+  public static ScheduleEvent createPanel;
   public static CalendarPanel calendarPanel;
   private ProfilePanel profilePanel;
   private Button exportTab;
@@ -46,21 +60,22 @@ public class HomeUI extends MasterUI {
     frame = this;
     this.user = user;
     frame.setTitle("Meetings Scheduler");
-    this.setSize(1200, 700);
-    this.remove(panel);
+    setSize(1200, 700);
+    remove(panel);
 
     tabsBox = new Point(0, 200);
     dashPanel = new Dashboard(frame, user);
-    createPanel = new ScheduleEvent(frame, user, null);
+    createPanel = new ScheduleEvent(frame, user, null, ScheduleModes.CREATE);
     calendarPanel = new CalendarPanel(frame, 95, false, user);
     profilePanel = new ProfilePanel(frame, user);
     currentPanel = dashPanel;
-    this.add(dashPanel);
+    add(dashPanel);
 
     styleSidebar();
     showAdminPanel();
     createSidebarTabs();
     initLogoutTab();
+    initExportTab();
 
     setComponentStyles(sidebar, "dark");
     setComponentStyles(panel, "light");
@@ -70,8 +85,8 @@ public class HomeUI extends MasterUI {
   }
 
   /**
-   * Create tab buttons on sidebar. Initialises the buttons 
-   * and appends icons to them.
+   * Create tab buttons on sidebar. Initialises the buttons and appends icons to
+   * them.
    */
   private void createSidebarTabs() {
     dashboardTab = new Button(tabsBox.x, tabsBox.y, "Dashboard", dashPanel);
@@ -133,10 +148,49 @@ public class HomeUI extends MasterUI {
     logoutTab.addActionListener(confirmDialogAction(logoutAction, "Are you sure you want to logout?"));
   }
 
+  private void initExportTab() {
+    ActionListener exportAction = new ActionListener() {
+      public void actionPerformed(ActionEvent actionEvent) {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        String dest;
+        if (chooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION) {
+          dest = chooser.getSelectedFile().toPath().toString();
+          if (isValidPath(dest)) {
+            CalendarPanelWeekly cpw = calendarPanel.createPDFWeekly();
+            LocalDate date = cpw.getDate();
+            TemporalField tf = WeekFields.of(Locale.getDefault()).weekOfMonth();
+            String week = tf.toString();
+            dest += "\\weekly_schedule_" + date.with(DayOfWeek.MONDAY).toString() + ".pdf";
+            File file = PDF_Document.create(user, CalendarPanel.getWeekly(), dest, date);
+            try {
+              Desktop.getDesktop().open(file);
+            } catch (IOException exp) {
+              exp.printStackTrace();
+            }
+            System.out.println("weekly report saved to " + dest);
+          } else
+            System.out.println("Path is invalid");
+          }
+        }
+    };
+
+    exportTab.addActionListener(confirmDialogAction(exportAction, "Export week selected on calendar?"));
+  }
+
+  public static boolean isValidPath(String path) {
+    try {
+      Paths.get(path);
+    } catch (InvalidPathException | NullPointerException ex) {
+      return false;
+    }
+    return true;
+  }
+
   /**
    * Open a dialog prompt asking the user to confirm their action. This window
-   * blocks action on the background until a selection (or exit) is given. On selecting
-   * yes, an action listener will be triggered.
+   * blocks action on the background until a selection (or exit) is given. On
+   * selecting yes, an action listener will be triggered.
    * 
    * @param action - ActionListener object to be passed to "YES" button
    * @param prompt - String prompt the user is asked
@@ -185,12 +239,12 @@ public class HomeUI extends MasterUI {
     no.addActionListener(closeDialog);
   }
 
-
   /**
-   * Bind {@link #confirmDialog(ActionListener, String)} to action listener.
-   * This design to wrap and bind methods into action listeners is later replaced with
-   * lambda expressions, as they functionally make these wrappers obsolete.
-   * I. e. <code>addActionListener(e -> confirmDialog())</code> could have replaced this wrapper.
+   * Bind {@link #confirmDialog(ActionListener, String)} to action listener. This
+   * design to wrap and bind methods into action listeners is later replaced with
+   * lambda expressions, as they functionally make these wrappers obsolete. I. e.
+   * <code>addActionListener(e -> confirmDialog())</code> could have replaced this
+   * wrapper.
    * 
    * @param action - Action to triggered on mouse event.
    * @param prompt - String prompt to be displayed.
@@ -205,14 +259,12 @@ public class HomeUI extends MasterUI {
   }
 
   /**
-   * Set styles for sidebar. Place header with user info and basic
-   * styles and sizes for left sidebar.
+   * Set styles for sidebar. Place header with user info and basic styles and
+   * sizes for left sidebar.
    */
   private void styleSidebar() {
     Label headerinfoUser = new Label(20, 30, "Logged as " + user.getUsername());
     Label headerinfoEmail = new Label(20, 55, user.getEmail());
-    headerinfoEmail.setFont(monoFont);
-    headerinfoUser.setFont(monoFont);
 
     sidebar.setBackground(primaryColAlt);
     sidebar.setBounds(0, 0, 200, this.getHeight());
@@ -222,8 +274,8 @@ public class HomeUI extends MasterUI {
   }
 
   /**
-   * Switch current active panel to another. This is removes the currently
-   * viewed panel and adds a new one.
+   * Switch current active panel to another. This is removes the currently viewed
+   * panel and adds a new one.
    * 
    * @param newPanel - Selected panel to be switched to
    */
@@ -235,8 +287,9 @@ public class HomeUI extends MasterUI {
   }
 
   /**
-   * Bind {@link #switchPanel(JPanel)} to action listener. @see {@link #confirmDialog(ActionListener, String)}
-   * function. This could as well just been <code>addActionListener(e -> switchPanel())</code>.
+   * Bind {@link #switchPanel(JPanel)} to action listener. @see
+   * {@link #confirmDialog(ActionListener, String)} function. This could as well
+   * just been <code>addActionListener(e -> switchPanel())</code>.
    * 
    * @param newPanel - Selected panel to be switched to
    * @return ActionListener object triggering function
@@ -251,9 +304,9 @@ public class HomeUI extends MasterUI {
   }
 
   /**
-   * Make admin panel visible when current user is admin. By making 
-   * the admin panel not show up to regular users, this method functionally
-   * controls permissions for user "roles".
+   * Make admin panel visible when current user is admin. By making the admin
+   * panel not show up to regular users, this method functionally controls
+   * permissions for user "roles".
    */
   private void showAdminPanel() {
     if (user.getUsername() == "admin") {

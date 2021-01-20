@@ -244,8 +244,10 @@ public class DataBaseAPI {
       String id = result.getString("id");
       String name = result.getString("username");
       String email = result.getString("email");
+      String firstname = result.getString("firstName");
+      String lastname = result.getString("lastName");
       // TODO succesfully create the new user
-      User user = new User(id, name, " " , " ", email, new ArrayList<Event>(), new ArrayList<Location>());
+      User user = new User(id, name, firstname , lastname, email, new ArrayList<Event>(), new ArrayList<Location>());
       closeDatabase(connection);
       return user;
     } catch (SQLException e) {
