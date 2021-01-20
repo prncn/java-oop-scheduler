@@ -12,7 +12,7 @@ import views.components.Panel;
 import views.components.TextField;
 
 import javax.swing.*;
-import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -634,7 +634,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    */
   private boolean validateForm(Label errorMsg, Panel panel) {
     boolean valid = true;
-    Border border = BorderFactory.createLineBorder(MasterUI.hiPrioCol, 1);
+    CompoundBorder border = new CompoundBorder(BorderFactory.createLineBorder(MasterUI.hiPrioCol, 1),
+            BorderFactory.createEmptyBorder(4,4,4,4));
 
     if (selectedPriority == null) {
       errorPriority.setText("(Select Priority)");
@@ -653,7 +654,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       valid = false;
     } else {
       errorTitle.setText("");
-      titleField.setBorder(BorderFactory.createEmptyBorder());
+      titleField.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     }
 
 
@@ -665,7 +666,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       valid = false;
     } else {
       errorDate.setText("");
-      dateField.setBorder(BorderFactory.createEmptyBorder());
+      dateField.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     }
 
     if (isBlankString(startField.getText()) || !isValidTime(startField.getText())) {
@@ -677,7 +678,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       valid = false;
     } else {
       errorStartTime.setText("");
-      startField.setBorder(BorderFactory.createEmptyBorder());
+      startField.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     }
 
     if (isBlankString(endField.getText()) || !isValidTime(endField.getText())) {
@@ -690,7 +691,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       valid = false;
     } else {
       errorEndTime.setText("");
-      endField.setBorder(BorderFactory.createEmptyBorder());
+      endField.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     }
 
     if(isValidTime(startField.getText()) && isValidTime(endField.getText())) {
@@ -708,8 +709,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         dpdwn.setLocation(contentBox.x + locationField.getWidth(), contentBox.y + 210 + 2*y);
         valid = false;
       } else {
-        startField.setBorder(BorderFactory.createEmptyBorder());
-        endField.setBorder(BorderFactory.createEmptyBorder());
+        startField.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        endField.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         errorMsg.setText("");
 
         WhereLabel.setLocation(contentBox.x, contentBox.y +210);
@@ -727,7 +728,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       valid = false;
     } else {
       errorLocation.setText("");
-      locationField.setBorder(BorderFactory.createEmptyBorder());
+      locationField.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     }
 
 
@@ -738,7 +739,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       valid = false;
     } else {
       errorReminder.setText("");
-      reminderField.setBorder(BorderFactory.createEmptyBorder());
+      reminderField.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     }
     return valid;
   }
