@@ -1,15 +1,9 @@
 package views.panels;
 
-import javax.swing.JFrame;
-import javax.swing.SwingConstants;
-
 import controllers.FormatUtil;
 import controllers.ViewModelHandler;
-import models.User;
-import models.Priority;
-import models.Reminder;
 import models.Event;
-import models.Location;
+import models.*;
 import views.HomeUI;
 import views.MasterUI;
 import views.components.Button;
@@ -18,23 +12,16 @@ import views.components.Panel;
 import views.components.TextField;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.filechooser.FileFilter;
-
-import java.awt.Point;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Desktop;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ScheduleEvent extends Panel implements ScheduleModes {
@@ -46,6 +33,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private Button hiPrioBtn;
   private Button midPrioBtn;
   private Button loPrioBtn;
+  private Button dpdwn;
   private TextField searchUserField;
   private Label userQueryResult;
   private int participantListPosition;
@@ -70,6 +58,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private static Label errorEndTime;
   private static Label errorLocation;
   private static Label errorReminder;
+  private static Label WhereLabel;
   private JFrame frame;
   private User user;
   private Event editEvent;
@@ -265,6 +254,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       switch (lbString) {
         case "Topic":
           textfield = new TextField(contentBox.x, initialY + 20);
+          textfield.setMaximumLength(25);
           titleField = textfield;
           break;
         case "When":
@@ -276,11 +266,13 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         case "Start Time":
           textfield = new TextField(contentBox.x, initialY + 20);
           textfield.setSize((textfield.getWidth() / 2) - 2, textfield.getHeight());
+          textfield.setMaximumLength(5);
           startField = textfield;
 
           Label timelb = new Label(contentBox.x + textfield.getWidth() + 4, initialY, "End Time");
           secondField = new TextField(contentBox.x + textfield.getWidth() + 4, initialY + 20);
           secondField.setSize(textfield.getWidth(), textfield.getHeight());
+          secondField.setMaximumLength(5);
           this.add(timelb);
           this.add(secondField);
           endField = secondField;
@@ -288,9 +280,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         case "Where":
           textfield = new TextField(contentBox.x, initialY + 20);
           textfield.setSize(textfield.getWidth() - 40, textfield.getHeight());
+          textfield.setMaximumLength(25);
           locationField = textfield;
+          WhereLabel = label;
 
-          Button dpdwn = new Button(contentBox.x + textfield.getWidth(), initialY + 20, "", MasterUI.lightColAlt);
+          dpdwn = new Button(contentBox.x + textfield.getWidth(), initialY + 20, "", MasterUI.lightColAlt);
           dpdwn.setIcon(MasterUI.downIcon);
           dpdwn.setSize(40, 40);
           dpdwn.addActionListener(e -> locationDropdownSelection(textfield));
@@ -631,147 +625,22 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   }
 
   /**
-   * Validate input form
-   * 
-   * @param errorMsg - Label to display error message
-   * @return Boolean whether form is valid or not
-   */
-  private boolean validateForm(Label errorMsg, Panel panel) {
-    boolean valid = true;
-    Border border = BorderFactory.createLineBorder(MasterUI.hiPrioCol, 1);
-    for (Component c : panel.getComponents()) {
-
-      // if (c instanceof TextField && isBlankString(((TextField) c).getText()) && c
-      // != searchUserField) {
-      // ((TextField) c).setBorder(border);
-      // errorMsg.setText("Missing required fields.");
-      // valid = false;
-      // }
-
-      if (selectedPriority == null) {
-        errorPriority.setText("(Select Priority)");
-        errorPriority.setForeground(Color.RED);
-        errorPriority.setHorizontalAlignment(SwingConstants.RIGHT);
-        valid = false;
-      } else {
-        errorPriority.setText("");
-      }
-
-      if ((c == startField || c == endField) && !isValidTime(((TextField) c).getText())) {
-        ((TextField) c).setBorder(border);
-        valid = false;
-      }
-
-      if (c == titleField) {
-        if (isBlankString(((TextField) c).getText())) {
-          errorTitle.setText("(Topic required)");
-          errorTitle.setForeground(Color.RED);
-          errorTitle.setHorizontalAlignment(SwingConstants.RIGHT);
-        } else {
-          errorTitle.setText("");
-        }
-      }
-
-      if (c == dateField) {
-        if (isBlankString(((TextField) c).getText())) {
-          errorDate.setText("(Select a date)");
-          errorDate.setForeground(Color.RED);
-          errorDate.setHorizontalAlignment(SwingConstants.RIGHT);
-        } else {
-          errorDate.setText("");
-        }
-      }
-
-      if (c == startField) {
-        if (isBlankString(((TextField) c).getText()) || !isValidTime(((TextField) c).getText())) {
-          errorStartTime.setText("(invalid)");
-          errorStartTime.setForeground(Color.RED);
-          errorStartTime.setBounds(contentBox.x, contentBox.y + 132, startField.getWidth(), startField.getHeight());
-          errorStartTime.setHorizontalAlignment(SwingConstants.RIGHT);
-        } else {
-          errorStartTime.setText("");
-        }
-      }
-
-      if (c == endField) {
-        if (isBlankString(((TextField) c).getText()) || !isValidTime(((TextField) c).getText())) {
-          errorEndTime.setText("(invalid)");
-          errorEndTime.setForeground(Color.RED);
-          errorEndTime.setBounds(contentBox.x + endField.getWidth() + 4, contentBox.y + 132, endField.getWidth(),
-              endField.getHeight());
-          errorEndTime.setHorizontalAlignment(SwingConstants.RIGHT);
-        } else {
-          errorEndTime.setText("");
-        }
-      }
-
-      if (c == locationField) {
-        if (isBlankString(((TextField) c).getText())) {
-          errorLocation.setText("(Location required)");
-          errorLocation.setForeground(Color.RED);
-          errorLocation.setHorizontalAlignment(SwingConstants.RIGHT);
-        } else {
-          errorLocation.setText("");
-        }
-      }
-
-      if (c == reminderField) {
-        if (isBlankString(((TextField) c).getText())) {
-          errorReminder.setText("(Select a reminder)");
-          errorReminder.setForeground(Color.RED);
-          // errorReminder.setOpaque(true);
-        } else {
-          errorReminder.setText("");
-        }
-      }
-
-    }
-    return valid;
-  }
-
-  /**
-   * Validate if given string is of pattern "H:mm"
-   * 
-   * @param time - the string to be checked
-   * @return Boolean whether form is valid or not
-   */
-  private boolean isValidTime(String time) {
-    try {
-      LocalTime.parse(time);
-    } catch (DateTimeParseException e) {
-      return false;
-    }
-    return true;
-  }
-
-  /**
-   * Check if a string is blank or not
-   * 
-   * @param string - the string to be checked
-   * @return Boolean whether string is blanked or not
-   */
-  boolean isBlankString(String string) {
-    return string == null || string.trim().isEmpty();
-  }
-
-  /**
    * Confirm creation form. Feed form data to new meeting object and proceed to
    * success screen.
    */
   private void processConfirm() {
     Panel panel = this;
-    Label errorMsg = new Label(40, 520, "");
-    add(errorMsg);
 
+    Label errorMsg = new Label(40, 520, "");
     errorPriority = new Label(contentBox.x + 50, 100, "");
     errorTitle = new Label(contentBox.x + 50, contentBox.y, "");
     errorDate = new Label(contentBox.x + 50, contentBox.y + 70, "");
     errorLocation = new Label(contentBox.x + 50, contentBox.y + 210, "");
-
     errorStartTime = new Label(contentBox.x + 50, contentBox.y + 140, "");
     errorEndTime = new Label(contentBox.x + 221, contentBox.y + 140, "");
     errorReminder = new Label(614, 100, "");
 
+    add(errorMsg);
     add(errorTitle);
     add(errorDate);
     add(errorStartTime);
@@ -779,6 +648,26 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     add(errorLocation);
     add(errorReminder);
     add(errorPriority);
+
+    HashMap<String, TextField> FieldMap = new HashMap<String, TextField>();
+    FieldMap.put("titleField", titleField);
+    FieldMap.put("dateField", dateField);
+    FieldMap.put("startField", startField);
+    FieldMap.put("endField", endField);
+    FieldMap.put("locationField", locationField);
+    FieldMap.put("reminderField", reminderField);
+
+
+    HashMap<String, Label> LabelMap = new HashMap<String, Label>();
+    LabelMap.put("errorPriority", errorPriority);
+    LabelMap.put("errorTitle", errorTitle);
+    LabelMap.put("errorDate", errorDate);
+    LabelMap.put("errorStart", errorStartTime);
+    LabelMap.put("errorEnd", errorEndTime);
+    LabelMap.put("errorLocation", errorLocation);
+    LabelMap.put("errorReminder", errorReminder);
+    LabelMap.put("Where", WhereLabel);
+    LabelMap.put("errorMsg", errorMsg);
 
     ActionListener createAction = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -814,7 +703,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
 
     confirmBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        if (!validateForm(errorMsg, panel)) return;
+        //if (!validateForm(errorMsg, panel)) return;
+        if (!ViewModelHandler.validateForm(FieldMap,LabelMap, dpdwn, selectedPriority)) return;
         if (mode == VIEW) {
           HomeUI.switchPanel(HomeUI.dashPanel);
           return;

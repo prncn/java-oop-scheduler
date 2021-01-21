@@ -178,6 +178,12 @@ public class HomeUI extends MasterUI {
     exportTab.addActionListener(confirmDialogAction(exportAction, "Export week selected on calendar?"));
   }
 
+  /**
+   * Checks if the used path is valid.
+   *
+   * @param path the path that is to be checked
+   * @return true if path exists, false if not 
+   */
   public static boolean isValidPath(String path) {
     try {
       Paths.get(path);
