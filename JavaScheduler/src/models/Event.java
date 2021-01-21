@@ -312,7 +312,7 @@ public class Event implements Comparable<Event> {
   public boolean removeParticipant(User user) {
     return false;
   }
-  
+
   @Override
   public int compareTo(Event other) {
     if (getDate() == null || other.getDate() == null) {
