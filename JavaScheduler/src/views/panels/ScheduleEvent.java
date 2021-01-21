@@ -12,7 +12,6 @@ import views.components.Panel;
 import views.components.TextField;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.filechooser.FileFilter;
 
 import java.awt.Point;
@@ -27,9 +26,8 @@ import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ScheduleEvent extends Panel implements ScheduleModes {
@@ -657,163 +655,22 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   }
 
   /**
-   * Validate input form
-   * 
-   * @param errorMsg - Label to display error message
-   * @return Boolean whether form is valid or not
-   */
-  private boolean validateForm(Label errorMsg, Panel panel) {
-    boolean valid = true;
-    Border border = BorderFactory.createLineBorder(Color.RED, 1);
-
-    if (selectedPriority == null) {
-      errorPriority.setText("(Select Priority)");
-      errorPriority.setForeground(Color.RED);
-      errorPriority.setHorizontalAlignment(SwingConstants.RIGHT);
-      valid = false;
-    } else {
-      errorPriority.setText("");
-    }
-
-    if (isBlankString(titleField.getText())) {
-      titleField.setBorder(border);
-      errorTitle.setText("*Title required");
-      errorTitle.setForeground(Color.RED);
-      errorTitle.setHorizontalAlignment(SwingConstants.RIGHT);
-      valid = false;
-    } else {
-      errorTitle.setText("");
-      titleField.setBorder(BorderFactory.createEmptyBorder());
-    }
-
-    if (isBlankString(dateField.getText())) {
-      dateField.setBorder(border);
-      errorDate.setText("(Select a date)");
-      errorDate.setForeground(Color.RED);
-      errorDate.setHorizontalAlignment(SwingConstants.RIGHT);
-      valid = false;
-    } else {
-      errorDate.setText("");
-      dateField.setBorder(BorderFactory.createEmptyBorder());
-    }
-
-    if (isBlankString(startField.getText()) || !isValidTime(startField.getText())) {
-      startField.setBorder(border);
-      errorStartTime.setText("(invalid time)");
-      errorStartTime.setForeground(Color.RED);
-      errorStartTime.setBounds(contentBox.x, contentBox.y + 132, startField.getWidth(), startField.getHeight());
-      errorStartTime.setHorizontalAlignment(SwingConstants.RIGHT);
-      valid = false;
-    } else {
-      errorStartTime.setText("");
-      startField.setBorder(BorderFactory.createEmptyBorder());
-    }
-
-    if (isBlankString(endField.getText()) || !isValidTime(endField.getText())) {
-      endField.setBorder(border);
-      errorEndTime.setText("(invalid Time)");
-      errorEndTime.setForeground(Color.RED);
-      errorEndTime.setBounds(contentBox.x + endField.getWidth() + 4, contentBox.y + 132, endField.getWidth(),
-          endField.getHeight());
-      errorEndTime.setHorizontalAlignment(SwingConstants.RIGHT);
-      valid = false;
-    } else {
-      errorEndTime.setText("");
-      endField.setBorder(BorderFactory.createEmptyBorder());
-    }
-
-    if (isValidTime(startField.getText()) && isValidTime(endField.getText())) {
-      if (LocalTime.parse(startField.getText()).isAfter(LocalTime.parse(endField.getText()))) {
-        int y = 20;
-        startField.setBorder(border);
-        endField.setBorder(border);
-        errorMsg.setLocation(contentBox.x, contentBox.y + 200);
-        errorMsg.setForeground(Color.RED);
-        errorMsg.setText("Start Time can't be after End Time");
-
-        WhereLabel.setLocation(contentBox.x, contentBox.y + 210 + y);
-        errorLocation.setLocation(contentBox.x + 50, contentBox.y + 210 + y);
-        locationField.setLocation(contentBox.x, contentBox.y + 210 + 2 * y);
-        dpdwn.setLocation(contentBox.x + locationField.getWidth(), contentBox.y + 210 + 2 * y);
-        valid = false;
-      } else {
-        startField.setBorder(BorderFactory.createEmptyBorder());
-        endField.setBorder(BorderFactory.createEmptyBorder());
-        errorMsg.setText("");
-
-        WhereLabel.setLocation(contentBox.x, contentBox.y + 210);
-        errorLocation.setLocation(contentBox.x + 50, contentBox.y + 210);
-        locationField.setLocation(contentBox.x, contentBox.y + 210 + 20);
-        dpdwn.setLocation(contentBox.x + locationField.getWidth(), contentBox.y + 210 + 20);
-      }
-    }
-
-    if (isBlankString(locationField.getText())) {
-      locationField.setBorder(border);
-      errorLocation.setText("(Location required)");
-      errorLocation.setForeground(Color.RED);
-      errorLocation.setHorizontalAlignment(SwingConstants.RIGHT);
-      valid = false;
-    } else {
-      errorLocation.setText("");
-      locationField.setBorder(BorderFactory.createEmptyBorder());
-    }
-
-    if (isBlankString(reminderField.getText())) {
-      reminderField.setBorder(border);
-      errorReminder.setText("(Select a reminder)");
-      errorReminder.setForeground(Color.RED);
-      valid = false;
-    } else {
-      errorReminder.setText("");
-      reminderField.setBorder(BorderFactory.createEmptyBorder());
-    }
-    return valid;
-  }
-
-  /**
-   * Validate if given string is of pattern "H:mm"
-   * 
-   * @param time - the string to be checked
-   * @return Boolean whether form is valid or not
-   */
-  private boolean isValidTime(String time) {
-    try {
-      LocalTime.parse(time);
-    } catch (DateTimeParseException e) {
-      return false;
-    }
-    return true;
-  }
-
-  /**
-   * Check if a string is blank or not
-   * 
-   * @param string - the string to be checked
-   * @return Boolean whether string is blanked or not
-   */
-  boolean isBlankString(String string) {
-    return string == null || string.trim().isEmpty();
-  }
-
-  /**
    * Confirm creation form. Feed form data to new meeting object and proceed to
    * success screen.
    */
   private void processConfirm() {
     Panel panel = this;
-    Label errorMsg = new Label(40, 520, "");
-    add(errorMsg);
 
+    Label errorMsg = new Label(40, 520, "");
     errorPriority = new Label(contentBox.x + 50, 100, "");
     errorTitle = new Label(contentBox.x + 50, contentBox.y, "");
     errorDate = new Label(contentBox.x + 50, contentBox.y + 70, "");
     errorLocation = new Label(contentBox.x + 50, contentBox.y + 210, "");
-
     errorStartTime = new Label(contentBox.x + 50, contentBox.y + 140, "");
     errorEndTime = new Label(contentBox.x + 221, contentBox.y + 140, "");
     errorReminder = new Label(614, 100, "");
 
+    add(errorMsg);
     add(errorTitle);
     add(errorDate);
     add(errorStartTime);
@@ -821,6 +678,26 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     add(errorLocation);
     add(errorReminder);
     add(errorPriority);
+
+    HashMap<String, TextField> FieldMap = new HashMap<String, TextField>();
+    FieldMap.put("titleField", titleField);
+    FieldMap.put("dateField", dateField);
+    FieldMap.put("startField", startField);
+    FieldMap.put("endField", endField);
+    FieldMap.put("locationField", locationField);
+    FieldMap.put("reminderField", reminderField);
+
+
+    HashMap<String, Label> LabelMap = new HashMap<String, Label>();
+    LabelMap.put("errorPriority", errorPriority);
+    LabelMap.put("errorTitle", errorTitle);
+    LabelMap.put("errorDate", errorDate);
+    LabelMap.put("errorStart", errorStartTime);
+    LabelMap.put("errorEnd", errorEndTime);
+    LabelMap.put("errorLocation", errorLocation);
+    LabelMap.put("errorReminder", errorReminder);
+    LabelMap.put("Where", WhereLabel);
+    LabelMap.put("errorMsg", errorMsg);
 
     ActionListener createAction = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -856,8 +733,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
 
     confirmBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        if (!validateForm(errorMsg, panel))
-          return;
+        //if (!validateForm(errorMsg, panel)) return;
+        if (!ViewModelHandler.validateForm(FieldMap,LabelMap, dpdwn, selectedPriority)) return;
         if (mode == VIEW) {
           HomeUI.switchPanel(HomeUI.dashPanel);
           return;
