@@ -227,7 +227,7 @@ public class DataBaseAPI {
     }
   }
 
-  /**
+  /** TODO
    * Query a username and return the corresponding User object from its table entry.
    * Used to search the user table.
    * @param username - String of username
@@ -247,7 +247,7 @@ public class DataBaseAPI {
       String firstname = result.getString("firstName");
       String lastname = result.getString("lastName");
       // TODO succesfully create the new user
-      User user = new User(id, name, firstname , lastname, email, new ArrayList<Event>(), new ArrayList<Location>());
+      User user = new User(id, name, firstname, lastname, email, new ArrayList<Event>(), new ArrayList<Location>());
       closeDatabase(connection);
       return user;
     } catch (SQLException e) {
@@ -256,12 +256,39 @@ public class DataBaseAPI {
     }
   }
 
+  /**
+   *
+   * @param userId is used to find the relative data
+   * @return a list of all events a user is part of.
+   */
+  public static ArrayList<Event> getEventsFromUser(String userId){
+    String sql = "SELECT * FROM UserEvent WHERE UserID = ?";
+    ArrayList<Event> events = new ArrayList<Event>();
+
+    Connection connection = connectDatabase();
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql);
+      ResultSet rs = ps.executeQuery();
+
+      while(rs.next()){
+
+      }
+
+      return events;
+    } catch (SQLException e){
+      e.printStackTrace();
+      return null;
+    }
+
+  }
+
     /**
      * Create table entry of new event in database.
      * @param event Object of new entry.
      * @return true on successful creation, return false on failed creation
      */
   public static boolean createEvent(Event event){
+
       String sql = "INSERT INTO Event (id, reminder, priority, name, date, time, durationMinutes, description, hostId, location)" + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
       Connection connection = connectDatabase();
 
@@ -277,6 +304,7 @@ public class DataBaseAPI {
         statement.setString(8 , event.getDescription());
         statement.setString(9 , event.getHost().getId());
         statement.setString(10 , event.getLocation().getId());
+
 
         statement.executeUpdate();
 
