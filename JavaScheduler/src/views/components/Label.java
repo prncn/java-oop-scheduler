@@ -5,6 +5,7 @@ import java.awt.Font;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import java.awt.Component;
 
 import views.MasterUI;
 
@@ -20,16 +21,15 @@ public class Label extends JLabel {
     setBounds(x, y, 250, 25);
   }
 
-  public Label(String text) {
-    super(text);
-    setFont(MasterUI.bodyFont);
-    setSize(250, 25);
-  }
-
   public Label() {
     super();
     setFont(MasterUI.bodyFont);
     setSize(250, 25);
+  }
+
+  public Label(String text, Component cmp) {
+    super(text);
+    setBounds(cmp.getX() + cmp.getWidth() + 10, cmp.getY(), 250, cmp.getHeight());
   }
 
   public Label(ImageIcon image) {

@@ -241,9 +241,14 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private void initPageButtons() {
     confirmBtn = new Button(40, 550, "Confirm", MasterUI.secondaryCol);
     switch (mode) {
-      case VIEW : confirmBtn.setText("Back"); break;
-      case EDIT : confirmBtn.setText("Save Changes"); break;
-      default : confirmBtn.setText("Confirm");
+      case VIEW:
+        confirmBtn.setText("Back");
+        break;
+      case EDIT:
+        confirmBtn.setText("Save Changes");
+        break;
+      default:
+        confirmBtn.setText("Confirm");
     }
 
     confirmBtn.setTab();
@@ -345,7 +350,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     if (editEvent == null) {
       titleField.setText("Proxy Networking");
       locationField.setText("Communications department");
-      dateField.setText("2021-02-12");
+      dateField.setText(LocalDate.now().toString());
       startField.setText("09:00");
       endField.setText("10:35");
     } else {
@@ -377,7 +382,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       for (Button prioBtn : prioBtns) {
         prioBtn.setEnabled(false);
       }
-      
+
       repaint();
     }
   }
@@ -414,8 +419,10 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     attachpanel.setBackground(MasterUI.lightCol);
     Label attachLabel = new Label(400, reminderField.getY() + 50, "Attachments (optional)");
     attachField = new TextField(attachLabel.getX(), attachLabel.getY() + 20);
-    Button attachBtn = new Button(attachField.getX() + attachField.getWidth(), attachField.getY(), "...",
+    attachField.setEditable(false);
+    Button attachBtn = new Button(attachField.getX() + attachField.getWidth(), attachField.getY(), "",
         MasterUI.lightColAlt);
+    attachBtn.setIcon(MasterUI.folderIcon);
     attachBtn.setDark(false);
     attachBtn.setForeground(MasterUI.accentCol);
     attachBtn.setSize(attachField.getHeight(), attachField.getHeight());
@@ -439,20 +446,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       });
       if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
         File file = chooser.getSelectedFile();
-        String join = " ";
-        if (selectedAttachments.isEmpty())
-          join = "";
-        attachField.setText(attachField.getText() + join + file.getName());
         selectedAttachments.add(file);
+        attachField.setText(selectedAttachments.size() + " File(s)");
         addAttachmentCard(attachpanel);
       }
     });
-
-    try {
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-        | UnsupportedLookAndFeelException ex) {
-    }
 
     addAttachmentCard(attachpanel);
 
@@ -465,7 +463,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
 
   /**
    * When the attachment form receives a new file, a card panel respresenting the
-   * file is added to the right. The card allows the removal and opening of the file.
+   * file is added to the right. The card allows the removal and opening of the
+   * file.
    * 
    * @param panel - Panel that holds the file cards
    */
@@ -494,12 +493,19 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       ficon.setSize(48, 48);
       fname.setFont(MasterUI.robotoFont.deriveFont(14f));
       fsize.setFont(MasterUI.robotoFont.deriveFont(11f));
-      del.addActionListener(e -> { panel.remove(fcard); selectedAttachments.remove(file); panel.repaint(); });
+
+      del.addActionListener(e -> {
+        panel.remove(fcard);
+        selectedAttachments.remove(file);
+        attachField.setText(selectedAttachments.size() + " File(s)");
+        panel.repaint();
+      });
       del.setIcon(MasterUI.xIcon);
       del.setSize(15, 13);
 
       fcard.add(open);
-      if(mode != VIEW) fcard.add(del);
+      if (mode != VIEW)
+        fcard.add(del);
       fcard.add(ficon);
       fcard.add(fname);
       fcard.add(fsize);
@@ -523,7 +529,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
 
     userQueryResult = new Label(400, searchUserField.getY() + 100, "");
     participantListPosition = userQueryResult.getY();
-    if (mode != VIEW) participantListPosition += 15;
+    if (mode != VIEW)
+      participantListPosition += 15;
     addUserBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         searchParticipant();
@@ -657,7 +664,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    */
   private boolean validateForm(Label errorMsg, Panel panel) {
     boolean valid = true;
-    Border border = BorderFactory.createLineBorder(MasterUI.hiPrioCol, 1);
+    Border border = BorderFactory.createLineBorder(Color.RED, 1);
 
     if (selectedPriority == null) {
       errorPriority.setText("(Select Priority)");
@@ -670,7 +677,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
 
     if (isBlankString(titleField.getText())) {
       titleField.setBorder(border);
-      errorTitle.setText("(Topic required)");
+      errorTitle.setText("*Title required");
       errorTitle.setForeground(Color.RED);
       errorTitle.setHorizontalAlignment(SwingConstants.RIGHT);
       valid = false;
@@ -678,7 +685,6 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       errorTitle.setText("");
       titleField.setBorder(BorderFactory.createEmptyBorder());
     }
-
 
     if (isBlankString(dateField.getText())) {
       dateField.setBorder(border);
@@ -716,8 +722,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       endField.setBorder(BorderFactory.createEmptyBorder());
     }
 
-    if(isValidTime(startField.getText()) && isValidTime(endField.getText())) {
-      if(LocalTime.parse(startField.getText()).isAfter(LocalTime.parse(endField.getText()))) {
+    if (isValidTime(startField.getText()) && isValidTime(endField.getText())) {
+      if (LocalTime.parse(startField.getText()).isAfter(LocalTime.parse(endField.getText()))) {
         int y = 20;
         startField.setBorder(border);
         endField.setBorder(border);
@@ -725,20 +731,20 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         errorMsg.setForeground(Color.RED);
         errorMsg.setText("Start Time can't be after End Time");
 
-        WhereLabel.setLocation(contentBox.x, contentBox.y +210 +y);
-        errorLocation.setLocation(contentBox.x +50, contentBox.y +210 +y);
-        locationField.setLocation(contentBox.x, contentBox.y + 210 + 2*y);
-        dpdwn.setLocation(contentBox.x + locationField.getWidth(), contentBox.y + 210 + 2*y);
+        WhereLabel.setLocation(contentBox.x, contentBox.y + 210 + y);
+        errorLocation.setLocation(contentBox.x + 50, contentBox.y + 210 + y);
+        locationField.setLocation(contentBox.x, contentBox.y + 210 + 2 * y);
+        dpdwn.setLocation(contentBox.x + locationField.getWidth(), contentBox.y + 210 + 2 * y);
         valid = false;
       } else {
         startField.setBorder(BorderFactory.createEmptyBorder());
         endField.setBorder(BorderFactory.createEmptyBorder());
         errorMsg.setText("");
 
-        WhereLabel.setLocation(contentBox.x, contentBox.y +210);
-        errorLocation.setLocation(contentBox.x +50, contentBox.y +210);
-        locationField.setLocation(contentBox.x, contentBox.y + 210+20 );
-        dpdwn.setLocation(contentBox.x + locationField.getWidth(), contentBox.y + 210 +20);
+        WhereLabel.setLocation(contentBox.x, contentBox.y + 210);
+        errorLocation.setLocation(contentBox.x + 50, contentBox.y + 210);
+        locationField.setLocation(contentBox.x, contentBox.y + 210 + 20);
+        dpdwn.setLocation(contentBox.x + locationField.getWidth(), contentBox.y + 210 + 20);
       }
     }
 
@@ -752,7 +758,6 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       errorLocation.setText("");
       locationField.setBorder(BorderFactory.createEmptyBorder());
     }
-
 
     if (isBlankString(reminderField.getText())) {
       reminderField.setBorder(border);
@@ -851,7 +856,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
 
     confirmBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        if (!validateForm(errorMsg, panel)) return;
+        if (!validateForm(errorMsg, panel))
+          return;
         if (mode == VIEW) {
           HomeUI.switchPanel(HomeUI.dashPanel);
           return;

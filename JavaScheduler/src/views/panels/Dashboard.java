@@ -3,6 +3,7 @@ package views.panels;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.border.LineBorder;
 
 import controllers.FormatUtil;
 import controllers.ViewModelHandler;
@@ -100,26 +101,63 @@ public class Dashboard extends Panel implements CardModes {
     Label emptyNotif = new Label(683, 80, "You're all caught up!");
     emptyNotif.setFont(MasterUI.monoFont);
     emptyNotif.setForeground(Color.LIGHT_GRAY);
-
+    
+    redpanel.add(emptyNotif);
+    redpanel.add(notifLabel);
+    
+    drawEventData(user);
+    drawFilterSortSection();
+    redpanel.add(screenTitle);
+    redpanel.add(upSectionInner);
+    redpanel.add(allEventsTitle);
+    redpanel.add(allSectionInner);
+  }
+  
+  private static void drawFilterSortSection() {
     Panel filterPanel = new Panel();
     filterPanel.setBounds(680, 700, 280, 200);
     filterPanel.setBackground(MasterUI.primaryColAlt);
     filterPanel.setRounded(true);
-
+    
     Label filterLabel = new Label(20, 20, "Filter");
     filterLabel.setHeading();
     filterLabel.setForeground(Color.WHITE);
     filterPanel.add(filterLabel);
 
-    redpanel.add(emptyNotif);
-    redpanel.add(notifLabel);
+    Panel sortPanel = new Panel();
+    sortPanel.setBounds(680, 700 + filterPanel.getHeight() + 20, 280, 200);
+    sortPanel.setBackground(MasterUI.primaryColAlt);
+    sortPanel.setRounded(true);
     
-    drawEventData(user);
-    redpanel.add(screenTitle);
-    redpanel.add(upSectionInner);
-    redpanel.add(allEventsTitle);
-    redpanel.add(allSectionInner);
+    Label sortLabel = new Label(20, 20, "Sort");
+    sortLabel.setHeading();
+    sortLabel.setForeground(Color.WHITE);
+    sortPanel.add(sortLabel);
+
+    Button sortOpt1 = new Button(20, 60, "", MasterUI.secondaryCol);
+    sortOpt1.setRadio(true);
+    Label sortOpt1L = new Label("Title", sortOpt1);
+    
+    Button sortOpt2 = new Button(20, sortOpt1.getY() + 25, "", MasterUI.secondaryCol);
+    sortOpt2.setActive(true);
+    sortOpt2.setRadio(true);
+    Label sortOpt2L = new Label("Recently added", sortOpt2);
+    
+    Button sortOpt3 = new Button(20, sortOpt2.getY() + 25, "", MasterUI.secondaryCol);
+    sortOpt3.setRadio(true);
+    sortOpt2.addLink(sortOpt1);
+    sortOpt2.addLink(sortOpt3);
+    Label sortOpt3L = new Label("Date", sortOpt3);
+    
+    sortPanel.add(sortOpt1);
+    sortPanel.add(sortOpt1L);
+    sortPanel.add(sortOpt2);
+    sortPanel.add(sortOpt2L);
+    sortPanel.add(sortOpt3);
+    sortPanel.add(sortOpt3L);
     redpanel.add(filterPanel);
+    redpanel.add(sortPanel);
+    MasterUI.setComponentStyles(sortPanel, "dark");
   }
 
   /**
