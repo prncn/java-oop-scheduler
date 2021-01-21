@@ -3,7 +3,6 @@ package views.panels;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-import javax.swing.border.LineBorder;
 
 import controllers.FormatUtil;
 import controllers.ViewModelHandler;

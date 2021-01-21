@@ -1,7 +1,6 @@
 package views;
 
 import models.*;
-import views.components.Label;
 import views.components.TextField;
 import controllers.*;
 import java.awt.event.ActionListener;
@@ -21,8 +20,7 @@ public class RegisterUI extends LoginUI {
   private String inputPassConf;
   private String inputEmail;
 
-  /** Margin between textfield label and textfield */
-  private final int LBL_MRGN = 20;
+  
 
   public RegisterUI() {
     setTitle("Scheduler Sign Up");
@@ -42,14 +40,14 @@ public class RegisterUI extends LoginUI {
     registerBtn.setBounds(lgnBox.x + 110, lgnBox.y + 350, 100, 40);
 
     placeToRight(passField, passConfField);
-    placeFieldLabel(passConfField, "Confirm Password");
+    placeFieldLabel(passConfField, "Confirm Password", LBL_MRGN);
     firstnameField.setBounds(passField.getX(), passField.getY() + 70, passField.getWidth(), passField.getHeight());
     placeToRight(firstnameField, lastnameField);
-    placeFieldLabel(firstnameField, "First name");
-    placeFieldLabel(lastnameField, "Last name");
+    placeFieldLabel(firstnameField, "First name", LBL_MRGN);
+    placeFieldLabel(lastnameField, "Last name", LBL_MRGN);
     emailField.setBounds(firstnameField.getX(), firstnameField.getY() + 70, passField.getWidth(),
         passField.getHeight());
-    placeFieldLabel(emailField, "Email");
+    placeFieldLabel(emailField, "Email", LBL_MRGN);
     success.setBounds(lgnBox.x, lgnBox.y + 430, 250, 25);
     setButtonActions();
 
@@ -72,17 +70,6 @@ public class RegisterUI extends LoginUI {
    */
   private void placeToRight(JTextField origin, JTextField field) {
     field.setBounds(origin.getX() + origin.getWidth() + LBL_MRGN, origin.getY(), origin.getWidth(), origin.getHeight());
-  }
-
-  /**
-   * Place label of name of textfield above that textfield.
-   * 
-   * @param field - Textfield of input
-   * @param name  - Name corresponding of textfield
-   */
-  private void placeFieldLabel(JTextField field, String name) {
-    Label label = new Label(field.getX(), field.getY() - LBL_MRGN, name);
-    panel.add(label);
   }
 
   /**
@@ -114,11 +101,11 @@ public class RegisterUI extends LoginUI {
   private void processRegistration() {
     String encryptPass = PasswordEncryption.createHash(inputPass);
     User user = new User(inputUser, encryptPass, inputEmail);
-    if (!DataBaseAPI.isAvailable(user)) {
+    if (!DatabaseAPI.isAvailable(user)) {
       success.setText("User already exists");
       return;
     }
-    DataBaseAPI.createUser(user);
+    DatabaseAPI.createUser(user);
     panel.removeAll();
     LoginUI login = new LoginUI();
     login.setVisible(true);

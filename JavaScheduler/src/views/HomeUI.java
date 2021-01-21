@@ -20,7 +20,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import controllers.PDF_Document;
+import controllers.PDFDocument;
 import models.User;
 import views.components.Button;
 import views.components.Label;
@@ -157,7 +157,7 @@ public class HomeUI extends MasterUI {
             CalendarPanelWeekly cpw = calendarPanel.createPDFWeekly();
             LocalDate date = cpw.getDate();
             dest += "\\weekly_schedule_" + date.with(DayOfWeek.MONDAY).toString() + ".pdf";
-            File file = PDF_Document.create(user, CalendarPanel.getWeekly(), dest, date);
+            File file = PDFDocument.create(user, CalendarPanel.getWeekly(), dest, date);
             try {
               Desktop.getDesktop().open(file);
             } catch (IOException exp) {

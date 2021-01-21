@@ -136,6 +136,17 @@ abstract public class MasterUI extends JFrame {
   }
 
   /**
+   * Place label of name of textfield above that textfield.
+   * 
+   * @param field - Textfield of input
+   * @param name  - Name corresponding of textfield
+   */
+  protected void placeFieldLabel(JTextField field, String name, int margin) {
+    Label label = new Label(field.getX(), field.getY() - (margin + 5), name);
+    panel.add(label);
+  }
+
+  /**
    * Loop through components of the frame and change their style properties
    * 
    * @param panel     - Selcted panel to apply the changes to
@@ -165,8 +176,8 @@ abstract public class MasterUI extends JFrame {
         c.setFont(robotoFont);
         c.setBackground(background);
         c.setForeground(foreground);
-      }
-      if (c instanceof JButton) {
+        ((JTextComponent) c).setCaretColor(foreground);
+      } else if (c instanceof JButton) {
         c.setFont(monoFont);
         if (((Button) c).getTab()) {
           c.setFont(bodyFont);
@@ -179,6 +190,7 @@ abstract public class MasterUI extends JFrame {
         ((AbstractButton) c).setMargin(new Insets(5, 5, 3, 3));
       }
       if (c instanceof JPasswordField) {
+        c.setFont(monoFont);
         ((JTextComponent) c).setCaretColor(foreground);
         ((JTextComponent) c).setBackground(background);
         ((JTextComponent) c).setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
