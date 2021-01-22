@@ -10,6 +10,7 @@ import java.awt.RenderingHints;
 import java.awt.Insets;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -30,8 +31,11 @@ public class Button extends JButton implements MouseListener {
   private boolean filled;
   private boolean rounded = false;
   private boolean isTab = false;
+  private boolean isRadio = false;
+  private boolean isActive = false;
   private ActionListener switchPanelAction;
   private Color prevColor;
+  private ArrayList<Button> links = new ArrayList<>();
 
   public Button(int x, int y, String text, Color color) {
     super(text);
@@ -91,6 +95,29 @@ public class Button extends JButton implements MouseListener {
   }
 
   /**
+   * Get whether button is active
+   * @return Boolean value of active button
+   */
+  public boolean getActive() {
+    return isActive;
+  }
+
+  /**
+   * Set whether button is active
+   * @param isActive - Boolean value of active button
+   */
+  public void setActive(boolean isActive) {
+    this.isActive = isActive; 
+  }
+
+  /**
+   * Toggle current active state
+   */
+  public void toggleActive() {
+    isActive = !isActive;
+  }
+
+  /**
    * Set position of button
    * 
    * @param x - Horizontal position coordinate
@@ -101,7 +128,7 @@ public class Button extends JButton implements MouseListener {
   }
 
   /**
-   * Get wether button is set on dark mode
+   * Get whether button is set on dark mode
    * 
    * @return Boolean object instead of boolean primitive since unset buttons may
    *         return null
@@ -113,16 +140,16 @@ public class Button extends JButton implements MouseListener {
   /**
    * Set dark mode value
    * 
-   * @param value - Boolean <code>true</code> if dark mode should be enabled
+   * @param dark - Boolean <code>true</code> if dark mode should be enabled
    */
-  public void setDark(boolean value) {
-    if (getDark() == value)
+  public void setDark(boolean dark) {
+    if (getDark() == dark)
       return;
-    this.dark = value;
-    if (value)
-      this.setForeground(Color.WHITE);
+    this.dark = dark;
+    if (dark)
+      setForeground(Color.WHITE);
     else
-      this.setForeground(Color.BLACK);
+      setForeground(Color.BLACK);
   }
 
   /**
@@ -186,12 +213,12 @@ public class Button extends JButton implements MouseListener {
   }
 
   /**
-   * Get wether button is a tab button
+   * Get whether button is a tab button
    * 
    * @return boolean is tab or not
    */
   public boolean getTab() {
-    return this.isTab;
+    return isTab;
   }
 
   /**
@@ -215,7 +242,7 @@ public class Button extends JButton implements MouseListener {
   /**
    * Set whether button is rounded
    * 
-   * @param value Boolean value to be set of rounded
+   * @param value - Boolean value to be set of rounded
    */
   public void setRounded(boolean value) {
     if (getRounded() == value)
@@ -223,15 +250,78 @@ public class Button extends JButton implements MouseListener {
     setOpaque(!value);
     rounded = value;
     repaint();
+
+  }
+
+  /**
+   * Get whether button is a radio button
+   * @return
+   */
+  public boolean getRadio() {
+    return isRadio;
+  }
+
+  ActionListener radioAction = e -> {
+    if (getActive()) {
+      setRounded(false);
+      setOpaque(false);
+      repaint();
+    } else {
+      setRounded(true);
+      setEnabled(false);
+    }
+    for (Button link : links) {
+      link.setActive(false);
+      link.setRadio(true);
+    }
+    System.out.println(links.size());
+    toggleActive();
+  };
+
+  /**
+   * Set whether button is a radio button
+   * @param isRadio - Boolean value to set to isRadio
+   */
+  public void setRadio(boolean isRadio) {
+    if (getRadio() == isRadio) return;
+    setOpaque(!isRadio);
+    setSize(13, 13);
+    this.isRadio = isRadio;
+    repaint();
+
+    if (isActive) {
+      setRounded(true);
+      setEnabled(false);
+    }
+
+    addActionListener(radioAction);
+  }
+
+  public void addLink(Button link) {
+    links.add(link);
+  }
+
+  /**
+   * Remove all action listener of a button
+   */
+  public void wipeAllActionListener() {
+    ActionListener[] actions = getActionListeners();
+    for (ActionListener action : actions) {
+      removeActionListener(action);
+    }
   }
 
   @Override
   protected void paintComponent(Graphics g) {
     Graphics2D g2d = (Graphics2D) g.create();
     g2d.setColor(getBackground());
-    if(getRounded()) {
+    if (getRounded()) {
       g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 50, 50);
+    } else if (getRadio()) {
+      g2d.setColor(Color.WHITE);
+      g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+      g2d.drawRoundRect(0, 0, getWidth() - 1, getWidth() - 1, 50, 50);
     }
     super.paintComponent(g2d);
   }

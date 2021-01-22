@@ -13,9 +13,6 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.temporal.TemporalField;
-import java.time.temporal.WeekFields;
-import java.util.Locale;
 
 import javax.swing.AbstractButton;
 import javax.swing.JDialog;
@@ -23,7 +20,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import controllers.PDF_Document;
+import controllers.PDFDocument;
 import models.User;
 import views.components.Button;
 import views.components.Label;
@@ -159,10 +156,8 @@ public class HomeUI extends MasterUI {
           if (isValidPath(dest)) {
             CalendarPanelWeekly cpw = calendarPanel.createPDFWeekly();
             LocalDate date = cpw.getDate();
-            TemporalField tf = WeekFields.of(Locale.getDefault()).weekOfMonth();
-            String week = tf.toString();
             dest += "\\weekly_schedule_" + date.with(DayOfWeek.MONDAY).toString() + ".pdf";
-            File file = PDF_Document.create(user, CalendarPanel.getWeekly(), dest, date);
+            File file = PDFDocument.create(user, CalendarPanel.getWeekly(), dest, date);
             try {
               Desktop.getDesktop().open(file);
             } catch (IOException exp) {
