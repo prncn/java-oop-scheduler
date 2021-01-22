@@ -2,7 +2,10 @@ package controllers;
 
 import models.*;
 
+import java.io.File;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 
@@ -50,7 +53,7 @@ public class DataBaseAPI {
     String saltHash = userData.getString("password");
     String password_encrypted = PasswordEncryption.verify(password, saltHash);
 
-    String sql = "SELECT * FROM UserAccount WHERE username = ? AND password = ?";
+    String sql = "SELECT * FROM User WHERE username = ? AND password = ?";
 
     PreparedStatement statement = connection.prepareStatement(sql);
     statement.setString(1, username);
@@ -67,14 +70,26 @@ public class DataBaseAPI {
   /**
    * Fetch user data from database. This is only called by other user related DB functions.
    * @param connection - SQL jdbc connection object, connection to DB 
-   * @param username - String of username
+   * @param t - ???
    * @return SQL result of data entry or <code>null</code> if user doesn't exist
    */
-  private static ResultSet fetchUserData(Connection connection, String username) {
-    String sql = "SELECT * FROM User WHERE username = ?";
+  private static <T> ResultSet fetchUserData(Connection connection, T t) {
+    String sqlColumn = "";
+
+    if(t instanceof String) sqlColumn = "username";
+      else sqlColumn = "user_id";
+
+    String sql = "SELECT * FROM User WHERE " + sqlColumn + " = ?";
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
-      statement.setString(1, username);
+      if(t instanceof String){
+        String username = t.toString();
+        statement.setString(1, username );
+      } else if (t instanceof Integer){
+        Integer userId = ((Integer) t).intValue();
+        statement.setInt(1, userId);
+      }
+
       ResultSet result = statement.executeQuery();
 
       if (result.next())
@@ -194,7 +209,7 @@ public class DataBaseAPI {
    * @return <code>true</code> if user data is available
    */
   public static boolean isAvailable(User user) {
-    String sql = "SELECT * FROM UserAccount WHERE username = ? OR email=?";
+    String sql = "SELECT * FROM User WHERE username = ? OR email=?";
     Connection connection = connectDatabase();
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
@@ -256,18 +271,24 @@ public class DataBaseAPI {
     }
   }
 
+/**  public static User getUser(int userId){
+    userId = sql
+            getUser(username);
+  }**/
+
   /**
    *
    * @param userId is used to find the relative data
    * @return a list of all events a user is part of.
    */
-  public static ArrayList<Event> getEventsFromUser(String userId){
+  public static ArrayList<Event> getEventsFromUser(int userId){
     String sql = "SELECT * FROM UserEvent WHERE UserID = ?";
     ArrayList<Event> events = new ArrayList<Event>();
 
     Connection connection = connectDatabase();
     try{
       PreparedStatement ps = connection.prepareStatement(sql);
+      ps.setInt(1 , userId);
       ResultSet rs = ps.executeQuery();
 
       while(rs.next()){
@@ -282,7 +303,50 @@ public class DataBaseAPI {
 
   }
 
-    /**
+  /**
+   * Query a event_id and return the corresponding Event object
+   * @param id - SQL id
+   * @return Event object on successful query, else null
+   */
+  /*
+  public static Event getEvent(int id){
+    Location PLATZHALTER = new Location("W", "w", "2", "2", "2", "2", "2");
+
+    String sql = "SELECT * FROM Event WHERE event_id = ?";
+    Connection connection = connectDatabase();
+
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql);
+      ps.setInt(1, id);
+      ResultSet rs = ps.executeQuery();
+
+      if(rs.next()){
+        int eventId = rs.getInt("user_id");
+        // TODO List of participants?
+        Reminder reminder = Enum.valueOf(Reminder.class, rs.getString("reminder"));
+        Priority priority = Enum.valueOf(Priority.class, rs.getString("priority"));
+        String name = rs.getString("name");
+        LocalDate date = rs.getDate("date").toLocalDate();
+        LocalTime time = rs.getTime("time").toLocalTime();
+        int duration = rs.getInt("durationMinutes");
+        String description = rs.getString("description");
+        int host_id = rs.getInt("host_id");
+        int location_id = rs.getInt("location_id");
+
+        Event event = new Event(eventId, date, time, duration, PLATZHALTER, new ArrayList<User>(), priority, new ArrayList<File>());
+
+        closeDatabase(connection);
+        return event;
+      }
+    } catch (SQLException e){
+
+      closeDatabase(connection);
+      return null;
+    }
+    return event;
+  }*/
+
+  /**
      * Create table entry of new event in database.
      * @param event Object of new entry.
      * @return true on successful creation, return false on failed creation
