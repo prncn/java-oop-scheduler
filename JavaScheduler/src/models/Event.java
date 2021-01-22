@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-public class Event implements Comparable<Event> {
+public class  Event implements Comparable<Event> {
   private String id;
   private String name;
   private LocalDate date;
@@ -66,6 +66,10 @@ public class Event implements Comparable<Event> {
     attachment = other.attachment;
     reminder = other.reminder;
     description = other.description;
+
+    /**sendMail();
+     *
+     */
   }
 
   /**

@@ -12,6 +12,8 @@ import java.awt.event.WindowEvent;
 import java.awt.Component;
 import java.awt.Point;
 import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -77,7 +79,10 @@ public class HomeUI extends MasterUI {
     setComponentStyles(panel, "light");
 
     add(sidebar);
+    setVisible(true);
+
     setLocationRelativeTo(null);
+    createTime();
   }
 
   /**
@@ -235,18 +240,39 @@ public class HomeUI extends MasterUI {
   /**
    * Set time and date for sidebar, updating itself every Minute
    */
-  private void createTime(){
-        LocalDate date = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String formattedDate = date.format(formatter);
-        LocalTime time = LocalTime.now();
-        //LocalTime t = LocalTime.of(time.getHour(), time.getMinute());
-        Label footerTime = new Label(20, 615, time.toString());
-        Label footerDate = new Label(100, 638, formattedDate);
+  private void createTime() {
+    Calendar calendar;
+    SimpleDateFormat timeFormat;
+    SimpleDateFormat dateFormat;
+    String time;
+    String date;
 
-        sidebar.add(footerDate);
-        sidebar.add(footerTime);
+    timeFormat = new SimpleDateFormat("hh:mm:ss"); // Zeit in 24h-layout und evtl sekunden raus
+    dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
+    Label timelabel = new Label(115, 615, "");
+    Label datelabel = new Label(100, 638, "");
+
+    sidebar.add(timelabel);
+    sidebar.add(datelabel);
+
+    setComponentStyles(sidebar, "dark");
+
+    while (true) {// while true ist eine endlos schleife die verhindert, dass die app startet
+      time = timeFormat.format(Calendar.getInstance().getTime());
+      timelabel.setText(time);
+      date = dateFormat.format(Calendar.getInstance().getTime());
+      datelabel.setText(date);
+
+      try {
+        Thread.sleep(1000);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
       }
+
+    }
+  }
+
       /**
          * Switch current active panel to another. This is removes the currently
          * viewed panel and adds a new one.
@@ -295,7 +321,6 @@ public class HomeUI extends MasterUI {
   public static void main(String[] args) {
     User guest = new User("admin", "root", "admin@mail.com");
     HomeUI homeFrame = new HomeUI(guest);
-    homeFrame.setVisible(true);
   }
 
 }
