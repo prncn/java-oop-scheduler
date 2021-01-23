@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class Event implements Comparable<Event> {
-  private String id;
+  private int id;
   private String name;
   private LocalDate date;
   private LocalTime time;
@@ -19,6 +19,7 @@ public class Event implements Comparable<Event> {
   private Reminder reminder;
   private String description;
 
+  //TODO has to be adjusted for all variables
   public Event(String name, LocalDate date, LocalTime time, int durationMinutes, Location location,
       ArrayList<User> participants, Priority priority, ArrayList<File> attachments) {
     this.name = name;
@@ -74,7 +75,7 @@ public class Event implements Comparable<Event> {
    * 
    * @return Event ID
    */
-  public String getId() {
+  public int getId() {
     return id;
   }
 
@@ -83,7 +84,7 @@ public class Event implements Comparable<Event> {
    * 
    * @param id - Event ID
    */
-  public void setId(String id) {
+  public void setId(int id) {
     this.id = id;
   }
 
