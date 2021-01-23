@@ -30,7 +30,7 @@ import com.itextpdf.layout.element.Text;
 import models.Event;
 import models.User;
 
-public class PDF_Document {
+public class PDFDocument {
 
 	/**
 	 * Creates the.

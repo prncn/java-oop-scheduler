@@ -13,13 +13,19 @@ import views.components.TextField;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import java.awt.*;
+
+import java.awt.Point;
+import java.awt.Color;
+import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -86,6 +92,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       selectedAttachments = editEvent.getAttachments();
     } else if (mode == VIEW) {
       screenTitle.setText(editEvent.getName());
+      screenTitle.setForeground(MasterUI.accentCol);
       selectedAttachments = editEvent.getAttachments();
       participants = editEvent.getParticipants();
     }
@@ -231,6 +238,16 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    */
   private void initPageButtons() {
     confirmBtn = new Button(40, 550, "Confirm", MasterUI.secondaryCol);
+    switch (mode) {
+      case VIEW:
+        confirmBtn.setText("Back");
+        break;
+      case EDIT:
+        confirmBtn.setText("Save Changes");
+        break;
+      default:
+        confirmBtn.setText("Confirm");
+    }
 
     confirmBtn.setTab();
     confirmBtn.centerText();
@@ -273,8 +290,12 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
           secondField = new TextField(contentBox.x + textfield.getWidth() + 4, initialY + 20);
           secondField.setSize(textfield.getWidth(), textfield.getHeight());
           secondField.setMaximumLength(5);
-          this.add(timelb);
-          this.add(secondField);
+          if (mode == VIEW) {
+            Label memberLabel = new Label(400, timelb.getY(), "Participants: ");
+            add(memberLabel);
+          }
+          add(timelb);
+          add(secondField);
           endField = secondField;
           break;
         case "Where":
@@ -327,7 +348,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     if (editEvent == null) {
       titleField.setText("Proxy Networking");
       locationField.setText("Communications department");
-      dateField.setText("2021-02-12");
+      dateField.setText(LocalDate.now().toString());
       startField.setText("09:00");
       endField.setText("10:35");
     } else {
@@ -352,6 +373,12 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         field.setBackground(MasterUI.lightCol);
         field.setEditable(false);
         field.setEqualPadding(0);
+        field.setFont(MasterUI.robotoFont.deriveFont(Font.BOLD, 15f));
+      }
+      dateField.setText(FormatUtil.readableDate(LocalDate.parse(dateField.getText())));
+      Button[] prioBtns = { loPrioBtn, midPrioBtn, hiPrioBtn };
+      for (Button prioBtn : prioBtns) {
+        prioBtn.setEnabled(false);
       }
 
       repaint();
@@ -390,8 +417,10 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     attachpanel.setBackground(MasterUI.lightCol);
     Label attachLabel = new Label(400, reminderField.getY() + 50, "Attachments (optional)");
     attachField = new TextField(attachLabel.getX(), attachLabel.getY() + 20);
-    Button attachBtn = new Button(attachField.getX() + attachField.getWidth(), attachField.getY(), "...",
+    attachField.setEditable(false);
+    Button attachBtn = new Button(attachField.getX() + attachField.getWidth(), attachField.getY(), "",
         MasterUI.lightColAlt);
+    attachBtn.setIcon(MasterUI.folderIcon);
     attachBtn.setDark(false);
     attachBtn.setForeground(MasterUI.accentCol);
     attachBtn.setSize(attachField.getHeight(), attachField.getHeight());
@@ -415,20 +444,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       });
       if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
         File file = chooser.getSelectedFile();
-        String join = " ";
-        if (selectedAttachments.isEmpty())
-          join = "";
-        attachField.setText(attachField.getText() + join + file.getName());
         selectedAttachments.add(file);
+        attachField.setText(selectedAttachments.size() + " File(s)");
         addAttachmentCard(attachpanel);
       }
     });
-
-    try {
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-        | UnsupportedLookAndFeelException ex) {
-    }
 
     addAttachmentCard(attachpanel);
 
@@ -441,7 +461,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
 
   /**
    * When the attachment form receives a new file, a card panel respresenting the
-   * file is added to the right. The card allows the removal and opening of the file.
+   * file is added to the right. The card allows the removal and opening of the
+   * file.
    * 
    * @param panel - Panel that holds the file cards
    */
@@ -470,12 +491,19 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       ficon.setSize(48, 48);
       fname.setFont(MasterUI.robotoFont.deriveFont(14f));
       fsize.setFont(MasterUI.robotoFont.deriveFont(11f));
-      del.addActionListener(e -> { panel.remove(fcard); selectedAttachments.remove(file); panel.repaint(); });
+
+      del.addActionListener(e -> {
+        panel.remove(fcard);
+        selectedAttachments.remove(file);
+        attachField.setText(selectedAttachments.size() + " File(s)");
+        panel.repaint();
+      });
       del.setIcon(MasterUI.xIcon);
       del.setSize(15, 13);
 
       fcard.add(open);
-      if(mode != VIEW) fcard.add(del);
+      if (mode != VIEW)
+        fcard.add(del);
       fcard.add(ficon);
       fcard.add(fname);
       fcard.add(fsize);
@@ -498,7 +526,9 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     addUserBtn.setIcon(MasterUI.addUserIcon);
 
     userQueryResult = new Label(400, searchUserField.getY() + 100, "");
-    participantListPosition = userQueryResult.getY() + 15;
+    participantListPosition = userQueryResult.getY();
+    if (mode != VIEW)
+      participantListPosition += 15;
     addUserBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         searchParticipant();

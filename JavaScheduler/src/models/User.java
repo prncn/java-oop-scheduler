@@ -1,6 +1,6 @@
 package models;
 
-import controllers.DataBaseAPI;
+import controllers.DatabaseAPI;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -73,8 +73,7 @@ public class User {
     event.setHost(this);
     addEvent(event);
 
-    DataBaseAPI.createEvent(event);
-
+    DatabaseAPI.createEvent(event);
   }
 
   /**

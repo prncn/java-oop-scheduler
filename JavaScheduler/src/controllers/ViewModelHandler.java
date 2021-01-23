@@ -95,7 +95,7 @@ public class ViewModelHandler {
     if(searchField.getText().isEmpty()){
       return null;
     }
-    User user = DataBaseAPI.getUser(searchField.getText());
+    User user = DatabaseAPI.getUser(searchField.getText());
     userQueryResult.setPosition(searchField.getX(), searchField.getY() + 60);
     userQueryResult.setText("");
     if(user != null){
