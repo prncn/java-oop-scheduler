@@ -305,8 +305,6 @@ public class DatabaseAPI {
         statement.setString(8 , event.getDescription());
         statement.setString(9 , event.getHost().getId());
         statement.setString(10 , event.getLocation().getId());
-
-
         statement.executeUpdate();
 
         statement.close();
@@ -315,6 +313,7 @@ public class DatabaseAPI {
 
       } catch (SQLException e) {
           e.printStackTrace();
+          closeDatabase(connection);
           return false;
       }
   }

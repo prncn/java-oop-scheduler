@@ -29,7 +29,7 @@ public class Label extends JLabel {
 
   public Label(String text, Component cmp) {
     super(text);
-    setBounds(cmp.getX() + cmp.getWidth() + 10, cmp.getY(), 250, cmp.getHeight());
+    setBounds(cmp.getX() + cmp.getWidth() + 12, cmp.getY(), 250, cmp.getHeight());
   }
 
   public Label(ImageIcon image) {

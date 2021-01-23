@@ -80,6 +80,16 @@ public class FormatUtil {
 	}
 
 	/**
+   * Check if a string is blank or not
+   *
+   * @param string - the string to be checked
+   * @return Boolean whether string is blanked or not
+   */
+  public static boolean isBlankString(String string) {
+    return string == null || string.trim().isEmpty();
+  }
+
+	/**
 	 * Change alpha value (transparency) of given color
 	 * 
 	 * @param color - Original color

@@ -168,9 +168,10 @@ abstract public class MasterUI extends JFrame {
 
     for (Component c : panel.getComponents()) {
       if (c instanceof JLabel) {
-        if(c instanceof Label && !((Label ) c).getUnset())
-        c.setFont(robotoFont);
-        c.setForeground(foreground);
+        if (c instanceof Label && !((Label) c).getUnset()) {
+          c.setFont(robotoFont);
+          c.setForeground(foreground);
+        }
       }
       if (c instanceof JTextField) {
         c.setFont(robotoFont);
