@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -45,6 +46,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private int participantListPosition;
   private ArrayList<User> participants;
   private ArrayList<File> selectedAttachments;
+  private Reminder selectedReminder;
   private Priority selectedPriority;
   private Location selectedLocation;
   private Point contentBox;
@@ -54,6 +56,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   public static TextField dateField;
   public static TextField startField;
   public static TextField endField;
+  public static TextField priorityField;
   public static TextField locationField;
   public static TextField reminderField;
   public static TextField attachField;
@@ -97,11 +100,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       participants = editEvent.getParticipants();
     }
 
+    initFormContent();
     if (mode != VIEW) {
       initDatePicker();
     }
     initPageButtons();
-    initFormContent();
     drawPrioritySection();
     drawReminderSection();
     drawAttachmentSection();
@@ -125,11 +128,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       dropdown.isActive = false;
     } else {
       dropdown.setSize(300, 200);
-      String[] dueBefores = { "One week before", "Three days before", "One hour before", "Ten minutes before",
-          "Don't remind me" };
+      Reminder[] dueBefores = { Reminder.ONE_WEEK, Reminder.THREE_DAYS,
+          Reminder.ONE_HOUR, Reminder.ONE_HOUR, Reminder.NONE };
       int rmd_initialY = 0;
-      for (String dueBefore : dueBefores) {
-        remOption = new Button(0, rmd_initialY, dueBefore, MasterUI.lightColAlt);
+      for (Reminder dueBefore : dueBefores) {
+        remOption = new Button(0, rmd_initialY, dueBefore.toString(), MasterUI.lightColAlt);
         remOption.setSize(dropdown.getWidth(), 40);
         remOption.setDark(false);
         remOption.setForeground(Color.BLACK);
@@ -139,10 +142,10 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
 
         remOption.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            reminderField.setText(dueBefore);
+            reminderField.setText(dueBefore.toString());
+            selectedReminder = dueBefore;
             dropdown.setSize(0, 0);
             dropdown.isActive = false;
-
             panel.add(searchUserField);
           }
         });
@@ -205,6 +208,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     Label reminderLabel = new Label(400, 100, "Remind me before event");
     reminderField = new TextField(400, 120);
     reminderField.setText(Reminder.NONE.toString());
+    selectedReminder = Reminder.NONE;
     reminderField.setEditable(false);
     Button dpdwn = new Button(700, 120, "", MasterUI.lightColAlt);
     dpdwn.setIcon(MasterUI.downIcon);
@@ -262,19 +266,19 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    *
    */
   private void initFormContent() {
-    String[] lbStrings = { "Topic", "When", "Start Time", "Where" };
+    String[] lbStrings = { "Title", "Date", "Start Time", "Where" };
     int initialY = contentBox.y;
     for (String lbString : lbStrings) {
       Label label = new Label(contentBox.x, initialY, lbString);
       TextField textfield;
       TextField secondField;
       switch (lbString) {
-        case "Topic":
+        case "Title":
           textfield = new TextField(contentBox.x, initialY + 20);
           textfield.setMaximumLength(25);
           titleField = textfield;
           break;
-        case "When":
+        case "Date":
           textfield = new TextField(contentBox.x, initialY + 20);
           textfield.setSize(textfield.getWidth() - 60, textfield.getHeight());
           textfield.setEditable(false);
@@ -569,6 +573,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    */
   private void drawPrioritySection() {
     Label priorityLabel = new Label(40, 100, "Priority");
+    priorityField = new TextField(40, 120);
     loPrioBtn = new Button(40, 120, "LOW", new Color(171, 169, 239));
     midPrioBtn = new Button(140, 120, "MEDIUM", new Color(129, 109, 254));
     hiPrioBtn = new Button(240, 120, "HIGH", MasterUI.accentCol);
@@ -619,6 +624,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     styleDefaultPriorityBtns();
     btn.setColor(prio.getColor());
     btn.setText(prio.toString());
+    priorityField.setText("TRUE");
     selectedPriority = prio;
   }
 
@@ -626,7 +632,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * Create and initialise date picker
    */
   private void initDatePicker() {
-    Button openDatePicker = new Button(285, 260, "", MasterUI.accentCol);
+    Button openDatePicker = new Button(285, dateField.getY(), "", MasterUI.accentCol);
     openDatePicker.setIcon(MasterUI.calendarIcon);
     openDatePicker.setSize(55, 40);
 
@@ -642,7 +648,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
           redpanel.setSize(0, 0);
           redpanel.isActive = false;
         } else {
-          redpanel.setBounds(285, 260, 300, 310);
+          redpanel.setBounds(openDatePicker.getX(), openDatePicker.getY(), 300, 310);
           redpanel.isActive = true;
         }
       }
@@ -660,51 +666,35 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    */
   private void processConfirm() {
     Panel panel = this;
+    
+    errorPriority = priorityField.createErrorLabel("Priority");
+    errorTitle = titleField.createErrorLabel("Title");
+    errorDate = dateField.createErrorLabel("Date");
+    errorLocation = locationField.createErrorLabel("Location");
+    errorStartTime = startField.createErrorLabel("Start Time");
+    errorEndTime = endField.createErrorLabel("End Time");
+    errorReminder = reminderField.createErrorLabel("Reminder");
 
-    Label errorMsg = new Label(40, 520, "");
-    errorPriority = new Label(contentBox.x + 50, 100, "");
-    errorTitle = new Label(contentBox.x + 50, contentBox.y, "");
-    errorDate = new Label(contentBox.x + 50, contentBox.y + 70, "");
-    errorLocation = new Label(contentBox.x + 50, contentBox.y + 210, "");
-    errorStartTime = new Label(contentBox.x + 50, contentBox.y + 140, "");
-    errorEndTime = new Label(contentBox.x + 221, contentBox.y + 140, "");
-    errorReminder = new Label(614, 100, "");
-
-    add(errorMsg);
-    add(errorTitle);
-    add(errorDate);
-    add(errorStartTime);
-    add(errorEndTime);
-    add(errorLocation);
-    add(errorReminder);
-    add(errorPriority);
+    Label[] errorLabels = { errorPriority, errorTitle, errorDate, errorLocation, errorStartTime, errorEndTime, errorReminder };
+    for (Label error : errorLabels) {
+      add(error);
+    }
 
     HashMap<String, TextField> FieldMap = new HashMap<String, TextField>();
     FieldMap.put("titleField", titleField);
     FieldMap.put("dateField", dateField);
     FieldMap.put("startField", startField);
     FieldMap.put("endField", endField);
+    FieldMap.put("priorityField", priorityField);
     FieldMap.put("locationField", locationField);
     FieldMap.put("reminderField", reminderField);
-
-
-    HashMap<String, Label> LabelMap = new HashMap<String, Label>();
-    LabelMap.put("errorPriority", errorPriority);
-    LabelMap.put("errorTitle", errorTitle);
-    LabelMap.put("errorDate", errorDate);
-    LabelMap.put("errorStart", errorStartTime);
-    LabelMap.put("errorEnd", errorEndTime);
-    LabelMap.put("errorLocation", errorLocation);
-    LabelMap.put("errorReminder", errorReminder);
-    LabelMap.put("Where", WhereLabel);
-    LabelMap.put("errorMsg", errorMsg);
 
     ActionListener createAction = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         panel.removeAll();
 
         Event event = ViewModelHandler.consumeEventForm(titleField, dateField, startField, endField, locationField,
-            participants, selectedPriority, selectedAttachments);
+            participants, selectedReminder, selectedPriority, selectedAttachments);
         if (selectedLocation != null && selectedLocation.getName().equals(locationField.getText())) {
           event.setLocation(selectedLocation);
         }
@@ -727,20 +717,17 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
             HomeUI.switchPanel(HomeUI.dashPanel);
             break;
         }
-
       }
     };
 
-    confirmBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        //if (!validateForm(errorMsg, panel)) return;
-        if (!ViewModelHandler.validateForm(FieldMap,LabelMap, dpdwn, selectedPriority)) return;
+    confirmBtn.addActionListener(e -> {
+        if (!ViewModelHandler.validateForm(FieldMap, selectedPriority))
+          return;
         if (mode == VIEW) {
           HomeUI.switchPanel(HomeUI.dashPanel);
           return;
         }
         HomeUI.confirmDialog(createAction, "Proceed with this event?");
-      }
     });
   }
 }

@@ -1,7 +1,7 @@
 package models;
 
 public enum Reminder {
-  ONE_WEEK("Don't remind me"),
+  ONE_WEEK("One week before"),
   THREE_DAYS("Three days before"),
   ONE_HOUR("One hour before"),
   TEN_MIN("Ten minutes before"),

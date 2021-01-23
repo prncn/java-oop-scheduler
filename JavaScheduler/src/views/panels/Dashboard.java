@@ -2,6 +2,7 @@ package views.panels;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import controllers.FormatUtil;
@@ -9,6 +10,7 @@ import controllers.ViewModelHandler;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +26,7 @@ import views.MasterUI;
 import views.components.Button;
 import views.components.Label;
 import views.components.Panel;
+import views.components.TextField;
 
 public class Dashboard extends Panel implements CardModes {
 
@@ -115,13 +118,22 @@ public class Dashboard extends Panel implements CardModes {
   private static void drawFilterSortSection() {
     Panel filterPanel = new Panel();
     filterPanel.setBounds(680, 700, 280, 200);
-    filterPanel.setBackground(MasterUI.primaryColAlt);
+    filterPanel.setBackground(MasterUI.primaryCol);
     filterPanel.setRounded(true);
     
     Label filterLabel = new Label(20, 20, "Filter");
     filterLabel.setHeading();
     filterLabel.setForeground(Color.WHITE);
     filterPanel.add(filterLabel);
+
+    TextField filterQuery = new TextField(20, 60, "filter names...");
+    filterQuery.setSize(200, 30);
+    filterPanel.add(filterQuery);
+
+    Button fqBtn = new Button(filterQuery.getX() + filterQuery.getWidth(), filterQuery.getY(), "", MasterUI.primaryColAlt);
+    fqBtn.setSize(filterQuery.getHeight(), filterQuery.getHeight());
+    fqBtn.setIcon(MasterUI.searchIcon);
+    filterPanel.add(fqBtn);
 
     Panel sortPanel = new Panel();
     sortPanel.setBounds(680, 700 + filterPanel.getHeight() + 20, 280, 200);
@@ -133,30 +145,16 @@ public class Dashboard extends Panel implements CardModes {
     sortLabel.setForeground(Color.WHITE);
     sortPanel.add(sortLabel);
 
-    Button sortOpt1 = new Button(20, 60, "", MasterUI.secondaryCol);
-    sortOpt1.setRadio(true);
-    Label sortOpt1L = new Label("Title", sortOpt1);
-    
-    Button sortOpt2 = new Button(20, sortOpt1.getY() + 25, "", MasterUI.secondaryCol);
-    sortOpt2.setActive(true);
-    sortOpt2.setRadio(true);
-    Label sortOpt2L = new Label("Recently added", sortOpt2);
-    
-    Button sortOpt3 = new Button(20, sortOpt2.getY() + 25, "", MasterUI.secondaryCol);
-    sortOpt3.setRadio(true);
-    sortOpt2.addLink(sortOpt1);
-    sortOpt2.addLink(sortOpt3);
-    Label sortOpt3L = new Label("Date", sortOpt3);
-    
-    sortPanel.add(sortOpt1);
-    sortPanel.add(sortOpt1L);
-    sortPanel.add(sortOpt2);
-    sortPanel.add(sortOpt2L);
-    sortPanel.add(sortOpt3);
-    sortPanel.add(sortOpt3L);
+    int BTN_MRGN = 25;
+    Button sortOpt1 = Button.createRadioButton(20, 70, "Alphabetically", false, sortPanel);
+    Button sortOpt2 = Button.createRadioButton(20, sortOpt1.getY() + BTN_MRGN, "Date added", true, sortPanel);
+    Button sortOpt3 = Button.createRadioButton(20, sortOpt2.getY() + BTN_MRGN, "Date event", false, sortPanel);
+    Button sortOpt4 = Button.createRadioButton(20, sortOpt3.getY() + BTN_MRGN, "Number participants", false, sortPanel);
+
     redpanel.add(filterPanel);
     redpanel.add(sortPanel);
     MasterUI.setComponentStyles(sortPanel, "dark");
+    MasterUI.setComponentStyles(filterPanel, "dark");
   }
 
   /**
@@ -256,7 +254,7 @@ public class Dashboard extends Panel implements CardModes {
    */
   private static Panel drawEventCard(Point p, Event event, Panel panel, int cardMode) {
     Panel card = new Panel();
-    Point c = new Point(15, 10);
+    Point c = new Point(15, 15);
     card.setRounded(true);
     card.setBounds(p.x, p.y, 300, 100);
     card.setBackground(MasterUI.lightColAlt);
@@ -270,15 +268,16 @@ public class Dashboard extends Panel implements CardModes {
       HomeUI.switchPanel(editEvent);
     });
     
-    Label name = new Label(c.x, c.y, "<html><strong>" + event.getName() + "<strong><html>");
-    Label location = new Label(c.x, c.y + 30, event.getLocation().getName());
-    Label date = new Label(c.x, c.y + 55, FormatUtil.readableDate(event.getDate()));
-    Label time = new Label(c.x + 60, c.y + 55, event.getTime().toString());
+    Label name = new Label(c.x, c.y, event.getName());
+    Label location = new Label(c.x, c.y + 20, event.getLocation().getName());
+    Label date = new Label(c.x, c.y + 45, FormatUtil.readableDate(event.getDate()));
+    Label time = new Label(c.x + 60, c.y + 45, event.getTime().toString());
     
     Label prio = new Label(card.getWidth() - 34, 10, "");
     prio.setSize(24, 24);
     prio.setIcon(event.getPriority().getIcon());
-    name.setFont(name.getFont().deriveFont(15f));
+    name.setFont(name.getFont().deriveFont(Font.BOLD, 14f));
+    name.setUnset(true);
     
     int margin = 6;
     

@@ -4,6 +4,8 @@ import views.MasterUI;
 import views.HomeUI;
 
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -11,6 +13,7 @@ import java.awt.Insets;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -35,7 +38,7 @@ public class Button extends JButton implements MouseListener {
   private boolean isActive = false;
   private ActionListener switchPanelAction;
   private Color prevColor;
-  private ArrayList<Button> links = new ArrayList<>();
+  private static ArrayList<Button> links = new ArrayList<>();
 
   public Button(int x, int y, String text, Color color) {
     super(text);
@@ -96,6 +99,7 @@ public class Button extends JButton implements MouseListener {
 
   /**
    * Get whether button is active
+   * 
    * @return Boolean value of active button
    */
   public boolean getActive() {
@@ -104,10 +108,11 @@ public class Button extends JButton implements MouseListener {
 
   /**
    * Set whether button is active
+   * 
    * @param isActive - Boolean value of active button
    */
   public void setActive(boolean isActive) {
-    this.isActive = isActive; 
+    this.isActive = isActive;
   }
 
   /**
@@ -250,55 +255,73 @@ public class Button extends JButton implements MouseListener {
     setOpaque(!value);
     rounded = value;
     repaint();
-
   }
 
   /**
    * Get whether button is a radio button
+   * 
    * @return
    */
   public boolean getRadio() {
     return isRadio;
   }
 
-  ActionListener radioAction = e -> {
+  private void radioToggleAction() {
     if (getActive()) {
       setRounded(false);
       setOpaque(false);
+      setEnabled(true);
       repaint();
     } else {
       setRounded(true);
       setEnabled(false);
     }
-    for (Button link : links) {
-      link.setActive(false);
-      link.setRadio(true);
-    }
-    System.out.println(links.size());
     toggleActive();
+
+  }
+  
+  private ActionListener radioAction = e -> { 
+    radioToggleAction();
+    for (Button link : links) {
+      if (e.getSource() != link){
+        link.setActive(true);
+        link.radioToggleAction();
+      }
+    }
   };
 
   /**
    * Set whether button is a radio button
+   * 
    * @param isRadio - Boolean value to set to isRadio
    */
   public void setRadio(boolean isRadio) {
-    if (getRadio() == isRadio) return;
+    if (getRadio() == isRadio)
+      return;
     setOpaque(!isRadio);
     setSize(13, 13);
     this.isRadio = isRadio;
     repaint();
-
     if (isActive) {
       setRounded(true);
       setEnabled(false);
     }
-
     addActionListener(radioAction);
   }
 
-  public void addLink(Button link) {
-    links.add(link);
+  public static Button createRadioButton(int x, int y, String optionTitle, boolean active, Panel panel) {
+    Button radioBtn = new Button(x, y, "", MasterUI.secondaryCol);
+    radioBtn.setActive(active);
+    radioBtn.setRadio(true);
+    links.add(radioBtn);
+    Label radioLabel = new Label(optionTitle, radioBtn);
+    radioLabel.setFont(MasterUI.robotoFont.deriveFont(12f));
+    radioLabel.setForeground(Color.WHITE);
+    radioLabel.setUnset(true);
+    panel.add(radioLabel);
+    panel.add(radioBtn);
+
+    return radioBtn;
   }
 
   /**
