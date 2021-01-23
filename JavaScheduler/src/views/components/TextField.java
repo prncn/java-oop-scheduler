@@ -97,7 +97,8 @@ public class TextField extends JTextField {
   }
 
   public Label createErrorLabel(String msg) {
-    Label error = new Label(getX() + 50, getY() - 20, "");
+    int xPos = (getX() + getWidth()) - 250;
+    Label error = new Label(xPos, getY() + getHeight(), "");
     error.setForeground(Color.RED);
     error.setHorizontalAlignment(SwingConstants.RIGHT);
     error.setUnset(true);

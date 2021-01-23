@@ -21,9 +21,7 @@ public class LoginUI extends MasterUI {
   /**
    * UI components
    */
-  private static Label userLabel;
   protected static TextField userField;
-  private static Label passLabel;
   protected static JPasswordField passField;
   protected static Button loginBtn;
   protected static Button registerBtn;

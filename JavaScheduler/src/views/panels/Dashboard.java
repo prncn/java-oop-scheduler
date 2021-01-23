@@ -2,7 +2,6 @@ package views.panels;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import controllers.FormatUtil;

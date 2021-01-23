@@ -134,6 +134,7 @@ public class ViewModelHandler {
     TextField reminderField = FieldMap.get("reminderField");
 
     TextField[] fields = { titleField, dateField, startField, endField, priorityField, locationField, reminderField };
+
     for (TextField field : fields) {
       if (FormatUtil.isBlankString(field.getText())) {
         field.setBorder(border);
@@ -149,7 +150,6 @@ public class ViewModelHandler {
       if(LocalTime.parse(startField.getText()).isAfter(LocalTime.parse(endField.getText()))) {
         startField.setBorder(border);
         endField.setBorder(border);
-        endField.getErrorLabel().setLocation(endField.getX() - 100, endField.getY() + endField.getHeight());
         endField.getErrorLabel().setText("*Start time can't be after end time");
 
         valid = false;

@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -60,14 +59,6 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   public static TextField locationField;
   public static TextField reminderField;
   public static TextField attachField;
-  private static Label errorPriority;
-  private static Label errorTitle;
-  private static Label errorDate;
-  private static Label errorStartTime;
-  private static Label errorEndTime;
-  private static Label errorLocation;
-  private static Label errorReminder;
-  private static Label WhereLabel;
   private JFrame frame;
   private User user;
   private Event editEvent;
@@ -307,7 +298,6 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
           textfield.setSize(textfield.getWidth() - 40, textfield.getHeight());
           textfield.setMaximumLength(25);
           locationField = textfield;
-          WhereLabel = label;
 
           dpdwn = new Button(contentBox.x + textfield.getWidth(), initialY + 20, "", MasterUI.lightColAlt);
           dpdwn.setIcon(MasterUI.downIcon);
@@ -667,13 +657,13 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private void processConfirm() {
     Panel panel = this;
     
-    errorPriority = priorityField.createErrorLabel("Priority");
-    errorTitle = titleField.createErrorLabel("Title");
-    errorDate = dateField.createErrorLabel("Date");
-    errorLocation = locationField.createErrorLabel("Location");
-    errorStartTime = startField.createErrorLabel("Start Time");
-    errorEndTime = endField.createErrorLabel("End Time");
-    errorReminder = reminderField.createErrorLabel("Reminder");
+    Label errorPriority = priorityField.createErrorLabel("Priority");
+    Label errorTitle = titleField.createErrorLabel("Title");
+    Label errorDate = dateField.createErrorLabel("Date");
+    Label errorLocation = locationField.createErrorLabel("Location");
+    Label errorStartTime = startField.createErrorLabel("Start Time");
+    Label errorEndTime = endField.createErrorLabel("End Time");
+    Label errorReminder = reminderField.createErrorLabel("Reminder");
 
     Label[] errorLabels = { errorPriority, errorTitle, errorDate, errorLocation, errorStartTime, errorEndTime, errorReminder };
     for (Label error : errorLabels) {
