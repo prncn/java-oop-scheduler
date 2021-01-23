@@ -125,14 +125,19 @@ public class Dashboard extends Panel implements CardModes {
     filterLabel.setForeground(Color.WHITE);
     filterPanel.add(filterLabel);
 
-    TextField filterQuery = new TextField(20, 60, "filter names...");
-    filterQuery.setSize(200, 30);
-    filterPanel.add(filterQuery);
+    TextField filterQuery_1 = new TextField(20, 60, "filter names...");
+    filterQuery_1.setSize(200, 40);
+    filterPanel.add(filterQuery_1);
 
-    Button fqBtn = new Button(filterQuery.getX() + filterQuery.getWidth(), filterQuery.getY(), "", MasterUI.primaryColAlt);
-    fqBtn.setSize(filterQuery.getHeight(), filterQuery.getHeight());
-    fqBtn.setIcon(MasterUI.searchIcon);
-    filterPanel.add(fqBtn);
+    Button fqBtn_1 = filterQuery_1.appendButton(MasterUI.searchIconLight);
+    filterPanel.add(fqBtn_1);
+
+    TextField filterQuery_2 = new TextField(20, 110, "filter locations...");
+    filterQuery_2.setSize(200, 40);
+    filterPanel.add(filterQuery_2);
+
+    Button fqBtn_2 = filterQuery_2.appendButton(MasterUI.searchIconLight);
+    filterPanel.add(fqBtn_2);
 
     Panel sortPanel = new Panel();
     sortPanel.setBounds(680, 700 + filterPanel.getHeight() + 20, 280, 200);

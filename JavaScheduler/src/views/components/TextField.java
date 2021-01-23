@@ -92,10 +92,27 @@ public class TextField extends JTextField {
     setBorder(javax.swing.BorderFactory.createEmptyBorder(p, p, p, p));
   }
 
+  public Button appendButton(ImageIcon icon) {
+    Button btn = new Button(getX() + getWidth(), getY(), "", MasterUI.primaryColAlt);
+    btn.setSize(getHeight(), getHeight());
+    btn.setIcon(icon);
+    return btn;
+  }
+
+  /**
+   * Get error label that was created to the field
+   * @return
+   */
   public Label getErrorLabel() {
     return errorLabel;
   }
 
+  /**
+   * Create error label that appears on specific (error) behaviour on 
+   * a text field
+   * @param msg
+   * @return
+   */
   public Label createErrorLabel(String msg) {
     int xPos = (getX() + getWidth()) - 250;
     Label error = new Label(xPos, getY() + getHeight(), "");
