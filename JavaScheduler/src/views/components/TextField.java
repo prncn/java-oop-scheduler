@@ -8,9 +8,12 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 
+import java.awt.Color;
+
 public class TextField extends JTextField {
 
   private static final long serialVersionUID = -2254754514418403224L;
+  private Label errorLabel;
 
   /**
    * Nested class to limit the number of entered characters
@@ -89,13 +92,19 @@ public class TextField extends JTextField {
     setBorder(javax.swing.BorderFactory.createEmptyBorder(p, p, p, p));
   }
 
-  /**
-   * Set placeholder text inside text field
-   */
-  public void setPlaceholderText() {
-    setForeground(MasterUI.lightCol);
+  public Label getErrorLabel() {
+    return errorLabel;
   }
 
+  public Label createErrorLabel(String msg) {
+    Label error = new Label(getX() + 50, getY() - 20, "");
+    error.setForeground(Color.RED);
+    error.setHorizontalAlignment(SwingConstants.RIGHT);
+    error.setUnset(true);
+    error.setName(msg);
+    errorLabel = error;
+    return error;
+  }
 
   /**
    * Set max. length of a entered characters in a textfield

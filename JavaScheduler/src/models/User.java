@@ -73,6 +73,9 @@ public class User {
     event.setHost(this);
     addEvent(event);
 
+    for (User participant : event.getParticipants()) {
+      participant.addEvent(event);
+    }
     DatabaseAPI.createEvent(event);
   }
 
@@ -81,7 +84,7 @@ public class User {
    * 
    * @param event - Newly created event
    */
-  public void addEvent(Event event) {
+  private void addEvent(Event event) {
     events.add(event);
   }
 

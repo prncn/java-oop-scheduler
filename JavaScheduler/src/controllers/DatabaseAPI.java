@@ -2,6 +2,7 @@ package controllers;
 
 import models.*;
 
+
 import java.io.File;
 import java.sql.*;
 import java.time.LocalDate;
@@ -52,6 +53,7 @@ public class DatabaseAPI {
     }
     String saltHash = userData.getString("password");
     String password_encrypted = PasswordEncryption.verify(password, saltHash);
+
 
     String sql = "SELECT * FROM User WHERE username = ? AND password = ?";
 
@@ -150,10 +152,12 @@ public class DatabaseAPI {
    * Edits a user in the database with the parameter user.
    *
    * @param user This user's attribute values are taken to edit the user in the DB with the same id 
+
    * @return <code>true</code>, if successful
    */
   public static boolean editUser(User user) {
 	  String sql = "UPDATE User SET username = ?, password = ?, email = ? WHERE user_id = ?";
+
 	  Connection connection = connectDatabase();
 	  try {
 		  PreparedStatement statement = connection.prepareStatement(sql);
@@ -212,6 +216,7 @@ public class DatabaseAPI {
    */
   public static boolean isAvailable(User user) {
     String sql = "SELECT * FROM User WHERE username = ? OR email=?";
+
     Connection connection = connectDatabase();
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
@@ -247,6 +252,7 @@ public class DatabaseAPI {
   /** TODO
    * Query a username and return the corresponding User object from its table entry.
    * Used to search the user table.
+
    * @param key - String of username or Int of userid
    * @return User object on successful query, else <code>null</code>
    */
@@ -258,6 +264,7 @@ public class DatabaseAPI {
       return null;
     }
     try {
+
       int id = result.getInt("user_id");
       String name = result.getString("username");
       String email = result.getString("email");
@@ -272,6 +279,7 @@ public class DatabaseAPI {
       return null;
     }
   }
+
 
 /**  public static User getUser(int userId){
     userId = sql
@@ -289,16 +297,19 @@ public class DatabaseAPI {
             "LEFT JOIN User_Event\n" +
             "ON User_Event.event_id = Event.event_id\n" +
             "WHERE User_Event.user_id = ?";
+
     ArrayList<Event> events = new ArrayList<Event>();
 
     Connection connection = connectDatabase();
     try{
       PreparedStatement ps = connection.prepareStatement(sql);
+
       ps.setInt(1 , userId);
       ResultSet rs = ps.executeQuery();
 
       while(rs.next()){
         events.add( getEvent(rs.getInt("event_id")) );
+
       }
 
       return events;
@@ -308,6 +319,7 @@ public class DatabaseAPI {
     }
 
   }
+
 
   /**
    * Query a event_id and return the corresponding Event object
@@ -365,6 +377,7 @@ public class DatabaseAPI {
 
       try{
         PreparedStatement statement = connection.prepareStatement(sql);
+
         statement.setInt(1 , event.getId());
         statement.setString(2 , event.getReminder().name());
         statement.setString(3 , event.getPriority().name());
@@ -373,6 +386,7 @@ public class DatabaseAPI {
         statement.setTime(6 , Time.valueOf(event.getTime() ));
         statement.setInt(7 , event.getDurationMinutes());
         statement.setString(8 , event.getDescription());
+
         statement.setInt(9 , event.getHost().getId());
         statement.setString(10 , event.getLocation().getId());
 
@@ -385,6 +399,7 @@ public class DatabaseAPI {
 
       } catch (SQLException e) {
           e.printStackTrace();
+          closeDatabase(connection);
           return false;
       }
   }

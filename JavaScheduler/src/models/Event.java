@@ -17,17 +17,18 @@ public class Event implements Comparable<Event> {
   private Priority priority;
   private ArrayList<File> attachments;
   private Reminder reminder;
-  private String description;
+  private String description = "";
 
   //TODO has to be adjusted for all variables
   public Event(String name, LocalDate date, LocalTime time, int durationMinutes, Location location,
-      ArrayList<User> participants, Priority priority, ArrayList<File> attachments) {
+      ArrayList<User> participants, Reminder reminder, Priority priority, ArrayList<File> attachments) {
     this.name = name;
     this.date = date;
     this.time = time;
     this.durationMinutes = durationMinutes;
     this.location = location;
     this.participants = participants;
+    this.reminder = reminder;
     this.priority = priority;
     this.attachments = attachments;
   }

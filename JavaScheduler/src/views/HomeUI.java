@@ -163,7 +163,7 @@ public class HomeUI extends MasterUI {
             } catch (IOException exp) {
               exp.printStackTrace();
             }
-            System.out.println("weekly report saved to " + dest);
+            System.out.println("Weekly report saved to " + dest);
           } else
             System.out.println("Path is invalid");
           }
