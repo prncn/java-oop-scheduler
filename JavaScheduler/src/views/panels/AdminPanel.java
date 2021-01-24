@@ -11,9 +11,6 @@ import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
 public class AdminPanel extends Panel {
 
   private static final long serialVersionUID = 542069743291702880L;

@@ -73,6 +73,7 @@ public class User {
     event.setHost(this);
     addEvent(event);
     for (User participant : event.getParticipants()) {
+      if (participant == this) continue;
       participant.addEvent(event);
     }
     // DatabaseAPI.createEvent(event);
