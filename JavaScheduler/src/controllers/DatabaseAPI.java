@@ -2,7 +2,11 @@ package controllers;
 
 import models.*;
 
+
+import java.io.File;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 
@@ -50,7 +54,8 @@ public class DatabaseAPI {
     String saltHash = userData.getString("password");
     String password_encrypted = PasswordEncryption.verify(password, saltHash);
 
-    String sql = "SELECT * FROM UserAccount WHERE username = ? AND password = ?";
+
+    String sql = "SELECT * FROM User WHERE username = ? AND password = ?";
 
     PreparedStatement statement = connection.prepareStatement(sql);
     statement.setString(1, username);
@@ -67,14 +72,26 @@ public class DatabaseAPI {
   /**
    * Fetch user data from database. This is only called by other user related DB functions.
    * @param connection - SQL jdbc connection object, connection to DB 
-   * @param username - String of username
+   * @param key - ???
    * @return SQL result of data entry or <code>null</code> if user doesn't exist
    */
-  private static ResultSet fetchUserData(Connection connection, String username) {
-    String sql = "SELECT * FROM User WHERE username = ?";
+  private static <T> ResultSet fetchUserData(Connection connection, T key) {
+    String sqlColumn = "";
+
+    if(key instanceof String) sqlColumn = "username";
+      else sqlColumn = "user_id";
+
+    String sql = "SELECT * FROM User WHERE " + sqlColumn + " = ?";
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
-      statement.setString(1, username);
+      if(key instanceof String){
+        String username = key.toString();
+        statement.setString(1, username );
+      } else if (key instanceof Integer){
+        Integer userId = ((Integer) key).intValue();
+        statement.setInt(1, userId);
+      }
+
       ResultSet result = statement.executeQuery();
 
       if (result.next())
@@ -110,14 +127,15 @@ public class DatabaseAPI {
    * @return <code>true</code> on successful user creation
    */
   public static boolean createUser(User user) {
-    String sql = "INSERT INTO UserAccount (id, username, password, email)" + " VALUES(?, ?, ?, ?)";
+    String sql = "INSERT INTO User (username, password, email, firstName, lastName)" + " VALUES(?, ?, ?, ?, ?)";
     Connection connection = connectDatabase();
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
-      statement.setString(1, user.getId());
-      statement.setString(2, user.getUsername());
-      statement.setString(3, user.getPassword());
-      statement.setString(4, user.getEmail());
+      statement.setString(1, user.getUsername());
+      statement.setString(2, user.getPassword());
+      statement.setString(3, user.getEmail());
+      statement.setString(4, user.getFirstname());
+      statement.setString(5, user.getLastname());
       statement.executeUpdate();
 
       statement.close();
@@ -134,17 +152,19 @@ public class DatabaseAPI {
    * Edits a user in the database with the parameter user.
    *
    * @param user This user's attribute values are taken to edit the user in the DB with the same id 
-   * @return true, if successful
+
+   * @return <code>true</code>, if successful
    */
   public static boolean editUser(User user) {
-	  String sql = "UPDATE UserAccount SET username = ?, password = ?, email = ? WHERE id = ?";
+	  String sql = "UPDATE User SET username = ?, password = ?, email = ? WHERE user_id = ?";
+
 	  Connection connection = connectDatabase();
 	  try {
 		  PreparedStatement statement = connection.prepareStatement(sql);
 	      statement.setString(1, user.getUsername());
 	      statement.setString(2, user.getPassword());
 	      statement.setString(3, user.getEmail());
-	      statement.setString(4, user.getId());
+	      statement.setInt(4, user.getId());
 	      statement.executeUpdate();
 	      statement.close();
 	      closeDatabase(connection);
@@ -162,7 +182,7 @@ public class DatabaseAPI {
    * @return all users as an arraylist
    */
   public static ArrayList<User> getAllUsers() {
-	  String sql = "SELECT * FROM UserAccount";
+	  String sql = "SELECT * FROM User";
 	  Connection connection = connectDatabase();
 	  try {
 		  PreparedStatement statement = connection.prepareStatement(sql);
@@ -195,7 +215,8 @@ public class DatabaseAPI {
    * @return <code>true</code> if user data is available
    */
   public static boolean isAvailable(User user) {
-    String sql = "SELECT * FROM UserAccount WHERE username = ? OR email=?";
+    String sql = "SELECT * FROM User WHERE username = ? OR email=?";
+
     Connection connection = connectDatabase();
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
@@ -231,18 +252,20 @@ public class DatabaseAPI {
   /** TODO
    * Query a username and return the corresponding User object from its table entry.
    * Used to search the user table.
-   * @param username - String of username
+
+   * @param key - String of username or Int of userid
    * @return User object on successful query, else <code>null</code>
    */
-  public static User getUser(String username) {
+  public static <T> User getUser(T key) {
     Connection connection = connectDatabase();
-    ResultSet result = fetchUserData(connection, username);
+    ResultSet result = fetchUserData(connection, key);
     if (result == null) {
       closeDatabase(connection);
       return null;
     }
     try {
-      String id = result.getString("id");
+
+      int id = result.getInt("user_id");
       String name = result.getString("username");
       String email = result.getString("email");
       String firstname = result.getString("firstName");
@@ -257,21 +280,35 @@ public class DatabaseAPI {
     }
   }
 
+
+/**  public static User getUser(int userId){
+    userId = sql
+            getUser(username);
+  }**/
+
   /**
-   *
+   *  TODO
    * @param userId is used to find the relative data
    * @return a list of all events a user is part of.
    */
-  public static ArrayList<Event> getEventsFromUser(String userId){
-    String sql = "SELECT * FROM UserEvent WHERE UserID = ?";
+  public static ArrayList<Event> getEventsFromUser(int userId){
+    String sql = "SELECT *\n" +
+            "FROM Event\n" +
+            "LEFT JOIN User_Event\n" +
+            "ON User_Event.event_id = Event.event_id\n" +
+            "WHERE User_Event.user_id = ?";
+
     ArrayList<Event> events = new ArrayList<Event>();
 
     Connection connection = connectDatabase();
     try{
       PreparedStatement ps = connection.prepareStatement(sql);
+
+      ps.setInt(1 , userId);
       ResultSet rs = ps.executeQuery();
 
       while(rs.next()){
+        events.add( getEvent(rs.getInt("event_id")) );
 
       }
 
@@ -283,7 +320,52 @@ public class DatabaseAPI {
 
   }
 
-    /**
+
+  /**
+   * Query a event_id and return the corresponding Event object
+   * @param id - SQL id
+   * @return Event object on successful query, else null
+   */
+  public static Event getEvent(int id){
+    Location PLATZHALTER = new Location("W", "w", "2", "2", "2", "2", "2");
+
+    String sql = "SELECT * FROM Event WHERE event_id = ?";
+    Connection connection = connectDatabase();
+
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql);
+      ps.setInt(1, id);
+      ResultSet rs = ps.executeQuery();
+
+      if(rs.next()){
+        int eventId = rs.getInt("user_id");
+        // TODO List of participants?
+        Reminder reminder = Enum.valueOf(Reminder.class, rs.getString("reminder"));
+        Priority priority = Enum.valueOf(Priority.class, rs.getString("priority"));
+        String name = rs.getString("name");
+        LocalDate date = rs.getDate("date").toLocalDate();
+        LocalTime time = rs.getTime("time").toLocalTime();
+        int duration = rs.getInt("durationMinutes");
+        String description = rs.getString("description");
+        int host_id = rs.getInt("host_id");
+        int location_id = rs.getInt("location_id");
+
+        Event event = new Event(name, date, time, duration, PLATZHALTER, new ArrayList<User>(), priority, new ArrayList<File>());
+        event.setId(eventId);
+        event.setHost(getUser(host_id));
+
+        closeDatabase(connection);
+        return event;
+      }
+    } catch (SQLException e){
+
+      closeDatabase(connection);
+      return null;
+    }
+    return null;
+  }
+
+  /**
      * Create table entry of new event in database.
      * @param event Object of new entry.
      * @return true on successful creation, return false on failed creation
@@ -295,7 +377,8 @@ public class DatabaseAPI {
 
       try{
         PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setString(1 , event.getId());
+
+        statement.setInt(1 , event.getId());
         statement.setString(2 , event.getReminder().name());
         statement.setString(3 , event.getPriority().name());
         statement.setString(4 , event.getName());
@@ -303,8 +386,11 @@ public class DatabaseAPI {
         statement.setTime(6 , Time.valueOf(event.getTime() ));
         statement.setInt(7 , event.getDurationMinutes());
         statement.setString(8 , event.getDescription());
-        statement.setString(9 , event.getHost().getId());
+
+        statement.setInt(9 , event.getHost().getId());
         statement.setString(10 , event.getLocation().getId());
+
+
         statement.executeUpdate();
 
         statement.close();

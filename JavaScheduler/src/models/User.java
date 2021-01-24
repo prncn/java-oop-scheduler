@@ -1,13 +1,13 @@
 package models;
 
+import controllers.DatabaseAPI;
+
 import java.util.ArrayList;
 import java.util.UUID;
 
-import controllers.DatabaseAPI;
-
 public class User {
 
-  private String id;
+  private int id;
   private String username;
   private String firstname;
   private String lastname;
@@ -20,7 +20,7 @@ public class User {
   /**
    * Constructor for fetching user from database and creating model class from it
    */
-  public User(String id, String username, String firstname, String lastname, String email,
+  public User(int id, String username, String firstname, String lastname, String email,
       ArrayList<Event> acceptEvents, ArrayList<Location> customLocations) {
     this.id = id;
     this.username = username;
@@ -36,7 +36,7 @@ public class User {
    * Constructor after account creation and before storing to database
    */
   public User(String username, String password, String email) {
-    this.id = generateUUID();
+
     this.username = username;
     this.firstname = "";
     this.lastname = "";
@@ -72,11 +72,12 @@ public class User {
   public void createEvent(Event event) {
     event.setHost(this);
     addEvent(event);
+
     for (User participant : event.getParticipants()) {
       if (participant == this) continue;
       participant.addEvent(event);
     }
-    // DatabaseAPI.createEvent(event);
+    DatabaseAPI.createEvent(event);
   }
 
   /**
@@ -108,10 +109,10 @@ public class User {
 
   /**
    * Get user ID
-   * 
+   *
    * @return String user ID
    */
-  public String getId() {
+  public int getId() {
     return this.id;
   }
 
@@ -142,21 +143,7 @@ public class User {
     return this.email;
   }
 
-  /**
-   * Get admin status
-   * 
-   * @return Boolean admin status
-   */
-  public Boolean getAdmin() {
-    return isAdmin;
-  }
-
-  /**
-   * Set user ID
-   * 
-   * @param id - String ID
-   */
-  public void setId(String id) {
+  public void setId(int id) {
     this.id = id;
   }
 
@@ -280,7 +267,7 @@ public class User {
   @Override
   public boolean equals(Object other) {
     User that = (User) other;
-    return this.id.equals(that.id);
+    return this.id == that.id;
   }
 
   /**
