@@ -339,7 +339,6 @@ public class DatabaseAPI {
 
       if(rs.next()){
         int eventId = rs.getInt("user_id");
-        // TODO List of participants?
         Reminder reminder = Enum.valueOf(Reminder.class, rs.getString("reminder"));
         Priority priority = Enum.valueOf(Priority.class, rs.getString("priority"));
         String name = rs.getString("name");
@@ -350,7 +349,7 @@ public class DatabaseAPI {
         int host_id = rs.getInt("host_id");
         int location_id = rs.getInt("location_id");
 
-        Event event = new Event(name, date, time, duration, PLATZHALTER, new ArrayList<User>(), priority, new ArrayList<File>());
+        Event event = new Event(name, date, time, duration, PLATZHALTER, new ArrayList<User>(), reminder, priority, new ArrayList<File>());
         event.setId(eventId);
         event.setHost(getUser(host_id));
 

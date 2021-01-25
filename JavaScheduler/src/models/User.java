@@ -77,7 +77,7 @@ public class User {
       if (participant == this) continue;
       participant.addEvent(event);
     }
-    DatabaseAPI.createEvent(event);
+    // DatabaseAPI.createEvent(event);
   }
 
   /**

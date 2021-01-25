@@ -39,7 +39,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private Button hiPrioBtn;
   private Button midPrioBtn;
   private Button loPrioBtn;
-  private Button dpdwn;
+  private Button lc_dpdwn;
   private TextField searchUserField;
   private Label userQueryResult;
   private int participantListPosition;
@@ -299,12 +299,12 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
           textfield.setMaximumLength(25);
           locationField = textfield;
 
-          dpdwn = new Button(contentBox.x + textfield.getWidth(), initialY + 20, "", MasterUI.lightColAlt);
-          dpdwn.setIcon(MasterUI.downIcon);
-          dpdwn.setSize(40, 40);
-          dpdwn.addActionListener(e -> locationDropdownSelection(textfield));
+          lc_dpdwn = new Button(contentBox.x + textfield.getWidth(), initialY + 20, "", MasterUI.lightColAlt);
+          lc_dpdwn.setIcon(MasterUI.downIcon);
+          lc_dpdwn.setSize(40, 40);
+          lc_dpdwn.addActionListener(e -> locationDropdownSelection(textfield));
           if (mode != VIEW)
-            add(dpdwn);
+            add(lc_dpdwn);
           break;
         default:
           textfield = new TextField(contentBox.x, initialY + 20);
@@ -630,6 +630,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     redpanel.setSize(0, 0);
     redpanel.setBackground(MasterUI.lightCol);
     redpanel.setLayout(null);
+    setComponentZOrder(redpanel, 0);
     ((CalendarPanel) redpanel).stripComponents();
     redpanel.isActive = false;
     openDatePicker.addActionListener(new ActionListener() {
@@ -637,9 +638,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         if (redpanel.isActive) {
           redpanel.setSize(0, 0);
           redpanel.isActive = false;
+          add(lc_dpdwn);
         } else {
           redpanel.setBounds(openDatePicker.getX(), openDatePicker.getY(), 300, 310);
           redpanel.isActive = true;
+          remove(lc_dpdwn);
         }
       }
     });

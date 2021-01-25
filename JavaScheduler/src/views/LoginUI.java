@@ -67,7 +67,7 @@ public class LoginUI extends MasterUI {
     userField.setSize(210, userField.getHeight());
     userField.setCaretColor(Color.WHITE);
     passField.setBounds(lgnBox.x, lgnBox.y + 120, 210, 40);
-    placeFieldLabel(userField, "User", LBL_MRGN);
+    placeFieldLabel(userField, "Username", LBL_MRGN);
     placeFieldLabel(passField, "Password", LBL_MRGN);
 
     panel.add(userField);

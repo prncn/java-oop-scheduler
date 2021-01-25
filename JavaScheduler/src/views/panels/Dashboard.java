@@ -137,7 +137,7 @@ public class Dashboard extends Panel implements CardModes {
     filterLabel.setHeading();
     filterLabel.setForeground(Color.WHITE);
     
-    TextField filterQuery_1 = new TextField(20, 60, "filter names...");
+    TextField filterQuery_1 = new TextField(20, 60, "filter event names...");
     filterQuery_1.setSize(200, 40);
     
     
@@ -250,11 +250,11 @@ public class Dashboard extends Panel implements CardModes {
       case PARTICIPS: Collections.sort(allEvents, (e1, e2) -> e1.getParticipants().size() - e2.getParticipants().size()); break;
       default: break;
     }
+    if (!TITLE_KEY.isBlank()) {
+      allEvents.removeIf(e -> !e.getName().equalsIgnoreCase(TITLE_KEY));
+    }
     if (!LOCATION_KEY.isBlank()) {
       allEvents.removeIf(e -> !e.getLocation().getName().equalsIgnoreCase(LOCATION_KEY));
-    }
-    if (!TITLE_KEY.isBlank()) {
-      allEvents.removeIf(e -> !e.getLocation().getName().equalsIgnoreCase(TITLE_KEY));
     }
     for (int i = 0; i < allEvents.size(); i++) {
       Event event = allEvents.get(i);
@@ -274,10 +274,11 @@ public class Dashboard extends Panel implements CardModes {
       }  
     }
     if (allEvents.size() % 8 == 0) {
-      allSectionInner.setSize(allSectionInner.getWidth(), allSectionInner.getHeight() + 500);
-      redpanel.setSize(redpanel.getWidth(), redpanel.getHeight() + 500);
-      redpanel.setPreferredSize(new Dimension(redpanel.getWidth(), redpanel.getHeight() + 500));
+      allSectionInner.setSize(allSectionInner.getWidth(), (allEvents.size() * 115) * 2);
+      redpanel.setSize(redpanel.getWidth(), (allEvents.size() * 115) * 2);
+      redpanel.setPreferredSize(new Dimension(redpanel.getWidth(), (allEvents.size() * 115) * 2));
     }
+    allSectionInner.repaint();
   }
 
   /**
@@ -367,8 +368,6 @@ public class Dashboard extends Panel implements CardModes {
         label.setForeground(MasterUI.lightColAlt);
       }
     }
-
-    panel.repaint();
     card.repaint();
     
     return card;
