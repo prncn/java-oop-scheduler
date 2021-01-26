@@ -40,14 +40,14 @@ public class RegisterUI extends LoginUI {
     registerBtn.setBounds(lgnBox.x + 110, lgnBox.y + 350, 100, 40);
 
     placeToRight(passField, passConfField);
-    placeFieldLabel(passConfField, "Confirm Password", LBL_MRGN);
+    placeFieldLabel(passConfField, "Confirm Password", panel);
     firstnameField.setBounds(passField.getX(), passField.getY() + 70, passField.getWidth(), passField.getHeight());
     placeToRight(firstnameField, lastnameField);
-    placeFieldLabel(firstnameField, "First name", LBL_MRGN);
-    placeFieldLabel(lastnameField, "Last name", LBL_MRGN);
+    placeFieldLabel(firstnameField, "First name", panel);
+    placeFieldLabel(lastnameField, "Last name", panel);
     emailField.setBounds(firstnameField.getX(), firstnameField.getY() + 70, passField.getWidth(),
         passField.getHeight());
-    placeFieldLabel(emailField, "Email", LBL_MRGN);
+    placeFieldLabel(emailField, "Email", panel);
     success.setBounds(lgnBox.x, lgnBox.y + 430, 250, 25);
     setButtonActions();
 

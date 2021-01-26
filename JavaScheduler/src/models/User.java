@@ -90,11 +90,25 @@ public class User {
   }
 
   /**
+   * Remove event from user and if host, remove from their
+   * event list as well
+   * @param event - Event to be deleted
+   */
+  public void deleteEvent(Event event) {
+    removeEvent(event);
+    if (event.getHost().equals(this)) {
+      for (User participant : event.getParticipants()) {
+        participant.removeEvent(event);
+      }
+    }
+  }
+
+  /**
    * Remove event from user
    * 
    * @param event - Event to be removed
    */
-  public void removeEvent(Event event) {
+  private void removeEvent(Event event) {
     events.remove(event);
   }
 

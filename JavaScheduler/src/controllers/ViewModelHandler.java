@@ -97,7 +97,9 @@ public class ViewModelHandler {
       return null;
     }
     User user = DatabaseAPI.getUser(searchField.getText());
-    userQueryResult.setPosition(searchField.getX(), searchField.getY() + 60);
+    userQueryResult.setPosition(searchField.getX() + searchField.getWidth() - userQueryResult.getWidth(), searchField.getY() + 40);
+    userQueryResult.setHorizontalAlignment(SwingConstants.RIGHT);
+    userQueryResult.setUnset(true);
     userQueryResult.setText("");
     if(user != null){
       userQueryResult.setForeground(MasterUI.secondaryCol);

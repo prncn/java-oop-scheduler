@@ -340,7 +340,7 @@ public class Dashboard extends Panel implements CardModes {
       remove.setIcon(MasterUI.removeIcon);
       ActionListener removeAction = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          user.removeEvent(event);
+          user.deleteEvent(event);
           ViewModelHandler.updateDashboard(user);
           panel.repaint();
         }

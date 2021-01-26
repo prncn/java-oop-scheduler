@@ -59,6 +59,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   public static TextField locationField;
   public static TextField reminderField;
   public static TextField attachField;
+  public static TextField descField;
   private JFrame frame;
   private User user;
   private Event editEvent;
@@ -91,7 +92,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       participants = editEvent.getParticipants();
     }
 
-    initFormContent();
+    initLeftFormContent();
     if (mode != VIEW) {
       initDatePicker();
     }
@@ -100,6 +101,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     drawReminderSection();
     drawAttachmentSection();
     drawParticipantSection();
+    drawDesciptionSection();
     processConfirm();
 
     add(screenTitle);
@@ -252,11 +254,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   }
 
   /**
-   * Create and initialise text forms. This method is designed as a loop and not
+   * Create and initialise text forms. This method was designed as a loop and not
    * statically for developemental purposes.
    *
    */
-  private void initFormContent() {
+  private void initLeftFormContent() {
     String[] lbStrings = { "Title", "Date", "Start Time", "Where" };
     int initialY = contentBox.y;
     for (String lbString : lbStrings) {
@@ -393,7 +395,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         return;
       }
       participants.add(user);
-      Label participantLabel = new Label(400, participantListPosition, "");
+      Label participantLabel = new Label(750, participantListPosition, "");
       participantLabel.setText(user.getUsername());
       participantLabel.setIcon(MasterUI.circleUserIcon);
       add(participantLabel);
@@ -407,7 +409,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    */
   private void drawAttachmentSection() {
     Panel attachpanel = new Panel();
-    attachpanel.setBounds(750, 40, 220, 500);
+    attachpanel.setBounds(750, 40, 220, 300);
     attachpanel.setBackground(MasterUI.lightCol);
     Label attachLabel = new Label(400, reminderField.getY() + 50, "Attachments (optional)");
     attachField = new TextField(attachLabel.getX(), attachLabel.getY() + 20);
@@ -521,13 +523,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
 
     userQueryResult = new Label(400, searchUserField.getY() + 100, "");
     participantListPosition = userQueryResult.getY();
-    if (mode != VIEW)
-      participantListPosition += 15;
-    addUserBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        searchParticipant();
-      }
-    });
+    addUserBtn.addActionListener(e -> searchParticipant());
 
     searchUserField.addFocusListener(new FocusListener() {
       public void focusGained(FocusEvent e) {
@@ -541,7 +537,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     });
 
     for (User part : participants) {
-      Label partLabel = new Label(400, participantListPosition, part.getUsername());
+      Label partLabel = new Label(750, participantListPosition, part.getUsername());
       if (part.equals(user))
         partLabel.setText(partLabel.getText() + " (Me)");
       partLabel.setIcon(MasterUI.circleUserIcon);
@@ -576,6 +572,15 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     add(loPrioBtn);
     add(midPrioBtn);
     add(hiPrioBtn);
+  }
+
+  private void drawDesciptionSection() {
+    Label descLabel = new Label(400, 310, "Description (optional)");
+    descField = new TextField(descLabel.getX(), descLabel.getY() + 20);
+    descField.setSize(descField.getWidth(), descField.getHeight() * 2);
+
+    add(descLabel);
+    add(descField);
   }
 
   /**

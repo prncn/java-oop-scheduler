@@ -17,18 +17,19 @@ public class Label extends JLabel {
 
   public Label(int x, int y, String text) {
     super(text);
-    setFont(MasterUI.bodyFont);
+    setFont(MasterUI.robotoFont);
     setBounds(x, y, 250, 25);
   }
 
   public Label() {
     super();
-    setFont(MasterUI.bodyFont);
+    setFont(MasterUI.robotoFont);
     setSize(250, 25);
   }
 
   public Label(String text, Component cmp) {
     super(text);
+    setFont(MasterUI.robotoFont);
     setBounds(cmp.getX() + cmp.getWidth() + 12, cmp.getY(), 250, cmp.getHeight());
   }
 
