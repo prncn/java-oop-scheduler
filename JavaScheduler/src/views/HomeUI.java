@@ -310,7 +310,7 @@ public class HomeUI extends MasterUI {
    * permissions for user "roles".
    */
   private void showAdminPanel() {
-    if (user.getUsername() == "admin") {
+    if (user.getUsername().equals("admin")) {
       AdminPanel adminPanel = new AdminPanel(frame);
       Button adminTab = new Button(tabsBox.x, tabsBox.y - 50, "ADMIN_PANEL", adminPanel);
       adminTab.setIcon(adminIcon);
@@ -321,9 +321,12 @@ public class HomeUI extends MasterUI {
   }
 
   public static void main(String[] args) {
+    // User guest = DatabaseAPI.getUser("admin");
     User guest = new User("admin", "root", "admin@mail.com");
     HomeUI homeFrame = new HomeUI(guest);
     homeFrame.setVisible(true);
+    System.out.println(new File(".").getAbsolutePath());
+
   }
 
 }

@@ -1,9 +1,6 @@
 package models;
 
-import controllers.DatabaseAPI;
-
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class User {
 
@@ -36,7 +33,6 @@ public class User {
    * Constructor after account creation and before storing to database
    */
   public User(String username, String password, String email) {
-
     this.username = username;
     this.firstname = "";
     this.lastname = "";
@@ -74,9 +70,10 @@ public class User {
     addEvent(event);
 
     for (User participant : event.getParticipants()) {
+      if (participant == this) continue;
       participant.addEvent(event);
     }
-    DatabaseAPI.createEvent(event);
+    // DatabaseAPI.createEvent(event);
   }
 
   /**
@@ -89,11 +86,25 @@ public class User {
   }
 
   /**
+   * Remove event from user and if host, remove from their
+   * event list as well
+   * @param event - Event to be deleted
+   */
+  public void deleteEvent(Event event) {
+    removeEvent(event);
+    if (event.getHost().equals(this)) {
+      for (User participant : event.getParticipants()) {
+        participant.removeEvent(event);
+      }
+    }
+  }
+
+  /**
    * Remove event from user
    * 
    * @param event - Event to be removed
    */
-  public void removeEvent(Event event) {
+  private void removeEvent(Event event) {
     events.remove(event);
   }
 
@@ -255,36 +266,15 @@ public class User {
   }
 
   /**
-   * Generate a random UUID for a newly created user account
-   * 
-   * @return standard UUID with dashes removed
+   * Override <code>{@link #toString()}</code> to <code>{@link #getUsername()}</code>
    */
-  public static String generateUUID() {
-    return UUID.randomUUID().toString().replace("-", "");
+  public String toString() {
+    return getUsername();
   }
 
   @Override
   public boolean equals(Object other) {
     User that = (User) other;
     return this.id == that.id;
-  }
-
-  /**
-   * todo
-   *
-   * @param u
-   * @return false on unsuccessful deletion, true on successful deletion
-   */
-  public boolean deleteUser(User u) {
-    return false;
-  }
-
-  /**
-   * todo
-   *
-   * @param u User input
-   */
-  public void accessUserProfile(User u) {
-    return;
   }
 }
