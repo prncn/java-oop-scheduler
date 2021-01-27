@@ -37,7 +37,6 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private static final long serialVersionUID = 1L;
   private Button addUserBtn;
   private Button confirmBtn;
-  private Button remOption;
   private Button hiPrioBtn;
   private Button midPrioBtn;
   private Button loPrioBtn;
@@ -124,11 +123,12 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     Panel panel = this;
     ActionListener action = e -> {
       Reminder reminder = (Reminder) ((Button<?>) e.getSource()).getData();
-      selectedReminder = reminder;
+      descField.requestFocus();
       remove(rmscroll);
       rmscroll = null;
+      selectedReminder = reminder;
     };
-    Component[] comps = reminderField.setDropdown(reminders, rmscroll, panel, action);
+    Component[] comps = reminderField.setDropdown(reminders, rmscroll, panel, action, 3);
     rmscroll = (JScrollPane) comps[0];
     panel = (Panel) comps[1];
   }
@@ -219,7 +219,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     add(lc_dpdwn);
     MasterUI.placeFieldLabel(locationField, "Location", this);
 
-    ArrayList<TextField> fields = new ArrayList<>(Arrays.asList(titleField, dateField, startField, endField, locationField));
+    ArrayList<TextField> fields = new ArrayList<>(
+        Arrays.asList(titleField, dateField, startField, endField, locationField));
     fields.forEach(e -> add(e));
 
     /**
@@ -227,18 +228,18 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
      * closes, if it has been open, so that a user does not have to manually close
      * the panel.
      */
-    fields.forEach(e -> {
-      if (mode != VIEW) {
-        e.addFocusListener(new FocusListener() {
-          public void focusGained(FocusEvent f) {
-            redpanel.setSize(0, 0);
-            redpanel.isActive = false;
-            e.setText("");
-          }
-          public void focusLost(FocusEvent f) {}
-        });
-      }
-    });
+    // fields.forEach(e -> {
+    // if (mode != VIEW) {
+    // e.addFocusListener(new FocusListener() {
+    // public void focusGained(FocusEvent f) {
+    // redpanel.setSize(0, 0);
+    // redpanel.isActive = false;
+    // e.setText("");
+    // }
+    // public void focusLost(FocusEvent f) {}
+    // });
+    // }
+    // });
 
   }
 
@@ -322,7 +323,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     attachpanel.setBounds(750, 40, 220, 200);
     attachpanel.setBackground(MasterUI.lightCol);
     attachField = new TextField(400, reminderField.getY() + TF_MRGN);
-    MasterUI.placeFieldLabel(attachField, "Attachments (optional)", this);
+    if (mode == VIEW) {
+      MasterUI.placeFieldLabel(attachField, "Attachments", this);
+    } else {
+      MasterUI.placeFieldLabel(attachField, "Attachments (optional)", this);
+    }
     attachField.setEditable(false);
     Button attachBtn = new Button(attachField.getX() + attachField.getWidth(), attachField.getY(), "",
         MasterUI.lightColAlt);
@@ -483,10 +488,6 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   }
 
   private void drawDesciptionSection() {
-    // descField = new TextField(400, 330);
-    // descField.setSize(descField.getWidth() + 40, descField.getHeight() * 2 + 30);
-    // MasterUI.placeFieldLabel(descField, "Description (Optional)", this);
-
     descField = new JTextArea();
     descField.setBackground(MasterUI.lightColAlt);
     descField.setFont(MasterUI.robotoFont);
@@ -496,6 +497,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     descField.setLineWrap(true);
 
     Label descLabel = new Label(400, descField.getY() - 25, "Description (optional)");
+    if (mode == VIEW) descLabel.setText("Description");
 
     add(descLabel);
     add(descField);
@@ -556,17 +558,15 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     setComponentZOrder(redpanel, 0);
     ((CalendarPanel) redpanel).stripComponents();
     redpanel.isActive = false;
-    openDatePicker.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if (redpanel.isActive) {
-          redpanel.setSize(0, 0);
-          redpanel.isActive = false;
-          add(lc_dpdwn);
-        } else {
-          redpanel.setBounds(openDatePicker.getX(), openDatePicker.getY(), 300, 310);
-          redpanel.isActive = true;
-          remove(lc_dpdwn);
-        }
+    openDatePicker.addActionListener(e -> {
+      if (redpanel.isActive) {
+        redpanel.setSize(0, 0);
+        redpanel.isActive = false;
+        add(lc_dpdwn);
+      } else {
+        redpanel.setBounds(openDatePicker.getX(), openDatePicker.getY(), 300, 310);
+        redpanel.isActive = true;
+        remove(lc_dpdwn);
       }
     });
 

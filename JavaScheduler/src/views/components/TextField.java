@@ -164,6 +164,21 @@ public class TextField extends JTextField {
   }
 
   /**
+   * Overload method to set default scroll option length to <code>2</code>
+   * @see #setDropdown(List, JScrollPane, Panel, ActionListener, int)
+    * @param <T> - Generic entry type, i.e. <code>Event.location</code>
+   * @param entries - List of entries that should be displayed on the menu
+   * @param scroll - Scroll pane that should contain the menu panel
+   * @param panel - Panel on which the dropdown menu is placed
+   * @param action - ActionListener that specifies the action on clicking a menu option
+   * @return An array that returns the scroll panel on the first index and the inner
+   *         panel on the second index
+   */
+  public <T> Component[] setDropdown(List<T> entries, JScrollPane scroll, Panel panel, ActionListener action) {
+    return setDropdown(entries, scroll, panel, action, 2);
+  }
+
+  /**
    * Append a dropdown menu onto the text field
    * @param <T> - Generic entry type, i.e. <code>Event.location</code>
    * @param entries - List of entries that should be displayed on the menu
@@ -173,7 +188,8 @@ public class TextField extends JTextField {
    * @return An array that returns the scroll panel on the first index and the inner
    *         panel on the second index
    */
-  public <T> Component[] setDropdown(List<T> entries, JScrollPane scroll, Panel panel, ActionListener action) {
+  public <T> Component[] setDropdown(List<T> entries, JScrollPane scroll, Panel panel, ActionListener action, int options) {
+    options = Math.min(options, entries.size());
     if (scroll != null) {
       panel.remove(scroll);
       panel.repaint();
@@ -182,14 +198,15 @@ public class TextField extends JTextField {
     }
 
     Panel dppanel = new Panel();
-    dppanel.setBounds(0, 0, getWidth() + 30, 40 * entries.size());
-    dppanel.setPreferredSize(new Dimension(getWidth(), 40 * entries.size()));
+    int HGHT = 38;
+    dppanel.setBounds(0, 0, getWidth() + 30, HGHT * entries.size());
+    dppanel.setPreferredSize(new Dimension(getWidth(), HGHT * entries.size()));
     int y = 0;
     for (T entry : entries) {
       Button<T> lcBtn = new Button<>(0, y, entry.toString(), MasterUI.lightColAlt);
       lcBtn.bindData(entry);
       lcBtn.setColor(MasterUI.lightColAlt);
-      lcBtn.setSize(dppanel.getWidth(), 40);
+      lcBtn.setSize(dppanel.getWidth(), HGHT);
       lcBtn.setDark(false);
       lcBtn.setHorizontalAlignment(SwingConstants.LEFT);
       lcBtn.addActionListener(action);
@@ -199,9 +216,10 @@ public class TextField extends JTextField {
     }
     scroll = new JScrollPane(dppanel);
     scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    scroll.getVerticalScrollBar().setUnitIncrement(15);
+    if (options == entries.size()) scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+    scroll.getVerticalScrollBar().setUnitIncrement(14);
     scroll.setBorder(BorderFactory.createEmptyBorder());
-    scroll.setBounds(getX(), getY() + getHeight(), getWidth() + 40, 40 * 2);
+    scroll.setBounds(getX(), getY() + getHeight(), getWidth() + 40, HGHT * options);
     MasterUI.setComponentStyles(dppanel, "light");
 
     panel.add(this);
