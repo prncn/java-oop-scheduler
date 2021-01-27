@@ -1,6 +1,5 @@
 package models;
 
-import controllers.DatabaseAPI;
 import java.util.ArrayList;
 
 public class User {

@@ -118,6 +118,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   /**
    * Build dropdown options as to when to remind the user of their event
    */
+  @SuppressWarnings("unchecked")
   private void reminderDropdownSelection() {
     List<Reminder> reminders = new ArrayList<>(EnumSet.allOf(Reminder.class));
     Panel panel = this;
@@ -138,6 +139,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * 
    * @param textfield - Location TextField object to reference
    */
+  @SuppressWarnings("unchecked")
   private void locationDropdownSelection(TextField textfield) {
     Panel panel = this;
     List<Location> locations = user.getLocations();

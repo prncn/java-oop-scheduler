@@ -143,9 +143,14 @@ public class ProfilePanel extends Panel {
     MasterUI.setComponentStyles(this, "light");
   }
 
+  /**
+   * Action for location options inside the location dropdown
+   * @return ActionListener object
+   */
+  @SuppressWarnings("unchecked")
   private ActionListener lcBtnAction() {
     return (e -> {
-      Location location = (Location) ((DataButton) e.getSource()).getData();
+      Location location = ((DataButton<Location>) e.getSource()).getData();
       addEditLocationButtons(location);
       sendLocationForm(location);
       selectLocation.setText(location.getName());
