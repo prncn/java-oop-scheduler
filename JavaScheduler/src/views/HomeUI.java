@@ -322,7 +322,8 @@ public class HomeUI extends MasterUI {
   }
 
   public static void main(String[] args) {
-    User guest = DatabaseAPI.getUser("admin");
+    // User guest = DatabaseAPI.getUser("admin");
+    User guest = new User("admin", "root", "admin@mail.com");
     HomeUI homeFrame = new HomeUI(guest);
     homeFrame.setVisible(true);
     System.out.println(new File(".").getAbsolutePath());

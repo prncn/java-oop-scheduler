@@ -91,6 +91,10 @@ public class Location {
         return name;
     }
 
+    public String toString() {
+        return getName();
+    }
+
     public void setName(String name) {
         this.name = name;
     }

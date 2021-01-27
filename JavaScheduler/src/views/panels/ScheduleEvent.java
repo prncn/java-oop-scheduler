@@ -2,7 +2,6 @@ package views.panels;
 
 import controllers.FormatUtil;
 import controllers.ViewModelHandler;
-import models.Event;
 import models.*;
 import views.HomeUI;
 import views.MasterUI;
@@ -16,6 +15,7 @@ import javax.swing.filechooser.FileFilter;
 
 import java.awt.Point;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 
@@ -48,9 +50,10 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private Reminder selectedReminder;
   private Priority selectedPriority;
   private Location selectedLocation;
-  private Point contentBox;
+  private Point cb;
+  private JScrollPane lcscroll;
+  private JScrollPane rmscroll;
   public static Panel redpanel;
-  public JScrollPane dpscroll;
   public static TextField titleField;
   public static TextField dateField;
   public static TextField startField;
@@ -59,7 +62,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   public static TextField locationField;
   public static TextField reminderField;
   public static TextField attachField;
-  public static TextField descField;
+  public static JTextArea descField;
+
+  /** Margin between text fields */
+  final int TF_MRGN = 70;
+
   private JFrame frame;
   private User user;
   private Event editEvent;
@@ -72,7 +79,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     this.editEvent = editEvent;
     this.mode = mode;
 
-    contentBox = new Point(40, 170);
+    cb = new Point(40, 170);
     Label screenTitle = new Label(40, 40, "");
     screenTitle.setHeading();
     if (mode == CREATE) {
@@ -111,41 +118,19 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
 
   /**
    * Build dropdown options as to when to remind the user of their event
-   * 
-   * @param dropdown - Panel object of reminder section section
-   * @param frame    - JFrame of current instance
    */
-  private void reminderDropdownSelection(Panel dropdown, JFrame frame, Panel panel) {
-    if (dropdown.isActive) {
-      dropdown.setSize(0, 0);
-      dropdown.isActive = false;
-    } else {
-      dropdown.setSize(300, 200);
-      Reminder[] dueBefores = { Reminder.ONE_WEEK, Reminder.THREE_DAYS,
-          Reminder.ONE_HOUR, Reminder.ONE_HOUR, Reminder.NONE };
-      int rmd_initialY = 0;
-      for (Reminder dueBefore : dueBefores) {
-        remOption = new Button(0, rmd_initialY, dueBefore.toString(), MasterUI.lightColAlt);
-        remOption.setSize(dropdown.getWidth(), 40);
-        remOption.setDark(false);
-        remOption.setForeground(Color.BLACK);
-        remOption.setHorizontalAlignment(SwingConstants.LEFT);
-        dropdown.add(remOption);
-        rmd_initialY += 40;
-
-        remOption.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            reminderField.setText(dueBefore.toString());
-            selectedReminder = dueBefore;
-            dropdown.setSize(0, 0);
-            dropdown.isActive = false;
-            panel.add(searchUserField);
-          }
-        });
-      }
-      dropdown.isActive = true;
-      MasterUI.setComponentStyles(dropdown, "dark");
-    }
+  private void reminderDropdownSelection() {
+    List<Reminder> reminders = new ArrayList<>(EnumSet.allOf(Reminder.class));
+    Panel panel = this;
+    ActionListener action = e -> {
+      Reminder reminder = (Reminder) ((Button<?>) e.getSource()).getData();
+      selectedReminder = reminder;
+      remove(rmscroll);
+      rmscroll = null;
+    };
+    Component[] comps = reminderField.setDropdown(reminders, rmscroll, panel, action);
+    rmscroll = (JScrollPane) comps[0];
+    panel = (Panel) comps[1];
   }
 
   /**
@@ -154,80 +139,33 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * @param textfield - Location TextField object to reference
    */
   private void locationDropdownSelection(TextField textfield) {
-    if (dpscroll != null) {
-      remove(dpscroll);
-      dpscroll = null;
-      repaint();
-      return;
-    }
-    Panel dppanel = new Panel();
+    Panel panel = this;
     List<Location> locations = user.getLocations();
-    dppanel.setBounds(0, 0, textfield.getWidth() + 30, 40 * locations.size());
-    dppanel.setPreferredSize(new Dimension(textfield.getWidth(), 40 * locations.size()));
-    int y = 0;
-    for (Location location : locations) {
-      Button lcBtn = new Button(0, y, location.getName(), MasterUI.lightColAlt);
-      lcBtn.setSize(dppanel.getWidth(), 40);
-      lcBtn.setDark(false);
-      lcBtn.setHorizontalAlignment(SwingConstants.LEFT);
-      lcBtn.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          textfield.setText(location.getName());
-          remove(dpscroll);
-          dpscroll = null;
-          repaint();
-          selectedLocation = location;
-        }
-      });
-      dppanel.add(lcBtn);
-      y += lcBtn.getHeight();
-    }
-    dpscroll = new JScrollPane(dppanel);
-    dpscroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    dpscroll.getVerticalScrollBar().setUnitIncrement(15);
-    dpscroll.setBorder(BorderFactory.createEmptyBorder());
-    dpscroll.setBounds(textfield.getX(), textfield.getY() + textfield.getHeight(), textfield.getWidth() + 40, 40 * 2);
-    MasterUI.setComponentStyles(dppanel, "light");
-    add(dpscroll);
-    revalidate();
-    repaint();
+    ActionListener action = e -> {
+      Location location = (Location) ((Button<?>) e.getSource()).getData();
+      remove(lcscroll);
+      lcscroll = null;
+      selectedLocation = location;
+    };
+    Component[] comps = locationField.setDropdown(locations, lcscroll, panel, action);
+    lcscroll = (JScrollPane) comps[0];
+    panel = (Panel) comps[1];
   }
 
   /**
    * Draw reminder section section that then prompts drop down options
    */
   private void drawReminderSection() {
-    Panel panel = this;
-    Label reminderLabel = new Label(400, 100, "Remind me before event");
     reminderField = new TextField(400, 120);
+    MasterUI.placeFieldLabel(reminderField, "Remind me before event", this);
     reminderField.setText(Reminder.NONE.toString());
     selectedReminder = Reminder.NONE;
     reminderField.setEditable(false);
-    Button dpdwn = new Button(700, 120, "", MasterUI.lightColAlt);
-    dpdwn.setIcon(MasterUI.downIcon);
-    dpdwn.setSize(40, 40);
+    Button dpdwn = reminderField.appendButton(MasterUI.downIcon);
+    dpdwn.addActionListener(e -> reminderDropdownSelection());
 
-    Panel rp = new Panel();
-    rp.setBounds(400, 160, 0, 0);
-    rp.setBackground(Color.RED);
-    rp.isActive = false;
-    dpdwn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if (rp.isActive) {
-          panel.add(searchUserField);
-        } else {
-          panel.remove(searchUserField);
-        }
-        reminderDropdownSelection(rp, frame, panel);
-      }
-    });
-
-    add(rp);
-    if (mode != VIEW) {
-      add(dpdwn);
-    }
+    if (mode != VIEW) add(dpdwn);
     add(reminderField);
-    add(reminderLabel);
   }
 
   /**
@@ -259,81 +197,49 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    *
    */
   private void initLeftFormContent() {
-    String[] lbStrings = { "Title", "Date", "Start Time", "Where" };
-    int initialY = contentBox.y;
-    for (String lbString : lbStrings) {
-      Label label = new Label(contentBox.x, initialY, lbString);
-      TextField textfield;
-      TextField secondField;
-      switch (lbString) {
-        case "Title":
-          textfield = new TextField(contentBox.x, initialY + 20);
-          textfield.setMaximumLength(25);
-          titleField = textfield;
-          break;
-        case "Date":
-          textfield = new TextField(contentBox.x, initialY + 20);
-          textfield.setSize(textfield.getWidth() - 60, textfield.getHeight());
-          textfield.setEditable(false);
-          dateField = textfield;
-          break;
-        case "Start Time":
-          textfield = new TextField(contentBox.x, initialY + 20);
-          textfield.setSize((textfield.getWidth() / 2) - 2, textfield.getHeight());
-          textfield.setMaximumLength(5);
-          startField = textfield;
+    titleField = new TextField(cb.x, cb.y + 20);
+    MasterUI.placeFieldLabel(titleField, "Title", this);
 
-          Label timelb = new Label(contentBox.x + textfield.getWidth() + 4, initialY, "End Time");
-          secondField = new TextField(contentBox.x + textfield.getWidth() + 4, initialY + 20);
-          secondField.setSize(textfield.getWidth(), textfield.getHeight());
-          secondField.setMaximumLength(5);
-          if (mode == VIEW) {
-            Label memberLabel = new Label(400, timelb.getY(), "Participants: ");
-            add(memberLabel);
-          }
-          add(timelb);
-          add(secondField);
-          endField = secondField;
-          break;
-        case "Where":
-          textfield = new TextField(contentBox.x, initialY + 20);
-          textfield.setSize(textfield.getWidth() - 40, textfield.getHeight());
-          textfield.setMaximumLength(25);
-          locationField = textfield;
+    dateField = new TextField(cb.x, titleField.getY() + TF_MRGN);
+    dateField.setSize(dateField.getWidth() - 60, dateField.getHeight());
+    MasterUI.placeFieldLabel(dateField, "Date", this);
 
-          lc_dpdwn = new Button(contentBox.x + textfield.getWidth(), initialY + 20, "", MasterUI.lightColAlt);
-          lc_dpdwn.setIcon(MasterUI.downIcon);
-          lc_dpdwn.setSize(40, 40);
-          lc_dpdwn.addActionListener(e -> locationDropdownSelection(textfield));
-          if (mode != VIEW)
-            add(lc_dpdwn);
-          break;
-        default:
-          textfield = new TextField(contentBox.x, initialY + 20);
-          break;
-      }
-      add(label);
-      add(textfield);
-      initialY += 70;
-      /**
-       * When clicking in on a text field, the panel of the date picker (redpanel)
-       * closes, if it has been open, so that a user does not have to manually close
-       * the panel.
-       */
+    startField = new TextField(cb.x, dateField.getY() + TF_MRGN);
+    startField.setSize(titleField.getWidth() / 2, titleField.getHeight());
+    MasterUI.placeFieldLabel(startField, "Start time", this);
+
+    endField = new TextField(cb.x + startField.getWidth() + 5, dateField.getY() + TF_MRGN);
+    endField.setSize(startField.getWidth() - 5, startField.getHeight());
+    MasterUI.placeFieldLabel(endField, "End time", this);
+
+    locationField = new TextField(cb.x, endField.getY() + TF_MRGN);
+    locationField.setSize(locationField.getWidth() - 40, dateField.getHeight());
+    lc_dpdwn = locationField.appendButton(MasterUI.downIcon);
+    lc_dpdwn.addActionListener(e -> locationDropdownSelection(locationField));
+    add(lc_dpdwn);
+    MasterUI.placeFieldLabel(locationField, "Location", this);
+
+    ArrayList<TextField> fields = new ArrayList<>(Arrays.asList(titleField, dateField, startField, endField, locationField));
+    fields.forEach(e -> add(e));
+
+    /**
+     * When clicking in on a text field, the panel of the date picker (redpanel)
+     * closes, if it has been open, so that a user does not have to manually close
+     * the panel.
+     */
+    fields.forEach(e -> {
       if (mode != VIEW) {
-        textfield.addFocusListener(new FocusListener() {
-          public void focusGained(FocusEvent e) {
+        e.addFocusListener(new FocusListener() {
+          public void focusGained(FocusEvent f) {
             redpanel.setSize(0, 0);
             redpanel.isActive = false;
-            textfield.setText("");
+            e.setText("");
           }
-
-          public void focusLost(FocusEvent e) {
-            // unchanged
-          }
+          public void focusLost(FocusEvent f) {}
         });
       }
-    }
+    });
+
   }
 
   /**
@@ -354,6 +260,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       dateField.setText(editEvent.getDate().toString());
       startField.setText(editEvent.getTime().toString());
       endField.setText(FormatUtil.getEndTime(editEvent.getTime(), editEvent.getDurationMinutes()).toString());
+      descField.setText(editEvent.getDescription());
       String attachStr = "";
       for (File f : editEvent.getAttachments()) {
         attachStr += f.getName() + " ";
@@ -369,8 +276,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         field.setBackground(MasterUI.lightCol);
         field.setEditable(false);
         field.setEqualPadding(0);
-        field.setFont(MasterUI.robotoFont.deriveFont(Font.BOLD, 15f));
+        field.setFont(MasterUI.robotoFont.deriveFont(Font.BOLD, 14f));
       }
+      descField.setBackground(MasterUI.lightCol);
+      descField.setEditable(false);
+      descField.setBorder(BorderFactory.createEmptyBorder());
       dateField.setText(FormatUtil.readableDate(LocalDate.parse(dateField.getText())));
       Button[] prioBtns = { loPrioBtn, midPrioBtn, hiPrioBtn };
       for (Button prioBtn : prioBtns) {
@@ -395,7 +305,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         return;
       }
       participants.add(user);
-      Label participantLabel = new Label(750, participantListPosition, "");
+      Label participantLabel = new Label(800, participantListPosition, "");
       participantLabel.setText(user.getUsername());
       participantLabel.setIcon(MasterUI.circleUserIcon);
       add(participantLabel);
@@ -409,10 +319,10 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    */
   private void drawAttachmentSection() {
     Panel attachpanel = new Panel();
-    attachpanel.setBounds(750, 40, 220, 300);
+    attachpanel.setBounds(750, 40, 220, 200);
     attachpanel.setBackground(MasterUI.lightCol);
-    Label attachLabel = new Label(400, reminderField.getY() + 50, "Attachments (optional)");
-    attachField = new TextField(attachLabel.getX(), attachLabel.getY() + 20);
+    attachField = new TextField(400, reminderField.getY() + TF_MRGN);
+    MasterUI.placeFieldLabel(attachField, "Attachments (optional)", this);
     attachField.setEditable(false);
     Button attachBtn = new Button(attachField.getX() + attachField.getWidth(), attachField.getY(), "",
         MasterUI.lightColAlt);
@@ -450,7 +360,6 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
 
     if (mode != VIEW)
       add(attachBtn);
-    add(attachLabel);
     add(attachField);
     add(attachpanel);
   }
@@ -514,15 +423,15 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * Create and initialise add-participant section
    */
   private void drawParticipantSection() {
-    Label searchUserLabel = new Label(400, 240, "People to invite");
-    searchUserField = new TextField(searchUserLabel.getX(), searchUserLabel.getY() + 20);
+    searchUserField = new TextField(400, 260);
+    MasterUI.placeFieldLabel(searchUserField, "People to invite", this);
 
     addUserBtn = new Button(700, searchUserField.getY(), "", MasterUI.lightColAlt);
     addUserBtn.setSize(40, 40);
     addUserBtn.setIcon(MasterUI.addUserIcon);
 
-    userQueryResult = new Label(400, searchUserField.getY() + 100, "");
-    participantListPosition = userQueryResult.getY();
+    userQueryResult = new Label(0, 0, "");
+    participantListPosition = searchUserField.getY();
     addUserBtn.addActionListener(e -> searchParticipant());
 
     searchUserField.addFocusListener(new FocusListener() {
@@ -537,18 +446,17 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     });
 
     for (User part : participants) {
-      Label partLabel = new Label(750, participantListPosition, part.getUsername());
+      Label partLabel = new Label(800, participantListPosition, part.getUsername());
       if (part.equals(user))
         partLabel.setText(partLabel.getText() + " (Me)");
       partLabel.setIcon(MasterUI.circleUserIcon);
-      partLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+      partLabel.setVerticalTextPosition(SwingConstants.CENTER);
       add(partLabel);
       participantListPosition += 35;
     }
 
     if (mode != VIEW) {
       add(addUserBtn);
-      add(searchUserLabel);
       add(searchUserField);
       add(userQueryResult);
     }
@@ -575,9 +483,19 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   }
 
   private void drawDesciptionSection() {
-    Label descLabel = new Label(400, 310, "Description (optional)");
-    descField = new TextField(descLabel.getX(), descLabel.getY() + 20);
-    descField.setSize(descField.getWidth(), descField.getHeight() * 2);
+    // descField = new TextField(400, 330);
+    // descField.setSize(descField.getWidth() + 40, descField.getHeight() * 2 + 30);
+    // MasterUI.placeFieldLabel(descField, "Description (Optional)", this);
+
+    descField = new JTextArea();
+    descField.setBackground(MasterUI.lightColAlt);
+    descField.setFont(MasterUI.robotoFont);
+    descField.setForeground(MasterUI.primaryColAlt);
+    descField.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    descField.setBounds(400, 330, 340, 110);
+    descField.setLineWrap(true);
+
+    Label descLabel = new Label(400, descField.getY() - 25, "Description (optional)");
 
     add(descLabel);
     add(descField);
@@ -664,7 +582,6 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    */
   private void processConfirm() {
     Panel panel = this;
-    
     Label errorPriority = priorityField.createErrorLabel("Priority");
     Label errorTitle = titleField.createErrorLabel("Title");
     Label errorDate = dateField.createErrorLabel("Date");
@@ -673,7 +590,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     Label errorEndTime = endField.createErrorLabel("End Time");
     Label errorReminder = reminderField.createErrorLabel("Reminder");
 
-    Label[] errorLabels = { errorPriority, errorTitle, errorDate, errorLocation, errorStartTime, errorEndTime, errorReminder };
+    Label[] errorLabels = { errorPriority, errorTitle, errorDate, errorLocation, errorStartTime, errorEndTime,
+        errorReminder };
     for (Label error : errorLabels) {
       add(error);
     }
@@ -692,7 +610,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         panel.removeAll();
 
         Event event = ViewModelHandler.consumeEventForm(titleField, dateField, startField, endField, locationField,
-            participants, selectedReminder, selectedPriority, selectedAttachments);
+            participants, selectedReminder, selectedPriority, selectedAttachments, descField);
         if (selectedLocation != null && selectedLocation.getName().equals(locationField.getText())) {
           event.setLocation(selectedLocation);
         }
@@ -719,13 +637,13 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     };
 
     confirmBtn.addActionListener(e -> {
-        if (!ViewModelHandler.validateForm(FieldMap, selectedPriority))
-          return;
-        if (mode == VIEW) {
-          HomeUI.switchPanel(HomeUI.dashPanel);
-          return;
-        }
-        HomeUI.confirmDialog(createAction, "Proceed with this event?");
+      if (!ViewModelHandler.validateForm(FieldMap, selectedPriority))
+        return;
+      if (mode == VIEW) {
+        HomeUI.switchPanel(HomeUI.dashPanel);
+        return;
+      }
+      HomeUI.confirmDialog(createAction, "Proceed with this event?");
     });
   }
 }

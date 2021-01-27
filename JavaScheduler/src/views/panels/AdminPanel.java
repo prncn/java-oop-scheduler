@@ -32,6 +32,7 @@ public class AdminPanel extends Panel {
     searchTitle.setSize(450, 75);
 
     TextField searchField = new TextField(50, 150);
+    searchField.setSuggestionField();
     Label userQueryResult = new Label(searchField.getX(), searchField.getY() + 60, "");
     Panel panel = this;
     Button searchBtn = searchField.appendButton(MasterUI.searchIcon);
