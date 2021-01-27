@@ -555,7 +555,6 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     redpanel.setSize(0, 0);
     redpanel.setBackground(MasterUI.lightCol);
     redpanel.setLayout(null);
-    setComponentZOrder(redpanel, 0);
     ((CalendarPanel) redpanel).stripComponents();
     redpanel.isActive = false;
     openDatePicker.addActionListener(e -> {
