@@ -10,6 +10,9 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 
+import controllers.DatabaseAPI;
+import models.User;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -20,6 +23,7 @@ public class TextField extends JTextField {
 
   private static final long serialVersionUID = -2254754514418403224L;
   private Label errorLabel;
+  private Component[] comps;
 
   /**
    * Nested class to limit the number of entered characters in a textfield
@@ -143,7 +147,17 @@ public class TextField extends JTextField {
     return error;
   }
 
-  public void setSuggestionField() {
+  /**
+   * Create user search suggestion below text field. On each key press, new suggestions
+   * are loaded in through the <code>setDropdown</code> method.
+   * @param <T> - Generic entry type, i.e. <code>Event.location</code>
+   * @param entries - List of entries that should be displayed on the menu
+   * @param scroll - Scroll pane that should contain the menu panel
+   * @param panel - Panel on which the dropdown menu is placed
+   * @param action - ActionListener that specifies the action on clicking a menu option
+   */
+  public <T> Component[] setSuggestionField(JScrollPane scroll, Panel panel, ActionListener action) {
+    comps = new Component[2];
     getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
         updateSuggest();
@@ -158,9 +172,18 @@ public class TextField extends JTextField {
       }
 
       public void updateSuggest() {
-        System.out.println("change detected");
+        if (!getText().isBlank()) {
+          List<User> entries = DatabaseAPI.getAllUsers();
+          entries.removeIf(e -> !e.getUsername().startsWith(getText()));
+          Component[] _comps = setDropdown(entries, scroll, panel, action, entries.size());
+          comps[0] = (JScrollPane) _comps[0];
+          comps[1] = (Panel) _comps[1];
+          System.out.println("Here: " + comps[0]);
+        }
       }
     });
+
+    return comps;
   }
 
   /**
@@ -199,14 +222,14 @@ public class TextField extends JTextField {
 
     Panel dppanel = new Panel();
     int HGHT = 38;
-    dppanel.setBounds(0, 0, getWidth() + 30, HGHT * entries.size());
+    dppanel.setBounds(0, 0, getWidth() + 40, HGHT * entries.size());
     dppanel.setPreferredSize(new Dimension(getWidth(), HGHT * entries.size()));
     int y = 0;
     for (T entry : entries) {
       DataButton<T> lcBtn = new DataButton<>(0, y, entry.toString(), MasterUI.lightColAlt);
       lcBtn.bind(entry);
       lcBtn.setColor(MasterUI.lightColAlt);
-      lcBtn.setSize(dppanel.getWidth(), HGHT);
+      lcBtn.setSize(getWidth() + 40, HGHT);
       lcBtn.setDark(false);
       lcBtn.setHorizontalAlignment(SwingConstants.LEFT);
       lcBtn.addActionListener(action);

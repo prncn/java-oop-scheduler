@@ -1,9 +1,7 @@
 package models;
 
 import controllers.DatabaseAPI;
-
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class User {
 
@@ -36,7 +34,6 @@ public class User {
    * Constructor after account creation and before storing to database
    */
   public User(String username, String password, String email) {
-
     this.username = username;
     this.firstname = "";
     this.lastname = "";
@@ -270,36 +267,15 @@ public class User {
   }
 
   /**
-   * Generate a random UUID for a newly created user account
-   * 
-   * @return standard UUID with dashes removed
+   * Override <code>{@link #toString()}</code> to <code>{@link #getUsername()}</code>
    */
-  public static String generateUUID() {
-    return UUID.randomUUID().toString().replace("-", "");
+  public String toString() {
+    return getUsername();
   }
 
   @Override
   public boolean equals(Object other) {
     User that = (User) other;
     return this.id == that.id;
-  }
-
-  /**
-   * todo
-   *
-   * @param u
-   * @return false on unsuccessful deletion, true on successful deletion
-   */
-  public boolean deleteUser(User u) {
-    return false;
-  }
-
-  /**
-   * todo
-   *
-   * @param u User input
-   */
-  public void accessUserProfile(User u) {
-    return;
   }
 }

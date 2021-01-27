@@ -201,11 +201,10 @@ public class DatabaseAPI {
         String password = result.getString("password");
         String email = result.getString("email");
         allUsers.add(new User(username, password, email));
-
-        statement.close();
-        closeDatabase(connection);
       }
-
+      
+      statement.close();
+      closeDatabase(connection);
       return allUsers;
 
     } catch (SQLException e) {
