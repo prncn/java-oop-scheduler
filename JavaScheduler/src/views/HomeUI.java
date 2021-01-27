@@ -20,7 +20,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import controllers.DatabaseAPI;
 import controllers.PDFDocument;
 import models.User;
 import views.components.Button;

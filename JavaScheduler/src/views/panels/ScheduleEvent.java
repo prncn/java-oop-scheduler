@@ -6,6 +6,7 @@ import models.*;
 import views.HomeUI;
 import views.MasterUI;
 import views.components.Button;
+import views.components.DataButton;
 import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
@@ -17,7 +18,6 @@ import java.awt.Point;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Desktop;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -122,7 +122,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     List<Reminder> reminders = new ArrayList<>(EnumSet.allOf(Reminder.class));
     Panel panel = this;
     ActionListener action = e -> {
-      Reminder reminder = (Reminder) ((Button<?>) e.getSource()).getData();
+      Reminder reminder = ((DataButton<Reminder>) e.getSource()).getData();
       descField.requestFocus();
       remove(rmscroll);
       rmscroll = null;
@@ -142,7 +142,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     Panel panel = this;
     List<Location> locations = user.getLocations();
     ActionListener action = e -> {
-      Location location = (Location) ((Button<?>) e.getSource()).getData();
+      Location location = ((DataButton<Location>) e.getSource()).getData();
       remove(lcscroll);
       lcscroll = null;
       selectedLocation = location;

@@ -20,9 +20,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import models.Location;
-
-public class Button<T> extends JButton implements MouseListener {
+public class Button extends JButton implements MouseListener {
 
   private static final long serialVersionUID = 1L;
   private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
@@ -37,8 +35,7 @@ public class Button<T> extends JButton implements MouseListener {
   private boolean isActive = false;
   private ActionListener switchPanelAction;
   private Color prevColor;
-  private static ArrayList<Button<?>> links = new ArrayList<>();
-  private T data = null;
+  private static ArrayList<Button> links = new ArrayList<>();
 
   public Button(int x, int y, String text, Color color) {
     super(text);
@@ -279,11 +276,11 @@ public class Button<T> extends JButton implements MouseListener {
     toggleActive();
 
   }
-  
-  private ActionListener radioAction = e -> { 
+
+  private ActionListener radioAction = e -> {
     radioToggleAction();
     for (Button link : links) {
-      if (e.getSource() != link){
+      if (e.getSource() != link) {
         link.setActive(true);
         link.radioToggleAction();
       }
@@ -332,14 +329,6 @@ public class Button<T> extends JButton implements MouseListener {
     for (ActionListener action : actions) {
       removeActionListener(action);
     }
-  }
-
-  public void bindData(T data) {
-    this.data = data;
-  }
-
-  public T getData() {
-    return data;
   }
 
   @Override

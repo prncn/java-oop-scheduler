@@ -5,21 +5,17 @@ import models.User;
 import views.HomeUI;
 import views.MasterUI;
 import views.components.Button;
+import views.components.DataButton;
 import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
 
 public class ProfilePanel extends Panel {
 
@@ -149,7 +145,7 @@ public class ProfilePanel extends Panel {
 
   private ActionListener lcBtnAction() {
     return (e -> {
-      Location location = (Location) ((Button<?>) e.getSource()).getData();
+      Location location = (Location) ((DataButton) e.getSource()).getData();
       addEditLocationButtons(location);
       sendLocationForm(location);
       selectLocation.setText(location.getName());

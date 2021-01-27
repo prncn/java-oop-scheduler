@@ -203,8 +203,8 @@ public class TextField extends JTextField {
     dppanel.setPreferredSize(new Dimension(getWidth(), HGHT * entries.size()));
     int y = 0;
     for (T entry : entries) {
-      Button<T> lcBtn = new Button<>(0, y, entry.toString(), MasterUI.lightColAlt);
-      lcBtn.bindData(entry);
+      DataButton<T> lcBtn = new DataButton<>(0, y, entry.toString(), MasterUI.lightColAlt);
+      lcBtn.bind(entry);
       lcBtn.setColor(MasterUI.lightColAlt);
       lcBtn.setSize(dppanel.getWidth(), HGHT);
       lcBtn.setDark(false);
