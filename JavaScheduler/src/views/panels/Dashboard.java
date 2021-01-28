@@ -4,6 +4,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
+import controllers.DatabaseAPI;
 import controllers.FormatUtil;
 import controllers.ViewModelHandler;
 
@@ -260,7 +261,7 @@ public class Dashboard extends Panel implements CardModes {
       Event event = allEvents.get(i);
       int mgn = 15;
       Panel card = null;
-      if(event.getHost().equals(user)){
+      if(event.getHostId() == user.getId()){ //DatabaseAPI.getUser(event.getHostId()).equals(user)){
         card = drawEventCard(content, event, allSectionInner, EDIT);
       } else {
         card = drawEventCard(content, event, allSectionInner, VIEW);

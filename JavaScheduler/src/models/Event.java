@@ -12,7 +12,7 @@ public class Event implements Comparable<Event> {
   private LocalTime time;
   private int durationMinutes;
   private Location location;
-  private User host;
+  private int hostId;
   private ArrayList<User> participants;
   private Priority priority;
   private ArrayList<File> attachments;
@@ -62,7 +62,7 @@ public class Event implements Comparable<Event> {
     time = other.time;
     durationMinutes = other.durationMinutes;
     location = other.location;
-    host = other.host;
+    hostId = other.hostId;
     participants = other.participants;
     priority = other.priority;
     attachments = other.attachments;
@@ -256,17 +256,17 @@ public class Event implements Comparable<Event> {
    * 
    * @return - User host
    */
-  public User getHost() {
-    return host;
+  public int getHostId() {
+    return hostId;
   }
 
   /**
    * Set host
    * 
-   * @param host - User to be set to host
+   * @param hostId - User to be set to host
    */
-  public void setHost(User host) {
-    this.host = host;
+  public void setHostId(int hostId) {
+    this.hostId = hostId;
   }
 
   /**

@@ -9,23 +9,27 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class DatabaseAPI {
-
   private static final String SQL_CLOUD_URI = "jdbc:mysql://bqzknjzyoeidxu0hmqhq-mysql.services.clever-cloud.com:3306/bqzknjzyoeidxu0hmqhq?useSSL=false";
+
   private static final String SQL_CLOUD_USERNAME = "udpcghp8h7wkwbrg";
   private static final String SQL_CLOUD_PASSWORD = "mYe6S6puRrvcblEZPIWZ";
+  private static Connection con = null;
 
   /**
    * Build a connection to the application database
-   * 
+   *
    * @return <code>null</code> on failed connection, else return connection object
    */
   private static Connection connectDatabase() {
     try {
+      if(con != null){
+        return con;
+      }
       Class.forName("com.mysql.jdbc.Driver");
-      Connection connection = DriverManager.getConnection(SQL_CLOUD_URI, SQL_CLOUD_USERNAME, SQL_CLOUD_PASSWORD);
+      con = DriverManager.getConnection(SQL_CLOUD_URI, SQL_CLOUD_USERNAME, SQL_CLOUD_PASSWORD);
       System.out.println("Database connected..");
 
-      return connection;
+      return con;
 
     } catch (SQLException e) {
       System.out.println(e.getMessage());
@@ -37,8 +41,23 @@ public class DatabaseAPI {
   }
 
   /**
+   * Close an existing connection to the database. This function should be used
+   * after every other database API function, as multiple unused connection may
+   * reach cloud traffic limit.
+   */
+  private static void closeDatabase() {
+    System.out.println("Connection closed.");
+    try {
+      con.close();
+      con = null;
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
    * Verify if given username and pass correspond to a user in the database
-   * 
+   *
    * @param username - String of username
    * @param password - String of <i>hashed<i> password
    * @return <code>true</code> if user exists
@@ -64,14 +83,14 @@ public class DatabaseAPI {
 
     Boolean isUser = result.next();
     statement.close();
-    closeDatabase(connection);
+    closeDatabase();
     return isUser;
   }
 
   /**
    * Fetch user data from database. This is only called by other user related DB
    * functions.
-   * 
+   *
    * @param connection - SQL jdbc connection object, connection to DB
    * @param key        - ???
    * @return SQL result of data entry or <code>null</code> if user doesn't exist
@@ -128,7 +147,7 @@ public class DatabaseAPI {
 
   /**
    * Create table entry of a new user in database. Used for account creation.
-   * 
+   *
    * @param user - User object of new user
    * @return <code>true</code> on successful user creation
    */
@@ -145,9 +164,10 @@ public class DatabaseAPI {
       statement.executeUpdate();
 
       statement.close();
-      closeDatabase(connection);
+      closeDatabase();
     } catch (SQLException e) {
       e.printStackTrace();
+      closeDatabase();
       return false;
     }
 
@@ -159,11 +179,11 @@ public class DatabaseAPI {
    *
    * @param user This user's attribute values are taken to edit the user in the DB
    *             with the same id
-   * 
+   *
    * @return <code>true</code>, if successful
    */
   public static boolean editUser(User user) {
-    String sql = "UPDATE User SET username = ?, password = ?, email = ? WHERE user_id = ?";
+    String sql = "UPDATE User SET username = ?, password = ?, email = ?, firstName = ?, lastName = ? WHERE user_id = ?";
 
     Connection connection = connectDatabase();
     try {
@@ -171,19 +191,21 @@ public class DatabaseAPI {
       statement.setString(1, user.getUsername());
       statement.setString(2, user.getPassword());
       statement.setString(3, user.getEmail());
-      statement.setInt(4, user.getId());
+      statement.setString(4, user.getFirstname());
+      statement.setString(5, user.getLastname());
+      statement.setInt(6, user.getId());
       statement.executeUpdate();
       statement.close();
-      closeDatabase(connection);
+      closeDatabase();
     } catch (SQLException e) {
       e.printStackTrace();
-      closeDatabase(connection);
+      closeDatabase();
       return false;
     }
     return true;
   }
 
-  /**
+  /** todo remove password?
    * Gets all users from DB
    *
    * @return all users as an arraylist
@@ -202,21 +224,21 @@ public class DatabaseAPI {
         String email = result.getString("email");
         allUsers.add(new User(username, password, email));
       }
-      
+
       statement.close();
-      closeDatabase(connection);
+      closeDatabase();
       return allUsers;
 
     } catch (SQLException e) {
       e.printStackTrace();
-      closeDatabase(connection);
+      closeDatabase();
     }
     return null;
   }
 
   /**
    * Check if username or email is already taken
-   * 
+   *
    * @param user - User data
    * @return <code>true</code> if user data is available
    */
@@ -232,27 +254,11 @@ public class DatabaseAPI {
       ResultSet result = statement.executeQuery();
       Boolean isTaken = result.next();
       statement.close();
-      closeDatabase(connection);
+      closeDatabase();
       return !isTaken;
     } catch (SQLException e) {
       e.printStackTrace();
       return false;
-    }
-  }
-
-  /**
-   * Close an existing connection to the database. This function should be used
-   * after every other database API function, as multiple unused connection may
-   * reach cloud traffic limit.
-   * 
-   * @param connection - SQL connection object of existing connection
-   */
-  private static void closeDatabase(Connection connection) {
-    System.out.println("Connection closed.");
-    try {
-      connection.close();
-    } catch (SQLException e) {
-      e.printStackTrace();
     }
   }
 
@@ -265,9 +271,10 @@ public class DatabaseAPI {
    */
   public static <T> User getUser(T key) {
     Connection connection = connectDatabase();
+
     ResultSet result = fetchUserData(connection, key);
     if (result == null) {
-      closeDatabase(connection);
+      closeDatabase();
       return null;
     }
     try {
@@ -277,12 +284,15 @@ public class DatabaseAPI {
       String email = result.getString("email");
       String firstname = result.getString("firstName");
       String lastname = result.getString("lastName");
-      // TODO succesfully create the new user
-      User user = new User(id, name, firstname, lastname, email, new ArrayList<Event>(), new ArrayList<Location>());
-      closeDatabase(connection);
+
+      ArrayList<Event> events = getEventsFromUser(id, connection);
+
+      User user = new User(id, name, firstname, lastname, email, events, new ArrayList<Location>());
+      closeDatabase();
       return user;
     } catch (SQLException e) {
       e.printStackTrace();
+      closeDatabase();
       return null;
     }
   }
@@ -292,18 +302,19 @@ public class DatabaseAPI {
    **/
 
   /**
-   * TODO
+   * Gets all events from User with help of the userId.
    * 
    * @param userId is used to find the relative data
    * @return a list of all events a user is part of.
    */
-  public static ArrayList<Event> getEventsFromUser(int userId) {
-    String sql = "SELECT *\n" + "FROM Event\n" + "LEFT JOIN User_Event\n" + "ON User_Event.event_id = Event.event_id\n"
-        + "WHERE User_Event.user_id = ?";
+  private static ArrayList<Event> getEventsFromUser(int userId, Connection connection) {
+    String sql =  "SELECT * FROM Event " +
+                  "LEFT JOIN User_Event " +
+                  "ON User_Event.event_id = Event.event_id " +
+                  "WHERE User_Event.user_id = ?";
 
     ArrayList<Event> events = new ArrayList<Event>();
 
-    Connection connection = connectDatabase();
     try {
       PreparedStatement ps = connection.prepareStatement(sql);
 
@@ -329,17 +340,18 @@ public class DatabaseAPI {
    * @param id - SQL id
    * @return Event object on successful query, else null
    */
-  public static Event getEvent(int id) {
+  private static Event getEvent(int id) {
     String sql = "SELECT * FROM Event WHERE event_id = ?";
     Connection connection = connectDatabase();
 
     try {
       PreparedStatement ps = connection.prepareStatement(sql);
+
       ps.setInt(1, id);
       ResultSet rs = ps.executeQuery();
 
       if (rs.next()) {
-        int eventId = rs.getInt("user_id");
+        int eventId = rs.getInt("event_id");
         String name = rs.getString("name");
         // TODO List of participants?
         int duration = rs.getInt("durationMinutes");
@@ -352,21 +364,45 @@ public class DatabaseAPI {
         int host_id = rs.getInt("host_id");
         int location_id = rs.getInt("location_id");
 
-        Event event = new Event(name, date, time, duration, new Location("PLACEHOLDER"), new ArrayList<User>(), reminder, priority,
-            new ArrayList<File>(), description);
+        Event event = new Event(eventId, name, description, duration, date, time, new Location("PLACEHOLDER"), priority, reminder,
+                new ArrayList<User>(), new ArrayList<File>());
 
         event.setId(eventId);
-        event.setHost(getUser(host_id));
+        event.setHostId(host_id);
 
-        closeDatabase(connection);
         return event;
       }
     } catch (SQLException e) {
 
-      closeDatabase(connection);
+      e.printStackTrace();
       return null;
     }
     return null;
+  }
+
+  /**
+   *
+   * @param eventId
+   * @return true when deletion is successful, false when deletion is unsuccessful
+   */
+  public static boolean deleteEvent(int eventId){
+    String sql = "DELETE FROM Event WHERE eventId = ?";
+    Connection connection = connectDatabase();
+
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql);
+      ps.setInt(1 , eventId);
+
+      ps.executeUpdate();
+
+      ps.close();
+      closeDatabase();
+      return true;
+    } catch (SQLException e){
+      e.printStackTrace();
+      closeDatabase();
+      return false;
+    }
   }
 
   /**
@@ -377,63 +413,75 @@ public class DatabaseAPI {
    */
   public static boolean createEvent(Event event) {
 
-    String sql = "INSERT INTO Event (id, reminder, priority, name, date, time, durationMinutes, description, hostId, location)"
-        + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO Event (reminder, priority, name, date, time, durationMinutes, description, host_id, location_id)"
+        + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
     Connection connection = connectDatabase();
+    int eventId;
 
     try {
-      PreparedStatement statement = connection.prepareStatement(sql);
+      PreparedStatement statement = connection.prepareStatement(sql , Statement.RETURN_GENERATED_KEYS);
 
-      statement.setInt(1, event.getId());
-      statement.setString(2, event.getReminder().name());
-      statement.setString(3, event.getPriority().name());
-      statement.setString(4, event.getName());
-      statement.setDate(5, Date.valueOf(event.getDate()));
-      statement.setTime(6, Time.valueOf(event.getTime()));
-      statement.setInt(7, event.getDurationMinutes());
-      statement.setString(8, event.getDescription());
+      statement.setString(1, event.getReminder().name());
+      statement.setString(2, event.getPriority().name());
+      statement.setString(3, event.getName());
+      statement.setDate(4, Date.valueOf(event.getDate()));
+      statement.setTime(5, Time.valueOf(event.getTime()));
+      statement.setInt(6, event.getDurationMinutes());
+      statement.setString(7, event.getDescription());
 
-      statement.setInt(9, event.getHost().getId());
-      statement.setString(10, event.getLocation().getId());
+      statement.setInt(8, event.getHostId());
+      statement.setString(9, event.getLocation().getId());
 
       statement.executeUpdate();
 
+      ResultSet generatedKey = statement.getGeneratedKeys();
+
+      if(generatedKey.next()) {
+        eventId = generatedKey.getInt(1);
+      } else {
+        throw new SQLException("Creating user failed, no ID obtained.");
+      }
+
+      createUserEventBridge(event.getHostId() , eventId);
+
       statement.close();
-      closeDatabase(connection);
+      closeDatabase();
+
       return true;
 
     } catch (SQLException e) {
       e.printStackTrace();
-      closeDatabase(connection);
+      closeDatabase();
       return false;
     }
   }
 
   /**
    * Creates an entry in the User_Event table in the Database.
-   * @param user
-   * @param event
+   * @param userId
+   * @param eventId
    * @return true when insertion was successful, false when insertion had an exception.
    */
-  public static boolean createUserEventConnection(User user, Event event){
-    String sql = "INSERT INTO User_Event (user_id, event_id)" + "VALUES(?, ?)";
+  private static boolean createUserEventBridge(int userId, int eventId){
+    String sql = "INSERT INTO User_Event (user_id , event_id) " + "VALUES(?, ?)";
     Connection connection = connectDatabase();
 
     try{
       PreparedStatement ps = connection.prepareStatement(sql);
-      ps.setInt(1 , event.getId());
-      ps.setInt(2 , user.getId());
+      ps.setInt(1 , userId);
+      ps.setInt(2 , eventId);
 
-      closeDatabase(connection);
+      ps.executeUpdate();
+
+      ps.close();
       return true;
     } catch (SQLException e){
       e.printStackTrace();
-      closeDatabase(connection);
       return false;
     }
   }
 
-  /**
+  /** TODO
    * Adds attachment entry into the Database
    * @param file
    * @param event

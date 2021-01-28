@@ -20,13 +20,13 @@ public class User {
    * Constructor for fetching user from database and creating model class from it
    */
   public User(int id, String username, String firstname, String lastname, String email,
-      ArrayList<Event> acceptEvents, ArrayList<Location> customLocations) {
+      ArrayList<Event> events, ArrayList<Location> customLocations) {
     this.id = id;
     this.username = username;
     this.firstname = firstname;
     this.lastname = lastname;
     this.email = email;
-    this.events = acceptEvents;
+    this.events = events;
     this.locations = customLocations;
     this.isAdmin = false;
   }
@@ -68,7 +68,8 @@ public class User {
    * @param event - Newly created event
    */
   public void createEvent(Event event) {
-    event.setHost(this);
+    event.setHostId(this.getId());
+
     addEvent(event);
 
     for (User participant : event.getParticipants()) {
@@ -77,7 +78,6 @@ public class User {
     }
 
     DatabaseAPI.createEvent(event);
-    DatabaseAPI.createUserEventConnection(this, event);
   }
 
   /**
@@ -96,7 +96,7 @@ public class User {
    */
   public void deleteEvent(Event event) {
     removeEvent(event);
-    if (event.getHost().equals(this)) {
+    if (event.getHostId() == this.getId()) {
       for (User participant : event.getParticipants()) {
         participant.removeEvent(event);
       }

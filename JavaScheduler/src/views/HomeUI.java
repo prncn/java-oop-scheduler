@@ -20,6 +20,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import controllers.DatabaseAPI;
 import controllers.PDFDocument;
 import models.User;
 import views.components.Button;
@@ -321,8 +322,7 @@ public class HomeUI extends MasterUI {
   }
 
   public static void main(String[] args) {
-    // User guest = DatabaseAPI.getUser("admin");
-    User guest = new User("admin", "root", "admin@mail.com");
+    User guest = DatabaseAPI.getUser("admin");
     HomeUI homeFrame = new HomeUI(guest);
     homeFrame.setVisible(true);
     System.out.println(new File(".").getAbsolutePath());
