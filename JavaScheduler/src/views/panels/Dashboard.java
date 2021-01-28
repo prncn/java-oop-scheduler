@@ -4,6 +4,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
+import controllers.DatabaseAPI;
 import controllers.FormatUtil;
 import controllers.ViewModelHandler;
 
@@ -138,10 +139,12 @@ public class Dashboard extends Panel implements CardModes {
     filterLabel.setForeground(Color.WHITE);
     
     TextField filterQuery_1 = new TextField(20, 60, "filter event names...");
+    filterQuery_1.setBackground(MasterUI.primaryColAlt);
     filterQuery_1.setSize(200, 40);
     
     
     TextField filterQuery_2 = new TextField(20, 110, "filter locations...");
+    filterQuery_2.setBackground(MasterUI.primaryColAlt);
     filterQuery_2.setSize(200, 40);
     
     Button fqBtn_1 = filterQuery_1.appendButton(MasterUI.searchIconLight);
@@ -260,7 +263,7 @@ public class Dashboard extends Panel implements CardModes {
       Event event = allEvents.get(i);
       int mgn = 15;
       Panel card = null;
-      if(event.getHost().equals(user)){
+      if(DatabaseAPI.getUser(event.getHostId()).equals(user)){
         card = drawEventCard(content, event, allSectionInner, EDIT);
       } else {
         card = drawEventCard(content, event, allSectionInner, VIEW);
