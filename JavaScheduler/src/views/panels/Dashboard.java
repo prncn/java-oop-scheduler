@@ -2,7 +2,6 @@ package views.panels;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import controllers.FormatUtil;
@@ -30,12 +29,19 @@ import views.components.TextField;
 
 public class Dashboard extends Panel implements CardModes {
 
+  private enum SortModes{
+    ALPHA, DATE_ADDED, DATE_EVENT, PARTICIPS;
+  };
+
   private static final long serialVersionUID = 1L;
   private static Panel redpanel;
   private static Panel upSectionInner;
   private static Panel allSectionInner;
   private static JScrollPane scroller;
   private static Label eventData;
+  private static SortModes SORT_MODE = SortModes.DATE_ADDED;
+  private static String TITLE_KEY = "";
+  private static String LOCATION_KEY = "";
 
   private static JFrame frame;
   private static User user;
@@ -115,6 +121,12 @@ public class Dashboard extends Panel implements CardModes {
     redpanel.add(allSectionInner);
   }
   
+  /**
+   * Draw section for filtering and sorting of events. The sort section
+   * contains radio buttons to change the ordering of drawn event cards.
+   * The filter panel gives the user two textfields to search and filter
+   * event titles or locations by names.
+   */
   private static void drawFilterSortSection() {
     Panel filterPanel = new Panel();
     filterPanel.setBounds(680, 700, 280, 200);
@@ -124,16 +136,25 @@ public class Dashboard extends Panel implements CardModes {
     Label filterLabel = new Label(20, 20, "Filter");
     filterLabel.setHeading();
     filterLabel.setForeground(Color.WHITE);
+    
+    TextField filterQuery_1 = new TextField(20, 60, "filter event names...");
+    filterQuery_1.setSize(200, 40);
+    
+    
+    TextField filterQuery_2 = new TextField(20, 110, "filter locations...");
+    filterQuery_2.setSize(200, 40);
+    
+    Button fqBtn_1 = filterQuery_1.appendButton(MasterUI.searchIconLight);
+    Button fqBtn_2 = filterQuery_2.appendButton(MasterUI.searchIconLight);
+
+    fqBtn_1.addActionListener(e -> { TITLE_KEY = filterQuery_1.getText(); drawEventData(user); });
+    fqBtn_2.addActionListener(e -> { LOCATION_KEY = filterQuery_2.getText(); drawEventData(user); });
+
     filterPanel.add(filterLabel);
-
-    TextField filterQuery = new TextField(20, 60, "filter names...");
-    filterQuery.setSize(200, 30);
-    filterPanel.add(filterQuery);
-
-    Button fqBtn = new Button(filterQuery.getX() + filterQuery.getWidth(), filterQuery.getY(), "", MasterUI.primaryColAlt);
-    fqBtn.setSize(filterQuery.getHeight(), filterQuery.getHeight());
-    fqBtn.setIcon(MasterUI.searchIcon);
-    filterPanel.add(fqBtn);
+    filterPanel.add(filterQuery_1);
+    filterPanel.add(fqBtn_1);
+    filterPanel.add(filterQuery_2);
+    filterPanel.add(fqBtn_2);
 
     Panel sortPanel = new Panel();
     sortPanel.setBounds(680, 700 + filterPanel.getHeight() + 20, 280, 200);
@@ -146,10 +167,15 @@ public class Dashboard extends Panel implements CardModes {
     sortPanel.add(sortLabel);
 
     int BTN_MRGN = 25;
-    Button sortOpt1 = Button.createRadioButton(20, 70, "Alphabetically", false, sortPanel);
-    Button sortOpt2 = Button.createRadioButton(20, sortOpt1.getY() + BTN_MRGN, "Date added", true, sortPanel);
-    Button sortOpt3 = Button.createRadioButton(20, sortOpt2.getY() + BTN_MRGN, "Date event", false, sortPanel);
-    Button sortOpt4 = Button.createRadioButton(20, sortOpt3.getY() + BTN_MRGN, "Number participants", false, sortPanel);
+    Button sortOpt0 = Button.createRadioButton(20, 70, "Alphabetically", false, sortPanel);
+    Button sortOpt1 = Button.createRadioButton(20, sortOpt0.getY() + BTN_MRGN, "Date added", true, sortPanel);
+    Button sortOpt2 = Button.createRadioButton(20, sortOpt1.getY() + BTN_MRGN, "Date event", false, sortPanel);
+    Button sortOpt3 = Button.createRadioButton(20, sortOpt2.getY() + BTN_MRGN, "Number participants", false, sortPanel);
+
+    sortOpt0.addActionListener(e -> { SORT_MODE = SortModes.ALPHA; drawEventData(user); });
+    sortOpt1.addActionListener(e -> { SORT_MODE = SortModes.DATE_ADDED; drawEventData(user); });
+    sortOpt2.addActionListener(e -> { SORT_MODE = SortModes.DATE_EVENT; drawEventData(user); });
+    sortOpt3.addActionListener(e -> { SORT_MODE = SortModes.PARTICIPS; drawEventData(user); });
 
     redpanel.add(filterPanel);
     redpanel.add(sortPanel);
@@ -190,6 +216,7 @@ public class Dashboard extends Panel implements CardModes {
    */
   private static void sectionUpcomingEventsCards(User user, Point content) {
     List<Event> upcomingEvents = new ArrayList<>(user.getAcceptedEvents());
+    
     Collections.sort(upcomingEvents);
     upcomingEvents.removeIf(e -> e.hasPassed()); // filter passed events
 
@@ -216,6 +243,19 @@ public class Dashboard extends Panel implements CardModes {
    */
   private static void sectionAllEventsCards(User user, Point content) {
     List<Event> allEvents = new ArrayList<>(user.getAcceptedEvents());
+    switch (SORT_MODE) {
+      case ALPHA: Collections.sort(allEvents, (e1, e2) -> e1.getName().compareTo(e2.getName())); break;
+      case DATE_ADDED: break;
+      case DATE_EVENT: Collections.sort(allEvents); break;
+      case PARTICIPS: Collections.sort(allEvents, (e1, e2) -> e1.getParticipants().size() - e2.getParticipants().size()); break;
+      default: break;
+    }
+    if (!TITLE_KEY.isBlank()) {
+      allEvents.removeIf(e -> !e.getName().equalsIgnoreCase(TITLE_KEY));
+    }
+    if (!LOCATION_KEY.isBlank()) {
+      allEvents.removeIf(e -> !e.getLocation().getName().equalsIgnoreCase(LOCATION_KEY));
+    }
     for (int i = 0; i < allEvents.size(); i++) {
       Event event = allEvents.get(i);
       int mgn = 15;
@@ -234,10 +274,11 @@ public class Dashboard extends Panel implements CardModes {
       }  
     }
     if (allEvents.size() % 8 == 0) {
-      allSectionInner.setSize(allSectionInner.getWidth(), allSectionInner.getHeight() + 500);
-      redpanel.setSize(redpanel.getWidth(), redpanel.getHeight() + 500);
-      redpanel.setPreferredSize(new Dimension(redpanel.getWidth(), redpanel.getHeight() + 500));
+      allSectionInner.setSize(allSectionInner.getWidth(), (allEvents.size() * 115) * 2);
+      redpanel.setSize(redpanel.getWidth(), (allEvents.size() * 115) * 2);
+      redpanel.setPreferredSize(new Dimension(redpanel.getWidth(), (allEvents.size() * 115) * 2));
     }
+    allSectionInner.repaint();
   }
 
   /**
@@ -299,7 +340,7 @@ public class Dashboard extends Panel implements CardModes {
       remove.setIcon(MasterUI.removeIcon);
       ActionListener removeAction = new ActionListener() {
         public void actionPerformed(ActionEvent e) {
-          user.removeEvent(event);
+          user.deleteEvent(event);
           ViewModelHandler.updateDashboard(user);
           panel.repaint();
         }
@@ -327,6 +368,7 @@ public class Dashboard extends Panel implements CardModes {
         label.setForeground(MasterUI.lightColAlt);
       }
     }
+    card.repaint();
     
     return card;
   }

@@ -21,9 +21,7 @@ public class LoginUI extends MasterUI {
   /**
    * UI components
    */
-  private static Label userLabel;
   protected static TextField userField;
-  private static Label passLabel;
   protected static JPasswordField passField;
   protected static Button loginBtn;
   protected static Button registerBtn;
@@ -69,8 +67,8 @@ public class LoginUI extends MasterUI {
     userField.setSize(210, userField.getHeight());
     userField.setCaretColor(Color.WHITE);
     passField.setBounds(lgnBox.x, lgnBox.y + 120, 210, 40);
-    placeFieldLabel(userField, "User", LBL_MRGN);
-    placeFieldLabel(passField, "Password", LBL_MRGN);
+    placeFieldLabel(userField, "Username", panel);
+    placeFieldLabel(passField, "Password", panel);
 
     panel.add(userField);
     panel.add(passField);

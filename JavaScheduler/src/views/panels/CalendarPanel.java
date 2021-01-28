@@ -20,7 +20,10 @@ import java.awt.event.ActionEvent;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.imageio.ImageIO;
@@ -96,6 +99,7 @@ public class CalendarPanel extends Panel {
     MasterUI.setComponentStyles(this, "light");
     styleDateTextFields();
     styleTopIcons();
+    monthField.getCaret().setVisible(true);
   }
 
   /**
@@ -103,19 +107,18 @@ public class CalendarPanel extends Panel {
    * This is used for the datepicker version of the calendar.
    */
   public void stripComponents() {
-    this.remove(yearField);
-    this.remove(dayField);
-    this.remove(dispModeWeek);
-    this.remove(dispModeMonth);
+    remove(yearField);
+    remove(dayField);
+    remove(dispModeWeek);
+    remove(dispModeMonth);
 
     monthField.setBounds(120, 15, 70, 30);
-    monthField.setHorizontalAlignment(SwingConstants.CENTER);
     monthField.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 18f));
     monthField.setText(monthField.getText().substring(0, 3));
     prevMonthBtn.setPosition(60, 5);
     nextMonthBtn.setPosition(200, 5);
 
-    this.repaint();
+    repaint();
   }
 
   /**
@@ -395,6 +398,7 @@ public class CalendarPanel extends Panel {
       disablePassedDates(dayBtn, currentLocalDate);
       fetchEventInfo(currentLocalDate, dayBtn);
       dayBtn.setPrevColor(dayBtn.getColor());
+      dayBtn.setFocusable(false);
       styleActiveSelectDay(dayNum, activeSelectDay, dayBtn);
 
       if (currentLocalDate.equals(LocalDate.now())) {
@@ -443,9 +447,9 @@ public class CalendarPanel extends Panel {
       }
     });
 
-    this.add(yearField);
-    this.add(monthField);
-    this.add(dayField);
+    add(yearField);
+    add(monthField);
+    add(dayField);
   }
 
   /**
@@ -463,15 +467,12 @@ public class CalendarPanel extends Panel {
    * Set styles for date text fields
    */
   private void styleDateTextFields() {
-    yearField.setSize(100, 40);
-    yearField.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 30f));
-    yearField.wipeBackground();
-    monthField.setSize(200, 40);
-    monthField.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 30f));
-    monthField.wipeBackground();
-    dayField.setSize(200, 40);
-    dayField.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 30f));
-    dayField.wipeBackground();
+    List<TextField> fields = new ArrayList<>(Arrays.asList(yearField, monthField, dayField));
+    fields.forEach(e -> {
+      e.setSize(200, 40);
+      e.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 30f));
+      e.wipeBackground();
+    });
   }
 
   /**

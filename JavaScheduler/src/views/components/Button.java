@@ -4,8 +4,6 @@ import views.MasterUI;
 import views.HomeUI;
 
 import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -13,7 +11,6 @@ import java.awt.Insets;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -279,11 +276,11 @@ public class Button extends JButton implements MouseListener {
     toggleActive();
 
   }
-  
-  private ActionListener radioAction = e -> { 
+
+  private ActionListener radioAction = e -> {
     radioToggleAction();
     for (Button link : links) {
-      if (e.getSource() != link){
+      if (e.getSource() != link) {
         link.setActive(true);
         link.radioToggleAction();
       }

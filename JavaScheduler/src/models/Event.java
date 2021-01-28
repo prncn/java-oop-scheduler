@@ -19,9 +19,9 @@ public class Event implements Comparable<Event> {
   private Reminder reminder;
   private String description = "";
 
-  //TODO has to be adjusted for all variables
   public Event(String name, LocalDate date, LocalTime time, int durationMinutes, Location location,
-      ArrayList<User> participants, Reminder reminder, Priority priority, ArrayList<File> attachments) {
+      ArrayList<User> participants, Reminder reminder, Priority priority, ArrayList<File> attachments,
+      String description) {
     this.name = name;
     this.date = date;
     this.time = time;
@@ -31,6 +31,7 @@ public class Event implements Comparable<Event> {
     this.reminder = reminder;
     this.priority = priority;
     this.attachments = attachments;
+    this.description = description;
   }
 
   public Event(int eventId, String name, String description, int duration,
@@ -124,7 +125,6 @@ public class Event implements Comparable<Event> {
     this.name = name;
   }
 
-  
   /**
    * Get Priority
    * 
@@ -133,7 +133,7 @@ public class Event implements Comparable<Event> {
   public Priority getPriority() {
     return this.priority;
   }
-  
+
   /**
    * Set Priority
    * 
@@ -142,7 +142,7 @@ public class Event implements Comparable<Event> {
   public void setPriority(Priority level) {
     this.priority = level;
   }
-  
+
   /**
    * Get reminder
    * 
@@ -151,7 +151,7 @@ public class Event implements Comparable<Event> {
   public Reminder getReminder() {
     return reminder;
   }
-  
+
   /**
    * Set reminder
    * 
@@ -160,7 +160,7 @@ public class Event implements Comparable<Event> {
   public void setReminder(Reminder reminder) {
     this.reminder = reminder;
   }
-  
+
   /**
    * Get date of event
    * 
@@ -169,7 +169,7 @@ public class Event implements Comparable<Event> {
   public LocalDate getDate() {
     return date;
   }
-  
+
   /**
    * Set date of event
    * 
@@ -178,7 +178,7 @@ public class Event implements Comparable<Event> {
   public void setDate(LocalDate date) {
     this.date = date;
   }
-  
+
   /**
    * Get starting time of event
    * 
@@ -187,7 +187,7 @@ public class Event implements Comparable<Event> {
   public LocalTime getTime() {
     return time;
   }
-  
+
   /**
    * Set starting time of event
    * 
@@ -196,7 +196,7 @@ public class Event implements Comparable<Event> {
   public void setTime(LocalTime time) {
     this.time = time;
   }
-  
+
   /**
    * Get duration of event in minutes
    * 
@@ -205,7 +205,7 @@ public class Event implements Comparable<Event> {
   public int getDurationMinutes() {
     return durationMinutes;
   }
-  
+
   /**
    * Set duration of event in minutes
    * 
@@ -214,7 +214,7 @@ public class Event implements Comparable<Event> {
   public void setDurationMinutes(int durationMinutes) {
     this.durationMinutes = durationMinutes;
   }
-  
+
   /**
    * Get description
    * 
@@ -223,7 +223,7 @@ public class Event implements Comparable<Event> {
   public String getDescription() {
     return description;
   }
-  
+
   /**
    * Set description
    * 
@@ -232,7 +232,7 @@ public class Event implements Comparable<Event> {
   public void setDescription(String description) {
     this.description = description;
   }
-  
+
   /**
    * Set location
    * 
@@ -241,7 +241,7 @@ public class Event implements Comparable<Event> {
   public Location getLocation() {
     return location;
   }
-  
+
   /**
    * Set location
    * 
@@ -250,7 +250,7 @@ public class Event implements Comparable<Event> {
   public void setLocation(Location location) {
     this.location = location;
   }
-  
+
   /**
    * Get host
    * 
@@ -259,7 +259,7 @@ public class Event implements Comparable<Event> {
   public User getHost() {
     return host;
   }
-  
+
   /**
    * Set host
    * 
@@ -268,7 +268,7 @@ public class Event implements Comparable<Event> {
   public void setHost(User host) {
     this.host = host;
   }
-  
+
   /**
    * Check if event is in the past
    * 
@@ -280,6 +280,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Get attachments
+   * 
    * @return attachments list
    */
   public ArrayList<File> getAttachments() {
@@ -288,6 +289,7 @@ public class Event implements Comparable<Event> {
 
   /**
    * Set attachments
+   * 
    * @param attachments attachments list
    */
   public void setAttachments(ArrayList<File> attachments) {
@@ -311,7 +313,7 @@ public class Event implements Comparable<Event> {
   public void setParticipants(ArrayList<User> participants) {
     this.participants = participants;
   }
-  
+
   /**
    * todo
    *
@@ -321,7 +323,7 @@ public class Event implements Comparable<Event> {
   public boolean addParticipant(User user) {
     return false;
   }
-  
+
   /**
    * todo
    *
@@ -339,5 +341,5 @@ public class Event implements Comparable<Event> {
     }
     return getDate().compareTo(other.getDate());
   }
-  
+
 }
