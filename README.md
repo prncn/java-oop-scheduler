@@ -23,7 +23,7 @@ Scheduling application.
 - [x] Admin panel visibility
 - [x] Dashboard
   - [x] Fetch user's meeting
-  - [ ] Add clock
+  - [x] Add clock
   - [x] Add invites panel
   - [x] Replace events list with cards
 - [x] Create Meeting
@@ -55,7 +55,7 @@ Scheduling application.
   - [x] Entry contains participants (list of *users*)
   - [x] Entry contains *priority* (high, medium, low)
     - [x] Highlight events based to priority  
-  - [ ] Pass Meeting to participants
+  - [x] Pass Meeting to participants
   - [x] Prepare to display created meetings on dashboards
 - [ ] Store meetings entity in database
   - [ ] Link to user / participant
@@ -75,10 +75,11 @@ Scheduling application.
 
 ### Documentation
 - [x] Include *Javadoc* as API for classes, methods, attributes
-- [ ] *Diagrams* (class, sequence, flow) describing the software architecture and functionality
+- [x] *Diagrams* (class, sequence, flow) describing the software architecture and functionality
 - [ ] *Project documentation* (max. 18 pages) (see requirements)
   - [x] Description
   - [x] Motivation
   - [x] Requirements
-  - [ ] Organisation/Task distribution
+  - [x] Organisation/Task distribution
+  - [x] Technical descriptions and solutions
   - [ ] Conclusion

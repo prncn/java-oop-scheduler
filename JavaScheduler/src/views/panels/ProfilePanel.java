@@ -74,6 +74,7 @@ public class ProfilePanel extends Panel {
     cnclBtn.addActionListener(infoPanel.setStaticAction());
 
     stats_1 = new Label(40, 600, "You're partaking in " + user.getAcceptedEvents().size() + " meetings.");
+    stats_1.setForeground(MasterUI.accentCol);
     stats_1.setUnset(true);
 
     add(stats_1);
@@ -83,7 +84,6 @@ public class ProfilePanel extends Panel {
     add(infoPanel);
 
     MasterUI.setComponentStyles(this, "light");
-    stats_1.setForeground(MasterUI.accentCol);
   }
 
   /**

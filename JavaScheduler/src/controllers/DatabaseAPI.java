@@ -327,18 +327,19 @@ public class DatabaseAPI {
 
       if(rs.next()){
         int eventId = rs.getInt("user_id");
-        // TODO List of participants?
-        Reminder reminder = Enum.valueOf(Reminder.class, rs.getString("reminder"));
-        Priority priority = Enum.valueOf(Priority.class, rs.getString("priority"));
         String name = rs.getString("name");
+        // TODO List of participants?
+        int duration = rs.getInt("durationMinutes");
         LocalDate date = rs.getDate("date").toLocalDate();
         LocalTime time = rs.getTime("time").toLocalTime();
-        int duration = rs.getInt("durationMinutes");
         String description = rs.getString("description");
+
+        Reminder reminder = Enum.valueOf(Reminder.class, rs.getString("reminder"));
+        Priority priority = Enum.valueOf(Priority.class, rs.getString("priority"));
         int host_id = rs.getInt("host_id");
         int location_id = rs.getInt("location_id");
 
-        Event event = new Event(name, date, time, duration, PLATZHALTER, new ArrayList<User>(), priority, new ArrayList<File>());
+        Event event = new Event(eventId, name, description, duration, date, time, location_id
         event.setId(eventId);
         event.setHost(getUser(host_id));
 
@@ -375,8 +376,6 @@ public class DatabaseAPI {
         statement.setString(8 , event.getDescription());
         statement.setInt(9 , event.getHost().getId());
         statement.setString(10 , event.getLocation().getId());
-
-
         statement.executeUpdate();
 
         statement.close();
@@ -385,7 +384,42 @@ public class DatabaseAPI {
 
       } catch (SQLException e) {
           e.printStackTrace();
+          closeDatabase(connection);
           return false;
       }
+  }
+
+  /**
+   * Creates an entry in the User_Event table in the Database.
+   * @param user
+   * @param event
+   * @return true when insertion was successful, false when insertion had an exception.
+   */
+  public static boolean createUserEventConnection(User user, Event event){
+    String sql = "INSERT INTO User_Event (user_id, event_id)" + "VALUES(?, ?)";
+    Connection connection = connectDatabase();
+
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql);
+      ps.setInt(1 , event.getId());
+      ps.setInt(2 , user.getId());
+
+      closeDatabase(connection);
+      return true;
+    } catch (SQLException e){
+      e.printStackTrace();
+      closeDatabase(connection);
+      return false;
+    }
+  }
+
+  /**
+   * Adds attachment entry into the Database
+   * @param file
+   * @param event
+   * @return
+   */
+  public static boolean createAttachment(File file, Event event){
+    return false;
   }
 }
