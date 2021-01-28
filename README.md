@@ -13,22 +13,22 @@ Scheduling application.
   - [x] Provide GUI interface 
   - [x] *Store* login data in database   
   - [x] *Encrypt* login data in database *CONTROLLER*  
-- [ ] Admin permission to access, edit and delete users  
+- [x] Admin permission to access, edit and delete users  
   - [x] Admin account placeholder
   - [x] Design admin panel
-  - [ ] Implement accessor, editor and deletor in admin panel
+  - [x] Implement accessor, editor and deletor in admin panel
 
 ### UI
 - [x] Create navigation panels
 - [x] Admin panel visibility
-- [ ] Dashboard
+- [x] Dashboard
   - [x] Fetch user's meeting
-  - [ ] Add clock
-  - [ ] Add invites panel
-  - [ ] Replace events list with cards
+  - [x] Add clock
+  - [x] Add invites panel
+  - [x] Replace events list with cards
 - [x] Create Meeting
   - [x] Schedule form
-    - [ ] Location suggestions
+    - [x] Location suggestions
     - [ ] Search users suggestions
   - [x] Success panel
 - [x] View Calendar
@@ -39,13 +39,13 @@ Scheduling application.
   - [x] Weekly display mode
     - [x] Design weekly calendar
     - [x] Display meetings at time
-- [ ] Profile / Admin
-  - [ ] Display user data
-  - [ ] Edit user data panel
-  - [ ] Location creator panel
+- [x] Profile / Admin
+  - [x] Display user data
+  - [x] Edit user data panel
+  - [x] Location creator panel
 
 ### Create Meetings/Appointments
-- [ ] Model meetings system (*version 3*)
+- [x] Model meetings system (*version 3*)
   - [x] Implement prototype systems (version 3)
   - [x] Reduce and minimise model
   - [x] Redesign invite system
@@ -55,7 +55,7 @@ Scheduling application.
   - [x] Entry contains participants (list of *users*)
   - [x] Entry contains *priority* (high, medium, low)
     - [x] Highlight events based to priority  
-  - [ ] Pass Meeting to participants *CONTROLLER*
+  - [x] Pass Meeting to participants
   - [x] Prepare to display created meetings on dashboards
 - [ ] Store meetings entity in database
   - [ ] Link to user / participant
@@ -66,19 +66,20 @@ Scheduling application.
 
 ### Delete and Edit Meetings/Appointments
 - [ ] Delete event
-  - [ ] From client
+  - [x] From client
   - [ ] From database
 - [ ] Edit event
-  - [ ] From client
+  - [x] From client
   - [ ] From database
 - [ ] User and Participant get *email notifcation* on delete/edit
 
 ### Documentation
-- [ ] Include *Javadoc* as API for classes, methods, attributes
-- [ ] *Diagrams* (class, sequence, flow) describing the software architecture and functionality
+- [x] Include *Javadoc* as API for classes, methods, attributes
+- [x] *Diagrams* (class, sequence, flow) describing the software architecture and functionality
 - [ ] *Project documentation* (max. 18 pages) (see requirements)
-  - [ ] Description
-  - [ ] Motivation
-  - [ ] Requirements
-  - [ ] Organisation/Task distribution
+  - [x] Description
+  - [x] Motivation
+  - [x] Requirements
+  - [x] Organisation/Task distribution
+  - [x] Technical descriptions and solutions
   - [ ] Conclusion

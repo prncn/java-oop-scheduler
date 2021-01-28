@@ -5,6 +5,7 @@ import java.awt.Font;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import java.awt.Component;
 
 import views.MasterUI;
 
@@ -12,23 +13,23 @@ public class Label extends JLabel {
 
   private static final long serialVersionUID = 1L;
   private boolean isHeading = false;
+  private boolean unset = false;
 
   public Label(int x, int y, String text) {
     super(text);
-    this.setFont(MasterUI.bodyFont);
-    this.setBounds(x, y, 250, 25);
-  }
-
-  public Label(String text) {
-    super(text);
-    this.setFont(MasterUI.bodyFont);
-    this.setSize(250, 25);
+    setFont(MasterUI.bodyFont);
+    setBounds(x, y, 250, 25);
   }
 
   public Label() {
     super();
-    this.setFont(MasterUI.bodyFont);
-    this.setSize(250, 25);
+    setFont(MasterUI.bodyFont);
+    setSize(250, 25);
+  }
+
+  public Label(String text, Component cmp) {
+    super(text);
+    setBounds(cmp.getX() + cmp.getWidth() + 12, cmp.getY(), 250, cmp.getHeight());
   }
 
   public Label(ImageIcon image) {
@@ -37,21 +38,31 @@ public class Label extends JLabel {
 
   public void setHeading() {
     isHeading = true;
-    this.setSize(500, 40);
-    this.setFont(this.getFont().deriveFont(Font.BOLD, 30f));
+    setUnset(true);
+    setSize(500, 40);
+    setFont(getFont().deriveFont(Font.BOLD, 30f));
   }
 
+  
   public boolean getHeading() {
-    return this.isHeading;
+    return isHeading;
+  }
+
+  public void setUnset(boolean unset) {
+    this.unset = unset;
+  }
+
+  public boolean getUnset() {
+    return unset;
   }
 
   public void setPosition(int x, int y) {
-    this.setBounds(x, y, this.getWidth(), this.getHeight());
+    setBounds(x, y, getWidth(), getHeight());
   }
 
   public void appendIcon(ImageIcon icon) {
-    this.setIcon(icon);
-    this.setVerticalTextPosition(SwingConstants.BOTTOM);
-    this.setIconTextGap(10);
+    setIcon(icon);
+    setVerticalTextPosition(SwingConstants.BOTTOM);
+    setIconTextGap(10);
   }
 }

@@ -1,12 +1,44 @@
 package views.components;
 
-import javax.swing.JTextField;
-
 import views.MasterUI;
+
+import javax.swing.*;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
+
+import java.awt.Color;
 
 public class TextField extends JTextField {
 
   private static final long serialVersionUID = -2254754514418403224L;
+  private Label errorLabel;
+
+  /**
+   * Nested class to limit the number of entered characters
+   * in a textfield
+   */
+  public class LimitDocumentFilter extends DocumentFilter {
+    private int limit;
+    public LimitDocumentFilter(int limit) {
+      if (limit <= 0) {
+        throw new IllegalArgumentException("Limit can not be <= 0");
+      }
+      this.limit = limit;
+    }
+    @Override
+    public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+      int currentLength = fb.getDocument().getLength();
+      int overLimit = (currentLength + text.length()) - limit - length;
+      if (overLimit > 0) {
+        text = text.substring(0, text.length() - overLimit);
+      }
+      if (text.length() > 0) {
+        super.replace(fb, offset, length, text, attrs);
+      }
+    }
+  }
 
   public TextField(int x, int y, String title) {
     super(title);
@@ -60,10 +92,24 @@ public class TextField extends JTextField {
     setBorder(javax.swing.BorderFactory.createEmptyBorder(p, p, p, p));
   }
 
+  public Label getErrorLabel() {
+    return errorLabel;
+  }
+
+  public Label createErrorLabel(String msg) {
+    Label error = new Label(getX() + 50, getY() - 20, "");
+    error.setForeground(Color.RED);
+    error.setHorizontalAlignment(SwingConstants.RIGHT);
+    error.setUnset(true);
+    error.setName(msg);
+    errorLabel = error;
+    return error;
+  }
+
   /**
-   * Set placeholder text inside text field
+   * Set max. length of a entered characters in a textfield
    */
-  public void setPlaceholderText() {
-    setForeground(MasterUI.lightCol);
+  public void setMaximumLength(int limit) {
+    ((AbstractDocument)this.getDocument()).setDocumentFilter(new LimitDocumentFilter(limit));
   }
 }

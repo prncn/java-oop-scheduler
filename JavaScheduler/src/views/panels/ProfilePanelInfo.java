@@ -142,7 +142,7 @@ public class ProfilePanelInfo extends Panel {
   }
 
   /**
-   * Set wether form is in editing mode
+   * Set whether form is in editing mode
    * 
    * @param value - Boolean isEditing value
    */
@@ -151,7 +151,7 @@ public class ProfilePanelInfo extends Panel {
   }
 
   /**
-   * Get wether form is in editing mode
+   * Get whether form is in editing mode
    * 
    * @return Boolean isEditable value
    */

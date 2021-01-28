@@ -2,6 +2,7 @@ package views.panels;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 
 import controllers.FormatUtil;
@@ -9,17 +10,23 @@ import controllers.ViewModelHandler;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import models.Event;
+import models.Priority;
 import models.User;
 import views.HomeUI;
 import views.MasterUI;
 import views.components.Button;
 import views.components.Label;
 import views.components.Panel;
+import views.components.TextField;
 
 public class Dashboard extends Panel implements CardModes {
 
@@ -27,6 +34,7 @@ public class Dashboard extends Panel implements CardModes {
   private static Panel redpanel;
   private static Panel upSectionInner;
   private static Panel allSectionInner;
+  private static JScrollPane scroller;
   private static Label eventData;
 
   private static JFrame frame;
@@ -41,7 +49,7 @@ public class Dashboard extends Panel implements CardModes {
     redpanel.setBackground(MasterUI.lightCol);
 
     createDashboardTab(user);
-    JScrollPane scroller = createScroller();
+    scroller = createScroller();
 
     Label scrollHintIcon = new Label();
     scrollHintIcon.setBounds(getWidth() / 2 - 50, 600, 24, 24);
@@ -74,7 +82,7 @@ public class Dashboard extends Panel implements CardModes {
 
     upSectionInner = new Panel();
     upSectionInner.setBackground(MasterUI.lightCol);
-    upSectionInner.setBounds(40, 80, getWidth() - 100, getHeight() - 200);
+    upSectionInner.setBounds(40, 80, getWidth() - 380, getHeight() - 200);
 
     Label allEventsTitle = new Label(40, 600, "All Events");
     allEventsTitle.setHeading();
@@ -95,15 +103,58 @@ public class Dashboard extends Panel implements CardModes {
     Label emptyNotif = new Label(683, 80, "You're all caught up!");
     emptyNotif.setFont(MasterUI.monoFont);
     emptyNotif.setForeground(Color.LIGHT_GRAY);
-
+    
     redpanel.add(emptyNotif);
     redpanel.add(notifLabel);
-
+    
     drawEventData(user);
+    drawFilterSortSection();
     redpanel.add(screenTitle);
     redpanel.add(upSectionInner);
     redpanel.add(allEventsTitle);
     redpanel.add(allSectionInner);
+  }
+  
+  private static void drawFilterSortSection() {
+    Panel filterPanel = new Panel();
+    filterPanel.setBounds(680, 700, 280, 200);
+    filterPanel.setBackground(MasterUI.primaryCol);
+    filterPanel.setRounded(true);
+    
+    Label filterLabel = new Label(20, 20, "Filter");
+    filterLabel.setHeading();
+    filterLabel.setForeground(Color.WHITE);
+    filterPanel.add(filterLabel);
+
+    TextField filterQuery = new TextField(20, 60, "filter names...");
+    filterQuery.setSize(200, 30);
+    filterPanel.add(filterQuery);
+
+    Button fqBtn = new Button(filterQuery.getX() + filterQuery.getWidth(), filterQuery.getY(), "", MasterUI.primaryColAlt);
+    fqBtn.setSize(filterQuery.getHeight(), filterQuery.getHeight());
+    fqBtn.setIcon(MasterUI.searchIcon);
+    filterPanel.add(fqBtn);
+
+    Panel sortPanel = new Panel();
+    sortPanel.setBounds(680, 700 + filterPanel.getHeight() + 20, 280, 200);
+    sortPanel.setBackground(MasterUI.primaryColAlt);
+    sortPanel.setRounded(true);
+    
+    Label sortLabel = new Label(20, 20, "Sort");
+    sortLabel.setHeading();
+    sortLabel.setForeground(Color.WHITE);
+    sortPanel.add(sortLabel);
+
+    int BTN_MRGN = 25;
+    Button sortOpt1 = Button.createRadioButton(20, 70, "Alphabetically", false, sortPanel);
+    Button sortOpt2 = Button.createRadioButton(20, sortOpt1.getY() + BTN_MRGN, "Date added", true, sortPanel);
+    Button sortOpt3 = Button.createRadioButton(20, sortOpt2.getY() + BTN_MRGN, "Date event", false, sortPanel);
+    Button sortOpt4 = Button.createRadioButton(20, sortOpt3.getY() + BTN_MRGN, "Number participants", false, sortPanel);
+
+    redpanel.add(filterPanel);
+    redpanel.add(sortPanel);
+    MasterUI.setComponentStyles(sortPanel, "dark");
+    MasterUI.setComponentStyles(filterPanel, "dark");
   }
 
   /**
@@ -138,20 +189,20 @@ public class Dashboard extends Panel implements CardModes {
    * @param content
    */
   private static void sectionUpcomingEventsCards(User user, Point content) {
-    List<Event> upcomingEvents = user.getAcceptedEvents();
+    List<Event> upcomingEvents = new ArrayList<>(user.getAcceptedEvents());
     Collections.sort(upcomingEvents);
     upcomingEvents.removeIf(e -> e.hasPassed()); // filter passed events
 
-    for (int i = 0; i < upcomingEvents.size(); i++) {
+    for (int i = 0; i < Math.min(8, upcomingEvents.size()); i++) {
       Event event = upcomingEvents.get(i);
-      if (i > 8)
-        break; // slice list after 8 entries
       int mgn = 15; // margin in pixels
-      Panel card = drawEventCard(content, event, upSectionInner, UPCOMING);
+      Panel card = drawEventCard(content, event, upSectionInner, VIEW);
 
       content.y += card.getHeight() + mgn;
-      if (i == 3)
-        content.setLocation(310, mgn);
+      if (i == 3) {
+        content.x += card.getWidth() + mgn;
+        content.y = 10;
+      }
     }
   }
 
@@ -164,15 +215,28 @@ public class Dashboard extends Panel implements CardModes {
    * @param content - Point pixel coordinate to place the card
    */
   private static void sectionAllEventsCards(User user, Point content) {
-    List<Event> allEvents = user.getAcceptedEvents();
+    List<Event> allEvents = new ArrayList<>(user.getAcceptedEvents());
     for (int i = 0; i < allEvents.size(); i++) {
       Event event = allEvents.get(i);
       int mgn = 15;
-      Panel card = drawEventCard(content, event, allSectionInner, ALL);
-
-      content.y += card.getHeight() + mgn;
-      if (i == 3)
-        content.setLocation(310, mgn);
+      Panel card = null;
+      if(event.getHost().equals(user)){
+        card = drawEventCard(content, event, allSectionInner, EDIT);
+      } else {
+        card = drawEventCard(content, event, allSectionInner, VIEW);
+      }
+      
+      if (i % 2 == 0) {
+        content.x += card.getWidth() + mgn;
+      } else {
+        content.x = 0;
+        content.y += card.getHeight() + mgn; 
+      }  
+    }
+    if (allEvents.size() % 8 == 0) {
+      allSectionInner.setSize(allSectionInner.getWidth(), allSectionInner.getHeight() + 500);
+      redpanel.setSize(redpanel.getWidth(), redpanel.getHeight() + 500);
+      redpanel.setPreferredSize(new Dimension(redpanel.getWidth(), redpanel.getHeight() + 500));
     }
   }
 
@@ -190,44 +254,58 @@ public class Dashboard extends Panel implements CardModes {
    */
   private static Panel drawEventCard(Point p, Event event, Panel panel, int cardMode) {
     Panel card = new Panel();
-    Point c = new Point(15, 10);
+    Point c = new Point(15, 15);
     card.setRounded(true);
     card.setBounds(p.x, p.y, 300, 100);
     card.setBackground(MasterUI.lightColAlt);
-
-    Label name = new Label(c.x, c.y, "<html><strong>" + event.getName() + "<strong><html>");
-    Label location = new Label(c.x, c.y + 30, event.getLocation().getName());
-    Label date = new Label(c.x, c.y + 55, FormatUtil.readableDate(event.getDate()));
-    Label time = new Label(c.x + 60, c.y + 55, event.getTime().toString());
-
+    Button view = new Button(p.x, p.y + 40, "");
+    view.setSize(300, 60);
+    view.setOpaque(false);
+    view.setContentAreaFilled(false);
+    view.setBorderPainted(false);
+    view.addActionListener(e -> {
+      Panel editEvent = new ScheduleEvent(frame, user, event, ScheduleModes.VIEW);
+      HomeUI.switchPanel(editEvent);
+    });
+    
+    Label name = new Label(c.x, c.y, event.getName());
+    Label location = new Label(c.x, c.y + 20, event.getLocation().getName());
+    Label date = new Label(c.x, c.y + 45, FormatUtil.readableDate(event.getDate()));
+    Label time = new Label(c.x + 60, c.y + 45, event.getTime().toString());
+    
     Label prio = new Label(card.getWidth() - 34, 10, "");
     prio.setSize(24, 24);
     prio.setIcon(event.getPriority().getIcon());
-
+    name.setFont(name.getFont().deriveFont(Font.BOLD, 14f));
+    name.setUnset(true);
+    
     int margin = 6;
-
-    if (checkCardModeKey(cardMode) == ALL) {
+    
+    if (checkCardModeKey(cardMode) == EDIT) {
       Button edit = new Button(prio.getX() - (prio.getWidth() + margin), prio.getY(), "");
       edit.setSmall();
       edit.setSize(24, 24);
       edit.setColor(MasterUI.lightColAlt);
       edit.setIcon(MasterUI.editIcon);
       edit.addActionListener(e -> {
-        Panel editEvent = new ScheduleEvent(frame, user, event);
+        Panel editEvent = new ScheduleEvent(frame, user, event, ScheduleModes.EDIT);
         HomeUI.switchPanel(editEvent);
       });
-
+      
       Button remove = new Button(edit.getX() - (edit.getWidth() + margin), edit.getY(), "");
       remove.setSmall();
       remove.setSize(24, 24);
       remove.setColor(MasterUI.lightColAlt);
       remove.setIcon(MasterUI.removeIcon);
-      remove.addActionListener(e -> {
-        user.removeEvent(event);
-        ViewModelHandler.updateDashboard(user);
-        panel.repaint();
-      });
-
+      ActionListener removeAction = new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          user.removeEvent(event);
+          ViewModelHandler.updateDashboard(user);
+          panel.repaint();
+        }
+      };
+      remove.addActionListener(e -> HomeUI.confirmDialog(removeAction, "Remove this event?"));
+      
       card.add(remove);
       card.add(edit);
     }
@@ -237,10 +315,19 @@ public class Dashboard extends Panel implements CardModes {
     card.add(location);
     card.add(date);
     card.add(time);
+    panel.add(view);
     panel.add(card);
-
+    
     MasterUI.setComponentStyles(card, "light");
-
+    
+    if (checkCardModeKey(cardMode) == VIEW && event.getPriority() == Priority.HIGH) {
+      card.setBackground(MasterUI.hiPrioCol);
+      Label[] labels = { name, location, date, time };
+      for (Label label : labels) {
+        label.setForeground(MasterUI.lightColAlt);
+      }
+    }
+    
     return card;
   }
 
@@ -252,7 +339,7 @@ public class Dashboard extends Panel implements CardModes {
    * @throws IllegalArgumentException on incorrect layout mode.
    */
   private static int checkCardModeKey(int key) {
-    if (key == UPCOMING || key == ALL || key == NOTIF || key == CALENDAR) {
+    if (key == VIEW || key == EDIT || key == NOTIF || key == CALENDAR) {
       return key;
     } else {
       throw new IllegalArgumentException("Invalid layout mode for event card.");

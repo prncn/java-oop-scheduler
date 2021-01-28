@@ -80,6 +80,16 @@ public class FormatUtil {
 	}
 
 	/**
+   * Check if a string is blank or not
+   *
+   * @param string - the string to be checked
+   * @return Boolean whether string is blanked or not
+   */
+  public static boolean isBlankString(String string) {
+    return string == null || string.trim().isEmpty();
+  }
+
+	/**
 	 * Change alpha value (transparency) of given color
 	 * 
 	 * @param color - Original color
@@ -91,14 +101,26 @@ public class FormatUtil {
 	}
 
 	/**
-	 * Parse LocalDate to readable string Format. 
-	 * For instance, <code>2021-03-05</code> gets parsed to <code>March 5</code>.
+	 * Parse LocalDate to readable string Format. For instance,
+	 * <code>2021-03-05</code> gets parsed to <code>March 5</code>.
+	 * 
 	 * @param date - LocalDate object
 	 * @return String of date
 	 */
 	public static String readableDate(LocalDate date) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd");
 		return date.format(formatter);
+	}
+
+	/**
+	 * Get ending time from a giving starting time and duration.
+	 * 
+	 * @param startTime    - Starting LocalTime of event
+	 * @param durationMins - Duration in minutes
+	 * @return LocalTime of ending time
+	 */
+	public static LocalTime getEndTime(LocalTime startTime, int durationMins) {
+		return startTime.plusMinutes((long) durationMins);
 	}
 
 }

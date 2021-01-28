@@ -1,14 +1,9 @@
 package views.panels;
 
-import javax.swing.JFrame;
-import javax.swing.SwingConstants;
-
+import controllers.FormatUtil;
 import controllers.ViewModelHandler;
-import models.User;
-import models.Priority;
-import models.Reminder;
 import models.Event;
-import models.Location;
+import models.*;
 import views.HomeUI;
 import views.MasterUI;
 import views.components.Button;
@@ -17,21 +12,26 @@ import views.components.Panel;
 import views.components.TextField;
 
 import javax.swing.*;
-import javax.swing.border.Border;
+import javax.swing.filechooser.FileFilter;
+
 import java.awt.Point;
 import java.awt.Color;
-import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
-public class ScheduleEvent extends Panel {
+public class ScheduleEvent extends Panel implements ScheduleModes {
 
   private static final long serialVersionUID = 1L;
   private Button addUserBtn;
@@ -40,10 +40,13 @@ public class ScheduleEvent extends Panel {
   private Button hiPrioBtn;
   private Button midPrioBtn;
   private Button loPrioBtn;
+  private Button dpdwn;
   private TextField searchUserField;
   private Label userQueryResult;
-  private int participantListPosition = 335;
-  private ArrayList<User> participants = new ArrayList<>();
+  private int participantListPosition;
+  private ArrayList<User> participants;
+  private ArrayList<File> selectedAttachments;
+  private Reminder selectedReminder;
   private Priority selectedPriority;
   private Location selectedLocation;
   private Point contentBox;
@@ -53,8 +56,10 @@ public class ScheduleEvent extends Panel {
   public static TextField dateField;
   public static TextField startField;
   public static TextField endField;
+  public static TextField priorityField;
   public static TextField locationField;
   public static TextField reminderField;
+  public static TextField attachField;
   private static Label errorPriority;
   private static Label errorTitle;
   private static Label errorDate;
@@ -62,37 +67,53 @@ public class ScheduleEvent extends Panel {
   private static Label errorEndTime;
   private static Label errorLocation;
   private static Label errorReminder;
+  private static Label WhereLabel;
   private JFrame frame;
   private User user;
   private Event editEvent;
+  private int mode;
 
-  public ScheduleEvent(JFrame frame, User user, Event editEvent) {
+  public ScheduleEvent(JFrame frame, User user, Event editEvent, int mode) {
     super(frame);
     this.frame = frame;
     this.user = user;
     this.editEvent = editEvent;
-    participants.add(user);
+    this.mode = mode;
 
     contentBox = new Point(40, 170);
-    Label screenTitle = new Label(40, 40, "Schedule an Event");
+    Label screenTitle = new Label(40, 40, "");
     screenTitle.setHeading();
-    if(editEvent != null)  {
+    if (mode == CREATE) {
+      screenTitle.setText("Schedule an Event");
+      participants = new ArrayList<>();
+      selectedAttachments = new ArrayList<>();
+      participants.add(user);
+    } else if (mode == EDIT) {
       screenTitle.setText("Edit event");
       screenTitle.setForeground(MasterUI.accentCol);
+      participants = editEvent.getParticipants();
+      selectedAttachments = editEvent.getAttachments();
+    } else if (mode == VIEW) {
+      screenTitle.setText(editEvent.getName());
+      screenTitle.setForeground(MasterUI.accentCol);
+      selectedAttachments = editEvent.getAttachments();
+      participants = editEvent.getParticipants();
     }
-    String[] lbStrings = { "Topic", "When", "Start Time", "Where" };
 
-    initDatePicker();
+    initFormContent();
+    if (mode != VIEW) {
+      initDatePicker();
+    }
     initPageButtons();
-    initFormContent(lbStrings);
-    setDefaultProperties();
     drawPrioritySection();
-    initAddParticipant();
     drawReminderSection();
+    drawAttachmentSection();
+    drawParticipantSection();
     processConfirm();
 
     add(screenTitle);
     MasterUI.setComponentStyles(this, "light");
+    setDefaultProperties();
   }
 
   /**
@@ -107,11 +128,11 @@ public class ScheduleEvent extends Panel {
       dropdown.isActive = false;
     } else {
       dropdown.setSize(300, 200);
-      String[] dueBefores = { "One week before", "Three days before", "One hour before", "Ten minutes before",
-          "Don't remind me" };
+      Reminder[] dueBefores = { Reminder.ONE_WEEK, Reminder.THREE_DAYS,
+          Reminder.ONE_HOUR, Reminder.ONE_HOUR, Reminder.NONE };
       int rmd_initialY = 0;
-      for (String dueBefore : dueBefores) {
-        remOption = new Button(0, rmd_initialY, dueBefore, MasterUI.lightColAlt);
+      for (Reminder dueBefore : dueBefores) {
+        remOption = new Button(0, rmd_initialY, dueBefore.toString(), MasterUI.lightColAlt);
         remOption.setSize(dropdown.getWidth(), 40);
         remOption.setDark(false);
         remOption.setForeground(Color.BLACK);
@@ -121,10 +142,10 @@ public class ScheduleEvent extends Panel {
 
         remOption.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            reminderField.setText(dueBefore);
+            reminderField.setText(dueBefore.toString());
+            selectedReminder = dueBefore;
             dropdown.setSize(0, 0);
             dropdown.isActive = false;
-
             panel.add(searchUserField);
           }
         });
@@ -136,7 +157,8 @@ public class ScheduleEvent extends Panel {
 
   /**
    * Build dropdown options as to which custom location to select
-   * @param textfield - Location TextField object to reference 
+   * 
+   * @param textfield - Location TextField object to reference
    */
   private void locationDropdownSelection(TextField textfield) {
     if (dpscroll != null) {
@@ -186,6 +208,7 @@ public class ScheduleEvent extends Panel {
     Label reminderLabel = new Label(400, 100, "Remind me before event");
     reminderField = new TextField(400, 120);
     reminderField.setText(Reminder.NONE.toString());
+    selectedReminder = Reminder.NONE;
     reminderField.setEditable(false);
     Button dpdwn = new Button(700, 120, "", MasterUI.lightColAlt);
     dpdwn.setIcon(MasterUI.downIcon);
@@ -206,10 +229,12 @@ public class ScheduleEvent extends Panel {
       }
     });
 
-    this.add(rp);
-    this.add(dpdwn);
-    this.add(reminderField);
-    this.add(reminderLabel);
+    add(rp);
+    if (mode != VIEW) {
+      add(dpdwn);
+    }
+    add(reminderField);
+    add(reminderLabel);
   }
 
   /**
@@ -217,33 +242,43 @@ public class ScheduleEvent extends Panel {
    */
   private void initPageButtons() {
     confirmBtn = new Button(40, 550, "Confirm", MasterUI.secondaryCol);
-    addUserBtn = new Button(700, 190, "", MasterUI.lightColAlt);
-    addUserBtn.setSize(40, 40);
-    addUserBtn.setIcon(MasterUI.addUserIcon);
+    switch (mode) {
+      case VIEW:
+        confirmBtn.setText("Back");
+        break;
+      case EDIT:
+        confirmBtn.setText("Save Changes");
+        break;
+      default:
+        confirmBtn.setText("Confirm");
+    }
+
     confirmBtn.setTab();
     confirmBtn.centerText();
+    confirmBtn.setRounded(true);
 
-    this.add(confirmBtn);
-    this.add(addUserBtn);
+    add(confirmBtn);
   }
 
   /**
-   * Create and initialise text forms. This method is designed as a loop instead
-   * of statically for developemental purposes.
+   * Create and initialise text forms. This method is designed as a loop and not
+   * statically for developemental purposes.
    *
    */
-  private void initFormContent(String[] lbStrings) {
+  private void initFormContent() {
+    String[] lbStrings = { "Title", "Date", "Start Time", "Where" };
     int initialY = contentBox.y;
     for (String lbString : lbStrings) {
       Label label = new Label(contentBox.x, initialY, lbString);
       TextField textfield;
       TextField secondField;
       switch (lbString) {
-        case "Topic":
+        case "Title":
           textfield = new TextField(contentBox.x, initialY + 20);
+          textfield.setMaximumLength(25);
           titleField = textfield;
           break;
-        case "When":
+        case "Date":
           textfield = new TextField(contentBox.x, initialY + 20);
           textfield.setSize(textfield.getWidth() - 60, textfield.getHeight());
           textfield.setEditable(false);
@@ -252,75 +287,111 @@ public class ScheduleEvent extends Panel {
         case "Start Time":
           textfield = new TextField(contentBox.x, initialY + 20);
           textfield.setSize((textfield.getWidth() / 2) - 2, textfield.getHeight());
+          textfield.setMaximumLength(5);
           startField = textfield;
 
           Label timelb = new Label(contentBox.x + textfield.getWidth() + 4, initialY, "End Time");
           secondField = new TextField(contentBox.x + textfield.getWidth() + 4, initialY + 20);
           secondField.setSize(textfield.getWidth(), textfield.getHeight());
-          this.add(timelb);
-          this.add(secondField);
+          secondField.setMaximumLength(5);
+          if (mode == VIEW) {
+            Label memberLabel = new Label(400, timelb.getY(), "Participants: ");
+            add(memberLabel);
+          }
+          add(timelb);
+          add(secondField);
           endField = secondField;
           break;
         case "Where":
           textfield = new TextField(contentBox.x, initialY + 20);
           textfield.setSize(textfield.getWidth() - 40, textfield.getHeight());
+          textfield.setMaximumLength(25);
           locationField = textfield;
+          WhereLabel = label;
 
-          Button dpdwn = new Button(contentBox.x + textfield.getWidth(), initialY + 20, "", MasterUI.lightColAlt);
+          dpdwn = new Button(contentBox.x + textfield.getWidth(), initialY + 20, "", MasterUI.lightColAlt);
           dpdwn.setIcon(MasterUI.downIcon);
           dpdwn.setSize(40, 40);
           dpdwn.addActionListener(e -> locationDropdownSelection(textfield));
-          this.add(dpdwn);
+          if (mode != VIEW)
+            add(dpdwn);
           break;
         default:
           textfield = new TextField(contentBox.x, initialY + 20);
           break;
       }
-      this.add(label);
-      this.add(textfield);
+      add(label);
+      add(textfield);
       initialY += 70;
       /**
-       * When clicking in on a text field, the panel of the date picker
-       * (redpanel) closes, if it has been open, so that a user
-       * does not have to manually close the panel.
+       * When clicking in on a text field, the panel of the date picker (redpanel)
+       * closes, if it has been open, so that a user does not have to manually close
+       * the panel.
        */
-      textfield.addFocusListener(new FocusListener() {
-        public void focusGained(FocusEvent e) {
-          redpanel.setSize(0, 0);
-          redpanel.isActive = false;
-          textfield.setText("");
-        }
+      if (mode != VIEW) {
+        textfield.addFocusListener(new FocusListener() {
+          public void focusGained(FocusEvent e) {
+            redpanel.setSize(0, 0);
+            redpanel.isActive = false;
+            textfield.setText("");
+          }
 
-        public void focusLost(FocusEvent e) {
-          // unchanged
-        }
-      });
+          public void focusLost(FocusEvent e) {
+            // unchanged
+          }
+        });
+      }
     }
   }
 
   /**
-   * Set properties of event to defaul values. If editEvent exists
-   * the event to be edited to filled into form.
+   * Set properties of event to defaul values. If editEvent exists the event to be
+   * edited to filled into form.
    */
   public void setDefaultProperties() {
-    if(editEvent == null){
+    if (editEvent == null) {
       titleField.setText("Proxy Networking");
       locationField.setText("Communications department");
-      dateField.setText("2021-01-12");
+      dateField.setText(LocalDate.now().toString());
       startField.setText("09:00");
       endField.setText("10:35");
     } else {
+      prioBtnAction(editEvent.getPriority());
       titleField.setText(editEvent.getName());
       locationField.setText(editEvent.getLocation().getName());
       dateField.setText(editEvent.getDate().toString());
       startField.setText(editEvent.getTime().toString());
+      endField.setText(FormatUtil.getEndTime(editEvent.getTime(), editEvent.getDurationMinutes()).toString());
+      String attachStr = "";
+      for (File f : editEvent.getAttachments()) {
+        attachStr += f.getName() + " ";
+      }
+
+      System.out.println(attachStr);
+      attachField.setText(attachStr);
+    }
+
+    if (mode == VIEW) {
+      TextField[] fields = { titleField, locationField, dateField, startField, endField, attachField, reminderField };
+      for (TextField field : fields) {
+        field.setBackground(MasterUI.lightCol);
+        field.setEditable(false);
+        field.setEqualPadding(0);
+        field.setFont(MasterUI.robotoFont.deriveFont(Font.BOLD, 15f));
+      }
+      dateField.setText(FormatUtil.readableDate(LocalDate.parse(dateField.getText())));
+      Button[] prioBtns = { loPrioBtn, midPrioBtn, hiPrioBtn };
+      for (Button prioBtn : prioBtns) {
+        prioBtn.setEnabled(false);
+      }
+
+      repaint();
     }
   }
 
   /**
-   * Search a user to add them to participants.
-   * If the database search fails, an error label indicates the 
-   * query failure. 
+   * Search a user to add them to participants. If the database search fails, an
+   * error label indicates the query failure.
    */
   public void searchParticipant() {
     Panel panel = this;
@@ -335,20 +406,133 @@ public class ScheduleEvent extends Panel {
       Label participantLabel = new Label(400, participantListPosition, "");
       participantLabel.setText(user.getUsername());
       participantLabel.setIcon(MasterUI.circleUserIcon);
-      this.add(participantLabel);
-      this.repaint();
+      add(participantLabel);
+      repaint();
       participantListPosition += 35;
+    }
+  }
+
+  /**
+   * Create and initialise attachment section
+   */
+  private void drawAttachmentSection() {
+    Panel attachpanel = new Panel();
+    attachpanel.setBounds(750, 40, 220, 500);
+    attachpanel.setBackground(MasterUI.lightCol);
+    Label attachLabel = new Label(400, reminderField.getY() + 50, "Attachments (optional)");
+    attachField = new TextField(attachLabel.getX(), attachLabel.getY() + 20);
+    attachField.setEditable(false);
+    Button attachBtn = new Button(attachField.getX() + attachField.getWidth(), attachField.getY(), "",
+        MasterUI.lightColAlt);
+    attachBtn.setIcon(MasterUI.folderIcon);
+    attachBtn.setDark(false);
+    attachBtn.setForeground(MasterUI.accentCol);
+    attachBtn.setSize(attachField.getHeight(), attachField.getHeight());
+    attachBtn.addActionListener(e -> {
+      JFileChooser chooser = new JFileChooser();
+      chooser.setAcceptAllFileFilterUsed(false);
+      chooser.setFileFilter(new FileFilter() {
+        public String getDescription() {
+          return "PDF files and image files";
+        }
+
+        public boolean accept(File f) {
+          if (f.isDirectory()) {
+            return true;
+          } else {
+            String filename = f.getName().toLowerCase();
+            return filename.endsWith(".pdf") || filename.endsWith(".jpg") || filename.endsWith(".jpeg")
+                || filename.endsWith(".png");
+          }
+        }
+      });
+      if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+        File file = chooser.getSelectedFile();
+        selectedAttachments.add(file);
+        attachField.setText(selectedAttachments.size() + " File(s)");
+        addAttachmentCard(attachpanel);
+      }
+    });
+
+    addAttachmentCard(attachpanel);
+
+    if (mode != VIEW)
+      add(attachBtn);
+    add(attachLabel);
+    add(attachField);
+    add(attachpanel);
+  }
+
+  /**
+   * When the attachment form receives a new file, a card panel respresenting the
+   * file is added to the right. The card allows the removal and opening of the
+   * file.
+   * 
+   * @param panel - Panel that holds the file cards
+   */
+  private void addAttachmentCard(Panel panel) {
+    panel.removeAll();
+    int y = 0;
+    for (File file : selectedAttachments) {
+      Panel fcard = new Panel();
+      fcard.setBounds(0, y, panel.getWidth(), 60);
+      fcard.setBackground(MasterUI.lightCol);
+      fcard.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+      Label ficon = new Label(5, 5, "");
+      Label fname = new Label(55, 10, file.getName());
+      Label fsize = new Label(fname.getX(), fname.getY() + 15, String.valueOf((int) file.length() / 1024) + " KB");
+      Button del = new Button(fcard.getWidth() - 25, 10, "");
+      Button open = new Button(0, 0, "");
+      open.setSize(fcard.getWidth() - 30, fcard.getHeight());
+      open.addActionListener(e -> {
+        try {
+          Desktop.getDesktop().open(file);
+        } catch (IOException exp) {
+          exp.printStackTrace();
+        }
+      });
+      ficon.setIcon(MasterUI.pdfIcon);
+      ficon.setSize(48, 48);
+      fname.setFont(MasterUI.robotoFont.deriveFont(14f));
+      fsize.setFont(MasterUI.robotoFont.deriveFont(11f));
+
+      del.addActionListener(e -> {
+        panel.remove(fcard);
+        selectedAttachments.remove(file);
+        attachField.setText(selectedAttachments.size() + " File(s)");
+        panel.repaint();
+      });
+      del.setIcon(MasterUI.xIcon);
+      del.setSize(15, 13);
+
+      fcard.add(open);
+      if (mode != VIEW)
+        fcard.add(del);
+      fcard.add(ficon);
+      fcard.add(fname);
+      fcard.add(fsize);
+
+      panel.add(fcard);
+      panel.repaint();
+      y += fcard.getHeight() + 7;
     }
   }
 
   /**
    * Create and initialise add-participant section
    */
-  private void initAddParticipant() {
-    Label searchUserLabel = new Label(400, 170, "People to invite");
-    searchUserField = new TextField(400, 190);
+  private void drawParticipantSection() {
+    Label searchUserLabel = new Label(400, 240, "People to invite");
+    searchUserField = new TextField(searchUserLabel.getX(), searchUserLabel.getY() + 20);
 
-    userQueryResult = new Label(400, 250, "");
+    addUserBtn = new Button(700, searchUserField.getY(), "", MasterUI.lightColAlt);
+    addUserBtn.setSize(40, 40);
+    addUserBtn.setIcon(MasterUI.addUserIcon);
+
+    userQueryResult = new Label(400, searchUserField.getY() + 100, "");
+    participantListPosition = userQueryResult.getY();
+    if (mode != VIEW)
+      participantListPosition += 15;
     addUserBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         searchParticipant();
@@ -360,19 +544,28 @@ public class ScheduleEvent extends Panel {
         redpanel.setSize(0, 0);
         redpanel.isActive = false;
       }
+
       public void focusLost(FocusEvent e) {
         // System.out.println("focus lost");
       }
     });
 
-    Label hostUser = new Label(400, 300, user.getUsername() + " (Me)");
-    hostUser.setIcon(MasterUI.circleUserIcon);
-    hostUser.setVerticalTextPosition(SwingConstants.BOTTOM);
+    for (User part : participants) {
+      Label partLabel = new Label(400, participantListPosition, part.getUsername());
+      if (part.equals(user))
+        partLabel.setText(partLabel.getText() + " (Me)");
+      partLabel.setIcon(MasterUI.circleUserIcon);
+      partLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+      add(partLabel);
+      participantListPosition += 35;
+    }
 
-    this.add(hostUser);
-    this.add(searchUserLabel);
-    this.add(searchUserField);
-    this.add(userQueryResult);
+    if (mode != VIEW) {
+      add(addUserBtn);
+      add(searchUserLabel);
+      add(searchUserField);
+      add(userQueryResult);
+    }
   }
 
   /**
@@ -380,18 +573,19 @@ public class ScheduleEvent extends Panel {
    */
   private void drawPrioritySection() {
     Label priorityLabel = new Label(40, 100, "Priority");
+    priorityField = new TextField(40, 120);
     loPrioBtn = new Button(40, 120, "LOW", new Color(171, 169, 239));
     midPrioBtn = new Button(140, 120, "MEDIUM", new Color(129, 109, 254));
     hiPrioBtn = new Button(240, 120, "HIGH", MasterUI.accentCol);
 
-    loPrioBtn.addActionListener(prioBtnAction(Priority.LOW, loPrioBtn));
-    midPrioBtn.addActionListener(prioBtnAction(Priority.MEDIUM, midPrioBtn));
-    hiPrioBtn.addActionListener(prioBtnAction(Priority.HIGH, hiPrioBtn));
+    loPrioBtn.addActionListener(e -> prioBtnAction(Priority.LOW));
+    midPrioBtn.addActionListener(e -> prioBtnAction(Priority.MEDIUM));
+    hiPrioBtn.addActionListener(e -> prioBtnAction(Priority.HIGH));
 
-    this.add(priorityLabel);
-    this.add(loPrioBtn);
-    this.add(midPrioBtn);
-    this.add(hiPrioBtn);
+    add(priorityLabel);
+    add(loPrioBtn);
+    add(midPrioBtn);
+    add(hiPrioBtn);
   }
 
   /**
@@ -410,25 +604,35 @@ public class ScheduleEvent extends Panel {
    * Get button action for priority buttons
    * 
    * @param prio - Priority enum
-   * @param btn  - Button for priority
-   * @return ActionListener styling priority button
    */
-  public ActionListener prioBtnAction(Priority prio, Button btn) {
-    return new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        styleDefaultPriorityBtns();
-        btn.setColor(prio.getColor());
-        btn.setText(prio.toString());
-        selectedPriority = prio;
-      }
-    };
+  public void prioBtnAction(Priority prio) {
+    Button btn;
+    switch (prio) {
+      case HIGH:
+        btn = hiPrioBtn;
+        break;
+      case MEDIUM:
+        btn = midPrioBtn;
+        break;
+      case LOW:
+        btn = loPrioBtn;
+        break;
+      default:
+        btn = loPrioBtn;
+        break;
+    }
+    styleDefaultPriorityBtns();
+    btn.setColor(prio.getColor());
+    btn.setText(prio.toString());
+    priorityField.setText("TRUE");
+    selectedPriority = prio;
   }
 
   /**
    * Create and initialise date picker
    */
   private void initDatePicker() {
-    Button openDatePicker = new Button(285, 260, "", MasterUI.accentCol);
+    Button openDatePicker = new Button(285, dateField.getY(), "", MasterUI.accentCol);
     openDatePicker.setIcon(MasterUI.calendarIcon);
     openDatePicker.setSize(55, 40);
 
@@ -444,138 +648,16 @@ public class ScheduleEvent extends Panel {
           redpanel.setSize(0, 0);
           redpanel.isActive = false;
         } else {
-          redpanel.setBounds(285, 260, 300, 310);
+          redpanel.setBounds(openDatePicker.getX(), openDatePicker.getY(), 300, 310);
           redpanel.isActive = true;
         }
       }
     });
 
-    this.add(openDatePicker);
-    this.add(redpanel);
-    this.setComponentZOrder(redpanel, 0);
-  }
-
-  /**
-   * Validate input form
-   * 
-   * @param errorMsg - Label to display error message
-   * @return Boolean whether form is valid or not
-   */
-  private boolean validateForm(Label errorMsg, Panel panel) {
-    boolean valid = true;
-    Border border = BorderFactory.createLineBorder(MasterUI.hiPrioCol, 1);
-    for (Component c : panel.getComponents()) {
-
-      if (c instanceof TextField && isBlankString(((TextField) c).getText()) && c != searchUserField) {
-        ((TextField) c).setBorder(border);
-        errorMsg.setText("Missing required fields.");
-        valid = false;
-      }
-
-      if (selectedPriority == null) {
-        errorPriority.setText("(Select Priority)");
-        errorPriority.setForeground(Color.RED);
-        errorPriority.setHorizontalAlignment(SwingConstants.RIGHT);
-        valid = false;
-      } else {
-        errorPriority.setText("");
-      }
-
-      if ((c == startField || c == endField) && !isValidTime(((TextField) c).getText())) {
-        ((TextField) c).setBorder(border);
-        valid = false;
-      }
-
-      if (c == titleField) {
-        if (isBlankString(((TextField) c).getText())) {
-          errorTitle.setText("(Topic required)");
-          errorTitle.setForeground(Color.RED);
-          errorTitle.setHorizontalAlignment(SwingConstants.RIGHT);
-        } else {
-          errorTitle.setText("");
-        }
-      }
-
-      if (c == dateField) {
-        if (isBlankString(((TextField) c).getText())) {
-          errorDate.setText("(Select a date)");
-          errorDate.setForeground(Color.RED);
-          errorDate.setHorizontalAlignment(SwingConstants.RIGHT);
-        } else {
-          errorDate.setText("");
-        }
-      }
-
-      if (c == startField) {
-        if (isBlankString(((TextField) c).getText()) || !isValidTime(((TextField) c).getText())) {
-          errorStartTime.setText("(invalid)");
-          errorStartTime.setForeground(Color.RED);
-          errorStartTime.setBounds(contentBox.x, contentBox.y + 132, startField.getWidth(), startField.getHeight());
-          errorStartTime.setHorizontalAlignment(SwingConstants.RIGHT);
-        } else {
-          errorStartTime.setText("");
-        }
-      }
-
-      if (c == endField) {
-        if (isBlankString(((TextField) c).getText()) || !isValidTime(((TextField) c).getText())) {
-          errorEndTime.setText("(invalid)");
-          errorEndTime.setForeground(Color.RED);
-          errorEndTime.setBounds(contentBox.x + endField.getWidth() + 4, contentBox.y + 132, endField.getWidth(),
-              endField.getHeight());
-          errorEndTime.setHorizontalAlignment(SwingConstants.RIGHT);
-        } else {
-          errorEndTime.setText("");
-        }
-      }
-
-      if (c == locationField) {
-        if (isBlankString(((TextField) c).getText())) {
-          errorLocation.setText("(Location required)");
-          errorLocation.setForeground(Color.RED);
-          errorLocation.setHorizontalAlignment(SwingConstants.RIGHT);
-        } else {
-          errorLocation.setText("");
-        }
-      }
-
-      if (c == reminderField) {
-        if (isBlankString(((TextField) c).getText())) {
-          errorReminder.setText("(Select a reminder)");
-          errorReminder.setForeground(Color.RED);
-          // errorReminder.setOpaque(true);
-        } else {
-          errorReminder.setText("");
-        }
-      }
-
-    }
-    return valid;
-  }
-
-  /**
-   * Validate if given string is of pattern "H:mm"
-   * 
-   * @param time - the string to be checked
-   * @return Boolean whether form is valid or not
-   */
-  private boolean isValidTime(String time) {
-    try {
-      LocalTime.parse(time);
-    } catch (DateTimeParseException e) {
-      return false;
-    }
-    return true;
-  }
-
-  /**
-   * Check if a string is blank or not
-   * 
-   * @param string - the string to be checked
-   * @return Boolean whether string is blanked or not
-   */
-  boolean isBlankString(String string) {
-    return string == null || string.trim().isEmpty();
+    add(openDatePicker);
+    add(redpanel);
+    setComponentZOrder(openDatePicker, 0);
+    setComponentZOrder(redpanel, 1);
   }
 
   /**
@@ -584,57 +666,68 @@ public class ScheduleEvent extends Panel {
    */
   private void processConfirm() {
     Panel panel = this;
-    Label errorMsg = new Label(40, 520, "");
-    this.add(errorMsg);
+    
+    errorPriority = priorityField.createErrorLabel("Priority");
+    errorTitle = titleField.createErrorLabel("Title");
+    errorDate = dateField.createErrorLabel("Date");
+    errorLocation = locationField.createErrorLabel("Location");
+    errorStartTime = startField.createErrorLabel("Start Time");
+    errorEndTime = endField.createErrorLabel("End Time");
+    errorReminder = reminderField.createErrorLabel("Reminder");
 
-    errorPriority = new Label(contentBox.x + 50, 100, "");
-    errorTitle = new Label(contentBox.x + 50, contentBox.y, "");
-    errorDate = new Label(contentBox.x + 50, contentBox.y + 70, "");
-    errorLocation = new Label(contentBox.x + 50, contentBox.y + 210, "");
+    Label[] errorLabels = { errorPriority, errorTitle, errorDate, errorLocation, errorStartTime, errorEndTime, errorReminder };
+    for (Label error : errorLabels) {
+      add(error);
+    }
 
-    errorStartTime = new Label(contentBox.x + 50, contentBox.y + 140, "");
-    errorEndTime = new Label(contentBox.x + 221, contentBox.y + 140, "");
-    errorReminder = new Label(614, 100, "");
-
-    this.add(errorTitle);
-    this.add(errorDate);
-    this.add(errorStartTime);
-    this.add(errorEndTime);
-    this.add(errorLocation);
-    this.add(errorReminder);
-    this.add(errorPriority);
+    HashMap<String, TextField> FieldMap = new HashMap<String, TextField>();
+    FieldMap.put("titleField", titleField);
+    FieldMap.put("dateField", dateField);
+    FieldMap.put("startField", startField);
+    FieldMap.put("endField", endField);
+    FieldMap.put("priorityField", priorityField);
+    FieldMap.put("locationField", locationField);
+    FieldMap.put("reminderField", reminderField);
 
     ActionListener createAction = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         panel.removeAll();
 
-        Event event = ViewModelHandler.consumeEventForm(titleField, dateField, startField, endField, locationField);
-        event.setParticipants(participants);
-        event.setPriority(selectedPriority);
-        if(selectedLocation != null && selectedLocation.getName().equals(locationField.getText())){
+        Event event = ViewModelHandler.consumeEventForm(titleField, dateField, startField, endField, locationField,
+            participants, selectedReminder, selectedPriority, selectedAttachments);
+        if (selectedLocation != null && selectedLocation.getName().equals(locationField.getText())) {
           event.setLocation(selectedLocation);
         }
         Panel createMeetingConfirm;
-        if (editEvent != null) {
-          editEvent.updateEvent(event);
-          createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, 1);
-        } else {
-          user.createEvent(event);
-          createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, 0);
+        switch (mode) {
+          case CREATE:
+            user.createEvent(event);
+            createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, CREATE);
+            HomeUI.switchPanel(createMeetingConfirm);
+            HomeUI.createTab.changeReferencePanel(createMeetingConfirm);
+            break;
+          case EDIT:
+            editEvent.updateEvent(event);
+            createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, EDIT);
+            HomeUI.switchPanel(HomeUI.dashPanel);
+            HomeUI.createPanel = new ScheduleEvent(frame, user, null, ScheduleModes.CREATE);
+            HomeUI.createTab.changeReferencePanel(HomeUI.createPanel);
+            break;
+          case VIEW:
+            HomeUI.switchPanel(HomeUI.dashPanel);
+            break;
         }
-
-        HomeUI.switchPanel(createMeetingConfirm);
-        HomeUI.createTab.changeReferencePanel(createMeetingConfirm);
       }
     };
 
-    confirmBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if (!validateForm(errorMsg, panel)) {
+    confirmBtn.addActionListener(e -> {
+        if (!ViewModelHandler.validateForm(FieldMap, selectedPriority))
+          return;
+        if (mode == VIEW) {
+          HomeUI.switchPanel(HomeUI.dashPanel);
           return;
         }
         HomeUI.confirmDialog(createAction, "Proceed with this event?");
-      }
     });
   }
 }

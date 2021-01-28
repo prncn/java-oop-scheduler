@@ -1,6 +1,8 @@
 package views;
 
-import views.components.*;
+import views.components.Label;
+import views.components.Button;
+import views.components.Panel;
 import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -9,6 +11,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.JTextComponent;
 
 import java.awt.Color;
@@ -36,9 +40,6 @@ abstract public class MasterUI extends JFrame {
   public static Color fontCol = Color.WHITE;
   public static Color lightCol = new Color(250, 250, 255);
   public static Color lightColAlt = new Color(240, 240, 245);
-  // protected static Color primaryCol = new Color(250, 250, 255);
-  // protected static Color primaryColAlt = new Color(240, 240, 245);
-  // protected static Color foregroundCol = Color.BLACK;
 
   public static Color secondaryCol = new Color(116, 207, 183);
   public static Color secondaryColAlt = secondaryCol.darker();
@@ -72,6 +73,8 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon backIcon = new ImageIcon(fileRoot + iconsRoot + "left-arrow-alt-solid-24.png");
   public static ImageIcon downIcon = new ImageIcon(fileRoot + iconsRoot + "chevron-down-solid-24.png");
   public static ImageIcon downIconDark = new ImageIcon(fileRoot + iconsRoot + "chevron-down-solid-24-dark.png");
+  public static ImageIcon xIcon = new ImageIcon(fileRoot + iconsRoot + "x-regular-24.png");
+
   public static ImageIcon dashboardIcon = new ImageIcon(fileRoot + iconsRoot + "category-regular-24.png");
   public static ImageIcon addUserIcon = new ImageIcon(fileRoot + iconsRoot + "user-plus-solid-24.png");
   public static ImageIcon circleUserIcon = new ImageIcon(fileRoot + iconsRoot + "user-circle-regular-36.png");
@@ -82,29 +85,40 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon logoutIcon = new ImageIcon(fileRoot + iconsRoot + "log-out-solid-24.png");
   public static ImageIcon bellIcon = new ImageIcon(fileRoot + iconsRoot + "bell-solid-24.png");
   public static ImageIcon searchIcon = new ImageIcon(fileRoot + iconsRoot + "search-regular-24.png");
+  public static ImageIcon folderIcon = new ImageIcon(fileRoot + iconsRoot + "folder-regular-24.png");
   public static ImageIcon editIcon = new ImageIcon(fileRoot + iconsRoot + "edit-solid-24.png");
   public static ImageIcon removeIcon = new ImageIcon(fileRoot + iconsRoot + "trash-alt-regular-24.png");
+  
   public static ImageIcon hiPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-rd.png");
   public static ImageIcon midPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-ylw.png");
   public static ImageIcon loPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-grn.png");
+  public static ImageIcon pdfIcon = new ImageIcon(fileRoot + iconsRoot + "file-pdf-solid-48.png");
+  public static ImageIcon jpgIcon = new ImageIcon(fileRoot + iconsRoot + "file-jpg-solid-48.png");
+  public static ImageIcon pngIcon = new ImageIcon(fileRoot + iconsRoot + "file-png-solid-48.png");
 
   public MasterUI() {
-    this.setIconImage(favicon.getImage());
-    this.setResizable(false);
-    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    this.setLayout(null);
+    setIconImage(favicon.getImage());
+    setResizable(false);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setLayout(null);
     panel.setBackground(primaryCol);
     panel.setLayout(null);
-    this.add(panel);
+    add(panel);
+
+    try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+        | UnsupportedLookAndFeelException ex) {
+    }
 
     try {
       bodyFont = Font
           .createFont(Font.TRUETYPE_FONT, new File(fileRoot + "/JavaScheduler/assets/fonts/UniversLTStd.otf"))
-          .deriveFont(15f);
+          .deriveFont(13f);
 
       robotoFont = Font
           .createFont(Font.TRUETYPE_FONT, new File(fileRoot + "/JavaScheduler/assets/fonts/Roboto-Regular.ttf"))
-          .deriveFont(15f);
+          .deriveFont(13f);
     } catch (IOException | FontFormatException e) {
       System.out.println(e);
       bodyFont = bodyFontAlt; // if font asset import failed, fall back to Arial
@@ -119,6 +133,17 @@ abstract public class MasterUI extends JFrame {
    */
   public static void setForegroundCol(Color color) {
     fontCol = color;
+  }
+
+  /**
+   * Place label of name of textfield above that textfield.
+   * 
+   * @param field - Textfield of input
+   * @param name  - Name corresponding of textfield
+   */
+  protected void placeFieldLabel(JTextField field, String name, int margin) {
+    Label label = new Label(field.getX(), field.getY() - (margin + 5), name);
+    panel.add(label);
   }
 
   /**
@@ -143,15 +168,17 @@ abstract public class MasterUI extends JFrame {
 
     for (Component c : panel.getComponents()) {
       if (c instanceof JLabel) {
-        if(!((Label ) c).getHeading())
-        c.setForeground(foreground);
+        if (c instanceof Label && !((Label) c).getUnset()) {
+          c.setFont(robotoFont);
+          c.setForeground(foreground);
+        }
       }
       if (c instanceof JTextField) {
         c.setFont(robotoFont);
         c.setBackground(background);
         c.setForeground(foreground);
-      }
-      if (c instanceof JButton) {
+        ((JTextComponent) c).setCaretColor(foreground);
+      } else if (c instanceof JButton) {
         c.setFont(monoFont);
         if (((Button) c).getTab()) {
           c.setFont(bodyFont);
@@ -164,6 +191,7 @@ abstract public class MasterUI extends JFrame {
         ((AbstractButton) c).setMargin(new Insets(5, 5, 3, 3));
       }
       if (c instanceof JPasswordField) {
+        c.setFont(monoFont);
         ((JTextComponent) c).setCaretColor(foreground);
         ((JTextComponent) c).setBackground(background);
         ((JTextComponent) c).setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));

@@ -8,7 +8,7 @@ import java.awt.Color;
 import javax.swing.*;
 
 import models.User;
-import controllers.DataBaseAPI;
+import controllers.DatabaseAPI;
 import views.components.*;
 
 import java.awt.event.MouseAdapter;
@@ -30,7 +30,12 @@ public class LoginUI extends MasterUI {
   protected static Label success;
   protected JLabel backIconHero;
   protected Label screenTitle;
-  protected static Point lgnBox = new Point(100, 70);
+
+  /** Pixel coordinates box for content */
+  protected static Point lgnBox = new Point(70, 70);
+
+  /** Margin between textfield label and textfield */
+  protected final int LBL_MRGN = 20;
 
 
   public LoginUI() {
@@ -43,7 +48,7 @@ public class LoginUI extends MasterUI {
     loginBtnAction();
     registerBtnAction();
     
-    setComponentStyles(panel, null);
+    setComponentStyles(panel, "dark");
     screenTitle.setHeading();
     setLocationRelativeTo(null);
     setVisible(true);
@@ -53,8 +58,6 @@ public class LoginUI extends MasterUI {
    * Create text fields, labels and button for Login form
    */
   private void createLoginForm() {
-    userLabel = new Label(lgnBox.x, lgnBox.y + 30, "Username");
-    passLabel = new Label(lgnBox.x, lgnBox.y + 100, "Password");
     userField = new TextField(lgnBox.x, lgnBox.y + 50);
     passField = new JPasswordField();
     loginBtn = new Button(lgnBox.x, lgnBox.y + 180, "Login", secondaryCol);
@@ -66,10 +69,9 @@ public class LoginUI extends MasterUI {
     userField.setSize(210, userField.getHeight());
     userField.setCaretColor(Color.WHITE);
     passField.setBounds(lgnBox.x, lgnBox.y + 120, 210, 40);
+    placeFieldLabel(userField, "User", LBL_MRGN);
+    placeFieldLabel(passField, "Password", LBL_MRGN);
 
-
-    panel.add(userLabel);
-    panel.add(passLabel);
     panel.add(userField);
     panel.add(passField);
     panel.add(loginBtn);
@@ -95,10 +97,10 @@ public class LoginUI extends MasterUI {
         }
 
         try {
-          if (DataBaseAPI.verifyUser(inputUser, inputPass)) {
+          if (DatabaseAPI.verifyUser(inputUser, inputPass)) {
             frame.dispose();
             frame.remove(panel);
-            User session = DataBaseAPI.getUser(inputUser);
+            User session = DatabaseAPI.getUser(inputUser);
             HomeUI home = new HomeUI(session);
             home.setVisible(true);
           } else {

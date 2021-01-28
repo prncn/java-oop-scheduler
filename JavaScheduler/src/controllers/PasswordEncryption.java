@@ -40,7 +40,7 @@ public class PasswordEncryption {
 	}
 
 	/**
-	 * Verifies wether entered password matches password from database
+	 * Verifies whether entered password matches password from database
 	 * 
 	 * @param password the password entered 
 	 * @param stored_pw encrypted password from database 

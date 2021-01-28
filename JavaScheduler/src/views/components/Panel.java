@@ -46,7 +46,7 @@ public class Panel extends JPanel {
   }
 
   /**
-   * Get wether panel is set to be rounded
+   * Get whether panel is set to be rounded
    * @return
    */
   public boolean getRounded() {

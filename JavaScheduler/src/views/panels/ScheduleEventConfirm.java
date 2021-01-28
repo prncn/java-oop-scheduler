@@ -5,9 +5,6 @@ import controllers.*;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import models.Event;
 import models.User;
 import views.components.Button;
@@ -21,12 +18,12 @@ public class ScheduleEventConfirm extends Panel {
   private static final long serialVersionUID = 4625075272906690489L;
   private ScheduleEvent createMeetingPanel;
 
-  public ScheduleEventConfirm(JFrame frame, User user, Event event, int state) {
+  public ScheduleEventConfirm(JFrame frame, User user, Event event, int mode) {
     super(frame);
 
     Button backCreate;
-    createMeetingPanel = new ScheduleEvent(frame, user, null);
-    if (state == 0) {
+    createMeetingPanel = new ScheduleEvent(frame, user, null, ScheduleModes.CREATE);
+    if (mode == ScheduleModes.CREATE) {
       backCreate = new Button(40, 400, "Back to creator", createMeetingPanel);
     } else {
       backCreate = new Button(40, 400, "Back to dashboard", HomeUI.dashPanel);
@@ -34,29 +31,37 @@ public class ScheduleEventConfirm extends Panel {
     backCreate.setIcon(MasterUI.backIcon);
     backCreate.setColor(MasterUI.secondaryCol);
     backCreate.setVerticalAlignment(SwingConstants.CENTER);
-    backCreate.setVerticalTextPosition(SwingConstants.BOTTOM);
+    backCreate.setVerticalTextPosition(SwingConstants.CENTER);
     backCreate.addActionListener(e -> HomeUI.createTab.changeReferencePanel(createMeetingPanel));
-    
-    Label screenTitle = new Label(40, 40, "Created.");
+    backCreate.setRounded(true);
+
+    Label screenTitle = new Label(40, 40, "");
     Label successMsg = new Label(40, 150, "");
     Label secondaryMsg = new Label(40, 290, "All participants have been notified.");
     Label heroImage = new Label(MasterUI.createdMeetingImage);
 
     String meetingDateDay = FormatUtil.formatOrdinal(event.getDate().getDayOfMonth());
     String meetingDateMonth = FormatUtil.capitalize(event.getDate().getMonth().toString());
-    successMsg.setText("<html>You have scheduled an event<br/>" + event.getName() + " for the " + meetingDateDay
-        + " of " + meetingDateMonth + ".<html>");
+    if (mode == ScheduleModes.CREATE) {
+      successMsg.setText("<html>You have scheduled an event<br/>" + event.getName() + " for the " + meetingDateDay
+          + " of " + meetingDateMonth + ".<html>");
+      screenTitle.setText("Created.");
+    } else if (mode == ScheduleModes.EDIT) {
+      successMsg.setText("<html>Changed event info on<br/>" + event.getName() + " for the " + meetingDateDay
+          + " of " + meetingDateMonth + ".<html>");
+      screenTitle.setText("Edited.");
+    }
     secondaryMsg.setSize(800, 40);
     heroImage.setBounds(400, 250, 542, 366);
     if (event.getParticipants().size() < 2) {
       secondaryMsg.setText("Your personal activity has been added.");
     }
 
-    this.add(heroImage);
-    this.add(backCreate);
-    this.add(screenTitle);
-    this.add(successMsg);
-    this.add(secondaryMsg);
+    add(heroImage);
+    add(backCreate);
+    add(screenTitle);
+    add(successMsg);
+    add(secondaryMsg);
     MasterUI.setComponentStyles(this, "light");
 
     screenTitle.setHeading();
