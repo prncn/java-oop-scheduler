@@ -85,6 +85,7 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon logoutIcon = new ImageIcon(fileRoot + iconsRoot + "log-out-solid-24.png");
   public static ImageIcon bellIcon = new ImageIcon(fileRoot + iconsRoot + "bell-solid-24.png");
   public static ImageIcon searchIcon = new ImageIcon(fileRoot + iconsRoot + "search-regular-24.png");
+  public static ImageIcon searchIconLight = new ImageIcon(fileRoot + iconsRoot + "search-regular-24-light.png");
   public static ImageIcon folderIcon = new ImageIcon(fileRoot + iconsRoot + "folder-regular-24.png");
   public static ImageIcon editIcon = new ImageIcon(fileRoot + iconsRoot + "edit-solid-24.png");
   public static ImageIcon removeIcon = new ImageIcon(fileRoot + iconsRoot + "trash-alt-regular-24.png");
@@ -141,8 +142,8 @@ abstract public class MasterUI extends JFrame {
    * @param field - Textfield of input
    * @param name  - Name corresponding of textfield
    */
-  protected void placeFieldLabel(JTextField field, String name, int margin) {
-    Label label = new Label(field.getX(), field.getY() - (margin + 5), name);
+  public static void placeFieldLabel(JTextField field, String name, JPanel panel) {
+    Label label = new Label(field.getX(), field.getY() - 25, name);
     panel.add(label);
   }
 
