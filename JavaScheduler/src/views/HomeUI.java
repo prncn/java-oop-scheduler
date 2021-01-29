@@ -79,7 +79,7 @@ public class HomeUI extends MasterUI {
     add(sidebar);
     setLocationRelativeTo(null);
 
-    EmailHandler.reminderMail(user);
+    // EmailHandler.reminderMail(user);
 
     setVisible(true);
     createTime();
@@ -267,18 +267,20 @@ public class HomeUI extends MasterUI {
    * Set time and date for sidebar, updating itself every Minute
    */
   private void createTime() {
-    DateTimeFormatter dateformat = DateTimeFormatter.ofPattern("dd . MM . yyyy");
-    DateTimeFormatter timeformat = DateTimeFormatter.ofPattern("HH : mm: ss");
+    DateTimeFormatter dateformat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    DateTimeFormatter timeformat = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    Label footerTime = new Label(115, 615, LocalTime.now().format(timeformat));
-    Label footerDate = new Label(100, 638, LocalDate.now().format(dateformat));
+    Label footerTime = new Label(90, 610, LocalTime.now().format(timeformat));
+    Label footerDate = new Label(footerTime.getX(), footerTime.getY() + footerTime.getHeight() - 5, LocalDate.now().format(dateformat));
 
     footerTime.setForeground(Color.white);
     footerDate.setForeground(Color.white);
-    footerTime.setUnset(true);
-    footerDate.setUnset(true);
-    /**footerTime.setHorizontalAlignment(SwingConstants.RIGHT);
-    footerDate.setHorizontalAlignment(SwingConstants.RIGHT);**/
+    footerTime.setSize(100, 25);
+    footerDate.setSize(100, 25);
+    footerTime.setFont(MasterUI.robotoFont);
+    footerDate.setFont(MasterUI.robotoFont);
+    footerTime.setHorizontalAlignment(SwingConstants.RIGHT);
+    footerDate.setHorizontalAlignment(SwingConstants.RIGHT);
     sidebar.add(footerTime);
     sidebar.add(footerDate);
 

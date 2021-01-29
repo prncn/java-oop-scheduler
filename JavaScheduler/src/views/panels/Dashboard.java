@@ -14,6 +14,7 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -85,7 +86,10 @@ public class Dashboard extends Panel implements CardModes {
    */
   private void createDashboardTab(User user) {
     Label screenTitle = new Label(40, 40, "Upcoming Events");
+    Label screenDate = new Label(10 + screenTitle.getX() + screenTitle.getWidth(), screenTitle.getY(), FormatUtil.readableDate(LocalDate.now()));
     screenTitle.setHeading();
+    screenDate.setHeading();
+    screenDate.setForeground(Color.LIGHT_GRAY);
 
     upSectionInner = new Panel();
     upSectionInner.setBackground(MasterUI.lightCol);
@@ -117,6 +121,7 @@ public class Dashboard extends Panel implements CardModes {
     drawEventData(user);
     drawFilterSortSection();
     redpanel.add(screenTitle);
+    redpanel.add(screenDate);
     redpanel.add(upSectionInner);
     redpanel.add(allEventsTitle);
     redpanel.add(allSectionInner);
@@ -320,7 +325,7 @@ public class Dashboard extends Panel implements CardModes {
     Label prio = new Label(card.getWidth() - 34, 10, "");
     prio.setSize(24, 24);
     prio.setIcon(event.getPriority().getIcon());
-    name.setFont(name.getFont().deriveFont(Font.BOLD, 14f));
+    name.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 14f));
     name.setUnset(true);
     
     int margin = 6;

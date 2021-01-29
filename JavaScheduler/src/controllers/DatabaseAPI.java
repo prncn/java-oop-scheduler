@@ -45,10 +45,10 @@ public class DatabaseAPI {
    * reach cloud traffic limit.
    */
   private static void closeDatabase() {
-    System.out.println("Connection closed.");
     try {
       con.close();
       con = null;
+      System.out.println("Connection closed.");
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -220,8 +220,10 @@ public class DatabaseAPI {
       while (result.next()) {
         String username = result.getString("username");
         String password = result.getString("password");
+        String firstname = result.getString("firstName");
+        String lastname = result.getString("lastName");
         String email = result.getString("email");
-        allUsers.add(new User(username, password, email));
+        allUsers.add(new User(username, password, firstname, lastname, email));
       }
 
       statement.close();
@@ -324,7 +326,6 @@ public class DatabaseAPI {
       while (rs.next()) {
         int eventId = rs.getInt("event_id");
         String name = rs.getString("name");
-        // TODO List of participants?
         int duration = rs.getInt("durationMinutes");
         LocalDate date = rs.getDate("date").toLocalDate();
         LocalTime time = rs.getTime("time").toLocalTime();
@@ -340,18 +341,15 @@ public class DatabaseAPI {
 
         event.setId(eventId);
         event.setHostId(host_id);
-
         events.add(event);
 
       }
 
       rs.close();
       ps.close();
-      closeDatabase();
       return events;
     } catch (SQLException e) {
       e.printStackTrace();
-      closeDatabase();
       return null;
     }
 

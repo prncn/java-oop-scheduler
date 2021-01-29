@@ -166,7 +166,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     Button dpdwn = reminderField.appendButton(MasterUI.downIcon);
     dpdwn.addActionListener(e -> reminderDropdownSelection());
 
-    if (mode != VIEW) add(dpdwn);
+    if (mode != VIEW)
+      add(dpdwn);
     add(reminderField);
   }
 
@@ -218,7 +219,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     locationField.setSize(locationField.getWidth() - 40, dateField.getHeight());
     lc_dpdwn = locationField.appendButton(MasterUI.downIcon);
     lc_dpdwn.addActionListener(e -> locationDropdownSelection(locationField));
-    add(lc_dpdwn);
+    if (mode != VIEW ) add(lc_dpdwn);
     MasterUI.placeFieldLabel(locationField, "Location", this);
 
     ArrayList<TextField> fields = new ArrayList<>(
@@ -230,18 +231,18 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
      * closes, if it has been open, so that a user does not have to manually close
      * the panel.
      */
-    // fields.forEach(e -> {
-    // if (mode != VIEW) {
-    // e.addFocusListener(new FocusListener() {
-    // public void focusGained(FocusEvent f) {
-    // redpanel.setSize(0, 0);
-    // redpanel.isActive = false;
-    // e.setText("");
-    // }
-    // public void focusLost(FocusEvent f) {}
-    // });
-    // }
-    // });
+    fields.forEach(e -> {
+      if (mode != VIEW) {
+        e.addFocusListener(new FocusListener() {
+          public void focusGained(FocusEvent f) {
+            redpanel.setSize(0, 0);
+            redpanel.isActive = false;
+            e.setText("");
+          }
+          public void focusLost(FocusEvent f) {}
+        });
+      }
+    });
 
   }
 
@@ -279,7 +280,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         field.setBackground(MasterUI.lightCol);
         field.setEditable(false);
         field.setEqualPadding(0);
-        field.setFont(MasterUI.robotoFont.deriveFont(Font.BOLD, 14f));
+        field.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 14f));
       }
       descField.setBackground(MasterUI.lightCol);
       descField.setEditable(false);
@@ -308,7 +309,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         return;
       }
       participants.add(user);
-      Label participantLabel = new Label(800, participantListPosition, "");
+      Label participantLabel = new Label(750, participantListPosition, "");
       participantLabel.setText(user.getUsername());
       participantLabel.setIcon(MasterUI.circleUserIcon);
       add(participantLabel);
@@ -453,7 +454,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     });
 
     for (User part : participants) {
-      Label partLabel = new Label(800, participantListPosition, part.getUsername());
+      Label partLabel = new Label(750, participantListPosition, part.getUsername());
       if (part.equals(user))
         partLabel.setText(partLabel.getText() + " (Me)");
       partLabel.setIcon(MasterUI.circleUserIcon);
@@ -499,7 +500,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     descField.setLineWrap(true);
 
     Label descLabel = new Label(400, descField.getY() - 25, "Description (optional)");
-    if (mode == VIEW) descLabel.setText("Description");
+    if (mode == VIEW)
+      descLabel.setText("Description");
 
     add(descLabel);
     add(descField);

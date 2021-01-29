@@ -2,7 +2,6 @@ package models;
 
 import controllers.DatabaseAPI;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 
 public class User {
@@ -35,10 +34,10 @@ public class User {
   /**
    * Constructor after account creation and before storing to database
    */
-  public User(String username, String password, String email) {
+  public User(String username, String password, String firstname, String lastname, String email) {
     this.username = username;
-    this.firstname = "";
-    this.lastname = "";
+    this.firstname = firstname;
+    this.lastname = lastname;
     this.password = password;
     this.email = email;
     this.events = new ArrayList<Event>();

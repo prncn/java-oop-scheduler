@@ -3,17 +3,9 @@ package controllers;
 
 import javax.mail.*;
 import javax.mail.internet.*;
-import java.rmi.server.RemoteObjectInvocationHandler;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import controllers.*;
 import models.*;
 
 public class EmailHandler {
