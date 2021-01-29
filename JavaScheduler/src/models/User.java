@@ -2,6 +2,7 @@ package models;
 
 import controllers.DatabaseAPI;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 
 public class User {
@@ -70,14 +71,16 @@ public class User {
   public void createEvent(Event event) {
     event.setHostId(this.getId());
 
-    addEvent(event);
+    int eventId = DatabaseAPI.createEvent(event);
+    event.setId(eventId);
+    this.addEvent(event);
 
     for (User participant : event.getParticipants()) {
       if (participant == this) continue;
       participant.addEvent(event);
     }
 
-    DatabaseAPI.createEvent(event);
+    updateEventList();
   }
 
   /**
@@ -86,7 +89,7 @@ public class User {
    * @param event - Newly created event
    */
   private void addEvent(Event event) {
-    events.add(event);
+    DatabaseAPI.createUserEventBridge(this.getId() , event.getId());
   }
 
   /**
@@ -100,7 +103,9 @@ public class User {
       for (User participant : event.getParticipants()) {
         participant.removeEvent(event);
       }
+      DatabaseAPI.deleteEvent(event.getId());
     }
+    updateEventList();
   }
 
   /**
@@ -109,18 +114,23 @@ public class User {
    * @param event - Event to be removed
    */
   private void removeEvent(Event event) {
-    events.remove(event);
+    DatabaseAPI.deleteUserEventBridge(this.getId(), event.getId());
+
   }
 
   /**
-   * Get accepted events
+   * Get all events that the User is part of
    * 
    * @return List of accepted events from user
    */
-  public ArrayList<Event> getAcceptedEvents() {
+  public ArrayList<Event> getEvents() {
     return events;
   }
 
+  private void updateEventList(){
+    events.clear();
+    events.addAll(DatabaseAPI.getEventsFromUser(this.getId()));
+  }
   /**
    * Get user ID
    *
@@ -132,7 +142,7 @@ public class User {
 
   /**
    * Get username
-   * q
+   *
    * @return String username
    */
   public String getUsername() {

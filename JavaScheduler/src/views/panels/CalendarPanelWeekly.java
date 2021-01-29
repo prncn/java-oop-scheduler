@@ -286,7 +286,7 @@ public class CalendarPanelWeekly extends Panel {
       incremX += d_wdth;
 
       if (user != null) {
-        for (Event event : user.getAcceptedEvents()) {
+        for (Event event : user.getEvents()) {
           if (event.getDate().equals(date)) {
             placeEventDriver(event);
           }

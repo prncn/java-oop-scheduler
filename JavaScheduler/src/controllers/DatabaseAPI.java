@@ -10,7 +10,6 @@ import java.util.ArrayList;
 
 public class DatabaseAPI {
   private static final String SQL_CLOUD_URI = "jdbc:mysql://bqzknjzyoeidxu0hmqhq-mysql.services.clever-cloud.com:3306/bqzknjzyoeidxu0hmqhq?useSSL=false";
-
   private static final String SQL_CLOUD_USERNAME = "udpcghp8h7wkwbrg";
   private static final String SQL_CLOUD_PASSWORD = "mYe6S6puRrvcblEZPIWZ";
   private static Connection con = null;
@@ -285,10 +284,11 @@ public class DatabaseAPI {
       String firstname = result.getString("firstName");
       String lastname = result.getString("lastName");
 
-      ArrayList<Event> events = getEventsFromUser(id, connection);
+      closeDatabase();
+
+      ArrayList<Event> events = getEventsFromUser(id);
 
       User user = new User(id, name, firstname, lastname, email, events, new ArrayList<Location>());
-      closeDatabase();
       return user;
     } catch (SQLException e) {
       e.printStackTrace();
@@ -307,12 +307,12 @@ public class DatabaseAPI {
    * @param userId is used to find the relative data
    * @return a list of all events a user is part of.
    */
-  private static ArrayList<Event> getEventsFromUser(int userId, Connection connection) {
+  public static ArrayList<Event> getEventsFromUser(int userId) {
     String sql =  "SELECT * FROM Event " +
                   "LEFT JOIN User_Event " +
                   "ON User_Event.event_id = Event.event_id " +
                   "WHERE User_Event.user_id = ?";
-
+    Connection connection = connectDatabase();
     ArrayList<Event> events = new ArrayList<Event>();
 
     try {
@@ -322,35 +322,6 @@ public class DatabaseAPI {
       ResultSet rs = ps.executeQuery();
 
       while (rs.next()) {
-        events.add(getEvent(rs.getInt("event_id")));
-
-      }
-
-      return events;
-    } catch (SQLException e) {
-      e.printStackTrace();
-      return null;
-    }
-
-  }
-
-  /**
-   * Query a event_id and return the corresponding Event object
-   * 
-   * @param id - SQL id
-   * @return Event object on successful query, else null
-   */
-  private static Event getEvent(int id) {
-    String sql = "SELECT * FROM Event WHERE event_id = ?";
-    Connection connection = connectDatabase();
-
-    try {
-      PreparedStatement ps = connection.prepareStatement(sql);
-
-      ps.setInt(1, id);
-      ResultSet rs = ps.executeQuery();
-
-      if (rs.next()) {
         int eventId = rs.getInt("event_id");
         String name = rs.getString("name");
         // TODO List of participants?
@@ -370,23 +341,30 @@ public class DatabaseAPI {
         event.setId(eventId);
         event.setHostId(host_id);
 
-        return event;
-      }
-    } catch (SQLException e) {
+        events.add(event);
 
+      }
+
+      rs.close();
+      ps.close();
+      closeDatabase();
+      return events;
+    } catch (SQLException e) {
       e.printStackTrace();
+      closeDatabase();
       return null;
     }
-    return null;
+
   }
 
   /**
+   * Delete table entry in Event
    *
    * @param eventId
    * @return true when deletion is successful, false when deletion is unsuccessful
    */
   public static boolean deleteEvent(int eventId){
-    String sql = "DELETE FROM Event WHERE eventId = ?";
+    String sql = "DELETE FROM Event WHERE event_id = ?";
     Connection connection = connectDatabase();
 
     try{
@@ -396,6 +374,7 @@ public class DatabaseAPI {
       ps.executeUpdate();
 
       ps.close();
+
       closeDatabase();
       return true;
     } catch (SQLException e){
@@ -406,12 +385,39 @@ public class DatabaseAPI {
   }
 
   /**
+   * Delete table entry in the User_Event & therefore remove the connection between the User & Event.
+   *
+   * @param userId User that should be removed from the event
+   * @param eventId Event that the User should be removed from
+   * @return true on success, false on failure.
+   */
+  public static boolean deleteUserEventBridge(int userId, int eventId) {
+    String sql;
+    Connection connection = connectDatabase();
+    sql = "DELETE FROM User_Event WHERE user_id = ? AND event_id = ?";
+
+    try {
+      PreparedStatement ps = connection.prepareStatement(sql);
+      ps.setInt(1, userId);
+      ps.setInt(2, eventId);
+
+      ps.executeUpdate();
+      closeDatabase();
+      return true;
+    } catch (SQLException e) {
+      e.printStackTrace();
+      closeDatabase();
+      return false;
+    }
+  }
+
+  /**
    * Create table entry of new event in database.
    * 
    * @param event Object of new entry.
-   * @return true on successful creation, return false on failed creation
+   * @return ID on successful creation, return -1 on failed creation
    */
-  public static boolean createEvent(Event event) {
+  public static int createEvent(Event event) {
 
     String sql = "INSERT INTO Event (reminder, priority, name, date, time, durationMinutes, description, host_id, location_id)"
         + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -442,17 +448,16 @@ public class DatabaseAPI {
         throw new SQLException("Creating user failed, no ID obtained.");
       }
 
-      createUserEventBridge(event.getHostId() , eventId);
 
       statement.close();
       closeDatabase();
 
-      return true;
+      return eventId;
 
     } catch (SQLException e) {
       e.printStackTrace();
       closeDatabase();
-      return false;
+      return -1;
     }
   }
 
@@ -462,7 +467,7 @@ public class DatabaseAPI {
    * @param eventId
    * @return true when insertion was successful, false when insertion had an exception.
    */
-  private static boolean createUserEventBridge(int userId, int eventId){
+  public static boolean createUserEventBridge(int userId, int eventId){
     String sql = "INSERT INTO User_Event (user_id , event_id) " + "VALUES(?, ?)";
     Connection connection = connectDatabase();
 
@@ -474,9 +479,11 @@ public class DatabaseAPI {
       ps.executeUpdate();
 
       ps.close();
+      closeDatabase();
       return true;
     } catch (SQLException e){
       e.printStackTrace();
+      closeDatabase();
       return false;
     }
   }

@@ -4,7 +4,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
-import controllers.DatabaseAPI;
 import controllers.FormatUtil;
 import controllers.ViewModelHandler;
 
@@ -193,7 +192,7 @@ public class Dashboard extends Panel implements CardModes {
     upSectionInner.removeAll();
     allSectionInner.removeAll();
     Point content = new Point(0, 10);
-    if (user.getAcceptedEvents().isEmpty()) {
+    if (user.getEvents().isEmpty()) {
       eventData = new Label(content.x, 40,
           "<html><p>No events :(<br>Schedule new events on the left</p><html>");
       eventData.setHeading();
@@ -216,7 +215,7 @@ public class Dashboard extends Panel implements CardModes {
    * @param content
    */
   private static void sectionUpcomingEventsCards(User user, Point content) {
-    List<Event> upcomingEvents = new ArrayList<>(user.getAcceptedEvents());
+    List<Event> upcomingEvents = new ArrayList<>(user.getEvents());
     
     Collections.sort(upcomingEvents);
     upcomingEvents.removeIf(e -> e.hasPassed()); // filter passed events
@@ -243,7 +242,7 @@ public class Dashboard extends Panel implements CardModes {
    * @param content - Point pixel coordinate to place the card
    */
   private static void sectionAllEventsCards(User user, Point content) {
-    List<Event> allEvents = new ArrayList<>(user.getAcceptedEvents());
+    List<Event> allEvents = new ArrayList<>(user.getEvents());
     switch (SORT_MODE) {
       case ALPHA: Collections.sort(allEvents, (e1, e2) -> e1.getName().compareTo(e2.getName())); break;
       case DATE_ADDED: break;
