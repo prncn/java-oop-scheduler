@@ -311,7 +311,7 @@ public class CalendarPanel extends Panel {
   private void fetchEventInfo(LocalDate currentLocalDate, Button dayBtn) {
     if (isMinified)
       return;
-    for (Event event : user.getAcceptedEvents()) {
+    for (Event event : user.getEvents()) {
       if (currentLocalDate.equals(event.getDate())) {
         dayBtn.setColor(MasterUI.accentCol);
         dayBtn.addActionListener(setInfoAction(event.getName()));

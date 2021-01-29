@@ -122,7 +122,7 @@ public class PDFDocument {
 		table.addCell(new Cell().add("Location"));
 		table.addCell(new Cell().add("Time"));
 		table.addCell(new Cell().add("Duration"));
-		for (Event event : user.getAcceptedEvents()) {
+		for (Event event : user.getEvents()) {
 			if (event.getDate().equals(date)) {
 				Cell cell = new Cell().add(event.getName());
 				cell.setBackgroundColor(new DeviceGray(0.93f));
