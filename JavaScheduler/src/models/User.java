@@ -1,5 +1,7 @@
 package models;
 
+import controllers.EmailHandler;
+
 import java.util.ArrayList;
 
 public class User {
@@ -74,6 +76,8 @@ public class User {
       participant.addEvent(event);
     }
     // DatabaseAPI.createEvent(event);
+    EmailHandler.createdMail(event);
+    System.out.println(event.participantsToString());
   }
 
   /**

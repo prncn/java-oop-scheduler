@@ -3,8 +3,10 @@ package controllers;
 
 import javax.mail.*;
 import javax.mail.internet.*;
+import java.rmi.server.RemoteObjectInvocationHandler;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Properties;
@@ -43,22 +45,17 @@ public class EmailHandler {
         mail.sendMail();
     }
 
-  /**  public static void reminderMail(Event event) {
-    switch (event.getReminder()){
-        case NONE:      new Timer().schedule(new ReminderTask(event), 900000000);
-        case TEN_MIN:   new Timer().schedule(new ReminderTask(event),10 );
-                        break;
-        case ONE_HOUR:
-                        break;
-        case THREE_DAYS:
-                        break;
-        case ONE_WEEK:
-                        break;
-
-
+    public static void reminderMail(User user) {
+        for(Event event : user.getAcceptedEvents()){
+            if(ReminderTask.checkReminderTime(event)) {
+                EmailHandler mail = new EmailHandler();
+                mail.setupServerProperties();
+                mail.draftReminderMail(event);
+                mail.sendMail();
+            }
+        }
     }
-    }
-**/
+
 
     void setupServerProperties() {
         Properties properties = System.getProperties();

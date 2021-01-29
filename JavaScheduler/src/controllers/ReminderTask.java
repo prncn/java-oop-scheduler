@@ -1,8 +1,13 @@
-/**package controllers;
+package controllers;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.TimerTask;
 import java.util.Timer;
 import java.util.concurrent.*;
@@ -27,24 +32,17 @@ class ReminderTask extends TimerTask {
         mail.sendMail();
     }
 
-  /**  public int reminderTimeCalc(Event event) {
-        int time;
-        switch (event.getReminder()) {
-            case NONE:
-                time = 0;
-                break;
-            case TEN_MIN:
-                new Timer().schedule(new ReminderTask(event), 10);
-                break;
-            case ONE_HOUR:
-                break;
-            case THREE_DAYS:
-                break;
-            case ONE_WEEK:
-                break;
-            return;
-        }
+    public static LocalDateTime getReminderTime(Event event)
+    {
+        LocalDateTime eventTime = event.getDate().atTime(event.getTime());
+        LocalDateTime reminderTime = eventTime.minusMinutes(event.getReminder().getMinutes());
+        return reminderTime;
     }
+
+    public static boolean checkReminderTime(Event event){
+        return  LocalDateTime.now().isAfter(getReminderTime(event));
+    }
+
 }
 
 
