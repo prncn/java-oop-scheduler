@@ -13,6 +13,8 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 
 import javax.swing.AbstractButton;
 import javax.swing.JDialog;
@@ -20,8 +22,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import controllers.DatabaseAPI;
 import controllers.PDFDocument;
-import models.User;
+import models.*;
 import views.components.Button;
 import views.components.Label;
 import views.panels.AdminPanel;
@@ -321,12 +324,10 @@ public class HomeUI extends MasterUI {
   }
 
   public static void main(String[] args) {
-    // User guest = DatabaseAPI.getUser("admin");
-    User guest = new User("admin", "root", "admin@mail.com");
+    User guest = DatabaseAPI.getUser("admin");
     HomeUI homeFrame = new HomeUI(guest);
     homeFrame.setVisible(true);
     System.out.println(new File(".").getAbsolutePath());
-
   }
 
 }

@@ -12,7 +12,7 @@ public class Event implements Comparable<Event> {
   private LocalTime time;
   private int durationMinutes;
   private Location location;
-  private User host;
+  private int hostId;
   private ArrayList<User> participants;
   private Priority priority;
   private ArrayList<File> attachments;
@@ -34,6 +34,23 @@ public class Event implements Comparable<Event> {
     this.description = description;
   }
 
+  public Event(int eventId, String name, String description, int duration,
+               LocalDate date, LocalTime time, Location location,
+               Priority priority, Reminder reminder,
+               ArrayList<User> participants, ArrayList<File> attachments) {
+    this.id = eventId;
+    this.name = name;
+    this.description = description;
+    this.durationMinutes = duration;
+    this.date = date;
+    this.time = time;
+    this.location = location;
+    this.priority = priority;
+    this.reminder = reminder;
+    this.participants = participants;
+    this.attachments = attachments;
+  }
+
   /**
    * Copy constructor
    * 
@@ -45,7 +62,7 @@ public class Event implements Comparable<Event> {
     time = other.time;
     durationMinutes = other.durationMinutes;
     location = other.location;
-    host = other.host;
+    hostId = other.hostId;
     participants = other.participants;
     priority = other.priority;
     attachments = other.attachments;
@@ -239,17 +256,17 @@ public class Event implements Comparable<Event> {
    * 
    * @return - User host
    */
-  public User getHost() {
-    return host;
+  public int getHostId() {
+    return hostId;
   }
 
   /**
    * Set host
    * 
-   * @param host - User to be set to host
+   * @param hostId - User to be set to host
    */
-  public void setHost(User host) {
-    this.host = host;
+  public void setHostId(int hostId) {
+    this.hostId = hostId;
   }
 
   /**
