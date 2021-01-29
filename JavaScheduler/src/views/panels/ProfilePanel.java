@@ -70,7 +70,7 @@ public class ProfilePanel extends Panel {
     cnclBtn.setSmall();
     cnclBtn.addActionListener(infoPanel.setStaticAction());
 
-    stats_1 = new Label(40, 600, "You're partaking in " + user.getAcceptedEvents().size() + " meetings.");
+    stats_1 = new Label(40, 600, "You're partaking in " + user.getEvents().size() + " meetings.");
     stats_1.setForeground(MasterUI.accentCol);
     stats_1.setUnset(true);
 
@@ -87,7 +87,7 @@ public class ProfilePanel extends Panel {
    * Update current user profile statistics.
    */
   public static void updateProfileStats(User user) {
-    stats_1.setText("You're partaking in " + user.getAcceptedEvents().size() + " meetings.");
+    stats_1.setText("You're partaking in " + user.getEvents().size() + " meetings.");
   }
 
   /**

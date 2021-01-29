@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 
 import javax.swing.*;
 
+import controllers.DatabaseAPI;
 import controllers.EmailHandler;
 import controllers.PDFDocument;
 import models.User;
@@ -353,8 +354,7 @@ public class HomeUI extends MasterUI {
   }
 
   public static void main(String[] args) {
-    // User guest = DatabaseAPI.getUser("admin");
-    User guest = new User("admin", "root", "admin@mail.com");
+    User guest = DatabaseAPI.getUser("admin");
     HomeUI homeFrame = new HomeUI(guest);
 
   }

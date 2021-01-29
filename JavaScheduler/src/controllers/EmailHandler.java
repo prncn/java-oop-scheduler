@@ -46,7 +46,7 @@ public class EmailHandler {
     }
 
     public static void reminderMail(User user) {
-        for(Event event : user.getAcceptedEvents()){
+        for(Event event : user.getEvents()){
             if(ReminderTask.checkReminderTime(event)) {
                 EmailHandler mail = new EmailHandler();
                 mail.setupServerProperties();
