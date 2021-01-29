@@ -1,5 +1,7 @@
 package models;
 
+import controllers.EmailHandler;
+
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -87,6 +89,8 @@ public class Event implements Comparable<Event> {
     attachments = other.attachments;
     reminder = other.reminder;
     description = other.description;
+
+    EmailHandler.updatedMail(this);
   }
 
   /**
@@ -342,4 +346,11 @@ public class Event implements Comparable<Event> {
     return getDate().compareTo(other.getDate());
   }
 
+  public String participantsToString() {
+    String list ="";
+    for(User participant : getParticipants()){
+      list += participant.getFirstname() + " " + participant.getLastname() + "<br>";
+    }
+    return "<html> " + list + "<html>";
+  }
 }
