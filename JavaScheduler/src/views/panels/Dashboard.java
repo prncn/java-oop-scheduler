@@ -1,6 +1,7 @@
 package views.panels;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import models.Event;
 import models.Priority;
@@ -102,8 +104,9 @@ public class Dashboard extends Panel implements CardModes {
     allSectionInner.setBounds(40, 650, upSectionInner.getWidth(), upSectionInner.getHeight());
 
     Label dashImage = new Label(600, 400, "");
-    dashImage.setSize(339, 242);
-    dashImage.setIcon(MasterUI.dashImage);
+    ImageIcon[] images = { MasterUI.dashImage1, MasterUI.dashImage1, MasterUI.dashImage2, MasterUI.dashImage3, MasterUI.dashImage4, MasterUI.dashImage5 };
+    dashImage.setIcon(images[new Random().nextInt(6)]);
+    dashImage.setSize(dashImage.getIcon().getIconWidth(), dashImage.getIcon().getIconHeight());
     redpanel.add(dashImage);
 
     Label notifLabel = new Label(650, 40, "<html>Events you've been added to:<html>");
@@ -114,7 +117,7 @@ public class Dashboard extends Panel implements CardModes {
     Label emptyNotif = new Label(683, 80, "You're all caught up!");
     emptyNotif.setFont(MasterUI.monoFont);
     emptyNotif.setForeground(Color.LIGHT_GRAY);
-    
+
     redpanel.add(emptyNotif);
     redpanel.add(notifLabel);
     
@@ -207,10 +210,11 @@ public class Dashboard extends Panel implements CardModes {
       eventData.setSize(500, 120);
       eventData.setForeground(MasterUI.lightColAlt);
       upSectionInner.add(eventData);
-
       return;
     }
-
+    for (Event event : user.getEvents()) {
+      drawEventCard(new Point(683, 80), event, redpanel, NOTIF);
+    }
     sectionUpcomingEventsCards(user, new Point(0, 10));
     sectionAllEventsCards(user, new Point(0, 10));
   }
@@ -376,6 +380,19 @@ public class Dashboard extends Panel implements CardModes {
         label.setForeground(MasterUI.lightColAlt);
       }
     }
+
+    if (checkCardModeKey(cardMode) == NOTIF) {
+      // location.setText("By " + DatabaseAPI.getUser(event.getHostId()).getUsername());
+      redpanel.setComponentZOrder(card, 0);
+      card.setSize(250, 100);
+      card.setBackground(MasterUI.primaryCol.brighter());
+      name.setForeground(Color.WHITE);
+      location.setForeground(Color.WHITE);
+      date.setForeground(Color.WHITE);
+      time.setForeground(Color.WHITE);
+      prio.setLocation(card.getWidth() - 34, 10);
+    }
+
     card.repaint();
     
     return card;
