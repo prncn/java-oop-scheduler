@@ -2,6 +2,7 @@ package views.panels;
 
 import java.awt.Component;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -67,8 +68,9 @@ public class AdminPanel extends Panel {
     searchTitle.setHeading();
     searchTitle.setSize(450, 75);
     
-    ActionListener action = e -> {};
+    ActionListener action = e -> { searchBack.remove(sgscroll); sgscroll = null; };
     searchField = new TextField(50, 150);
+    List<User> entries = DatabaseAPI.getAllUsers();
     searchField.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
         updateSuggest();
@@ -84,11 +86,11 @@ public class AdminPanel extends Panel {
 
       public void updateSuggest() {
         if (!searchField.getText().isBlank()) {
+          List<User> suggestions = new ArrayList<>(entries);
           if (sgscroll != null) searchBack.remove(sgscroll);
-          List<User> entries = DatabaseAPI.getAllUsers();
-          entries.removeIf(e -> !e.getUsername().startsWith(searchField.getText()));
+          suggestions.removeIf(e -> !e.getUsername().startsWith(searchField.getText()));
           sgscroll = null;
-          Component[] _comps = searchField.setDropdown(entries, sgscroll, searchBack, action, entries.size());
+          Component[] _comps = searchField.setDropdown(suggestions, sgscroll, searchBack, action, suggestions.size());
           sgscroll = (JScrollPane) _comps[0];
         }
         searchField.requestFocus();
