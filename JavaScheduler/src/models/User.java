@@ -1,6 +1,8 @@
 package models;
 
 import controllers.DatabaseAPI;
+import controllers.EmailHandler;
+
 
 import java.util.ArrayList;
 
@@ -80,6 +82,8 @@ public class User {
     }
 
     updateEventList();
+    EmailHandler.sendEventMail(event, Status.CREATED);
+
   }
 
   /**
@@ -105,6 +109,7 @@ public class User {
       DatabaseAPI.deleteEvent(event.getId());
     }
     updateEventList();
+    EmailHandler.sendEventMail(event, Status.DELETED);
   }
 
   /**
