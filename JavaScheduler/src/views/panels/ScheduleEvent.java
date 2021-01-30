@@ -2,23 +2,19 @@ package views.panels;
 
 import controllers.FormatUtil;
 import controllers.ViewModelHandler;
+import models.Event;
 import models.*;
 import views.HomeUI;
 import views.MasterUI;
 import views.components.Button;
-import views.components.DataButton;
 import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
+import views.components.*;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-
-import java.awt.Point;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Desktop;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -26,11 +22,8 @@ import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
+import java.util.*;
 
 public class ScheduleEvent extends Panel implements ScheduleModes {
 
@@ -400,8 +393,17 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
           exp.printStackTrace();
         }
       });
-      ficon.setIcon(MasterUI.pdfIcon);
+      if(file.getName().toLowerCase().endsWith(".pdf")) {
+        ficon.setIcon(ViewModelHandler.resizeImageIcon(MasterUI.pdfIcon, 0.9f));
+      }
+      if(file.getName().toLowerCase().endsWith(".jpg")) {
+        ficon.setIcon(ViewModelHandler.resizeImageIcon(MasterUI.jpgIcon, 0.9f));
+      }
+      if(file.getName().toLowerCase().endsWith(".png")) {
+        ficon.setIcon(ViewModelHandler.resizeImageIcon(MasterUI.pngIcon, 0.9f));
+      }
       ficon.setSize(48, 48);
+      ficon.setHorizontalAlignment(SwingConstants.CENTER);
       fname.setFont(MasterUI.robotoFont.deriveFont(14f));
       fsize.setFont(MasterUI.robotoFont.deriveFont(11f));
 
