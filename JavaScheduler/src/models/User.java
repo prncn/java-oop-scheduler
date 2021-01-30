@@ -1,6 +1,7 @@
 package models;
 
 import controllers.DatabaseAPI;
+import controllers.EmailHandler;
 
 import javax.xml.crypto.Data;
 import java.util.ArrayList;
@@ -20,12 +21,12 @@ public class User {
   /**
    * Constructor for fetching user from database and creating model class from it
    */
-  public User(int id, String username, String firstname, String lastname, String email,
+  public User(int id, String username, String firstName, String lastName, String email,
       ArrayList<Event> events, ArrayList<Location> customLocations) {
     this.id = id;
     this.username = username;
-    this.firstname = firstname;
-    this.lastname = lastname;
+    this.firstname = firstName;
+    this.lastname = lastName;
     this.email = email;
     this.events = events;
     this.locations = customLocations;
@@ -47,8 +48,19 @@ public class User {
   }
 
   /**
+   * Constructor for list of participants in an Event Object, excludes list of events & locations.
+   */
+  public User(int user_id, String username, String firstName, String lastName, String email) {
+    this.id = user_id;
+    this.username = username;
+    this.firstname = firstName;
+    this.lastname = lastName;
+    this.email = email;
+  }
+
+  /**
    * Copy constructor
-   * 
+   *
    * @param other - Other user to be copied from
    */
   public User(User other) {
@@ -81,6 +93,7 @@ public class User {
     }
 
     updateEventList();
+    EmailHandler.createdMail(event);
   }
 
   /**
@@ -110,27 +123,40 @@ public class User {
 
   /**
    * Remove event from user
-   * 
+   *
    * @param event - Event to be removed
    */
   private void removeEvent(Event event) {
     DatabaseAPI.deleteUserEventBridge(this.getId(), event.getId());
+  }
 
+  /**
+   * Updates the local list of events from the database
+   */
+  private void updateEventList(){
+    events.clear();
+    events.addAll(DatabaseAPI.getEventsFromUser(this.getId()));
+  }
+
+  /**
+   * Creates a new Location and adds it into the User.locations list
+   * @param location
+   */
+  public void createLocation(Location location){
+    int locationId = DatabaseAPI.createLocation(location , this.getId());
+    location.setId(locationId);
+    this.addLocation(location);
   }
 
   /**
    * Get all events that the User is part of
-   * 
+   *
    * @return List of accepted events from user
    */
   public ArrayList<Event> getEvents() {
     return events;
   }
 
-  private void updateEventList(){
-    events.clear();
-    events.addAll(DatabaseAPI.getEventsFromUser(this.getId()));
-  }
   /**
    * Get user ID
    *

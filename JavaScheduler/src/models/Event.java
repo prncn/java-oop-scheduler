@@ -1,5 +1,6 @@
 package models;
 
+import controllers.DatabaseAPI;
 import controllers.EmailHandler;
 
 import java.io.File;
@@ -90,7 +91,8 @@ public class Event implements Comparable<Event> {
     reminder = other.reminder;
     description = other.description;
 
-    EmailHandler.updatedMail(this);
+    DatabaseAPI.editEvent(this);
+    //EmailHandler.updatedMail(this);
   }
 
   /**
@@ -301,7 +303,7 @@ public class Event implements Comparable<Event> {
   }
 
   /**
-   * Get participants
+   * Get participants as User Objects
    * 
    * @return participants
    */
@@ -314,8 +316,8 @@ public class Event implements Comparable<Event> {
    * 
    * @param participants - List of participants
    */
-  public void setParticipants(ArrayList<User> participants) {
-    this.participants = participants;
+  public void setParticipants(ArrayList<Integer> participants) {
+    this.participants = this.participants;
   }
 
   /**
