@@ -1,8 +1,6 @@
 package views;
 
-import java.awt.Component;
-import java.awt.Point;
-import java.awt.Desktop;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -13,13 +11,14 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
-import javax.swing.AbstractButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 
+import controllers.DatabaseAPI;
+import controllers.EmailHandler;
 import controllers.PDFDocument;
 import models.User;
 import views.components.Button;
@@ -79,6 +78,11 @@ public class HomeUI extends MasterUI {
 
     add(sidebar);
     setLocationRelativeTo(null);
+
+    EmailHandler.reminderMail(user);
+
+    setVisible(true);
+    createTime();
   }
 
   /**
@@ -260,6 +264,35 @@ public class HomeUI extends MasterUI {
   }
 
   /**
+   * Set time and date for sidebar, updating itself every Minute
+   */
+  private void createTime() {
+    DateTimeFormatter dateformat = DateTimeFormatter.ofPattern("dd . MM . yyyy");
+    DateTimeFormatter timeformat = DateTimeFormatter.ofPattern("HH : mm: ss");
+
+    Label footerTime = new Label(115, 615, LocalTime.now().format(timeformat));
+    Label footerDate = new Label(100, 638, LocalDate.now().format(dateformat));
+
+    footerTime.setForeground(Color.white);
+    footerDate.setForeground(Color.white);
+    footerTime.setUnset(true);
+    footerDate.setUnset(true);
+    /**footerTime.setHorizontalAlignment(SwingConstants.RIGHT);
+    footerDate.setHorizontalAlignment(SwingConstants.RIGHT);**/
+    sidebar.add(footerTime);
+    sidebar.add(footerDate);
+
+    while(true) {
+      footerTime.setText(LocalTime.now().format(timeformat));
+      footerDate.setText(LocalDate.now().format(dateformat));
+      try {
+        Thread.sleep(1000);
+      }catch (InterruptedException e){
+      e.printStackTrace();}
+    }
+  }
+
+  /**
    * Set styles for sidebar. Place header with user info and basic styles and
    * sizes for left sidebar.
    */
@@ -321,11 +354,8 @@ public class HomeUI extends MasterUI {
   }
 
   public static void main(String[] args) {
-    // User guest = DatabaseAPI.getUser("admin");
-    User guest = new User("admin", "root", "admin@mail.com");
+    User guest = DatabaseAPI.getUser("admin");
     HomeUI homeFrame = new HomeUI(guest);
-    homeFrame.setVisible(true);
-    System.out.println(new File(".").getAbsolutePath());
 
   }
 
