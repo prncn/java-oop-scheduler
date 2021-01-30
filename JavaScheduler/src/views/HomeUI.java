@@ -11,9 +11,11 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -51,6 +53,7 @@ public class HomeUI extends MasterUI {
   public static Button createTab;
   public static Button calendarTab;
   public static Button profileTab;
+  private static Button adminTab;
 
   public HomeUI(User user) {
     frame = this;
@@ -59,7 +62,7 @@ public class HomeUI extends MasterUI {
     setSize(1200, 700);
     remove(panel);
 
-    tabsBox = new Point(0, 200);
+    tabsBox = new Point(0, 310);
     dashPanel = new Dashboard(frame, user);
     createPanel = new ScheduleEvent(frame, user, null, ScheduleModes.CREATE);
     calendarPanel = new CalendarPanel(frame, 95, false, user);
@@ -79,7 +82,7 @@ public class HomeUI extends MasterUI {
     add(sidebar);
     setLocationRelativeTo(null);
 
-    // EmailHandler.reminderMail(user);
+    EmailHandler.reminderMail(user);
 
     setVisible(true);
     createTime();
@@ -102,30 +105,24 @@ public class HomeUI extends MasterUI {
     profileTab.setIcon(profileIcon);
     exportTab.setTab();
 
-    sidebar.add(dashboardTab);
-    sidebar.add(createTab);
-    sidebar.add(calendarTab);
-    sidebar.add(exportTab);
-    sidebar.add(profileTab);
+    List<Button> tabs = new ArrayList<>(Arrays.asList(dashboardTab, createTab, calendarTab, profileTab, exportTab, adminTab));
+    tabs.forEach(e -> sidebar.add(e));
 
     /**
      * Highlight active tab by color
      */
-    dashboardTab.setColor(MasterUI.secondaryCol);
+    Color active = MasterUI.primaryCol.brighter();
+    Color inactive = MasterUI.primaryColAlt;
+    dashboardTab.setColor(active);
     prevBtn = dashboardTab;
-    for (Component c : sidebar.getComponents()) {
-      if (c instanceof Button) {
-        ((AbstractButton) c).addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            if (prevBtn != null) {
-              prevBtn.setColor(MasterUI.primaryColAlt);
-            }
-            ((Button) c).setColor(MasterUI.secondaryCol);
-            prevBtn = ((Button) c);
-          }
-        });
-      }
-    }
+    tabs.forEach(tab -> {
+      tab.setPrevColor(inactive);
+      tab.addActionListener(e -> {
+        prevBtn.setColor(prevBtn.getPrevColor());
+        tab.setColor(active);
+        prevBtn = tab;
+      });
+    });
   }
 
   /**
@@ -299,14 +296,19 @@ public class HomeUI extends MasterUI {
    * sizes for left sidebar.
    */
   private void styleSidebar() {
-    Label headerinfoUser = new Label(20, 30, "Logged as " + user.getUsername());
-    Label headerinfoEmail = new Label(20, 55, user.getEmail());
+    Label headerinfoUser = new Label(10, 10, "Logged as " + user.getUsername());
+    Label headerinfoEmail = new Label(headerinfoUser.getX(), headerinfoUser.getY() + 25, user.getEmail());
+
+    Label avatarIcon = new Label(30, 90, "");
+    avatarIcon.setIcon(MasterUI.avatarImage3);
+    avatarIcon.setSize(128, 128);
 
     sidebar.setBackground(primaryColAlt);
     sidebar.setBounds(0, 0, 200, this.getHeight());
     sidebar.setLayout(null);
     sidebar.add(headerinfoUser);
     sidebar.add(headerinfoEmail);
+    sidebar.add(avatarIcon);
   }
 
   /**
@@ -347,9 +349,8 @@ public class HomeUI extends MasterUI {
   private void showAdminPanel() {
     if (user.getUsername().equals("admin")) {
       AdminPanel adminPanel = new AdminPanel(frame);
-      Button adminTab = new Button(tabsBox.x, tabsBox.y - 50, "ADMIN_PANEL", adminPanel);
+      adminTab = new Button(tabsBox.x, tabsBox.y - 50, "Admin Panel", adminPanel);
       adminTab.setIcon(adminIcon);
-      adminTab.setColor(accentCol);
       adminTab.setTab();
       sidebar.add(adminTab);
     }
@@ -357,8 +358,7 @@ public class HomeUI extends MasterUI {
 
   public static void main(String[] args) {
     User guest = DatabaseAPI.getUser("admin");
-    HomeUI homeFrame = new HomeUI(guest);
-
+    new HomeUI(guest);
   }
 
 }

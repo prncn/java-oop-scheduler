@@ -64,7 +64,17 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon loginHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Analysis_re_w2vd.png");
   public static ImageIcon signupHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Cloud_docs_re_xjht.png");
   public static ImageIcon createdMeetingImage = new ImageIcon(fileRoot + imagesRoot + "undraw_relaxing_walk_mljx.png");
-  public static ImageIcon dashImage = new ImageIcon(fileRoot + imagesRoot + "undraw_complete_task_u2c3.png");
+  public static ImageIcon dashImage1 = new ImageIcon(fileRoot + imagesRoot + "undraw_complete_task_u2c3.png");
+  public static ImageIcon dashImage2 = new ImageIcon(fileRoot + imagesRoot + "undraw_Onboarding_re_6osc.png");
+  public static ImageIcon dashImage3 = new ImageIcon(fileRoot + imagesRoot + "undraw_Online_calendar_re_wk3t.png");
+  public static ImageIcon dashImage4 = new ImageIcon(fileRoot + imagesRoot + "undraw_Statistics_re_kox4.png");
+  public static ImageIcon dashImage5 = new ImageIcon(fileRoot + imagesRoot + "undraw_Navigation_re_wxx4.png");
+  public static ImageIcon avatarImage1 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-1.png");
+  public static ImageIcon avatarImage2 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-2.png");
+  public static ImageIcon avatarImage3 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-3.png");
+  public static ImageIcon avatarImage4 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-4.png");
+  public static ImageIcon avatarImage5 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-5.png");
+  public static ImageIcon avatarImage6 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-6.png");
 
   public static ImageIcon favicon = new ImageIcon(fileRoot + iconsRoot + "category-solid-36.png");
   public static ImageIcon adminIcon = new ImageIcon(fileRoot + iconsRoot + "menu-alt-left-regular-24.png");

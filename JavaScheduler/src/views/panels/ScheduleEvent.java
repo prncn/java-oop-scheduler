@@ -474,7 +474,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * Draw priority label and buttons
    */
   private void drawPrioritySection() {
-    Label priorityLabel = new Label(40, 100, "Priority");
+    Label priorityLabel = new Label(40, 95, "Priority");
     priorityField = new TextField(40, 120);
     loPrioBtn = new Button(40, 120, "LOW", new Color(171, 169, 239));
     midPrioBtn = new Button(140, 120, "MEDIUM", new Color(129, 109, 254));
