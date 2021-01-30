@@ -83,6 +83,7 @@ public class HomeUI extends MasterUI {
 
     setVisible(true);
     createTime();
+
   }
 
   /**
@@ -356,7 +357,6 @@ public class HomeUI extends MasterUI {
   public static void main(String[] args) {
     User guest = DatabaseAPI.getUser("admin");
     HomeUI homeFrame = new HomeUI(guest);
-
   }
 
 }

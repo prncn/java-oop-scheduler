@@ -90,7 +90,7 @@ public class Event implements Comparable<Event> {
     reminder = other.reminder;
     description = other.description;
 
-    EmailHandler.updatedMail(this);
+    EmailHandler.sendEventMail(this, Status.EDITED);
   }
 
   /**

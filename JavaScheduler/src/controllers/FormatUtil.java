@@ -37,8 +37,8 @@ public class FormatUtil {
 	/**
 	 * Calculate the difference between to time stamps
 	 * 
-	 * @param startTime - Beginning time stamp
-	 * @param endTime   - Ending time stamp
+	 * @param startStr - Beginning time stamp
+	 * @param endStr   - Ending time stamp
 	 * @return Duration from start until end time
 	 */
 	public static int parseDuration(String startStr, String endStr) {
