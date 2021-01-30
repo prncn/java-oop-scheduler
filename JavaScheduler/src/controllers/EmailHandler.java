@@ -3,17 +3,10 @@ package controllers;
 
 import javax.mail.*;
 import javax.mail.internet.*;
-import java.rmi.server.RemoteObjectInvocationHandler;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import controllers.*;
 import models.*;
 
 public class EmailHandler {
@@ -22,36 +15,23 @@ public class EmailHandler {
     MimeMessage mimeMessage = null;
 
 
-    public static void createdMail(Event event) {
+    public static void sendEventMail(Event event, Status status) {
         EmailHandler mail = new EmailHandler();
         mail.setupServerProperties();
-        mail.draftCreatedMail(event);
+        mail.draftMail(event, status);
         mail.sendMail();
     }
 
-
-    public static void updatedMail(Event event) {
-        EmailHandler mail = new EmailHandler();
-        mail.setupServerProperties();
-        mail.draftUpdatedMail(event);
-        mail.sendMail();
-    }
-
-
-    public static void deletedMail(Event event) {
-        EmailHandler mail = new EmailHandler();
-        mail.setupServerProperties();
-        mail.draftDeletedMail(event);
-        mail.sendMail();
-    }
 
     public static void reminderMail(User user) {
         for(Event event : user.getEvents()){
-            if(ReminderTask.checkReminderTime(event)) {
-                EmailHandler mail = new EmailHandler();
-                mail.setupServerProperties();
-                mail.draftReminderMail(event);
-                mail.sendMail();
+            if(user.getId() == event.getHostId()) {
+                if (checkReminderTime(event)) {
+                    EmailHandler mail = new EmailHandler();
+                    mail.setupServerProperties();
+                    mail.draftReminderMail(event);
+                    mail.sendMail();
+                }
             }
         }
     }
@@ -67,7 +47,7 @@ public class EmailHandler {
     }
 
 
-    private void draftCreatedMail(Event event) {
+    private void draftMail(Event event, Status status) {
         mimeMessage = new MimeMessage(newSession);
 
         for (User participant : event.getParticipants()) {
@@ -79,55 +59,34 @@ public class EmailHandler {
         }
 
         try {
-            mimeMessage.setSubject("New Event: " + event.getName() + " " + event.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + event.getTime() + " " + event.getLocation().getName());
-            mimeMessage.setText(EmailHandlerHTML.setupText(event, "You have a newly added Event!"),null, "html");
+            String subject = "";
+            String text = "";
+            switch (status){
+                case CREATED:
+                    subject = "New Event: ";
+                    text = "You have a newly added Event!";
+                    break;
+                case EDITED:
+                    subject = "Updated Event: ";
+                    text = "Your Event has been edited!";
+                case DELETED:
+                    subject = "Deleted Event: ";
+                    text = "Your Event has been removed!";
+            }
+            mimeMessage.setSubject(subject + event.getName() + " " + event.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + event.getTime() + " " + event.getLocation().getName());
+            mimeMessage.setText(EmailHandlerHTML.setupText(event, text),null, "html");
         } catch (MessagingException e) {
             e.printStackTrace();
         }
     }
 
 
-        private void draftUpdatedMail (Event event){
-            mimeMessage = new MimeMessage(newSession);
 
-            for (User participant : event.getParticipants()) {
-                try {
-                    mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(participant.getEmail()));
-                } catch (MessagingException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            try {
-                mimeMessage.setSubject("Updated Event: " + event.getName() + " " + event.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + event.getTime() + " " + event.getLocation().getName());
-                mimeMessage.setText(EmailHandlerHTML.setupText(event, "Your Event has been edited!"),null, "html");
-            } catch (MessagingException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-
-    private void draftDeletedMail (Event event){
-        mimeMessage = new MimeMessage(newSession);
-
-        for (User participant : event.getParticipants()) {
-            try {
-                mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(participant.getEmail()));
-            } catch (MessagingException e) {
-                e.printStackTrace();
-            }
-        }
-
-        try {
-            mimeMessage.setSubject("Deleted Event: " + event.getName() + " " + event.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + event.getTime() + " " + event.getLocation().getName());
-            mimeMessage.setText(EmailHandlerHTML.setupText(event, "Your Event has been removed!"),null, "html");
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-    }
-
-    void draftReminderMail(Event event) {
+    /**
+     *
+     * @param event
+     */
+    public void draftReminderMail(Event event) {
         mimeMessage = new MimeMessage(newSession);
 
         for (User participant : event.getParticipants()) {
@@ -146,6 +105,15 @@ public class EmailHandler {
         }
     }
 
+    public static boolean checkReminderTime(Event event){
+        LocalDateTime eventTime = event.getDate().atTime(event.getTime());
+        LocalDateTime reminderTime = eventTime.minusMinutes(event.getReminder().getMinutes());
+        if(LocalDateTime.now().isAfter(eventTime)){
+            return false;
+        }
+        return  LocalDateTime.now().isAfter(reminderTime);
+    }
+
     public  void sendMail() {
         String fromUser = "javaschedulerlablundaws2021@gmail.com";
         String fromUserPassword = "Javascheduler2021";
@@ -162,7 +130,6 @@ public class EmailHandler {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-
     }
 
     }
@@ -200,3 +167,46 @@ public class EmailHandler {
  -Edit
  -Delete, Unterscheidung ob nur 1 user gelöscht, oder ob ganze Event gelöscht
  **/
+
+/**
+ 30.01.2021
+ private void draftUpdatedMail (Event event){
+ mimeMessage = new MimeMessage(newSession);
+
+ for (User participant : event.getParticipants()) {
+ try {
+ mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(participant.getEmail()));
+ } catch (MessagingException e) {
+ e.printStackTrace();
+ }
+ }
+
+ try {
+ mimeMessage.setSubject("Updated Event: " + event.getName() + " " + event.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + event.getTime() + " " + event.getLocation().getName());
+ mimeMessage.setText(EmailHandlerHTML.setupText(event, "Your Event has been edited!"),null, "html");
+ } catch (MessagingException e) {
+ e.printStackTrace();
+ }
+ }
+
+
+
+ private void draftDeletedMail (Event event){
+ mimeMessage = new MimeMessage(newSession);
+
+ for (User participant : event.getParticipants()) {
+ try {
+ mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(participant.getEmail()));
+ } catch (MessagingException e) {
+ e.printStackTrace();
+ }
+ }
+
+ try {
+ mimeMessage.setSubject("Deleted Event: " + event.getName() + " " + event.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + event.getTime() + " " + event.getLocation().getName());
+ mimeMessage.setText(EmailHandlerHTML.setupText(event, "Your Event has been removed!"),null, "html");
+ } catch (MessagingException e) {
+ e.printStackTrace();
+ }
+ }
+**/
