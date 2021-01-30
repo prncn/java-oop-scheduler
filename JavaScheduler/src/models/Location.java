@@ -1,7 +1,7 @@
 package models;
 
 public class Location {
-    private String id;
+    private int id;
     private String name;
     private String city;
     private String zip;
@@ -10,6 +10,10 @@ public class Location {
     private String building;
     private String roomNr;
 
+    /**
+     * Placeholder constructor
+     * @param name
+     */
     public Location(String name) {
         this.name = name;
         city = "";
@@ -31,11 +35,11 @@ public class Location {
         this.roomNr = roomNr;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
