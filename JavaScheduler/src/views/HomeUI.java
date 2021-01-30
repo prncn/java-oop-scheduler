@@ -21,6 +21,7 @@ import javax.swing.*;
 
 import controllers.DatabaseAPI;
 import controllers.EmailHandler;
+import controllers.FormatUtil;
 import controllers.PDFDocument;
 import models.User;
 import views.components.Button;
@@ -62,7 +63,7 @@ public class HomeUI extends MasterUI {
     setSize(1200, 700);
     remove(panel);
 
-    tabsBox = new Point(0, 310);
+    tabsBox = new Point(0, 260);
     dashPanel = new Dashboard(frame, user);
     createPanel = new ScheduleEvent(frame, user, null, ScheduleModes.CREATE);
     calendarPanel = new CalendarPanel(frame, 95, false, user);
@@ -98,7 +99,7 @@ public class HomeUI extends MasterUI {
     createTab = new Button(tabsBox.x, tabsBox.y + 50, "Schedule Event", createPanel);
     calendarTab = new Button(tabsBox.x, tabsBox.y + 100, "View Calendar", calendarPanel);
     profileTab = new Button(tabsBox.x, tabsBox.y + 150, "Profile", profilePanel);
-    exportTab = new Button(tabsBox.x, tabsBox.y + 250, "Export Schedule", primaryColAlt);
+    exportTab = new Button(tabsBox.x, tabsBox.y + 300, "Export Schedule", primaryColAlt);
     dashboardTab.setIcon(dashboardIcon);
     createTab.setIcon(createMeetingIcon);
     calendarTab.setIcon(calendarIcon);
@@ -112,8 +113,8 @@ public class HomeUI extends MasterUI {
     /**
      * Highlight active tab by color
      */
-    Color active = MasterUI.primaryCol.brighter();
-    Color inactive = MasterUI.primaryColAlt;
+    Color active = MasterUI.primaryColAlt;
+    Color inactive = MasterUI.primaryColAlt.darker();
     dashboardTab.setColor(active);
     prevBtn = dashboardTab;
     tabs.forEach(tab -> {
@@ -131,7 +132,7 @@ public class HomeUI extends MasterUI {
    * confirmation and then directs them to login page.
    */
   private void initLogoutTab() {
-    logoutTab = new Button(tabsBox.x, tabsBox.y + 300, "Logout", primaryColAlt);
+    logoutTab = new Button(0, exportTab.getY() + 50, "Logout", primaryColAlt);
     logoutTab.setIcon(logoutIcon);
     logoutTab.setTab();
     sidebar.add(logoutTab);
@@ -268,7 +269,7 @@ public class HomeUI extends MasterUI {
     DateTimeFormatter dateformat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     DateTimeFormatter timeformat = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    Label footerTime = new Label(90, 610, LocalTime.now().format(timeformat));
+    Label footerTime = new Label(85, 10, LocalTime.now().format(timeformat));
     Label footerDate = new Label(footerTime.getX(), footerTime.getY() + footerTime.getHeight() - 5, LocalDate.now().format(dateformat));
 
     footerTime.setForeground(Color.white);
@@ -297,14 +298,16 @@ public class HomeUI extends MasterUI {
    * sizes for left sidebar.
    */
   private void styleSidebar() {
-    Label headerinfoUser = new Label(10, 10, "Logged as " + user.getUsername());
-    Label headerinfoEmail = new Label(headerinfoUser.getX(), headerinfoUser.getY() + 25, user.getEmail());
+    Label avatarIcon = new Label(10, 90, "");
+    avatarIcon.setIcon(FormatUtil.resizeImageIcon(MasterUI.avatarImage3, 0.7f));
+    avatarIcon.setSize(avatarIcon.getIcon().getIconWidth(), avatarIcon.getIcon().getIconHeight());
 
-    Label avatarIcon = new Label(30, 90, "");
-    avatarIcon.setIcon(MasterUI.avatarImage3);
-    avatarIcon.setSize(128, 128);
-
-    sidebar.setBackground(primaryColAlt);
+    Label headerinfoUser = new Label(avatarIcon.getX() + avatarIcon.getWidth() + 10, avatarIcon.getY() + 10, "Logged in as");
+    Label headerinfoEmail = new Label(headerinfoUser.getX(), headerinfoUser.getY() + 25, user.getUsername());
+    headerinfoEmail.setSize(70, 24);
+    headerinfoEmail.setHorizontalAlignment(SwingConstants.RIGHT);
+    
+    sidebar.setBackground(primaryColAlt.darker());
     sidebar.setBounds(0, 0, 200, this.getHeight());
     sidebar.setLayout(null);
     sidebar.add(headerinfoUser);

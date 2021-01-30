@@ -394,16 +394,17 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         }
       });
       if(file.getName().toLowerCase().endsWith(".pdf")) {
-        ficon.setIcon(ViewModelHandler.resizeImageIcon(MasterUI.pdfIcon, 0.9f));
+        ficon.setIcon(FormatUtil.resizeImageIcon(MasterUI.pdfIcon, 0.9f));
       }
       if(file.getName().toLowerCase().endsWith(".jpg")) {
-        ficon.setIcon(ViewModelHandler.resizeImageIcon(MasterUI.jpgIcon, 0.9f));
+        ficon.setIcon(FormatUtil.resizeImageIcon(MasterUI.jpgIcon, 0.9f));
       }
       if(file.getName().toLowerCase().endsWith(".png")) {
-        ficon.setIcon(ViewModelHandler.resizeImageIcon(MasterUI.pngIcon, 0.9f));
+        ficon.setIcon(FormatUtil.resizeImageIcon(MasterUI.pngIcon, 0.9f));
       }
       ficon.setSize(48, 48);
       ficon.setHorizontalAlignment(SwingConstants.CENTER);
+      fname.setSize(200, 25);
       fname.setFont(MasterUI.robotoFont.deriveFont(14f));
       fsize.setFont(MasterUI.robotoFont.deriveFont(11f));
 

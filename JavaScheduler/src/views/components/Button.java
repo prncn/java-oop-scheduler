@@ -64,7 +64,7 @@ public class Button extends JButton implements MouseListener {
     addActionListener(switchPanelAction);
     setPosition(x, y);
     setTab();
-    setColor(MasterUI.primaryColAlt);
+    setColor(MasterUI.primaryColAlt.darker());
     filled = true;
   }
 
@@ -198,6 +198,7 @@ public class Button extends JButton implements MouseListener {
     setMargin(new Insets(5, 5, 10, 10));
     setFont(this.getFont().deriveFont(13f));
     setForeground(Color.WHITE);
+    setColor(MasterUI.primaryColAlt.darker());
     setFocusPainted(false);
     setContentAreaFilled(true);
     setIconTextGap(15);

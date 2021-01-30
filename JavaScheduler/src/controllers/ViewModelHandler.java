@@ -185,16 +185,4 @@ public class ViewModelHandler {
     }
     return true;
   }
-
-
-  public static ImageIcon resizeImageIcon(ImageIcon img, float proportion) {
-    int width = img.getIconWidth();
-    int height = img.getIconHeight();
-
-    width = Math.round(width*proportion);
-    height = Math.round(height*proportion);
-
-    return new ImageIcon(img.getImage().getScaledInstance(width, height, Image.SCALE_DEFAULT));
-  }
-
 }
