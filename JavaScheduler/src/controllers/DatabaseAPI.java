@@ -337,7 +337,7 @@ public class DatabaseAPI {
         int location_id = rs.getInt("location_id");
 
         Event event = new Event(eventId, name, description, duration, date, time, new Location("PLACEHOLDER"), priority, reminder,
-                new ArrayList<User>(), new ArrayList<File>());
+                getParticipants(eventId), new ArrayList<File>());
 
         event.setId(eventId);
         event.setHostId(host_id);
@@ -352,9 +352,45 @@ public class DatabaseAPI {
       e.printStackTrace();
       return null;
     }
-
   }
 
+  /**
+   * Gets a list of participants for an event
+   * @param eventId
+   * @return
+   */
+  private static ArrayList<User> getParticipants(int eventId){
+    String sql =
+            "SELECT * FROM User " +
+            "LEFT JOIN User_Event " +
+            "ON User_Event.user_id = User.user_id WHERE User_Event.event_id = ? ";
+    Connection connection = connectDatabase();
+    ArrayList<User> participants = new ArrayList<>();
+
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql);
+      ps.setInt(1, eventId);
+
+      ResultSet rs = ps.executeQuery();
+
+      while(rs.next()){
+        User u = new User(
+                rs.getInt("user_id") ,
+                rs.getString("username"),
+                rs.getString("firstName"),
+                rs.getString("lastName"),
+                rs.getString("email")
+        );
+        participants.add(u);
+      }
+      rs.close();
+      ps.close();
+      return participants;
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
   /**
    * Delete table entry in Event
    *
@@ -373,6 +409,33 @@ public class DatabaseAPI {
 
       ps.close();
 
+      closeDatabase();
+      return true;
+    } catch (SQLException e){
+      e.printStackTrace();
+      closeDatabase();
+      return false;
+    }
+  }
+
+  /**
+   * Creates an entry in the User_Event table in the Database.
+   * @param userId
+   * @param eventId
+   * @return true when insertion was successful, false when insertion had an exception.
+   */
+  public static boolean createUserEventBridge(int userId, int eventId){
+    String sql = "INSERT INTO User_Event (user_id , event_id) " + "VALUES(?, ?)";
+    Connection connection = connectDatabase();
+
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql);
+      ps.setInt(1 , userId);
+      ps.setInt(2 , eventId);
+
+      ps.executeUpdate();
+
+      ps.close();
       closeDatabase();
       return true;
     } catch (SQLException e){
@@ -411,7 +474,7 @@ public class DatabaseAPI {
 
   /**
    * Create table entry of new event in database.
-   * 
+   *
    * @param event Object of new entry.
    * @return ID on successful creation, return -1 on failed creation
    */
@@ -434,8 +497,7 @@ public class DatabaseAPI {
       statement.setString(7, event.getDescription());
 
       statement.setInt(8, event.getHostId());
-      statement.setString(9, event.getLocation().getId());
-
+      statement.setInt(9, event.getLocation().getId());
       statement.executeUpdate();
 
       ResultSet generatedKey = statement.getGeneratedKeys();
@@ -460,29 +522,82 @@ public class DatabaseAPI {
   }
 
   /**
-   * Creates an entry in the User_Event table in the Database.
-   * @param userId
-   * @param eventId
-   * @return true when insertion was successful, false when insertion had an exception.
+   *
+   * @param event new event object which the Database should be adjusted for
+   * @return
    */
-  public static boolean createUserEventBridge(int userId, int eventId){
-    String sql = "INSERT INTO User_Event (user_id , event_id) " + "VALUES(?, ?)";
+  public static boolean editEvent(Event event){
+    String sql =
+            "UPDATE Event SET reminder = ? , priority = ? , name = ? , date = ? , time = ? , durationMinutes = ? , description = ? ,  host_id = ? ,location_id = ? " +
+            "WHERE event_id = ? ";
+
     Connection connection = connectDatabase();
 
     try{
       PreparedStatement ps = connection.prepareStatement(sql);
-      ps.setInt(1 , userId);
-      ps.setInt(2 , eventId);
+
+      ps.setString(1 , event.getReminder().name());
+      ps.setString(2 , event.getPriority().name());
+      ps.setString(3 , event.getName());
+      ps.setDate(4 , Date.valueOf(event.getDate()));
+      ps.setTime(5 , Time.valueOf(event.getTime()));
+      ps.setInt(6 , event.getDurationMinutes());
+      ps.setString(7 , event.getDescription());
+      ps.setInt(8 , event.getHostId());
+      ps.setInt(9 , event.getLocation().getId());
+
+      ps.setInt(10 , event.getId());
 
       ps.executeUpdate();
-
       ps.close();
       closeDatabase();
       return true;
-    } catch (SQLException e){
+    } catch (SQLException e) {
       e.printStackTrace();
+      e.getErrorCode();
       closeDatabase();
       return false;
+    }
+  }
+
+  /**
+   * Creates an entry in Location table in the Database.
+   * @param l Location that should be entered
+   * @param userId User that the Location belongs to
+   * @return ID of Location or -1
+   */
+  public static int createLocation(Location l, int userId){
+    String sql = "INSERT INTO Location (name, city, street, streetNr, building, roomNr, user_id) " +
+            "VALUES( ? , ? , ? , ? , ? , ? , ? )";
+    Connection connection = connectDatabase();
+    int locationId = -1;
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+      ps.setString(1 , l.getName());
+      ps.setString(2 , l.getCity());
+      ps.setString(3 , l.getStreet());
+      ps.setString(4 , l.getStreetNr());
+      ps.setString(5 , l.getBuilding());
+      ps.setString(6 , l.getRoomNr());
+      ps.setInt(7 , userId);
+
+      ps.executeQuery();
+
+      ResultSet genKey = ps.getGeneratedKeys();
+
+      if(genKey.next()) {
+        locationId = genKey.getInt(1);
+      } else {
+        throw new SQLException("Creating Location failed, no ID obtained.");
+      }
+
+      ps.close();
+      genKey.close();
+
+      return locationId;
+    } catch (SQLException e){
+      e.printStackTrace();
+      return -1;
     }
   }
 
