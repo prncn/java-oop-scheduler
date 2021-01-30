@@ -1,10 +1,7 @@
 package controllers;
 
 import models.Event;
-import models.Location;
-import models.Priority;
-import models.Reminder;
-import models.User;
+import models.*;
 import views.HomeUI;
 import views.MasterUI;
 import views.components.Label;
@@ -15,7 +12,6 @@ import views.panels.ProfilePanel;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-
 import java.awt.*;
 import java.io.File;
 import java.time.LocalDate;
@@ -188,6 +184,17 @@ public class ViewModelHandler {
       return false;
     }
     return true;
+  }
+
+
+  public static ImageIcon resizeImageIcon(ImageIcon img, float proportion) {
+    int width = img.getIconWidth();
+    int height = img.getIconHeight();
+
+    width = Math.round(width*proportion);
+    height = Math.round(height*proportion);
+
+    return new ImageIcon(img.getImage().getScaledInstance(width, height, Image.SCALE_DEFAULT));
   }
 
 }

@@ -92,7 +92,7 @@ public class Event implements Comparable<Event> {
     description = other.description;
 
     DatabaseAPI.editEvent(this);
-    //EmailHandler.updatedMail(this);
+    EmailHandler.sendEventMail(this, Status.EDITED);
   }
 
   /**

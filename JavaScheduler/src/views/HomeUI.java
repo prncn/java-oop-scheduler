@@ -84,6 +84,7 @@ public class HomeUI extends MasterUI {
 
     setVisible(true);
     createTime();
+
   }
 
   /**

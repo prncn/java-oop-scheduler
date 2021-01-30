@@ -3,7 +3,7 @@ package models;
 import controllers.DatabaseAPI;
 import controllers.EmailHandler;
 
-import javax.xml.crypto.Data;
+
 import java.util.ArrayList;
 
 public class User {
@@ -93,7 +93,7 @@ public class User {
     }
 
     updateEventList();
-    EmailHandler.createdMail(event);
+    EmailHandler.sendEventMail(event, Status.CREATED);
   }
 
   /**
@@ -119,6 +119,7 @@ public class User {
       DatabaseAPI.deleteEvent(event.getId());
     }
     updateEventList();
+    EmailHandler.sendEventMail(event, Status.DELETED);
   }
 
   /**
