@@ -354,7 +354,6 @@ public class DatabaseAPI {
       closeDatabase();
       return null;
     }
-
   }
 
   /**
