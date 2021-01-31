@@ -111,7 +111,7 @@ public class FormatUtil {
 	 * @return String of date
 	 */
 	public static String readableDate(LocalDate date) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, YYYY", Locale.US);
 		return date.format(formatter);
 	}
 
@@ -126,6 +126,13 @@ public class FormatUtil {
 		return startTime.plusMinutes((long) durationMins);
 	}
 
+	/**
+	 * Resize an image to a specified factor and retain its resolution
+	 * 
+	 * @param img - Source ImageIcon to be resized
+	 * @param proportion - Resize factor to resize image
+	 * @return Copy of img in resized dimensions
+	 */
 	public static ImageIcon resizeImageIcon(ImageIcon img, float proportion) {
 		int width = img.getIconWidth();
 		int height = img.getIconHeight();

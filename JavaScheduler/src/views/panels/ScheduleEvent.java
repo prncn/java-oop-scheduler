@@ -59,6 +59,9 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   /** Margin between text fields */
   final int TF_MRGN = 70;
 
+  private Panel PAGE_ONE;
+  private Panel PAGE_TWO;
+
   private JFrame frame;
   private User user;
   private Event editEvent;
@@ -71,7 +74,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     this.editEvent = editEvent;
     this.mode = mode;
 
-    cb = new Point(40, 170);
+    cb = new Point(0, 70);
     Label screenTitle = new Label(40, 40, "");
     screenTitle.setHeading();
     if (mode == CREATE) {
@@ -91,7 +94,17 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       participants = editEvent.getParticipants();
     }
 
-    initLeftFormContent();
+    PAGE_ONE = new Panel();
+    PAGE_ONE.setBounds(300, 120, 320, 400);
+    PAGE_ONE.setBackground(MasterUI.lightCol);
+    add(PAGE_ONE);
+
+    PAGE_TWO = new Panel();
+    PAGE_TWO.setBounds(400, 100, 350, 400);
+    PAGE_TWO.setBackground(Color.RED);
+    // add(PAGE_TWO);
+
+    initPageOneFormContent();
     if (mode != VIEW) {
       initDatePicker();
     }
@@ -105,6 +118,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
 
     add(screenTitle);
     MasterUI.setComponentStyles(this, "light");
+    MasterUI.setComponentStyles(PAGE_ONE, "light");
+    MasterUI.setComponentStyles(PAGE_TWO, "light");
     setDefaultProperties();
   }
 
@@ -134,11 +149,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    */
   @SuppressWarnings("unchecked")
   private void locationDropdownSelection(TextField textfield) {
-    Panel panel = this;
+    Panel panel = PAGE_ONE;
     List<Location> locations = user.getLocations();
     ActionListener action = e -> {
       Location location = ((DataButton<Location>) e.getSource()).getData();
-      remove(lcscroll);
+      PAGE_ONE.remove(lcscroll);
       lcscroll = null;
       selectedLocation = location;
     };
@@ -152,7 +167,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    */
   private void drawReminderSection() {
     reminderField = new TextField(400, 120);
-    MasterUI.placeFieldLabel(reminderField, "Remind me before event", this);
+    MasterUI.placeFieldLabel(reminderField, "Remind me before event", PAGE_TWO);
     reminderField.setText(Reminder.NONE.toString());
     selectedReminder = Reminder.NONE;
     reminderField.setEditable(false);
@@ -160,15 +175,15 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     dpdwn.addActionListener(e -> reminderDropdownSelection());
 
     if (mode != VIEW)
-      add(dpdwn);
-    add(reminderField);
+      PAGE_TWO.add(dpdwn);
+    PAGE_TWO.add(reminderField);
   }
 
   /**
    * Create and initialise page buttons
    */
   private void initPageButtons() {
-    confirmBtn = new Button(40, 550, "Confirm", MasterUI.secondaryCol);
+    confirmBtn = new Button(300, 550, "Confirm", MasterUI.secondaryCol);
     switch (mode) {
       case VIEW:
         confirmBtn.setText("Back");
@@ -177,10 +192,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         confirmBtn.setText("Save Changes");
         break;
       default:
-        confirmBtn.setText("Confirm");
+        confirmBtn.setText("Next");
     }
 
     confirmBtn.setTab();
+    confirmBtn.centerText();
     confirmBtn.setCornerRadius(Button.ROUND);
 
     add(confirmBtn);
@@ -191,32 +207,32 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * statically for developemental purposes.
    *
    */
-  private void initLeftFormContent() {
+  private void initPageOneFormContent() {
     titleField = new TextField(cb.x, cb.y + 20);
-    MasterUI.placeFieldLabel(titleField, "Title", this);
+    MasterUI.placeFieldLabel(titleField, "Title", PAGE_ONE);
 
     dateField = new TextField(cb.x, titleField.getY() + TF_MRGN);
-    dateField.setSize(dateField.getWidth() - 60, dateField.getHeight());
-    MasterUI.placeFieldLabel(dateField, "Date", this);
+    dateField.setSize(dateField.getWidth() - 55, dateField.getHeight());
+    MasterUI.placeFieldLabel(dateField, "Date", PAGE_ONE);
 
     startField = new TextField(cb.x, dateField.getY() + TF_MRGN);
     startField.setSize(titleField.getWidth() / 2, titleField.getHeight());
-    MasterUI.placeFieldLabel(startField, "Start time", this);
+    MasterUI.placeFieldLabel(startField, "Start time", PAGE_ONE);
 
     endField = new TextField(cb.x + startField.getWidth() + 5, dateField.getY() + TF_MRGN);
     endField.setSize(startField.getWidth() - 5, startField.getHeight());
-    MasterUI.placeFieldLabel(endField, "End time", this);
+    MasterUI.placeFieldLabel(endField, "End time", PAGE_ONE);
 
     locationField = new TextField(cb.x, endField.getY() + TF_MRGN);
     locationField.setSize(locationField.getWidth() - 40, dateField.getHeight());
     lc_dpdwn = locationField.appendButton(MasterUI.downIcon);
     lc_dpdwn.addActionListener(e -> locationDropdownSelection(locationField));
-    if (mode != VIEW ) add(lc_dpdwn);
-    MasterUI.placeFieldLabel(locationField, "Location", this);
+    if (mode != VIEW ) PAGE_ONE.add(lc_dpdwn);
+    MasterUI.placeFieldLabel(locationField, "Location", PAGE_ONE);
 
     ArrayList<TextField> fields = new ArrayList<>(
         Arrays.asList(titleField, dateField, startField, endField, locationField));
-    fields.forEach(e -> add(e));
+    fields.forEach(e -> PAGE_ONE.add(e));
 
     /**
      * When clicking in on a text field, the panel of the date picker (redpanel)
@@ -319,9 +335,9 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     attachpanel.setBackground(MasterUI.lightCol);
     attachField = new TextField(400, reminderField.getY() + TF_MRGN);
     if (mode == VIEW) {
-      MasterUI.placeFieldLabel(attachField, "Attachments", this);
+      MasterUI.placeFieldLabel(attachField, "Attachments", PAGE_TWO);
     } else {
-      MasterUI.placeFieldLabel(attachField, "Attachments (optional)", this);
+      MasterUI.placeFieldLabel(attachField, "Attachments (optional)", PAGE_TWO);
     }
     attachField.setEditable(false);
     Button attachBtn = attachField.appendButton(MasterUI.folderIcon);
@@ -356,9 +372,9 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     addAttachmentCard(attachpanel);
 
     if (mode != VIEW)
-      add(attachBtn);
-    add(attachField);
-    add(attachpanel);
+      PAGE_TWO.add(attachBtn);
+    PAGE_TWO.add(attachField);
+    PAGE_TWO.add(attachpanel);
   }
 
   /**
@@ -431,7 +447,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    */
   private void drawParticipantSection() {
     searchUserField = new TextField(400, 260);
-    MasterUI.placeFieldLabel(searchUserField, "People to invite", this);
+    MasterUI.placeFieldLabel(searchUserField, "People to invite", PAGE_TWO);
 
     addUserBtn = searchUserField.appendButton(MasterUI.addUserIcon);
     userQueryResult = new Label(0, 0, "");
@@ -455,14 +471,14 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         partLabel.setText(partLabel.getText() + " (Me)");
       partLabel.setIcon(MasterUI.circleUserIcon);
       partLabel.setVerticalTextPosition(SwingConstants.CENTER);
-      add(partLabel);
+      // add(partLabel);
       participantListPosition += 35;
     }
 
     if (mode != VIEW) {
-      add(addUserBtn);
-      add(searchUserField);
-      add(userQueryResult);
+      PAGE_TWO.add(addUserBtn);
+      PAGE_TWO.add(searchUserField);
+      PAGE_TWO.add(userQueryResult);
     }
   }
 
@@ -470,20 +486,20 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * Draw priority label and buttons
    */
   private void drawPrioritySection() {
-    Label priorityLabel = new Label(40, 95, "Priority");
-    priorityField = new TextField(40, 120);
-    loPrioBtn = new Button(40, 120, "LOW", new Color(171, 169, 239));
-    midPrioBtn = new Button(145, 120, "MEDIUM", new Color(129, 109, 254));
-    hiPrioBtn = new Button(250, 120, "HIGH", MasterUI.accentCol);
+    Label priorityLabel = new Label(0, -5, "Priority");
+    priorityField = new TextField(0, 20);
+    loPrioBtn = new Button(0, 20, "LOW", new Color(171, 169, 239));
+    midPrioBtn = new Button(105, 20, "MEDIUM", new Color(129, 109, 254));
+    hiPrioBtn = new Button(210, 20, "HIGH", MasterUI.accentCol);
 
     loPrioBtn.addActionListener(e -> prioBtnAction(Priority.LOW));
     midPrioBtn.addActionListener(e -> prioBtnAction(Priority.MEDIUM));
     hiPrioBtn.addActionListener(e -> prioBtnAction(Priority.HIGH));
 
-    add(priorityLabel);
-    add(loPrioBtn);
-    add(midPrioBtn);
-    add(hiPrioBtn);
+    PAGE_ONE.add(priorityLabel);
+    PAGE_ONE.add(loPrioBtn);
+    PAGE_ONE.add(midPrioBtn);
+    PAGE_ONE.add(hiPrioBtn);
   }
 
   private void drawDesciptionSection() {
@@ -499,8 +515,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     if (mode == VIEW)
       descLabel.setText("Description");
 
-    add(descLabel);
-    add(descField);
+    PAGE_TWO.add(descLabel);
+    PAGE_TWO.add(descField);
   }
 
   /**
@@ -547,7 +563,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * Create and initialise date picker
    */
   private void initDatePicker() {
-    Button openDatePicker = new Button(285, dateField.getY(), "", MasterUI.accentCol);
+    Button openDatePicker = new Button(dateField.getX() + dateField.getWidth() - 10, dateField.getY(), "", MasterUI.accentCol);
     openDatePicker.setIcon(MasterUI.calendarIcon);
     openDatePicker.setSize(65, 40);
 
@@ -561,18 +577,18 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       if (redpanel.isActive) {
         redpanel.setSize(0, 0);
         redpanel.isActive = false;
-        add(lc_dpdwn);
+        PAGE_ONE.add(lc_dpdwn);
       } else {
         redpanel.setBounds(openDatePicker.getX(), openDatePicker.getY(), 300, 310);
         redpanel.isActive = true;
-        remove(lc_dpdwn);
+        PAGE_ONE.remove(lc_dpdwn);
       }
     });
 
-    add(openDatePicker);
-    add(redpanel);
-    setComponentZOrder(openDatePicker, 0);
-    setComponentZOrder(redpanel, 1);
+    PAGE_ONE.add(openDatePicker);
+    PAGE_ONE.add(redpanel);
+    PAGE_ONE.setComponentZOrder(openDatePicker, 0);
+    PAGE_ONE.setComponentZOrder(redpanel, 1);
   }
 
   /**

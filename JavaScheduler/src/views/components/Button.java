@@ -236,6 +236,7 @@ public class Button extends JButton implements MouseListener {
     setVerticalTextPosition(SwingConstants.BOTTOM);
     setHorizontalAlignment(SwingConstants.CENTER);
     setVerticalAlignment(SwingConstants.CENTER);
+    setBorder(BorderFactory.createEmptyBorder());
   }
 
   /**
