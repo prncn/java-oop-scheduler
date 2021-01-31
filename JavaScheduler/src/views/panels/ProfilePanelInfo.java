@@ -184,7 +184,7 @@ public class ProfilePanelInfo extends Panel {
     return new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         if (usernameField.getText().isBlank() || emailField.getText().isBlank()) {
-          JOptionPane.showMessageDialog(null, "Username or mail cannot be empty.");
+          HomeUI.confirmDialog("Username or mail cannot be blank.");
           resetForm();
           return;
         }
@@ -192,7 +192,7 @@ public class ProfilePanelInfo extends Panel {
         check.setUsername(usernameField.getText());
         check.setEmail(emailField.getText());
         if (!DatabaseAPI.isAvailable(check)) {
-          JOptionPane.showMessageDialog(null, "Username of mail already exists.");
+          HomeUI.confirmDialog("Username or mail already exists.");
           resetForm();
           return;
         }

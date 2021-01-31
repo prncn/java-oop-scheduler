@@ -191,6 +191,10 @@ public class HomeUI extends MasterUI {
     return true;
   }
 
+  public static void confirmDialog(String prompt) {
+    confirmDialog(null, null, prompt);
+  }
+
   /**
    * Overload confirmDialog, for prompts that have no fail action. A fail action
    * is the action to be triggered if the user does no confirm.c
@@ -232,8 +236,13 @@ public class HomeUI extends MasterUI {
     logoutp.setLayout(null);
     logoutp.setBackground(MasterUI.lightCol);
     logoutp.add(logoutlabel);
+    if (action != null) {
+      logoutp.add(no);
+    } else {
+      yes.setLocation(85, 60);
+      yes.setText("OK");
+    }
     logoutp.add(yes);
-    logoutp.add(no);
 
     confirmDialog.add(logoutp);
     confirmDialog.setSize(300, 160);
