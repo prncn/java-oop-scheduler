@@ -103,7 +103,8 @@ public class ProfilePanelInfo extends Panel {
       field.setEditable(true);
     }
 
-    saveBtn.setSize(300, 50);
+    saveBtn.setSize(310, 50);
+    saveBtn.setCornerRadius(Button.ROUND);
     saveBtn.addActionListener(HomeUI.confirmDialogAction(saveFormUserData(), "Save and overwrite profile info?"));
     add(saveBtn);
 
