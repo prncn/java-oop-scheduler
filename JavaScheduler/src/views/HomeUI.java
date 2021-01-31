@@ -88,7 +88,6 @@ public class HomeUI extends MasterUI {
 
     setVisible(true);
     createTime();
-
   }
 
   /**
@@ -193,6 +192,17 @@ public class HomeUI extends MasterUI {
   }
 
   /**
+   * Overload confirmDialog, for prompts that have no fail action. A fail action
+   * is the action to be triggered if the user does no confirm.c
+   * @param action
+   * @param prompt
+   * @see #confirmDialog(ActionListener, ActionListener, String)
+   */
+  public static void confirmDialog(ActionListener action, String prompt) {
+    confirmDialog(action, null, prompt);
+  }
+
+  /**
    * Open a dialog prompt asking the user to confirm their action. This window
    * blocks action on the background until a selection (or exit) is given. On
    * selecting yes, an action listener will be triggered.
@@ -200,7 +210,7 @@ public class HomeUI extends MasterUI {
    * @param action - ActionListener object to be passed to "YES" button
    * @param prompt - String prompt the user is asked
    */
-  public static void confirmDialog(ActionListener action, String prompt) {
+  public static void confirmDialog(ActionListener action, ActionListener failAction, String prompt) {
     JDialog confirmDialog = new JDialog(frame, "Confirm action");
     frame.setEnabled(false);
 
@@ -240,6 +250,7 @@ public class HomeUI extends MasterUI {
       }
     };
     yes.addActionListener(action);
+    if(failAction != null) no.addActionListener(failAction);
     yes.addActionListener(closeDialog);
     no.addActionListener(closeDialog);
   }
@@ -270,7 +281,7 @@ public class HomeUI extends MasterUI {
     DateTimeFormatter dateformat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     DateTimeFormatter timeformat = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    Label footerTime = new Label(85, 30, LocalTime.now().format(timeformat));
+    Label footerTime = new Label(90, 5, LocalTime.now().format(timeformat));
     Label footerDate = new Label(footerTime.getX(), footerTime.getY() + footerTime.getHeight() - 5, LocalDate.now().format(dateformat));
 
     footerTime.setForeground(Color.white);
@@ -282,7 +293,7 @@ public class HomeUI extends MasterUI {
     footerTime.setHorizontalAlignment(SwingConstants.RIGHT);
     footerDate.setHorizontalAlignment(SwingConstants.RIGHT);
     sidebar.add(footerTime);
-    sidebar.add(footerDate);
+    // sidebar.add(footerDate);
 
     while(true) {
       footerTime.setText(LocalTime.now().format(timeformat));

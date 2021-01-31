@@ -74,7 +74,7 @@ public class ProfilePanel extends Panel {
       panel.repaint();
     });
 
-    cnclBtn = new Button(profileTitle.getX() + 250, profileTitle.getY(), "Cancel");
+    cnclBtn = new Button(profileTitle.getX() + 250, profileTitle.getY(), "Close");
     cnclBtn.setSmall();
     cnclBtn.addActionListener(infoPanel.setStaticAction());
     cnclBtn.addActionListener(e -> {

@@ -8,6 +8,10 @@ import views.components.Panel;
 import views.components.TextField;
 
 import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
+
+import controllers.DatabaseAPI;
+
 import java.awt.event.ActionEvent;
 
 import java.awt.Point;
@@ -34,12 +38,20 @@ public class ProfilePanelInfo extends Panel {
     firstnameField = new TextField(user.getFirstname());
     lastnameField = new TextField(user.getLastname());
     saveBtn = new Button(0, 340, "Save Changes", MasterUI.secondaryCol);
+    saveBtn.setSize(310, 50);
+    saveBtn.setCornerRadius(Button.ROUND);
+    saveBtn.addActionListener(confirm -> HomeUI.confirmDialog(saveFormUserData(), e -> {
+      resetForm();
+    }, "Change profile info?"));
+    saveBtn.addActionListener(e -> setToStaticMode());
 
     TextField[] fields = { usernameField, emailField, firstnameField, lastnameField };
     
+    /** Content box */
     Point contentPoint = new Point(0, 0);
-    Point cb = new Point(contentPoint.x, contentPoint.y); // Content box
-    int marginBottom = 80; // Vertical margin between text fields
+    Point cb = new Point(contentPoint.x, contentPoint.y); 
+    /** Vertical margin between text fields **/
+    int marginBottom = 80; 
     
     cb.setLocation(contentPoint.x, contentPoint.y);
     for (TextField field : fields) {
@@ -83,9 +95,7 @@ public class ProfilePanelInfo extends Panel {
       remove(saveBtn);
     }
 
-    resetForm();
     repaint();
-
     setEditable(false);
   }
 
@@ -103,11 +113,7 @@ public class ProfilePanelInfo extends Panel {
       field.setEditable(true);
     }
 
-    saveBtn.setSize(310, 50);
-    saveBtn.setCornerRadius(Button.ROUND);
-    saveBtn.addActionListener(HomeUI.confirmDialogAction(saveFormUserData(), "Save and overwrite profile info?"));
     add(saveBtn);
-
     MasterUI.setComponentStyles(this, "light");
     repaint();
 
@@ -177,15 +183,32 @@ public class ProfilePanelInfo extends Panel {
   public ActionListener saveFormUserData() {
     return new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        if (usernameField.getText().isBlank() || emailField.getText().isBlank()) {
+          JOptionPane.showMessageDialog(null, "Username or mail cannot be empty.");
+          resetForm();
+          return;
+        }
+        User check = new User(user);
+        check.setUsername(usernameField.getText());
+        check.setEmail(emailField.getText());
+        if (!DatabaseAPI.isAvailable(check)) {
+          JOptionPane.showMessageDialog(null, "Username of mail already exists.");
+          resetForm();
+          return;
+        }
         user.setUsername(usernameField.getText());
         user.setEmail(emailField.getText());
         user.setFirstname(firstnameField.getText());
         user.setLastname(lastnameField.getText());
-        setToStaticMode();
+        DatabaseAPI.editUser(user);
       }
     };
   }
 
+  /**
+   * Get save user data info button
+   * @return Save Button object
+   */
   public Button getSaveBtn() {
     return saveBtn;
   }
