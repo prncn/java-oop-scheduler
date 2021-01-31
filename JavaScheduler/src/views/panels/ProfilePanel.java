@@ -99,12 +99,11 @@ public class ProfilePanel extends Panel {
 
     lcpanel = new Panel();
     lcpanel.setBackground(MasterUI.lightCol);
-    lcpanel.setBounds(450, 100, 300, 520);
+    lcpanel.setBounds(450, 100, 310, 520);
 
-    Label lcNameLabel = new Label(0, 0, "Location name");
     lcNameField = new TextField(0, 20);
     lcNameField.setText("Test");
-    lcpanel.add(lcNameLabel);
+    MasterUI.placeFieldLabel(lcNameField, "Location name", lcpanel);
     lcpanel.add(lcNameField);
 
     TextField[] lcFields = initLocationFields();
@@ -130,13 +129,13 @@ public class ProfilePanel extends Panel {
     });
     add(lcAddBtn);
     setComponentZOrder(lcAddBtn, 0);
-    selectLocation = new TextField(0, lcpanel.getHeight() - 200);
+    selectLocation = new TextField(0, lcpanel.getHeight() - 190);
     selectLocation.setSize(selectLocation.getWidth() - 40, selectLocation.getHeight());
     Button dpdwn = selectLocation.appendButton(MasterUI.downIcon);
     dpdwn.addActionListener(e -> drawLocationListPanel(lcpanel));
 
-    lcpanel.add(selectLocation);
     lcpanel.add(dpdwn);
+    lcpanel.add(selectLocation);
     add(lcpanel);
     add(locationTitle);
     MasterUI.setComponentStyles(lcpanel, "light");
@@ -312,17 +311,15 @@ public class ProfilePanel extends Panel {
       field.setName(labelStr);
 
       if (i % 2 == 0) {
-        Label label = new Label(0, y, labelStr);
         field.setSize(200, field.getHeight());
         field.setLocation(0, y + 20);
+        MasterUI.placeFieldLabel(field, labelStr, lcpanel);
         lcpanel.add(field);
-        lcpanel.add(label);
       } else {
-        Label label = new Label(210, y, labelStr);
         field.setSize(100, field.getHeight());
         field.setLocation(210, y + 20);
+        MasterUI.placeFieldLabel(field, labelStr, lcpanel);
         lcpanel.add(field);
-        lcpanel.add(label);
         y += 80;
       }
     }

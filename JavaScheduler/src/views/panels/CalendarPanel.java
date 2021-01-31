@@ -472,6 +472,7 @@ public class CalendarPanel extends Panel {
       e.setSize(200, 40);
       e.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 30f));
       e.wipeBackground();
+      e.setOpaque(true);
     });
   }
 

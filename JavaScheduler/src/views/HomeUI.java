@@ -270,7 +270,7 @@ public class HomeUI extends MasterUI {
     DateTimeFormatter dateformat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     DateTimeFormatter timeformat = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    Label footerTime = new Label(85, 10, LocalTime.now().format(timeformat));
+    Label footerTime = new Label(85, 30, LocalTime.now().format(timeformat));
     Label footerDate = new Label(footerTime.getX(), footerTime.getY() + footerTime.getHeight() - 5, LocalDate.now().format(dateformat));
 
     footerTime.setForeground(Color.white);

@@ -13,7 +13,6 @@ import javax.swing.text.DocumentFilter;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.Graphics;
 
 import controllers.DatabaseAPI;
 import models.User;
@@ -122,10 +121,16 @@ public class TextField extends JTextField {
     setBorder(javax.swing.BorderFactory.createEmptyBorder(p, p, p, p));
   }
 
-  
+  /**
+   * Append button to field, on the right.
+   * 
+   * @param icon - Icon to be set into the button
+   * @return Button on text field
+   */
   public Button appendButton(ImageIcon icon) {
-    Button btn = new Button(getX() + getWidth() - 10, getY(), "", getBackground());
-    btn.setSize(getHeight() + 10, getHeight());
+    Button btn = new Button(getX() + getWidth() - 20, getY(), "", getBackground());
+    btn.setSize(getHeight() + 20, getHeight());
+    btn.setCornerRadius(Button.SMOOTH);
     btn.setIcon(icon);
     return btn;
   }
@@ -262,7 +267,7 @@ public class TextField extends JTextField {
       scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
     scroll.getVerticalScrollBar().setUnitIncrement(14);
     scroll.setBorder(BorderFactory.createEmptyBorder());
-    scroll.setBounds(getX(), getY() + getHeight(), getWidth() + 40, HGHT * options);
+    scroll.setBounds(getX(), getY() + getHeight() - 5, getWidth() - 18, HGHT * options);
     MasterUI.setComponentStyles(dppanel, "light");
 
     panel.add(this);

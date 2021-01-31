@@ -181,8 +181,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     }
 
     confirmBtn.setTab();
-    confirmBtn.centerText();
-    confirmBtn.setRounded(true);
+    confirmBtn.setCornerRadius(Button.ROUND);
 
     add(confirmBtn);
   }
@@ -325,12 +324,9 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       MasterUI.placeFieldLabel(attachField, "Attachments (optional)", this);
     }
     attachField.setEditable(false);
-    Button attachBtn = new Button(attachField.getX() + attachField.getWidth(), attachField.getY(), "",
-        MasterUI.lightColAlt);
-    attachBtn.setIcon(MasterUI.folderIcon);
+    Button attachBtn = attachField.appendButton(MasterUI.folderIcon);
     attachBtn.setDark(false);
     attachBtn.setForeground(MasterUI.accentCol);
-    attachBtn.setSize(attachField.getHeight(), attachField.getHeight());
     attachBtn.addActionListener(e -> {
       JFileChooser chooser = new JFileChooser();
       chooser.setAcceptAllFileFilterUsed(false);
@@ -437,10 +433,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     searchUserField = new TextField(400, 260);
     MasterUI.placeFieldLabel(searchUserField, "People to invite", this);
 
-    addUserBtn = new Button(700, searchUserField.getY(), "", MasterUI.lightColAlt);
-    addUserBtn.setSize(40, 40);
-    addUserBtn.setIcon(MasterUI.addUserIcon);
-
+    addUserBtn = searchUserField.appendButton(MasterUI.addUserIcon);
     userQueryResult = new Label(0, 0, "");
     participantListPosition = searchUserField.getY();
     addUserBtn.addActionListener(e -> searchParticipant());
@@ -480,8 +473,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     Label priorityLabel = new Label(40, 95, "Priority");
     priorityField = new TextField(40, 120);
     loPrioBtn = new Button(40, 120, "LOW", new Color(171, 169, 239));
-    midPrioBtn = new Button(140, 120, "MEDIUM", new Color(129, 109, 254));
-    hiPrioBtn = new Button(240, 120, "HIGH", MasterUI.accentCol);
+    midPrioBtn = new Button(145, 120, "MEDIUM", new Color(129, 109, 254));
+    hiPrioBtn = new Button(250, 120, "HIGH", MasterUI.accentCol);
 
     loPrioBtn.addActionListener(e -> prioBtnAction(Priority.LOW));
     midPrioBtn.addActionListener(e -> prioBtnAction(Priority.MEDIUM));
@@ -556,7 +549,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private void initDatePicker() {
     Button openDatePicker = new Button(285, dateField.getY(), "", MasterUI.accentCol);
     openDatePicker.setIcon(MasterUI.calendarIcon);
-    openDatePicker.setSize(55, 40);
+    openDatePicker.setSize(65, 40);
 
     redpanel = new CalendarPanel(frame, 40, true, null);
     redpanel.setSize(0, 0);

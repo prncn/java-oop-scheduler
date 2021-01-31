@@ -66,8 +66,8 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon createdMeetingImage = new ImageIcon(fileRoot + imagesRoot + "undraw_relaxing_walk_mljx.png");
   public static ImageIcon dashImage1 = new ImageIcon(fileRoot + imagesRoot + "undraw_complete_task_u2c3.png");
   public static ImageIcon dashImage2 = new ImageIcon(fileRoot + imagesRoot + "undraw_Onboarding_re_6osc.png");
-  public static ImageIcon dashImage3 = new ImageIcon(fileRoot + imagesRoot + "undraw_Online_calendar_re_wk3t.png");
-  public static ImageIcon dashImage4 = new ImageIcon(fileRoot + imagesRoot + "undraw_Statistics_re_kox4.png");
+  public static ImageIcon dashImage3 = new ImageIcon(fileRoot + imagesRoot + "undraw_complete_task_u2c3.png");
+  public static ImageIcon dashImage4 = new ImageIcon(fileRoot + imagesRoot + "undraw_complete_task_u2c3.png");
   public static ImageIcon dashImage5 = new ImageIcon(fileRoot + imagesRoot + "undraw_Navigation_re_wxx4.png");
   public static ImageIcon avatarImage1 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-1.png");
   public static ImageIcon avatarImage2 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-2.png");
@@ -148,7 +148,8 @@ abstract public class MasterUI extends JFrame {
   }
 
   /**
-   * Place label of name of textfield above that textfield.
+   * Place label of name of textfield above that textfield. This is not a method
+   * for TextField since it would not be callable on JPasswordFields for instance.
    * 
    * @param field - Textfield of input
    * @param name  - Name corresponding of textfield

@@ -20,7 +20,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 
 public class Button extends JButton implements MouseListener {
 
@@ -31,13 +30,17 @@ public class Button extends JButton implements MouseListener {
   private int height = 40;
   private boolean dark = true;
   private boolean filled;
-  private boolean rounded = false;
   private boolean isTab = false;
   private boolean isRadio = false;
   private boolean isActive = false;
+  private int cornerRadius = FLAT;
   private ActionListener switchPanelAction;
   private Color prevColor;
   private static ArrayList<Button> links = new ArrayList<>();
+  
+  public final static int FLAT = 0;
+  public final static int SMOOTH = 20;
+  public final static int ROUND = 50;
 
   public Button(int x, int y, String text, Color color) {
     super(text);
@@ -240,20 +243,19 @@ public class Button extends JButton implements MouseListener {
    * 
    * @return Boolean value of rounded
    */
-  public boolean getRounded() {
-    return rounded;
+  public int getCornerRadius() {
+    return cornerRadius;
   }
 
   /**
    * Set whether button is rounded
    * 
-   * @param value - Boolean value to be set of rounded
+   * @param cornerRadius - Boolean value to be set of rounded
    */
-  public void setRounded(boolean value) {
-    if (getRounded() == value)
+  public void setCornerRadius(int cornerRadius) {
+    if (getCornerRadius() == cornerRadius)
       return;
-    setOpaque(!value);
-    rounded = value;
+    this.cornerRadius = cornerRadius;
     repaint();
   }
 
@@ -268,12 +270,12 @@ public class Button extends JButton implements MouseListener {
 
   private void radioToggleAction() {
     if (getActive()) {
-      setRounded(false);
+      setCornerRadius(ROUND);
       setOpaque(false);
       setEnabled(true);
       repaint();
     } else {
-      setRounded(true);
+      setCornerRadius(ROUND);
       setEnabled(false);
     }
     toggleActive();
@@ -303,7 +305,7 @@ public class Button extends JButton implements MouseListener {
     this.isRadio = isRadio;
     repaint();
     if (isActive) {
-      setRounded(true);
+      setCornerRadius(ROUND);
       setEnabled(false);
     }
     addActionListener(radioAction);
@@ -336,15 +338,15 @@ public class Button extends JButton implements MouseListener {
 
   @Override
   protected void paintComponent(Graphics g) {
+    setOpaque(false);
     Graphics2D g2d = (Graphics2D) g.create();
     g2d.setColor(getBackground());
-    if (getRounded()) {
-      g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 50, 50);
-    } else if (getRadio()) {
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g2d.fillRoundRect(0, 0, getWidth(), getHeight(), getCornerRadius(), getCornerRadius());
+    if (getRadio()) {
       g2d.setColor(Color.WHITE);
       g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      g2d.drawRoundRect(0, 0, getWidth() - 1, getWidth() - 1, 50, 50);
+      g2d.drawRoundRect(0, 0, getWidth() - 1, getWidth() - 1, ROUND, ROUND);
     }
     super.paintComponent(g2d);
   }

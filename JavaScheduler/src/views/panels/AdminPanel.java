@@ -54,9 +54,10 @@ public class AdminPanel extends Panel {
         panel.repaint();
       }
     });
-
-    searchBack.add(searchBtn);
+    
     searchBack.add(userQueryResult);
+    searchBack.add(searchBtn);
+    searchBack.setComponentZOrder(searchBtn, 0);
     add(adminTitle);
     
     MasterUI.setComponentStyles(this, "light");
@@ -75,15 +76,15 @@ public class AdminPanel extends Panel {
       public void changedUpdate(DocumentEvent e) {
         updateSuggest();
       }
-
+      
       public void removeUpdate(DocumentEvent e) {
         updateSuggest();
       }
-
+      
       public void insertUpdate(DocumentEvent e) {
         updateSuggest();
       }
-
+      
       public void updateSuggest() {
         if (!searchField.getText().isBlank()) {
           List<User> suggestions = new ArrayList<>(entries);

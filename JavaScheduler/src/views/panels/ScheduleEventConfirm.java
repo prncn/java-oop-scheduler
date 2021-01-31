@@ -33,7 +33,7 @@ public class ScheduleEventConfirm extends Panel {
     backCreate.setVerticalAlignment(SwingConstants.CENTER);
     backCreate.setVerticalTextPosition(SwingConstants.CENTER);
     backCreate.addActionListener(e -> HomeUI.createTab.changeReferencePanel(createMeetingPanel));
-    backCreate.setRounded(true);
+    backCreate.setCornerRadius(Button.ROUND);
 
     Label screenTitle = new Label(40, 40, "");
     Label successMsg = new Label(40, 150, "");
