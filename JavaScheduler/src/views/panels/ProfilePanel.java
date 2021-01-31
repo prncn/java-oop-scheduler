@@ -56,19 +56,38 @@ public class ProfilePanel extends Panel {
    * @param user - User to be display
    */
   private void drawProfileSection(User user) {
+    Panel panel = this;
     Label profileTitle = new Label(40, 40, "Profile");
     profileTitle.setHeading();
 
     ProfilePanelInfo infoPanel = new ProfilePanelInfo(user, false);
-    infoPanel.setStatic();
+    infoPanel.setToStaticMode();
 
-    editBtn = new Button(150, 35, "Edit");
-    editBtn.setSmall();
+    editBtn = new Button(40, 440, "Edit", MasterUI.primaryCol);
     editBtn.addActionListener(infoPanel.setEditAction());
+    editBtn.addActionListener(e -> { 
+      remove(editBtn); 
+      add(cnclBtn); 
+      panel.setComponentZOrder(cnclBtn, 0); 
+      panel.repaint(); 
+    });
 
-    cnclBtn = new Button(editBtn.getX() + editBtn.getWidth(), editBtn.getY(), "Cancel");
+    cnclBtn = new Button(profileTitle.getX() + 250, profileTitle.getY(), "Cancel");
     cnclBtn.setSmall();
     cnclBtn.addActionListener(infoPanel.setStaticAction());
+    cnclBtn.addActionListener(e -> { 
+      remove(cnclBtn); 
+      add(editBtn); 
+      panel.setComponentZOrder(editBtn, 0); 
+      panel.repaint(); 
+    });
+
+    infoPanel.getSaveBtn().addActionListener(e -> {
+      remove(cnclBtn);
+      add(editBtn);
+      panel.setComponentZOrder(editBtn, 0); 
+      panel.repaint(); 
+    });
 
     stats_1 = new Label(40, 600, "You're partaking in " + user.getEvents().size() + " meetings.");
     stats_1.setForeground(MasterUI.accentCol);
@@ -76,7 +95,6 @@ public class ProfilePanel extends Panel {
 
     add(stats_1);
     add(editBtn);
-    add(cnclBtn);
     add(profileTitle);
     add(infoPanel);
 
