@@ -75,6 +75,7 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon avatarImage4 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-4.png");
   public static ImageIcon avatarImage5 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-5.png");
   public static ImageIcon avatarImage6 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-6.png");
+  public static ImageIcon avatarImage7 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-7.png");
 
   public static ImageIcon favicon = new ImageIcon(fileRoot + iconsRoot + "category-solid-36.png");
   public static ImageIcon adminIcon = new ImageIcon(fileRoot + iconsRoot + "menu-alt-left-regular-24.png");
@@ -189,11 +190,9 @@ abstract public class MasterUI extends JFrame {
         c.setBackground(background);
         c.setForeground(foreground);
         ((JTextComponent) c).setCaretColor(foreground);
-      } else if (c instanceof JButton) {
-        c.setFont(monoFont);
-        if (((Button) c).getTab()) {
-          c.setFont(bodyFont);
-        }
+      } 
+      if (c instanceof JButton) {
+        c.setFont(bodyFont);
         if (((Button) c).getDark()) {
           ((AbstractButton) c).setForeground(fontCol);
         }

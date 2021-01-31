@@ -16,9 +16,11 @@ import java.awt.event.ActionListener;
 
 import java.awt.Color;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 
 public class Button extends JButton implements MouseListener {
 
@@ -194,8 +196,8 @@ public class Button extends JButton implements MouseListener {
     if (getTab())
       return;
     setSize(200, 50);
-    setHorizontalAlignment(SwingConstants.LEFT);
-    setMargin(new Insets(5, 5, 10, 10));
+    setHorizontalAlignment(SwingConstants.LEADING);
+    setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 0));
     setFont(this.getFont().deriveFont(13f));
     setForeground(Color.WHITE);
     setColor(MasterUI.primaryColAlt.darker());

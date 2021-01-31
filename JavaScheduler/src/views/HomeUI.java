@@ -299,14 +299,16 @@ public class HomeUI extends MasterUI {
    * sizes for left sidebar.
    */
   private void styleSidebar() {
-    Label avatarIcon = new Label(10, 90, "");
-    avatarIcon.setIcon(FormatUtil.resizeImageIcon(MasterUI.avatarImage3, 0.7f));
+    Label avatarIcon = new Label(10, 30, "");
+    avatarIcon.setIcon(FormatUtil.resizeImageIcon(MasterUI.avatarImage7, 0.7f));
     avatarIcon.setSize(avatarIcon.getIcon().getIconWidth(), avatarIcon.getIcon().getIconHeight());
 
-    Label headerinfoUser = new Label(avatarIcon.getX() + avatarIcon.getWidth() + 10, avatarIcon.getY() + 10, "Logged in as");
-    Label headerinfoEmail = new Label(headerinfoUser.getX(), headerinfoUser.getY() + 25, user.getUsername());
+    Label headerinfoUser = new Label(10, 140, "Lorenzo Guadalupe");
+    Label headerinfoEmail = new Label(headerinfoUser.getX(), headerinfoUser.getY() + 20, user.getUsername());
+    headerinfoUser.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 16f));
+    headerinfoUser.setForeground(Color.WHITE);
+    headerinfoUser.setUnset(true);
     headerinfoEmail.setSize(70, 24);
-    headerinfoEmail.setHorizontalAlignment(SwingConstants.RIGHT);
     
     sidebar.setBackground(primaryColAlt.darker());
     sidebar.setBounds(0, 0, 200, this.getHeight());
