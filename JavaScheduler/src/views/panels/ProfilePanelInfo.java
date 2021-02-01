@@ -7,13 +7,10 @@ import views.components.Button;
 import views.components.Panel;
 import views.components.TextField;
 
-import java.awt.event.ActionListener;
-import javax.swing.JOptionPane;
-
 import controllers.DatabaseAPI;
 
+import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
 import java.awt.Point;
 
 public class ProfilePanelInfo extends Panel {

@@ -2,6 +2,9 @@ package views.panels;
 
 import controllers.*;
 
+import java.util.Random;
+
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 
@@ -38,7 +41,9 @@ public class ScheduleEventConfirm extends Panel {
     Label screenTitle = new Label(40, 40, "");
     Label successMsg = new Label(40, 150, "");
     Label secondaryMsg = new Label(40, 290, "All participants have been notified.");
-    Label heroImage = new Label(MasterUI.createdMeetingImage);
+    ImageIcon[] heroImages = { MasterUI.createdMeetingImage1, MasterUI.createdMeetingImage2 };
+    Label heroImage = new Label(FormatUtil.resizeImageIcon(heroImages[new Random().nextInt(2)], 0.7f));
+    heroImage.setSize(heroImage.getIcon().getIconWidth(), heroImage.getIcon().getIconHeight());
 
     String meetingDateDay = FormatUtil.formatOrdinal(event.getDate().getDayOfMonth());
     String meetingDateMonth = FormatUtil.capitalize(event.getDate().getMonth().toString());
@@ -52,7 +57,7 @@ public class ScheduleEventConfirm extends Panel {
       screenTitle.setText("Edited.");
     }
     secondaryMsg.setSize(800, 40);
-    heroImage.setBounds(400, 250, 542, 366);
+    heroImage.setLocation(400, 250);
     if (event.getParticipants().size() < 2) {
       secondaryMsg.setText("Your personal activity has been added.");
     }
