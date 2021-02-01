@@ -96,15 +96,15 @@ public class HomeUI extends MasterUI {
    */
   private void createSidebarTabs() {
     dashboardTab = new Button(tabsBox.x, tabsBox.y, "Dashboard", dashPanel);
-    createTab = new Button(tabsBox.x, tabsBox.y + 50, "Schedule Event", createPanel);
-    calendarTab = new Button(tabsBox.x, tabsBox.y + 100, "View Calendar", calendarPanel);
+    createTab = new Button(tabsBox.x, tabsBox.y + 50, "Schedule", createPanel);
+    calendarTab = new Button(tabsBox.x, tabsBox.y + 100, "Calendar", calendarPanel);
     profileTab = new Button(tabsBox.x, tabsBox.y + 150, "Profile", profilePanel);
     exportTab = new Button(tabsBox.x, tabsBox.y + 300, "Export Schedule", primaryColAlt);
-    dashboardTab.setIcon(dashboardIcon);
-    createTab.setIcon(createMeetingIcon);
-    calendarTab.setIcon(calendarIcon);
-    exportTab.setIcon(exportIcon);
-    profileTab.setIcon(profileIcon);
+    dashboardTab.setIcon(FormatUtil.resizeImageIcon(dashboardIcon, 0.7f));
+    createTab.setIcon(FormatUtil.resizeImageIcon(createMeetingIcon, 0.7f));
+    calendarTab.setIcon(FormatUtil.resizeImageIcon(calendarIcon, 0.7f));
+    exportTab.setIcon(FormatUtil.resizeImageIcon(exportIcon, 0.7f));
+    profileTab.setIcon(FormatUtil.resizeImageIcon(profileIcon, 0.7f));
     exportTab.setTab();
 
     List<Button> tabs = new ArrayList<>(Arrays.asList(dashboardTab, createTab, calendarTab, profileTab, exportTab, adminTab));
@@ -133,7 +133,7 @@ public class HomeUI extends MasterUI {
    */
   private void initLogoutTab() {
     logoutTab = new Button(0, exportTab.getY() + 50, "Logout", primaryColAlt);
-    logoutTab.setIcon(logoutIcon);
+    logoutTab.setIcon(FormatUtil.resizeImageIcon(logoutIcon, 0.7f));
     logoutTab.setTab();
     sidebar.add(logoutTab);
 
@@ -323,7 +323,7 @@ public class HomeUI extends MasterUI {
     avatarIcon.setIcon(FormatUtil.resizeImageIcon(MasterUI.avatarImage7, 0.7f));
     avatarIcon.setSize(avatarIcon.getIcon().getIconWidth(), avatarIcon.getIcon().getIconHeight());
 
-    Label headerinfoUser = new Label(10, 140, "Lorenzo Guadalupe");
+    Label headerinfoUser = new Label(10, 140, user.getFirstname() + " " +user.getLastname());
     Label headerinfoEmail = new Label(headerinfoUser.getX(), headerinfoUser.getY() + 20, user.getUsername());
     headerinfoUser.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 16f));
     headerinfoUser.setForeground(Color.WHITE);
@@ -377,7 +377,7 @@ public class HomeUI extends MasterUI {
     if (user.getUsername().equals("admin")) {
       AdminPanel adminPanel = new AdminPanel(frame);
       adminTab = new Button(tabsBox.x, tabsBox.y - 50, "Admin Panel", adminPanel);
-      adminTab.setIcon(adminIcon);
+      adminTab.setIcon(FormatUtil.resizeImageIcon(adminIcon, 0.7f));
       adminTab.setTab();
       sidebar.add(adminTab);
     }

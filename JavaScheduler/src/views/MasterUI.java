@@ -15,6 +15,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.JTextComponent;
 
+import controllers.FormatUtil;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -64,11 +66,12 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon loginHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Analysis_re_w2vd.png");
   public static ImageIcon signupHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Cloud_docs_re_xjht.png");
   public static ImageIcon createdMeetingImage = new ImageIcon(fileRoot + imagesRoot + "undraw_relaxing_walk_mljx.png");
-  public static ImageIcon dashImage1 = new ImageIcon(fileRoot + imagesRoot + "undraw_complete_task_u2c3.png");
-  public static ImageIcon dashImage2 = new ImageIcon(fileRoot + imagesRoot + "undraw_Onboarding_re_6osc.png");
-  public static ImageIcon dashImage3 = new ImageIcon(fileRoot + imagesRoot + "undraw_complete_task_u2c3.png");
-  public static ImageIcon dashImage4 = new ImageIcon(fileRoot + imagesRoot + "undraw_complete_task_u2c3.png");
-  public static ImageIcon dashImage5 = new ImageIcon(fileRoot + imagesRoot + "undraw_Navigation_re_wxx4.png");
+  public static ImageIcon dashImage1 = FormatUtil.resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-1.png"), 0.5f);
+  public static ImageIcon dashImage2 = FormatUtil.resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-2.png"), 0.5f);
+  public static ImageIcon dashImage3 = FormatUtil.resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-3.png"), 0.5f);
+  public static ImageIcon dashImage4 = FormatUtil.resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-4.png"), 0.5f);
+  public static ImageIcon dashImage5 = FormatUtil.resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-5.png"), 0.5f);
+  public static ImageIcon dashhero = new ImageIcon(fileRoot + imagesRoot + "taxi-dashhero-1.png");
   public static ImageIcon avatarImage1 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-1.png");
   public static ImageIcon avatarImage2 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-2.png");
   public static ImageIcon avatarImage3 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-3.png");

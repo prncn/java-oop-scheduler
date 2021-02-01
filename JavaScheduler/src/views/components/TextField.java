@@ -109,7 +109,8 @@ public class TextField extends JTextField {
    */
   public void wipeBackground() {
     setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
-    setOpaque(false);
+    setBackground(MasterUI.lightCol);
+    setOpaque(true);
   }
 
   /**
@@ -294,6 +295,5 @@ public class TextField extends JTextField {
     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
     super.paintComponent(g);
-
   }
 }
