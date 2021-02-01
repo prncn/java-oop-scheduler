@@ -95,7 +95,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     }
 
     PAGE_ONE = new Panel();
-    PAGE_ONE.setBounds(300, 120, 320, 400);
+    PAGE_ONE.setBounds(100, 120, 320, 400);
     PAGE_ONE.setBackground(MasterUI.lightCol);
     add(PAGE_ONE);
 
@@ -183,7 +183,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * Create and initialise page buttons
    */
   private void initPageButtons() {
-    confirmBtn = new Button(300, 550, "Confirm", MasterUI.secondaryCol);
+    confirmBtn = new Button(PAGE_ONE.getX(), 550, "Confirm", MasterUI.secondaryCol);
     switch (mode) {
       case VIEW:
         confirmBtn.setText("Back");
@@ -227,7 +227,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     locationField.setSize(locationField.getWidth() - 40, dateField.getHeight());
     lc_dpdwn = locationField.appendButton(MasterUI.downIcon);
     lc_dpdwn.addActionListener(e -> locationDropdownSelection(locationField));
-    if (mode != VIEW ) PAGE_ONE.add(lc_dpdwn);
+    if (mode != VIEW)
+      PAGE_ONE.add(lc_dpdwn);
     MasterUI.placeFieldLabel(locationField, "Location", PAGE_ONE);
 
     ArrayList<TextField> fields = new ArrayList<>(
@@ -247,7 +248,9 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
             redpanel.isActive = false;
             e.setText("");
           }
-          public void focusLost(FocusEvent f) {}
+
+          public void focusLost(FocusEvent f) {
+          }
         });
       }
     });
@@ -405,13 +408,13 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
           exp.printStackTrace();
         }
       });
-      if(file.getName().toLowerCase().endsWith(".pdf")) {
+      if (file.getName().toLowerCase().endsWith(".pdf")) {
         ficon.setIcon(FormatUtil.resizeImageIcon(MasterUI.pdfIcon, 0.9f));
       }
-      if(file.getName().toLowerCase().endsWith(".jpg")) {
+      if (file.getName().toLowerCase().endsWith(".jpg")) {
         ficon.setIcon(FormatUtil.resizeImageIcon(MasterUI.jpgIcon, 0.9f));
       }
-      if(file.getName().toLowerCase().endsWith(".png")) {
+      if (file.getName().toLowerCase().endsWith(".png")) {
         ficon.setIcon(FormatUtil.resizeImageIcon(MasterUI.pngIcon, 0.9f));
       }
       ficon.setSize(48, 48);
@@ -563,7 +566,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * Create and initialise date picker
    */
   private void initDatePicker() {
-    Button openDatePicker = new Button(dateField.getX() + dateField.getWidth() - 10, dateField.getY(), "", MasterUI.accentCol);
+    Button openDatePicker = new Button(dateField.getX() + dateField.getWidth() - 10, dateField.getY(), "",
+        MasterUI.accentCol);
     openDatePicker.setIcon(MasterUI.calendarIcon);
     openDatePicker.setSize(65, 40);
 
@@ -635,6 +639,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
             createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, CREATE);
             HomeUI.switchPanel(createMeetingConfirm);
             HomeUI.createTab.changeReferencePanel(createMeetingConfirm);
+            user.createEvent(event);
             break;
           case EDIT:
             editEvent.updateEvent(event);

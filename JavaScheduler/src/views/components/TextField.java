@@ -98,7 +98,7 @@ public class TextField extends JTextField {
   /**
    * Set default style for text field
    */
-  private void setDefaultStyle() {
+  public void setDefaultStyle() {
     setCaretColor(MasterUI.primaryColAlt);
     setBackground(MasterUI.lightColAlt);
     setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));

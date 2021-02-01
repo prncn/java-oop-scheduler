@@ -20,8 +20,7 @@ public class ScheduleEventConfirm extends Panel {
 
   public ScheduleEventConfirm(JFrame frame, User user, Event event, int mode) {
     super(frame);
-    user.createEvent(event);
-
+    
     Button backCreate;
     createMeetingPanel = new ScheduleEvent(frame, user, null, ScheduleModes.CREATE);
     if (mode == ScheduleModes.CREATE) {

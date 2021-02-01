@@ -328,7 +328,7 @@ public class DatabaseAPI {
       while (rs.next()) {
         int eventId = rs.getInt("event_id");
         String name = rs.getString("name");
-        int duration = rs.getInt("durationMinutes");
+        int duration = rs.getInt("duration_minutes");
         LocalDate date = rs.getDate("date").toLocalDate();
         LocalTime time = rs.getTime("time").toLocalTime();
         String description = rs.getString("description");
@@ -479,8 +479,7 @@ public class DatabaseAPI {
    * @return ID on successful creation, return -1 on failed creation
    */
   public static int createEvent(Event event) {
-
-    String sql = "INSERT INTO Event (reminder, priority, name, date, time, durationMinutes, description, host_id, location_id)"
+    String sql = "INSERT INTO Event (host_id, name, date, time, duration_minutes, location_id, reminder, priority, description)"
         + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
     Connection connection = connectDatabase();
     int eventId;
@@ -488,16 +487,15 @@ public class DatabaseAPI {
     try {
       PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-      statement.setString(1, event.getReminder().name());
-      statement.setString(2, event.getPriority().name());
-      statement.setString(3, event.getName());
-      statement.setDate(4, Date.valueOf(event.getDate()));
-      statement.setTime(5, Time.valueOf(event.getTime()));
-      statement.setInt(6, event.getDurationMinutes());
-      statement.setString(7, event.getDescription());
-
-      statement.setInt(8, event.getHostId());
-      statement.setInt(9, event.getLocation().getId());
+      statement.setInt(1, event.getHostId());
+      statement.setString(2, event.getName());
+      statement.setDate(3, Date.valueOf(event.getDate()));
+      statement.setTime(4, Time.valueOf(event.getTime()));
+      statement.setInt(5, event.getDurationMinutes());
+      statement.setInt(6, event.getLocation().getId());
+      statement.setString(7, event.getReminder().name());
+      statement.setString(8, event.getPriority().name());
+      statement.setString(9, event.getDescription());
       statement.executeUpdate();
 
       ResultSet generatedKey = statement.getGeneratedKeys();
@@ -526,7 +524,7 @@ public class DatabaseAPI {
    * @return
    */
   public static boolean editEvent(Event event) {
-    String sql = "UPDATE Event SET reminder = ? , priority = ? , name = ? , date = ? , time = ? , durationMinutes = ? , description = ? ,  host_id = ? ,location_id = ? "
+    String sql = "UPDATE Event SET reminder = ? , priority = ? , name = ? , date = ? , time = ? , duration_minutes = ? , description = ? ,  host_id = ? ,location_id = ? "
         + "WHERE event_id = ? ";
 
     Connection connection = connectDatabase();

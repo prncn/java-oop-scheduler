@@ -351,7 +351,7 @@ public class Dashboard extends Panel implements CardModes {
     Panel card = new Panel();
     Point c = new Point(15, 15);
     card.setRounded(true);
-    card.setBounds(p.x, p.y, 300, 100);
+    card.setBounds(p.x, p.y, 300, 150);
     card.setBackground(MasterUI.lightColAlt);
     Button view = new Button(p.x, p.y + 40, "");
     view.setSize(300, 60);
