@@ -29,6 +29,7 @@ public class Button extends JButton implements MouseListener {
   private int width = 100;
   private int height = 40;
   private boolean dark = true;
+  private boolean blank;
   private boolean filled;
   private boolean isTab = false;
   private boolean isRadio = false;
@@ -269,6 +270,9 @@ public class Button extends JButton implements MouseListener {
     return isRadio;
   }
 
+  /**
+   * 
+   */
   private void radioToggleAction() {
     if (getActive()) {
       setCornerRadius(ROUND);
@@ -283,6 +287,9 @@ public class Button extends JButton implements MouseListener {
 
   }
 
+  /**
+   * TODO
+   */
   private ActionListener radioAction = e -> {
     radioToggleAction();
     for (Button link : links) {
@@ -301,7 +308,6 @@ public class Button extends JButton implements MouseListener {
   public void setRadio(boolean isRadio) {
     if (getRadio() == isRadio)
       return;
-    setOpaque(!isRadio);
     setSize(13, 13);
     this.isRadio = isRadio;
     repaint();
@@ -312,8 +318,18 @@ public class Button extends JButton implements MouseListener {
     addActionListener(radioAction);
   }
 
+  /**
+   * TODO
+   * @param x
+   * @param y
+   * @param optionTitle
+   * @param active
+   * @param panel
+   * @return
+   */
   public static Button createRadioButton(int x, int y, String optionTitle, boolean active, Panel panel) {
     Button radioBtn = new Button(x, y, "", MasterUI.secondaryCol);
+    radioBtn.setCornerRadius(ROUND);
     radioBtn.setActive(active);
     radioBtn.setRadio(true);
     links.add(radioBtn);
@@ -337,17 +353,29 @@ public class Button extends JButton implements MouseListener {
     }
   }
 
+  public boolean getBlank() {
+    return blank;
+  }
+
+  public void setBlank(boolean blank) {
+    this.blank = blank;
+  }
+
   @Override
   protected void paintComponent(Graphics g) {
     setOpaque(false);
+    if (getBlank()) {
+      return;
+    }
     Graphics2D g2d = (Graphics2D) g.create();
     g2d.setColor(getBackground());
     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    g2d.fillRoundRect(0, 0, getWidth(), getHeight(), getCornerRadius(), getCornerRadius());
-    if (getRadio()) {
+    if (getRadio() && !getActive()) {
       g2d.setColor(Color.WHITE);
       g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       g2d.drawRoundRect(0, 0, getWidth() - 1, getWidth() - 1, ROUND, ROUND);
+    } else {
+      g2d.fillRoundRect(0, 0, getWidth(), getHeight(), getCornerRadius(), getCornerRadius());
     }
     super.paintComponent(g2d);
   }

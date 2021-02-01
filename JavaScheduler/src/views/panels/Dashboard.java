@@ -131,11 +131,9 @@ public class Dashboard extends Panel implements CardModes {
 
     Label notifLabel = new Label(650, 40, "<html>Events you've been added to:<html>");
     notifLabel.setSize(500, 40);
-    notifLabel.setFont(MasterUI.monoFont);
     notifLabel.appendIcon(MasterUI.bellIcon);
 
     Label emptyNotif = new Label(683, 80, "You're all caught up!");
-    emptyNotif.setFont(MasterUI.monoFont);
     emptyNotif.setForeground(Color.LIGHT_GRAY);
 
     redpanel.add(emptyNotif);
@@ -165,11 +163,11 @@ public class Dashboard extends Panel implements CardModes {
     filterLabel.setHeading();
     filterLabel.setForeground(Color.WHITE);
 
-    TextField filterQuery_1 = new TextField(20, 60, "filter event names...");
+    TextField filterQuery_1 = new TextField(20, 70, "filter event names...");
     filterQuery_1.setBackground(MasterUI.primaryColAlt);
     filterQuery_1.setSize(200, 40);
 
-    TextField filterQuery_2 = new TextField(20, 110, "filter locations...");
+    TextField filterQuery_2 = new TextField(20, 120, "filter locations...");
     filterQuery_2.setBackground(MasterUI.primaryColAlt);
     filterQuery_2.setSize(200, 40);
 
@@ -186,10 +184,10 @@ public class Dashboard extends Panel implements CardModes {
     });
 
     filterPanel.add(filterLabel);
-    filterPanel.add(filterQuery_1);
     filterPanel.add(fqBtn_1);
-    filterPanel.add(filterQuery_2);
     filterPanel.add(fqBtn_2);
+    filterPanel.add(filterQuery_1);
+    filterPanel.add(filterQuery_2);
 
     Panel sortPanel = new Panel();
     sortPanel.setBounds(680, 700 + filterPanel.getHeight() + 20, 280, 200);
