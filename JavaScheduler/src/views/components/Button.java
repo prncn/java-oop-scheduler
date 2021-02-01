@@ -29,8 +29,9 @@ public class Button extends JButton implements MouseListener {
   private int width = 100;
   private int height = 40;
   private boolean dark = true;
-  private boolean blank;
-  private boolean filled;
+  private boolean blank = false;
+  private boolean filled = true;  
+  private boolean outline = false;
   private boolean isTab = false;
   private boolean isRadio = false;
   private boolean isActive = false;
@@ -271,7 +272,7 @@ public class Button extends JButton implements MouseListener {
   }
 
   /**
-   * 
+   * Toggle active state when clicking on a radio button
    */
   private void radioToggleAction() {
     if (getActive()) {
@@ -288,7 +289,7 @@ public class Button extends JButton implements MouseListener {
   }
 
   /**
-   * TODO
+   * Get action listener when triggering a radio button
    */
   private ActionListener radioAction = e -> {
     radioToggleAction();
@@ -319,13 +320,14 @@ public class Button extends JButton implements MouseListener {
   }
 
   /**
-   * TODO
-   * @param x
-   * @param y
-   * @param optionTitle
-   * @param active
-   * @param panel
-   * @return
+   * Create a pre-set radio button. This button is is linked to other radio buttons,
+   * switchting their states on selection (activation).
+   * @param x - x position of button
+   * @param y - y position of button
+   * @param optionTitle - Description of option of radio button
+   * @param active - Set whether radio to be set active by default
+   * @param panel - Panel on which the radio button is placed
+   * @return Button object
    */
   public static Button createRadioButton(int x, int y, String optionTitle, boolean active, Panel panel) {
     Button radioBtn = new Button(x, y, "", MasterUI.secondaryCol);
@@ -346,19 +348,38 @@ public class Button extends JButton implements MouseListener {
   /**
    * Remove all action listener of a button
    */
-  public void wipeAllActionListener() {
+  public void wipeActionListeners() {
     ActionListener[] actions = getActionListeners();
     for (ActionListener action : actions) {
       removeActionListener(action);
     }
   }
 
+  /**
+   * Get whether button is blank (invisible). 
+   * This prevents <code>paintComponent()</code> on this object.
+   * @return Boolean blank value
+   */
   public boolean getBlank() {
     return blank;
   }
 
+  /**
+   * Set whether button should be blanke (invisible). 
+   * This prevents <code>paintComponent()</code> on this object.
+   * @param blank
+   */
   public void setBlank(boolean blank) {
     this.blank = blank;
+  }
+
+  public boolean getOutline() {
+    return outline;
+  }
+
+  public void setOutline(boolean outline) {
+    this.outline = outline;
+    repaint();
   }
 
   @Override
@@ -370,8 +391,8 @@ public class Button extends JButton implements MouseListener {
     Graphics2D g2d = (Graphics2D) g.create();
     g2d.setColor(getBackground());
     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    if (getRadio() && !getActive()) {
-      g2d.setColor(Color.WHITE);
+    if (getRadio() && !getActive() || getOutline()) {
+      if(getRadio()) g2d.setColor(Color.WHITE);
       g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       g2d.drawRoundRect(0, 0, getWidth() - 1, getWidth() - 1, ROUND, ROUND);
     } else {

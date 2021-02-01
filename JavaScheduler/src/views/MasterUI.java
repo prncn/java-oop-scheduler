@@ -15,6 +15,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.JTextComponent;
 
+import controllers.DatabaseAPI;
 import controllers.FormatUtil;
 
 import java.awt.Color;
@@ -66,11 +67,16 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon loginHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Analysis_re_w2vd.png");
   public static ImageIcon signupHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Cloud_docs_re_xjht.png");
   public static ImageIcon createdMeetingImage = new ImageIcon(fileRoot + imagesRoot + "undraw_relaxing_walk_mljx.png");
-  public static ImageIcon dashImage1 = FormatUtil.resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-1.png"), 0.5f);
-  public static ImageIcon dashImage2 = FormatUtil.resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-2.png"), 0.5f);
-  public static ImageIcon dashImage3 = FormatUtil.resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-3.png"), 0.5f);
-  public static ImageIcon dashImage4 = FormatUtil.resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-4.png"), 0.5f);
-  public static ImageIcon dashImage5 = FormatUtil.resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-5.png"), 0.5f);
+  public static ImageIcon dashImage1 = FormatUtil
+      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-1.png"), 0.5f);
+  public static ImageIcon dashImage2 = FormatUtil
+      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-2.png"), 0.5f);
+  public static ImageIcon dashImage3 = FormatUtil
+      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-3.png"), 0.5f);
+  public static ImageIcon dashImage4 = FormatUtil
+      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-4.png"), 0.5f);
+  public static ImageIcon dashImage5 = FormatUtil
+      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-5.png"), 0.5f);
   public static ImageIcon dashhero = new ImageIcon(fileRoot + imagesRoot + "taxi-dashhero-1.png");
   public static ImageIcon avatarImage1 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-1.png");
   public static ImageIcon avatarImage2 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-2.png");
@@ -103,7 +109,7 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon folderIcon = new ImageIcon(fileRoot + iconsRoot + "folder-regular-24.png");
   public static ImageIcon editIcon = new ImageIcon(fileRoot + iconsRoot + "edit-solid-24.png");
   public static ImageIcon removeIcon = new ImageIcon(fileRoot + iconsRoot + "trash-alt-regular-24.png");
-  
+
   public static ImageIcon hiPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-rd.png");
   public static ImageIcon midPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-ylw.png");
   public static ImageIcon loPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-grn.png");
@@ -114,7 +120,6 @@ abstract public class MasterUI extends JFrame {
   public MasterUI() {
     setIconImage(favicon.getImage());
     setResizable(false);
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setLayout(null);
     panel.setBackground(primaryCol);
     panel.setLayout(null);
@@ -139,6 +144,13 @@ abstract public class MasterUI extends JFrame {
       bodyFont = bodyFontAlt; // if font asset import failed, fall back to Arial
       robotoFont = bodyFont;
     }
+
+    addWindowListener(new java.awt.event.WindowAdapter() {
+      public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+        DatabaseAPI.closeDatabase();
+        System.exit(0);
+      }
+    });
   }
 
   /**
@@ -194,7 +206,7 @@ abstract public class MasterUI extends JFrame {
         c.setBackground(background);
         c.setForeground(foreground);
         ((JTextComponent) c).setCaretColor(foreground);
-      } 
+      }
       if (c instanceof JButton) {
         c.setFont(bodyFont);
         if (((Button) c).getDark()) {

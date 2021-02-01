@@ -44,11 +44,13 @@ public class DatabaseAPI {
    * after every other database API function, as multiple unused connection may
    * reach cloud traffic limit.
    */
-  private static void closeDatabase() {
+  public static void closeDatabase() {
     try {
-      con.close();
-      con = null;
-      System.out.println("Connection closed.");
+      if (con != null) {
+        con.close();
+        con = null;
+        System.out.println("Connection closed.");
+      }
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -82,7 +84,7 @@ public class DatabaseAPI {
 
     Boolean isUser = result.next();
     statement.close();
-    closeDatabase();
+    // closeDatabase();
     return isUser;
   }
 
@@ -338,7 +340,7 @@ public class DatabaseAPI {
         int host_id = rs.getInt("host_id");
         int location_id = rs.getInt("location_id");
 
-        Event event = new Event(eventId, name, description, duration, date, time, new Location("PLACEHOLDER"), priority,
+        Event event = new Event(eventId, name, description, duration, date, time, new Location("Rock Bottom"), priority,
             reminder, getParticipants(eventId), new ArrayList<File>());
 
         event.setId(eventId);

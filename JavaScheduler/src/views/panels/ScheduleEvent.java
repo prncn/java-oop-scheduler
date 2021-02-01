@@ -636,10 +636,10 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         Panel createMeetingConfirm;
         switch (mode) {
           case CREATE:
-            createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, CREATE);
-            HomeUI.switchPanel(createMeetingConfirm);
-            HomeUI.createTab.changeReferencePanel(createMeetingConfirm);
-            user.createEvent(event);
+          user.createEvent(event);
+          createMeetingConfirm = new ScheduleEventConfirm(frame, user, event, CREATE);
+          HomeUI.switchPanel(createMeetingConfirm);
+          HomeUI.createTab.changeReferencePanel(createMeetingConfirm);
             break;
           case EDIT:
             editEvent.updateEvent(event);

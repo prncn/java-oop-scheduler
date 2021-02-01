@@ -302,7 +302,6 @@ public class HomeUI extends MasterUI {
     footerTime.setHorizontalAlignment(SwingConstants.RIGHT);
     footerDate.setHorizontalAlignment(SwingConstants.RIGHT);
     sidebar.add(footerTime);
-    // sidebar.add(footerDate);
 
     while(true) {
       footerTime.setText(LocalTime.now().format(timeformat));
@@ -320,7 +319,7 @@ public class HomeUI extends MasterUI {
    */
   private void styleSidebar() {
     Label avatarIcon = new Label(10, 30, "");
-    avatarIcon.setIcon(FormatUtil.resizeImageIcon(MasterUI.avatarImage7, 0.7f));
+    avatarIcon.setIcon(FormatUtil.resizeImageIcon(user.getAvatar(), 0.7f));
     avatarIcon.setSize(avatarIcon.getIcon().getIconWidth(), avatarIcon.getIcon().getIconHeight());
 
     Label headerinfoUser = new Label(10, 140, user.getFirstname() + " " +user.getLastname());
@@ -385,6 +384,7 @@ public class HomeUI extends MasterUI {
 
   public static void main(String[] args) {
     User guest = DatabaseAPI.getUser("admin");
+    guest.setAvatar(MasterUI.avatarImage7);
     new HomeUI(guest);
   }
 
