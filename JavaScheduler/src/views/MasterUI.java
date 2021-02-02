@@ -68,6 +68,7 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon signupHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Cloud_docs_re_xjht.png");
   public static ImageIcon createdMeetingImage1 = new ImageIcon(fileRoot + imagesRoot + "taxi-schedule-1.png");
   public static ImageIcon createdMeetingImage2 = new ImageIcon(fileRoot + imagesRoot + "taxi-schedule-2.png");
+  public static ImageIcon scheduleFormImage = new ImageIcon(fileRoot + imagesRoot + "taxi-create-1.png");
   public static ImageIcon dashImage1 = FormatUtil
       .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-1.png"), 0.5f);
   public static ImageIcon dashImage2 = FormatUtil

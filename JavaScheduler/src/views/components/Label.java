@@ -66,4 +66,9 @@ public class Label extends JLabel {
     setVerticalTextPosition(SwingConstants.BOTTOM);
     setIconTextGap(10);
   }
+
+  public void fillIcon(ImageIcon icon) {
+    setIcon(icon);
+    setSize(getIcon().getIconWidth(), getIcon().getIconHeight());
+  }
 }

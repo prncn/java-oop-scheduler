@@ -129,6 +129,7 @@ public class TextField extends JTextField {
    * @return Button on text field
    */
   public Button appendButton(ImageIcon icon) {
+    setSize(getWidth() - getHeight(), getHeight());
     Button btn = new Button(getX() + getWidth() - 20, getY(), "", getBackground());
     btn.setSize(getHeight() + 20, getHeight());
     btn.setCornerRadius(Button.SMOOTH);

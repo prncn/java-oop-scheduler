@@ -153,7 +153,7 @@ public class DatabaseAPI {
    * @return <code>true</code> on successful user creation
    */
   public static boolean createUser(User user) {
-    String sql = "INSERT INTO User (username, password, email, firstName, lastName)" + " VALUES(?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO User (username, password, email, firstname, lastname)" + " VALUES(?, ?, ?, ?, ?)";
     Connection connection = connectDatabase();
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
@@ -184,7 +184,7 @@ public class DatabaseAPI {
    * @return <code>true</code>, if successful
    */
   public static boolean editUser(User user) {
-    String sql = "UPDATE User SET username = ?, email = ?, firstName = ?, lastName = ? WHERE user_id = ?";
+    String sql = "UPDATE User SET username = ?, email = ?, firstname = ?, lastname = ? WHERE user_id = ?";
 
     Connection connection = connectDatabase();
     try {
@@ -221,8 +221,8 @@ public class DatabaseAPI {
       while (result.next()) {
         String username = result.getString("username");
         String password = result.getString("password");
-        String firstname = result.getString("firstName");
-        String lastname = result.getString("lastName");
+        String firstname = result.getString("firstname");
+        String lastname = result.getString("lastname");
         String email = result.getString("email");
         allUsers.add(new User(username, password, firstname, lastname, email));
       }
@@ -289,8 +289,8 @@ public class DatabaseAPI {
       int id = result.getInt("user_id");
       String name = result.getString("username");
       String email = result.getString("email");
-      String firstname = result.getString("firstName");
-      String lastname = result.getString("lastName");
+      String firstname = result.getString("firstname");
+      String lastname = result.getString("lastname");
 
       closeDatabase();
 
@@ -377,7 +377,7 @@ public class DatabaseAPI {
       ResultSet rs = ps.executeQuery();
 
       while (rs.next()) {
-        User u = new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("firstName"),
+        User u = new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("firstname"),
             rs.getString("lastName"), rs.getString("email"));
         participants.add(u);
       }
