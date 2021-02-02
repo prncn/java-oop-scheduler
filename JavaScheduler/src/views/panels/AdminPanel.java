@@ -22,8 +22,6 @@ import views.components.TextField;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 public class AdminPanel extends Panel {
 

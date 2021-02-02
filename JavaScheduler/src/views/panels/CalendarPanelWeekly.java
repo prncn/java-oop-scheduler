@@ -2,6 +2,7 @@ package views.panels;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -156,9 +157,9 @@ public class CalendarPanelWeekly extends Panel {
     bluepanel.setAlpha(0.65f);
 
     Label eventInfo = new Label(7, 7,
-        "<html><p><strong>" + event.getName() + "</strong><br>" + time + " - " + FormatUtil.getEndTime(event) +  "</p><html>");
+        "<html><p>" + event.getName() + "<br>" + time + " - " + FormatUtil.getEndTime(event) +  "</p><html>");
     eventInfo.setSize(d_wdth - 10, bluepanel.getHeight());
-    eventInfo.setFont(MasterUI.bodyFont);
+    eventInfo.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 14f));
     eventInfo.setVerticalAlignment(SwingConstants.TOP);
     eventInfo.setHorizontalAlignment(SwingConstants.LEFT);
     eventInfo.setForeground(eventCol.darker());

@@ -235,9 +235,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
             redpanel.isActive = false;
             e.setText("");
           }
-
-          public void focusLost(FocusEvent f) {
-          }
+          public void focusLost(FocusEvent f) { }
         });
       }
     });
@@ -286,6 +284,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       Button[] prioBtns = { loPrioBtn, midPrioBtn, hiPrioBtn };
       for (Button prioBtn : prioBtns) {
         prioBtn.setEnabled(false);
+        prioBtn.setForeground(Color.WHITE);
       }
 
       repaint();
@@ -365,6 +364,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     redpanel.setSize(0, 0);
     redpanel.setBackground(MasterUI.lightCol);
     redpanel.setLayout(null);
+    redpanel.setBorder(BorderFactory.createLineBorder(Color.GRAY.brighter(), 1));
     ((CalendarPanel) redpanel).stripComponents();
     redpanel.isActive = false;
     openDatePicker.addActionListener(e -> {
@@ -373,16 +373,16 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         redpanel.isActive = false;
         PAGE_ONE.add(lc_dpdwn);
       } else {
-        redpanel.setBounds(openDatePicker.getX(), openDatePicker.getY(), 300, 310);
+        redpanel.setBounds(openDatePicker.getX() + PAGE_ONE.getX(), openDatePicker.getY() + PAGE_ONE.getY(), 300, 310);
         redpanel.isActive = true;
         PAGE_ONE.remove(lc_dpdwn);
       }
     });
 
     PAGE_ONE.add(openDatePicker);
-    PAGE_ONE.add(redpanel);
+    mainpanel.add(redpanel);
     PAGE_ONE.setComponentZOrder(openDatePicker, 0);
-    PAGE_ONE.setComponentZOrder(redpanel, 1);
+    mainpanel.setComponentZOrder(redpanel, 1);
   }
 
   /**
@@ -448,7 +448,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     attachpanel.setBackground(MasterUI.lightCol);
     attachField = new TextField(0, reminderField.getY() + TF_MRGN);
     attachpanel.setBounds(attachField.getX() + attachField.getWidth() + 100, 40, 220, 200);
-    if (mode == VIEW) {
+    if (mode == VIEW && !editEvent.getAttachments().isEmpty()) {
       MasterUI.placeFieldLabel(attachField, "Attachments", PAGE_TWO);
     } else {
       MasterUI.placeFieldLabel(attachField, "Attachments (optional)", PAGE_TWO);
@@ -562,7 +562,9 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    */
   private void drawParticipantSection() {
     searchUserField = new TextField(0, attachField.getY() + TF_MRGN);
-    MasterUI.placeFieldLabel(searchUserField, "People to invite", PAGE_TWO);
+    if (mode == CREATE) {
+      MasterUI.placeFieldLabel(searchUserField, "People to invite", PAGE_TWO);
+    }
 
     addUserBtn = searchUserField.appendButton(MasterUI.addUserIcon);
     userQueryResult = new Label(0, 0, "");
@@ -623,20 +625,27 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     pcpIconPos += 40;
   }
 
+  /**
+   * Draw description text area for event description
+   */
   private void drawDesciptionSection() {
     descField = new JTextArea();
     descField.setBackground(MasterUI.lightColAlt);
     descField.setFont(MasterUI.robotoFont);
     descField.setForeground(MasterUI.primaryColAlt);
-    descField.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    descField.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     descField.setBounds(0, searchUserField.getY() + TF_MRGN, searchUserField.getWidth() + 40, 110);
     descField.setLineWrap(true);
 
-    Label descLabel = new Label(0, descField.getY() - 25, "Description (optional)");
-    if (mode == VIEW)
-      descLabel.setText("Description");
+    if (mode == CREATE || mode == EDIT) {
+      MasterUI.placeFieldLabel(descField, "Description (optional)", PAGE_TWO);
+    }
+    if (mode == VIEW && !descField.getText().isBlank()) {
+      MasterUI.placeFieldLabel(descField, "Description", PAGE_TWO);
+      descField.setBorder(BorderFactory.createEmptyBorder());
+      descField.setBackground(MasterUI.lightCol);
+    }
 
-    PAGE_TWO.add(descLabel);
     PAGE_TWO.add(descField);
   }
 
