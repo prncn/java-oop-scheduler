@@ -12,6 +12,7 @@ import views.panels.ProfilePanel;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
+
 import java.awt.*;
 import java.io.File;
 import java.time.LocalDate;
@@ -150,7 +151,7 @@ public class ViewModelHandler {
         valid = false;
       } else {
         field.getErrorLabel().setText("");
-        field.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        field.setDefaultStyle();
       }
     }
 
@@ -162,8 +163,8 @@ public class ViewModelHandler {
 
         valid = false;
       } else {
-        startField.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        endField.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        startField.setDefaultStyle();
+        endField.setDefaultStyle();
         endField.getErrorLabel().setText("");
       }
     }
@@ -185,16 +186,4 @@ public class ViewModelHandler {
     }
     return true;
   }
-
-
-  public static ImageIcon resizeImageIcon(ImageIcon img, float proportion) {
-    int width = img.getIconWidth();
-    int height = img.getIconHeight();
-
-    width = Math.round(width*proportion);
-    height = Math.round(height*proportion);
-
-    return new ImageIcon(img.getImage().getScaledInstance(width, height, Image.SCALE_DEFAULT));
-  }
-
 }

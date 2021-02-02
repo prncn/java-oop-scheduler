@@ -9,7 +9,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Locale;
 
+import javax.swing.ImageIcon;
+
 import java.awt.Color;
+import java.awt.Image;
 
 public class FormatUtil {
 	/**
@@ -80,14 +83,14 @@ public class FormatUtil {
 	}
 
 	/**
-   * Check if a string is blank or not
-   *
-   * @param string - the string to be checked
-   * @return Boolean whether string is blanked or not
-   */
-  public static boolean isBlankString(String string) {
-    return string == null || string.trim().isEmpty();
-  }
+	 * Check if a string is blank or not
+	 *
+	 * @param string - the string to be checked
+	 * @return Boolean whether string is blanked or not
+	 */
+	public static boolean isBlankString(String string) {
+		return string == null || string.trim().isEmpty();
+	}
 
 	/**
 	 * Change alpha value (transparency) of given color
@@ -108,7 +111,7 @@ public class FormatUtil {
 	 * @return String of date
 	 */
 	public static String readableDate(LocalDate date) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM dd, YYYY", Locale.US);
 		return date.format(formatter);
 	}
 
@@ -121,6 +124,25 @@ public class FormatUtil {
 	 */
 	public static LocalTime getEndTime(LocalTime startTime, int durationMins) {
 		return startTime.plusMinutes((long) durationMins);
+	}
+
+	/**
+	 * Resize an image to a specified factor and retain its resolution
+	 * 
+	 * @param img - Source ImageIcon to be resized
+	 * @param proportion - Resize factor to resize image
+	 * @return Copy of img in resized dimensions
+	 */
+	public static ImageIcon resizeImageIcon(ImageIcon img, float proportion) {
+		int width = img.getIconWidth();
+		int height = img.getIconHeight();
+
+		width = Math.round(width * proportion);
+		height = Math.round(height * proportion);
+
+		Image image = img.getImage(); 
+		Image newimg = image.getScaledInstance(width, height, Image.SCALE_SMOOTH); 
+		return new ImageIcon(newimg);
 	}
 
 }

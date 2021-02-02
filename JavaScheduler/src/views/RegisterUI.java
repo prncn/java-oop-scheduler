@@ -19,8 +19,9 @@ public class RegisterUI extends LoginUI {
   private String inputPass;
   private String inputPassConf;
   private String inputEmail;
+  private String inputFirstname;
+  private String inputLastname;
 
-  
 
   public RegisterUI() {
     setTitle("Scheduler Sign Up");
@@ -81,8 +82,10 @@ public class RegisterUI extends LoginUI {
     inputPass = String.valueOf(passField.getPassword());
     inputPassConf = String.valueOf(passConfField.getPassword());
     inputEmail = emailField.getText();
+    inputFirstname = firstnameField.getText();
+    inputLastname = lastnameField.getText();
 
-    if (inputUser.isEmpty() || inputPass.isEmpty() || inputEmail.isEmpty()) {
+    if (inputUser.isBlank() || inputPass.isBlank() || inputEmail.isBlank() || inputFirstname.isBlank() || inputLastname.isBlank()) {
       success.setText("Required fields missing");
       return;
     } else if (!inputPassConf.equals(inputPass)) {
@@ -100,7 +103,7 @@ public class RegisterUI extends LoginUI {
    */
   private void processRegistration() {
     String encryptPass = PasswordEncryption.createHash(inputPass);
-    User user = new User(inputUser, encryptPass, inputEmail);
+    User user = new User(inputUser, encryptPass, inputEmail, inputFirstname, inputLastname);
     if (!DatabaseAPI.isAvailable(user)) {
       success.setText("User already exists");
       return;

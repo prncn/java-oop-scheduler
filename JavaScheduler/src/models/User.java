@@ -2,9 +2,13 @@ package models;
 
 import controllers.DatabaseAPI;
 import controllers.EmailHandler;
-
+import views.MasterUI;
 
 import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+
+import com.itextpdf.layout.element.Image;
 
 public class User {
 
@@ -17,6 +21,7 @@ public class User {
   private ArrayList<Event> events = new ArrayList<Event>();
   private ArrayList<Location> locations = new ArrayList<Location>();
   private Boolean isAdmin;
+  private ImageIcon avatar = MasterUI.avatarImage1;
 
   /**
    * Constructor for fetching user from database and creating model class from it
@@ -36,10 +41,10 @@ public class User {
   /**
    * Constructor after account creation and before storing to database
    */
-  public User(String username, String password, String email) {
+  public User(String username, String password, String firstname, String lastname, String email) {
     this.username = username;
-    this.firstname = "";
-    this.lastname = "";
+    this.firstname = firstname;
+    this.lastname = lastname;
     this.password = password;
     this.email = email;
     this.events = new ArrayList<Event>();
@@ -93,7 +98,7 @@ public class User {
     }
 
     updateEventList();
-    EmailHandler.sendEventMail(event, Status.CREATED);
+    // EmailHandler.sendEventMail(event, Status.CREATED);
   }
 
   /**
@@ -304,6 +309,24 @@ public class User {
    */
   public void setEvents(ArrayList<Event> events) {
     this.events = events;
+  }
+
+  /**
+   * Get profile icon
+   * 
+   * @return ImageIcon object
+   */
+  public ImageIcon getAvatar() {
+    return avatar;
+  }
+
+  /**
+   * Set profile icon
+   * 
+   * @param avatar ImageIcon to be set
+   */
+  public void setAvatar(ImageIcon avatar) {
+    this.avatar = avatar;
   }
 
   /**

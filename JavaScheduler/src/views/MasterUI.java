@@ -15,6 +15,9 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.JTextComponent;
 
+import controllers.DatabaseAPI;
+import controllers.FormatUtil;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -63,8 +66,27 @@ abstract public class MasterUI extends JFrame {
 
   public static ImageIcon loginHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Analysis_re_w2vd.png");
   public static ImageIcon signupHeroImage = new ImageIcon(fileRoot + imagesRoot + "undraw_Cloud_docs_re_xjht.png");
-  public static ImageIcon createdMeetingImage = new ImageIcon(fileRoot + imagesRoot + "undraw_relaxing_walk_mljx.png");
-  public static ImageIcon dashImage = new ImageIcon(fileRoot + imagesRoot + "undraw_complete_task_u2c3.png");
+  public static ImageIcon createdMeetingImage1 = new ImageIcon(fileRoot + imagesRoot + "taxi-schedule-1.png");
+  public static ImageIcon createdMeetingImage2 = new ImageIcon(fileRoot + imagesRoot + "taxi-schedule-2.png");
+  public static ImageIcon scheduleFormImage = new ImageIcon(fileRoot + imagesRoot + "taxi-create-1.png");
+  public static ImageIcon dashImage1 = FormatUtil
+      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-1.png"), 0.5f);
+  public static ImageIcon dashImage2 = FormatUtil
+      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-2.png"), 0.5f);
+  public static ImageIcon dashImage3 = FormatUtil
+      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-3.png"), 0.5f);
+  public static ImageIcon dashImage4 = FormatUtil
+      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-4.png"), 0.5f);
+  public static ImageIcon dashImage5 = FormatUtil
+      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-5.png"), 0.5f);
+  public static ImageIcon dashhero = new ImageIcon(fileRoot + imagesRoot + "taxi-dashhero-1.png");
+  public static ImageIcon avatarImage1 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-1.png");
+  public static ImageIcon avatarImage2 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-2.png");
+  public static ImageIcon avatarImage3 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-3.png");
+  public static ImageIcon avatarImage4 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-4.png");
+  public static ImageIcon avatarImage5 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-5.png");
+  public static ImageIcon avatarImage6 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-6.png");
+  public static ImageIcon avatarImage7 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-7.png");
 
   public static ImageIcon favicon = new ImageIcon(fileRoot + iconsRoot + "category-solid-36.png");
   public static ImageIcon adminIcon = new ImageIcon(fileRoot + iconsRoot + "menu-alt-left-regular-24.png");
@@ -89,7 +111,7 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon folderIcon = new ImageIcon(fileRoot + iconsRoot + "folder-regular-24.png");
   public static ImageIcon editIcon = new ImageIcon(fileRoot + iconsRoot + "edit-solid-24.png");
   public static ImageIcon removeIcon = new ImageIcon(fileRoot + iconsRoot + "trash-alt-regular-24.png");
-  
+
   public static ImageIcon hiPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-rd.png");
   public static ImageIcon midPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-ylw.png");
   public static ImageIcon loPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-grn.png");
@@ -100,7 +122,6 @@ abstract public class MasterUI extends JFrame {
   public MasterUI() {
     setIconImage(favicon.getImage());
     setResizable(false);
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setLayout(null);
     panel.setBackground(primaryCol);
     panel.setLayout(null);
@@ -125,6 +146,13 @@ abstract public class MasterUI extends JFrame {
       bodyFont = bodyFontAlt; // if font asset import failed, fall back to Arial
       robotoFont = bodyFont;
     }
+
+    addWindowListener(new java.awt.event.WindowAdapter() {
+      public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+        DatabaseAPI.closeDatabase();
+        System.exit(0);
+      }
+    });
   }
 
   /**
@@ -137,7 +165,8 @@ abstract public class MasterUI extends JFrame {
   }
 
   /**
-   * Place label of name of textfield above that textfield.
+   * Place label of name of textfield above that textfield. This is not a method
+   * for TextField since it would not be callable on JPasswordFields for instance.
    * 
    * @param field - Textfield of input
    * @param name  - Name corresponding of textfield
@@ -179,11 +208,9 @@ abstract public class MasterUI extends JFrame {
         c.setBackground(background);
         c.setForeground(foreground);
         ((JTextComponent) c).setCaretColor(foreground);
-      } else if (c instanceof JButton) {
-        c.setFont(monoFont);
-        if (((Button) c).getTab()) {
-          c.setFont(bodyFont);
-        }
+      }
+      if (c instanceof JButton) {
+        c.setFont(bodyFont);
         if (((Button) c).getDark()) {
           ((AbstractButton) c).setForeground(fontCol);
         }

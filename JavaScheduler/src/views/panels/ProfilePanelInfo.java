@@ -4,13 +4,13 @@ import models.User;
 import views.HomeUI;
 import views.MasterUI;
 import views.components.Button;
-import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
 
+import controllers.DatabaseAPI;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
 import java.awt.Point;
 
 public class ProfilePanelInfo extends Panel {
@@ -28,22 +28,27 @@ public class ProfilePanelInfo extends Panel {
     super();
     this.user = user;
     setBackground(MasterUI.lightCol);
-    setBounds(40, 100, 300, 500);
+    setBounds(40, 100, 320, 500);
     
-    String[] labels = { "Username", "Email", "First name", "Last name" };
     usernameField = new TextField(user.getUsername());
     emailField = new TextField(user.getEmail());
     firstnameField = new TextField(user.getFirstname());
     lastnameField = new TextField(user.getLastname());
+    saveBtn = new Button(0, 340, "Save Changes", MasterUI.secondaryCol);
+    saveBtn.setSize(310, 50);
+    saveBtn.setCornerRadius(Button.ROUND);
+    saveBtn.addActionListener(confirm -> HomeUI.confirmDialog(saveFormUserData(), e -> {
+      resetForm();
+    }, "Change profile info?"));
+    saveBtn.addActionListener(e -> setToStaticMode());
+
     TextField[] fields = { usernameField, emailField, firstnameField, lastnameField };
     
+    /** Content box */
     Point contentPoint = new Point(0, 0);
-    Point cb = new Point(contentPoint.x, contentPoint.y); // Content box
-    int marginBottom = 80; // Vertical margin between text fields
-    for (String label : labels) {
-      add(new Label(0, cb.y, label));
-      cb.y += marginBottom;
-    }
+    Point cb = new Point(contentPoint.x, contentPoint.y); 
+    /** Vertical margin between text fields **/
+    int marginBottom = 80; 
     
     cb.setLocation(contentPoint.x, contentPoint.y);
     for (TextField field : fields) {
@@ -52,14 +57,18 @@ public class ProfilePanelInfo extends Panel {
       cb.y += marginBottom;
     }
     
+    MasterUI.placeFieldLabel(usernameField, "Username", this);
+    MasterUI.placeFieldLabel(emailField, "Email", this);
+    MasterUI.placeFieldLabel(firstnameField, "First name", this);
+    MasterUI.placeFieldLabel(lastnameField, "Last name", this);
     MasterUI.setComponentStyles(this, "light");
     
     if(isEditable){
       this.isEditable = false;
-      setEdit();
+      setToEditMode();
     } else {
       this.isEditable = true;
-      setStatic();
+      setToStaticMode();
     }
     
     this.isEditable = isEditable;
@@ -70,22 +79,20 @@ public class ProfilePanelInfo extends Panel {
    * 
    * @param fields - Text fields for user data
    */
-  public void setStatic() {
+  public void setToStaticMode() {
     if (!getEditable())
       return;
     TextField[] fields = { usernameField, emailField, firstnameField, lastnameField };
     for (TextField field : fields) {
-      field.setBackground(MasterUI.lightCol);
+      field.setBackground(MasterUI.primaryCol);
+      field.setForeground(MasterUI.lightCol);
       field.setEditable(false);
-      field.setEqualPadding(0);
     }
     if (saveBtn != null) {
       remove(saveBtn);
     }
 
-    resetForm();
     repaint();
-
     setEditable(false);
   }
 
@@ -94,21 +101,16 @@ public class ProfilePanelInfo extends Panel {
    * 
    * @param fields - Text fields for user data
    */
-  public void setEdit() {
+  public void setToEditMode() {
     if (getEditable())
       return;
     TextField[] fields = { usernameField, emailField, firstnameField, lastnameField };
     for (TextField field : fields) {
       field.setBackground(MasterUI.lightColAlt);
       field.setEditable(true);
-      field.setEqualPadding(5);
     }
 
-    saveBtn = new Button(0, 340, "Save Changes", MasterUI.secondaryCol);
-    saveBtn.setSize(300, 50);
-    saveBtn.addActionListener(HomeUI.confirmDialogAction(saveFormUserData(), "Save and overwrite profile info?"));
     add(saveBtn);
-
     MasterUI.setComponentStyles(this, "light");
     repaint();
 
@@ -116,27 +118,27 @@ public class ProfilePanelInfo extends Panel {
   }
 
   /**
-   * Bind {@link #setEdit()} to action listener
+   * Bind {@link #setToEditMode()} to action listener
    * 
    * @return ActionListener object
    */
   public ActionListener setEditAction() {
     return new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        setEdit();
+        setToEditMode();
       }
     };
   }
 
   /**
-   * Bind {@link #setStatic()} to action listener
+   * Bind {@link #setToStaticMode()} to action listener
    * 
    * @return ActionListener object
    */
   public ActionListener setStaticAction() {
     return new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        setStatic();
+        setToStaticMode();
       }
     };
   }
@@ -178,12 +180,33 @@ public class ProfilePanelInfo extends Panel {
   public ActionListener saveFormUserData() {
     return new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        if (usernameField.getText().isBlank() || emailField.getText().isBlank()) {
+          HomeUI.confirmDialog("Username or mail cannot be blank.");
+          resetForm();
+          return;
+        }
+        User check = new User(user);
+        check.setUsername(usernameField.getText());
+        check.setEmail(emailField.getText());
+        if (!DatabaseAPI.isAvailable(check)) {
+          HomeUI.confirmDialog("Username or mail already exists.");
+          resetForm();
+          return;
+        }
         user.setUsername(usernameField.getText());
         user.setEmail(emailField.getText());
         user.setFirstname(firstnameField.getText());
         user.setLastname(lastnameField.getText());
-        setStatic();
+        DatabaseAPI.editUser(user);
       }
     };
+  }
+
+  /**
+   * Get save user data info button
+   * @return Save Button object
+   */
+  public Button getSaveBtn() {
+    return saveBtn;
   }
 }

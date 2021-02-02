@@ -153,7 +153,7 @@ public class CalendarPanelWeekly extends Panel {
 
     bluepanel.setBounds(90 + yOffset, xOffset, d_wdth - 2, Math.max(event.getDurationMinutes(), 45));
     bluepanel.setBackground(FormatUtil.colorLowerAlpha(eventCol, 80));
-    bluepanel.setAlpha(0.93f);
+    bluepanel.setAlpha(0.98f);
 
     Label eventInfo = new Label(2, 2,
         "<html><p><strong>" + event.getName() + "</strong><br>" + event.getTime() + "</p><html>");
