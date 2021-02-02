@@ -171,8 +171,8 @@ abstract public class MasterUI extends JFrame {
    * @param field - Textfield of input
    * @param name  - Name corresponding of textfield
    */
-  public static void placeFieldLabel(JTextField field, String name, JPanel panel) {
-    Label label = new Label(field.getX(), field.getY() - 25, name);
+  public static void placeFieldLabel(Component comp, String name, JPanel panel) {
+    Label label = new Label(comp.getX(), comp.getY() - 25, name);
     panel.add(label);
   }
 
