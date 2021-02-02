@@ -127,25 +127,6 @@ public class DatabaseAPI {
     }
   }
 
-  private static ResultSet fetchEventData(Connection connection, String eventID) {
-    String sql = "SELECT * FROM Event WHERE eventID = ?";
-    try {
-      PreparedStatement statement = connection.prepareStatement(sql);
-      statement.setString(1, eventID);
-      ResultSet result = statement.executeQuery();
-
-      if (result.next())
-        return result;
-      else
-        return null;
-
-    } catch (SQLException e) {
-      e.printStackTrace();
-      System.out.println(e);
-      return null;
-    }
-  }
-
   /**
    * Create table entry of a new user in database. Used for account creation.
    *
@@ -270,7 +251,7 @@ public class DatabaseAPI {
   }
 
   /**
-   * TODO Query a username and return the corresponding User object from its table
+   * Query a username and return the corresponding User object from its table
    * entry. Used to search the user table.
    * 
    * @param key - String of username or Int of userid
@@ -338,7 +319,7 @@ public class DatabaseAPI {
         Reminder reminder = Enum.valueOf(Reminder.class, rs.getString("reminder"));
         Priority priority = Enum.valueOf(Priority.class, rs.getString("priority"));
         int host_id = rs.getInt("host_id");
-        int location_id = rs.getInt("location_id");
+        // int location_id = rs.getInt("location_id");
 
         Event event = new Event(eventId, name, description, duration, date, time, new Location("Rock Bottom"), priority,
             reminder, getParticipants(eventId), new ArrayList<File>());

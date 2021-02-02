@@ -3,15 +3,10 @@ package models;
 import controllers.DatabaseAPI;
 import controllers.EmailHandler;
 import views.MasterUI;
-
 import java.util.ArrayList;
-
 import javax.swing.ImageIcon;
 
-import com.itextpdf.layout.element.Image;
-
 public class User {
-
   private int id;
   private String username;
   private String firstname;

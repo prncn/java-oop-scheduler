@@ -122,12 +122,12 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     }
 
     PAGE_ONE = new Panel();
-    PAGE_ONE.setBounds(100, 120, 320, 400);
+    PAGE_ONE.setBounds(100, 120, 320, 410);
     PAGE_ONE.setBackground(MasterUI.lightCol);
     mainpanel.add(PAGE_ONE);
 
     PAGE_TWO = new Panel();
-    PAGE_TWO.setBounds(100, 520, 320, 400);
+    PAGE_TWO.setBounds(100, 540, 320, 400);
     PAGE_TWO.setBackground(MasterUI.lightCol);
     mainpanel.add(PAGE_TWO);
 
@@ -260,7 +260,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       locationField.setText(editEvent.getLocation().getName());
       dateField.setText(editEvent.getDate().toString());
       startField.setText(editEvent.getTime().toString());
-      endField.setText(FormatUtil.getEndTime(editEvent.getTime(), editEvent.getDurationMinutes()).toString());
+      endField.setText(FormatUtil.getEndTime(editEvent).toString());
       descField.setText(editEvent.getDescription());
       String attachStr = "";
       for (File f : editEvent.getAttachments()) {

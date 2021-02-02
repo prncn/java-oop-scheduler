@@ -403,7 +403,7 @@ public class CalendarPanel extends Panel {
 
       if (currentLocalDate.equals(LocalDate.now())) {
         highlightToday = dayBtn;
-        dayBtn.setForeground(Color.RED);
+        dayBtn.setForeground(Color.WHITE);
       }
 
       dayBtn.addActionListener(new ActionListener() {
@@ -518,7 +518,7 @@ public class CalendarPanel extends Panel {
       }
     }
     if (prevActive.equals(highlightToday)) {
-      prevActive.setForeground(Color.RED);
+      prevActive.setForeground(Color.WHITE);
     }
 
     dayBtn.setColor(MasterUI.secondaryCol);

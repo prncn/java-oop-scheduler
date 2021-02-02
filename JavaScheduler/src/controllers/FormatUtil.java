@@ -11,6 +11,8 @@ import java.util.Locale;
 
 import javax.swing.ImageIcon;
 
+import models.Event;
+
 import java.awt.Color;
 import java.awt.Image;
 
@@ -122,8 +124,8 @@ public class FormatUtil {
 	 * @param durationMins - Duration in minutes
 	 * @return LocalTime of ending time
 	 */
-	public static LocalTime getEndTime(LocalTime startTime, int durationMins) {
-		return startTime.plusMinutes((long) durationMins);
+	public static LocalTime getEndTime(Event event) {
+		return event.getTime().plusMinutes((long) event.getDurationMinutes());
 	}
 
 	/**
