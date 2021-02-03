@@ -16,7 +16,7 @@ public class User {
   private ArrayList<Event> events = new ArrayList<Event>();
   private ArrayList<Location> locations = new ArrayList<Location>();
   private Boolean isAdmin;
-  private ImageIcon avatar = MasterUI.avatarImage1;
+  private ImageIcon avatar = MasterUI.avatarImage7;
 
   /**
    * Constructor for fetching user from database and creating model class from it

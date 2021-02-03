@@ -9,12 +9,20 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Locale;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import models.Event;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.nio.file.Files;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.AlphaComposite;
 
 public class FormatUtil {
 	/**
@@ -131,7 +139,7 @@ public class FormatUtil {
 	/**
 	 * Resize an image to a specified factor and retain its resolution
 	 * 
-	 * @param img - Source ImageIcon to be resized
+	 * @param img        - Source ImageIcon to be resized
 	 * @param proportion - Resize factor to resize image
 	 * @return Copy of img in resized dimensions
 	 */
@@ -142,9 +150,69 @@ public class FormatUtil {
 		width = Math.round(width * proportion);
 		height = Math.round(height * proportion);
 
-		Image image = img.getImage(); 
-		Image newimg = image.getScaledInstance(width, height, Image.SCALE_SMOOTH); 
+		Image image = img.getImage();
+		Image newimg = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 		return new ImageIcon(newimg);
+	}
+
+	/**
+	 * Convert Image object to ImageIcon object cropped to circular shape and
+	 * 128x128 dimensions for profile icon use from any user image.
+	 * 
+	 * @param img - Image to be converted
+	 * @return ImageIcon object with proper attributes
+	 */
+	public static ImageIcon byteToIcon(byte[] bytes) {
+		InputStream is = new ByteArrayInputStream(bytes);
+		BufferedImage original = null;
+		try {
+			original = ImageIO.read(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		BufferedImage resized = new BufferedImage(128, 128, BufferedImage.TYPE_INT_ARGB);
+		if (original.getWidth() > original.getHeight()) {
+			original = original.getSubimage(original.getWidth() / 2 - original.getHeight() / 2, 0, original.getHeight(), original.getHeight());
+		} else {
+			original = original.getSubimage(0, original.getHeight() / 2 - original.getWidth() / 2, original.getWidth(), original.getWidth());
+		}
+		Graphics2D g = resized.createGraphics();
+		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.fillOval(1, 1, 126, 126);
+		g.setComposite(AlphaComposite.SrcIn);
+		g.drawImage(original, 0, 0, 128, 128, null);
+		g.dispose();
+
+		return new ImageIcon(resized);
+	}
+
+	public static byte[] fileToBytes(File img) {
+		try {
+			BufferedImage image = ImageIO.read(img);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write(image, "jpg", baos);
+			byte[] buffByte = baos.toByteArray();
+			return buffByte;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static byte[] iconToBytes(ImageIcon icon) {
+		BufferedImage bi = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
+		Graphics g = bi.createGraphics();
+		icon.paintIcon(null, g, 0, 0);
+		g.dispose();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			ImageIO.write(bi, "jpg", baos);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return baos.toByteArray();
 	}
 
 }

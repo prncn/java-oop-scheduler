@@ -172,10 +172,17 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     confirmBtn.centerText();
     confirmBtn.setCornerRadius(Button.ROUND);
 
+    String pref = "";
+    switch (mode) {
+      case CREATE: pref = "Create"; break;
+      case EDIT: pref = "Edit"; break;
+      case VIEW: pref = "View"; break;
+    }
+
     Label schedulehero = new Label(-10, -10, "");
     schedulehero.setIcon(FormatUtil.resizeImageIcon(MasterUI.scheduleFormImage, 0.5f));
     schedulehero.setSize(schedulehero.getIcon().getIconWidth(), schedulehero.getIcon().getIconHeight() - 70);
-    Label scheduleheroText = new Label(15, 15, "Create your event here.");
+    Label scheduleheroText = new Label(15, 15, pref + " your event here.");
     scheduleheroText.setHeading();
     scheduleheroText.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 28f));
     scheduleheroText.setForeground(Color.WHITE);
@@ -450,7 +457,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     attachpanel.setBounds(attachField.getX() + attachField.getWidth() + 100, 40, 220, 200);
     if (mode == VIEW && !editEvent.getAttachments().isEmpty()) {
       MasterUI.placeFieldLabel(attachField, "Attachments", PAGE_TWO);
-    } else {
+    } else if (mode == CREATE || mode == EDIT) {
       MasterUI.placeFieldLabel(attachField, "Attachments (optional)", PAGE_TWO);
     }
     attachField.setEditable(false);
@@ -581,6 +588,9 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       }
     });
 
+    Label pcpIconLabel = new Label(pcpIconPos, 370, "Participants");
+    mainpanel.add(pcpIconLabel);
+
     for (User pcp : participants) {
       placeParticpantIcon(pcp);
     }
@@ -618,7 +628,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * @param pcp - Participant user
    */
   public void placeParticpantIcon(User pcp) {
-    Label pcpIcon = new Label(pcpIconPos, 680, "");
+    Label pcpIcon = new Label(pcpIconPos, 400, "");
     pcpIcon.fillIcon(FormatUtil.resizeImageIcon(pcp.getAvatar(), 0.5f));
     pcpIcon.setVerticalTextPosition(SwingConstants.CENTER);
     mainpanel.add(pcpIcon);
