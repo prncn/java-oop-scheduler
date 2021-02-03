@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
@@ -99,7 +100,6 @@ public class CalendarPanel extends Panel {
     MasterUI.setComponentStyles(this, "light");
     styleDateTextFields();
     styleTopIcons();
-    monthField.getCaret().setVisible(true);
   }
 
   /**
@@ -107,16 +107,19 @@ public class CalendarPanel extends Panel {
    * This is used for the datepicker version of the calendar.
    */
   public void stripComponents() {
-    remove(yearField);
     remove(dayField);
     remove(dispModeWeek);
     remove(dispModeMonth);
 
-    monthField.setBounds(120, 15, 70, 30);
+    monthField.setBounds(110, 10, 50, 30);
     monthField.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 18f));
     monthField.setText(monthField.getText().substring(0, 3));
-    prevMonthBtn.setPosition(60, 5);
-    nextMonthBtn.setPosition(200, 5);
+    monthField.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+    yearField.setBounds(160, 10, 50, 30);
+    yearField.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 18f));
+    yearField.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+    prevMonthBtn.setBounds(65, 1, 40, 39);
+    nextMonthBtn.setBounds(220, 1, 40, 39);
 
     repaint();
   }
@@ -403,7 +406,7 @@ public class CalendarPanel extends Panel {
 
       if (currentLocalDate.equals(LocalDate.now())) {
         highlightToday = dayBtn;
-        dayBtn.setForeground(Color.RED);
+        dayBtn.setForeground(Color.WHITE);
       }
 
       dayBtn.addActionListener(new ActionListener() {
@@ -438,6 +441,7 @@ public class CalendarPanel extends Panel {
       monthField.setText(date.getMonth().toString().substring(0, 3));
     } else {
       monthField.setText(date.getMonth().toString());
+      monthField.getCaret().setVisible(true);
     }
     dayField.setText(FormatUtil.formatOrdinal(date.getDayOfMonth()));
 
@@ -518,7 +522,7 @@ public class CalendarPanel extends Panel {
       }
     }
     if (prevActive.equals(highlightToday)) {
-      prevActive.setForeground(Color.RED);
+      prevActive.setForeground(Color.WHITE);
     }
 
     dayBtn.setColor(MasterUI.secondaryCol);

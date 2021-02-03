@@ -15,7 +15,8 @@ public class DatabaseAPI {
   private static Connection con = null;
 
   /**
-   * Build a connection to the application database
+   * Build a connection to the application database.
+   * If a connection already resides, that connection is used instead.
    *
    * @return <code>null</code> on failed connection, else return connection object
    */
@@ -127,25 +128,6 @@ public class DatabaseAPI {
     }
   }
 
-  private static ResultSet fetchEventData(Connection connection, String eventID) {
-    String sql = "SELECT * FROM Event WHERE eventID = ?";
-    try {
-      PreparedStatement statement = connection.prepareStatement(sql);
-      statement.setString(1, eventID);
-      ResultSet result = statement.executeQuery();
-
-      if (result.next())
-        return result;
-      else
-        return null;
-
-    } catch (SQLException e) {
-      e.printStackTrace();
-      System.out.println(e);
-      return null;
-    }
-  }
-
   /**
    * Create table entry of a new user in database. Used for account creation.
    *
@@ -153,7 +135,7 @@ public class DatabaseAPI {
    * @return <code>true</code> on successful user creation
    */
   public static boolean createUser(User user) {
-    String sql = "INSERT INTO User (username, password, email, firstname, lastname)" + " VALUES(?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO User (username, password, email, firstname, lastname, icon)" + " VALUES(?, ?, ?, ?, ?, ?)";
     Connection connection = connectDatabase();
     try {
       PreparedStatement statement = connection.prepareStatement(sql);
@@ -162,6 +144,7 @@ public class DatabaseAPI {
       statement.setString(3, user.getEmail());
       statement.setString(4, user.getFirstname());
       statement.setString(5, user.getLastname());
+      statement.setBytes(6, FormatUtil.iconToBytes(user.getAvatar()));
       statement.executeUpdate();
 
       statement.close();
@@ -184,18 +167,19 @@ public class DatabaseAPI {
    * @return <code>true</code>, if successful
    */
   public static boolean editUser(User user) {
-    String sql = "UPDATE User SET username = ?, email = ?, firstname = ?, lastname = ? WHERE user_id = ?";
+    String sql = "UPDATE User SET username = ?, email = ?, firstname = ?, lastname = ?, icon = ? WHERE user_id = ?";
 
     Connection connection = connectDatabase();
     try {
-      PreparedStatement statement = connection.prepareStatement(sql);
-      statement.setString(1, user.getUsername());
-      statement.setString(2, user.getEmail());
-      statement.setString(3, user.getFirstname());
-      statement.setString(4, user.getLastname());
-      statement.setInt(5, user.getId());
-      statement.executeUpdate();
-      statement.close();
+      PreparedStatement ps = connection.prepareStatement(sql);
+      ps.setString(1, user.getUsername());
+      ps.setString(2, user.getEmail());
+      ps.setString(3, user.getFirstname());
+      ps.setString(4, user.getLastname());
+      ps.setBytes(5, FormatUtil.iconToBytes(user.getAvatar()));
+      ps.setInt(6, user.getId());
+      ps.executeUpdate();
+      ps.close();
       closeDatabase();
     } catch (SQLException e) {
       e.printStackTrace();
@@ -270,7 +254,7 @@ public class DatabaseAPI {
   }
 
   /**
-   * TODO Query a username and return the corresponding User object from its table
+   * Query a username and return the corresponding User object from its table
    * entry. Used to search the user table.
    * 
    * @param key - String of username or Int of userid
@@ -285,18 +269,19 @@ public class DatabaseAPI {
       return null;
     }
     try {
-
       int id = result.getInt("user_id");
       String name = result.getString("username");
       String email = result.getString("email");
       String firstname = result.getString("firstname");
       String lastname = result.getString("lastname");
-
-      closeDatabase();
+      byte[] icon = result.getBytes("icon");
 
       ArrayList<Event> events = getEventsFromUser(id);
-
       User user = new User(id, name, firstname, lastname, email, events, new ArrayList<Location>());
+      if (icon != null) {
+        user.setAvatar(FormatUtil.byteToIcon(icon));
+      }
+      closeDatabase();
       return user;
     } catch (SQLException e) {
       e.printStackTrace();
@@ -304,10 +289,6 @@ public class DatabaseAPI {
       return null;
     }
   }
-
-  /**
-   * public static User getUser(int userId){ userId = sql getUser(username); }
-   **/
 
   /**
    * Gets all events from User with help of the userId.
@@ -338,7 +319,7 @@ public class DatabaseAPI {
         Reminder reminder = Enum.valueOf(Reminder.class, rs.getString("reminder"));
         Priority priority = Enum.valueOf(Priority.class, rs.getString("priority"));
         int host_id = rs.getInt("host_id");
-        int location_id = rs.getInt("location_id");
+        // int location_id = rs.getInt("location_id");
 
         Event event = new Event(eventId, name, description, duration, date, time, new Location("Rock Bottom"), priority,
             reminder, getParticipants(eventId), new ArrayList<File>());

@@ -23,10 +23,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+/**
+ * The view model handler contains methods that serve as interaction between model
+ * and view. For instance, it might bring higher level logic out of the view
+ * to then, turn into model entities.
+ */
 public class ViewModelHandler {
 
   /**
-   * Consume input form data from Create view and generate a model Event
+   * Consume input form data from Create view and generate a model Event.
+   * This method is used at the end of the schedule event form.
    * 
    * @param titleField    - Field for title
    * @param dateField     - Field for date
@@ -123,7 +129,8 @@ public class ViewModelHandler {
   }
 
   /**
-   * Validate input
+   * Validate input of form. Display UI errors on the form
+   * incase of missing or invalid inputs.
    *
    * @param FieldMap         Map of textfields
    * @param selectedPriority selected Priority

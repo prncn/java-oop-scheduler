@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 import javax.swing.*;
 
 import controllers.DatabaseAPI;
@@ -107,7 +106,8 @@ public class HomeUI extends MasterUI {
     profileTab.setIcon(FormatUtil.resizeImageIcon(profileIcon, 0.7f));
     exportTab.setTab();
 
-    List<Button> tabs = new ArrayList<>(Arrays.asList(dashboardTab, createTab, calendarTab, profileTab, exportTab, adminTab));
+    List<Button> tabs = new ArrayList<>(
+        Arrays.asList(dashboardTab, createTab, calendarTab, profileTab, exportTab, adminTab));
     tabs.forEach(e -> sidebar.add(e));
 
     /**
@@ -169,8 +169,8 @@ public class HomeUI extends MasterUI {
             System.out.println("Weekly report saved to " + dest);
           } else
             System.out.println("Path is invalid");
-          }
         }
+      }
     };
 
     exportTab.addActionListener(confirmDialogAction(exportAction, "Export week selected on calendar?"));
@@ -180,7 +180,7 @@ public class HomeUI extends MasterUI {
    * Checks if the used path is valid.
    *
    * @param path the path that is to be checked
-   * @return true if path exists, false if not 
+   * @return true if path exists, false if not
    */
   public static boolean isValidPath(String path) {
     try {
@@ -198,6 +198,7 @@ public class HomeUI extends MasterUI {
   /**
    * Overload confirmDialog, for prompts that have no fail action. A fail action
    * is the action to be triggered if the user does no confirm.c
+   * 
    * @param action
    * @param prompt
    * @see #confirmDialog(ActionListener, ActionListener, String)
@@ -259,7 +260,8 @@ public class HomeUI extends MasterUI {
       }
     };
     yes.addActionListener(action);
-    if(failAction != null) no.addActionListener(failAction);
+    if (failAction != null)
+      no.addActionListener(failAction);
     yes.addActionListener(closeDialog);
     no.addActionListener(closeDialog);
   }
@@ -291,7 +293,8 @@ public class HomeUI extends MasterUI {
     DateTimeFormatter timeformat = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     Label footerTime = new Label(90, 5, LocalTime.now().format(timeformat));
-    Label footerDate = new Label(footerTime.getX(), footerTime.getY() + footerTime.getHeight() - 5, LocalDate.now().format(dateformat));
+    Label footerDate = new Label(footerTime.getX(), footerTime.getY() + footerTime.getHeight() - 5,
+        LocalDate.now().format(dateformat));
 
     footerTime.setForeground(Color.white);
     footerDate.setForeground(Color.white);
@@ -303,13 +306,14 @@ public class HomeUI extends MasterUI {
     footerDate.setHorizontalAlignment(SwingConstants.RIGHT);
     sidebar.add(footerTime);
 
-    while(true) {
+    while (true) {
       footerTime.setText(LocalTime.now().format(timeformat));
       footerDate.setText(LocalDate.now().format(dateformat));
       try {
         Thread.sleep(1000);
-      }catch (InterruptedException e){
-      e.printStackTrace();}
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
     }
   }
 
@@ -322,13 +326,13 @@ public class HomeUI extends MasterUI {
     avatarIcon.setIcon(FormatUtil.resizeImageIcon(user.getAvatar(), 0.7f));
     avatarIcon.setSize(avatarIcon.getIcon().getIconWidth(), avatarIcon.getIcon().getIconHeight());
 
-    Label headerinfoUser = new Label(10, 140, user.getFirstname() + " " +user.getLastname());
+    Label headerinfoUser = new Label(10, 140, user.getFirstname() + " " + user.getLastname());
     Label headerinfoEmail = new Label(headerinfoUser.getX(), headerinfoUser.getY() + 20, user.getUsername());
     headerinfoUser.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 16f));
     headerinfoUser.setForeground(Color.WHITE);
     headerinfoUser.setUnset(true);
     headerinfoEmail.setSize(70, 24);
-    
+
     sidebar.setBackground(primaryColAlt.darker());
     sidebar.setBounds(0, 0, 200, this.getHeight());
     sidebar.setLayout(null);
@@ -373,18 +377,17 @@ public class HomeUI extends MasterUI {
    * permissions for user "roles".
    */
   private void showAdminPanel() {
+    AdminPanel adminPanel = new AdminPanel(frame);
+    adminTab = new Button(tabsBox.x, tabsBox.y - 50, "Admin Panel", adminPanel);
+    adminTab.setIcon(FormatUtil.resizeImageIcon(adminIcon, 0.7f));
+    adminTab.setTab();
     if (user.getUsername().equals("admin")) {
-      AdminPanel adminPanel = new AdminPanel(frame);
-      adminTab = new Button(tabsBox.x, tabsBox.y - 50, "Admin Panel", adminPanel);
-      adminTab.setIcon(FormatUtil.resizeImageIcon(adminIcon, 0.7f));
-      adminTab.setTab();
       sidebar.add(adminTab);
     }
   }
 
   public static void main(String[] args) {
-    User guest = DatabaseAPI.getUser("admin");
-    guest.setAvatar(MasterUI.avatarImage7);
+    User guest = DatabaseAPI.getUser("Admin");
     new HomeUI(guest);
   }
 

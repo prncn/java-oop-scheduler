@@ -48,7 +48,7 @@ public class Button extends JButton implements MouseListener {
     super(text);
     drawDefaultStyle();
     setColor(color);
-    setPosition(x, y);
+    setLocation(x, y);
     setBackground(color);
     setDark(true);
     filled = true;
@@ -57,7 +57,7 @@ public class Button extends JButton implements MouseListener {
   public Button(int x, int y, String text) {
     super(text);
     drawDefaultStyle();
-    setPosition(x, y);
+    setLocation(x, y);
     setBackground(MasterUI.primaryCol);
     setDark(true);
     setContentAreaFilled(false);
@@ -69,7 +69,7 @@ public class Button extends JButton implements MouseListener {
     drawDefaultStyle();
     switchPanelAction = HomeUI.switchPanelAction(switchTo);
     addActionListener(switchPanelAction);
-    setPosition(x, y);
+    setLocation(x, y);
     setTab();
     setColor(MasterUI.primaryColAlt.darker());
     filled = true;
@@ -124,16 +124,6 @@ public class Button extends JButton implements MouseListener {
    */
   public void toggleActive() {
     isActive = !isActive;
-  }
-
-  /**
-   * Set position of button
-   * 
-   * @param x - Horizontal position coordinate
-   * @param y - Vertical position coordinate
-   */
-  public void setPosition(int x, int y) {
-    this.setBounds(x, y, this.getWidth(), this.getHeight());
   }
 
   /**

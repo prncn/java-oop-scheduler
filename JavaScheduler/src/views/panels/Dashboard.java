@@ -166,11 +166,11 @@ public class Dashboard extends Panel implements CardModes {
 
     TextField filterQuery_1 = new TextField(20, 70, "filter event names...");
     filterQuery_1.setBackground(MasterUI.primaryColAlt);
-    filterQuery_1.setSize(200, 40);
+    filterQuery_1.setSize(240, 40);
 
     TextField filterQuery_2 = new TextField(20, 120, "filter locations...");
     filterQuery_2.setBackground(MasterUI.primaryColAlt);
-    filterQuery_2.setSize(200, 40);
+    filterQuery_2.setSize(240, 40);
 
     Button fqBtn_1 = filterQuery_1.appendButton(MasterUI.searchIconLight);
     Button fqBtn_2 = filterQuery_2.appendButton(MasterUI.searchIconLight);
@@ -270,7 +270,7 @@ public class Dashboard extends Panel implements CardModes {
     for (int i = 0; i < Math.min(8, upcomingEvents.size()); i++) {
       Event event = upcomingEvents.get(i);
       int mgn = 15; // margin in pixels
-      Panel card = drawEventCard(content, event, upSectionInner, VIEW, new Dimension(300, 130));
+      Panel card = drawEventCard(content, event, upSectionInner, VIEW, new Dimension(300, 100));
 
       content.y += card.getHeight() + mgn;
       if (i == 3) {
@@ -355,8 +355,8 @@ public class Dashboard extends Panel implements CardModes {
     card.setRounded(true);
     card.setBounds(p.x, p.y, (int) size.getWidth(), (int) size.getHeight());
     card.setBackground(MasterUI.lightColAlt);
-    Button view = new Button(0, 40, "");
-    view.setSize(card.getWidth(), card.getHeight() - 40);
+    Button view = new Button(0, 0, "");
+    view.setSize(card.getWidth(), card.getHeight());
     view.setBlank(true);
     view.setContentAreaFilled(false);
     view.setBorderPainted(false);
@@ -368,7 +368,7 @@ public class Dashboard extends Panel implements CardModes {
     Label name = new Label(c.x, c.y, event.getName());
     Label location = new Label(c.x, c.y + 20, event.getLocation().getName());
     Label time = new Label(c.x, c.y + 40,
-        event.getTime() + " - " + FormatUtil.getEndTime(event.getTime(), event.getDurationMinutes()));
+        event.getTime() + " - " + FormatUtil.getEndTime(event));
 
     Label date1 = new Label(card.getWidth() - 40, c.y + 30, event.getDate().getMonth().name().substring(0, 3));
     date1.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 15f));
@@ -416,7 +416,7 @@ public class Dashboard extends Panel implements CardModes {
       card.add(edit);
     }
 
-    if (cardMode != NOTIF) {
+    if (cardMode == EDIT) {
       int x = 10;
       for (User user : event.getParticipants()) {
         Label pcpIcon = new Label(x, card.getHeight() - 50, "");

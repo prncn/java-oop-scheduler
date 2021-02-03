@@ -20,6 +20,9 @@ import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
 
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+
 public class AdminPanel extends Panel {
 
   private static final long serialVersionUID = 542069743291702880L;
@@ -54,24 +57,23 @@ public class AdminPanel extends Panel {
         panel.repaint();
       }
     });
-    
+
     searchBack.add(userQueryResult);
     searchBack.add(searchBtn);
     searchBack.setComponentZOrder(searchBtn, 0);
     add(adminTitle);
-    
+
     MasterUI.setComponentStyles(this, "light");
   }
+
   
   private void initSearchField() {
     Label searchTitle = new Label(50, 40, "<html><p>Search for a user and access their profile</p><html>");
     searchTitle.setVerticalTextPosition(SwingConstants.TOP);
     searchTitle.setHeading();
     searchTitle.setSize(450, 75);
-    
-    ActionListener action = e -> { searchBack.remove(sgscroll); sgscroll = null; };
+
     searchField = new TextField(50, 150);
-    List<User> entries = DatabaseAPI.getAllUsers();
     searchField.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
         updateSuggest();
@@ -84,23 +86,40 @@ public class AdminPanel extends Panel {
       public void insertUpdate(DocumentEvent e) {
         updateSuggest();
       }
-      
-      public void updateSuggest() {
-        if (!searchField.getText().isBlank()) {
-          List<User> suggestions = new ArrayList<>(entries);
-          if (sgscroll != null) searchBack.remove(sgscroll);
-          suggestions.removeIf(e -> !e.getUsername().startsWith(searchField.getText()));
-          sgscroll = null;
-          Component[] _comps = searchField.setDropdown(suggestions, sgscroll, searchBack, action, suggestions.size());
-          sgscroll = (JScrollPane) _comps[0];
-        }
-        searchField.requestFocus();
-      }
     });
     
     searchBack.add(searchField);
     searchBack.add(searchTitle);
     add(searchBack);
     MasterUI.setComponentStyles(searchBack, "light");
+    
+    searchField.addFocusListener(new FocusListener() {
+      public void focusGained(FocusEvent f) {
+        if (sgscroll == null) {
+          updateSuggest();
+        }
+      }
+      public void focusLost(FocusEvent f) {
+        // searchBack.remove(sgscroll);
+        // sgscroll = null;
+      }
+    });
+  }
+  
+  
+  public void updateSuggest() {
+    ActionListener action = e -> {
+      searchBack.remove(sgscroll);
+      sgscroll = null;
+    };
+    List<User> entries = DatabaseAPI.getAllUsers();
+    List<User> suggestions = new ArrayList<>(entries);
+    if (sgscroll != null)
+    searchBack.remove(sgscroll);
+    suggestions.removeIf(e -> !e.getUsername().startsWith(searchField.getText()));
+    sgscroll = null;
+    Component[] _comps = searchField.setDropdown(suggestions, sgscroll, searchBack, action, suggestions.size());
+    sgscroll = (JScrollPane) _comps[0];
+    searchField.requestFocus();
   }
 }

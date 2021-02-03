@@ -122,12 +122,12 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     }
 
     PAGE_ONE = new Panel();
-    PAGE_ONE.setBounds(100, 120, 320, 400);
+    PAGE_ONE.setBounds(100, 120, 320, 410);
     PAGE_ONE.setBackground(MasterUI.lightCol);
     mainpanel.add(PAGE_ONE);
 
     PAGE_TWO = new Panel();
-    PAGE_TWO.setBounds(100, 520, 320, 400);
+    PAGE_TWO.setBounds(100, 540, 320, 400);
     PAGE_TWO.setBackground(MasterUI.lightCol);
     mainpanel.add(PAGE_TWO);
 
@@ -172,10 +172,17 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     confirmBtn.centerText();
     confirmBtn.setCornerRadius(Button.ROUND);
 
+    String pref = "";
+    switch (mode) {
+      case CREATE: pref = "Create"; break;
+      case EDIT: pref = "Edit"; break;
+      case VIEW: pref = "View"; break;
+    }
+
     Label schedulehero = new Label(-10, -10, "");
     schedulehero.setIcon(FormatUtil.resizeImageIcon(MasterUI.scheduleFormImage, 0.5f));
     schedulehero.setSize(schedulehero.getIcon().getIconWidth(), schedulehero.getIcon().getIconHeight() - 70);
-    Label scheduleheroText = new Label(15, 15, "Create your event here.");
+    Label scheduleheroText = new Label(15, 15, pref + " your event here.");
     scheduleheroText.setHeading();
     scheduleheroText.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 28f));
     scheduleheroText.setForeground(Color.WHITE);
@@ -235,9 +242,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
             redpanel.isActive = false;
             e.setText("");
           }
-
-          public void focusLost(FocusEvent f) {
-          }
+          public void focusLost(FocusEvent f) { }
         });
       }
     });
@@ -260,7 +265,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       locationField.setText(editEvent.getLocation().getName());
       dateField.setText(editEvent.getDate().toString());
       startField.setText(editEvent.getTime().toString());
-      endField.setText(FormatUtil.getEndTime(editEvent.getTime(), editEvent.getDurationMinutes()).toString());
+      endField.setText(FormatUtil.getEndTime(editEvent).toString());
       descField.setText(editEvent.getDescription());
       String attachStr = "";
       for (File f : editEvent.getAttachments()) {
@@ -286,6 +291,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       Button[] prioBtns = { loPrioBtn, midPrioBtn, hiPrioBtn };
       for (Button prioBtn : prioBtns) {
         prioBtn.setEnabled(false);
+        prioBtn.setForeground(Color.WHITE);
       }
 
       repaint();
@@ -365,6 +371,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     redpanel.setSize(0, 0);
     redpanel.setBackground(MasterUI.lightCol);
     redpanel.setLayout(null);
+    redpanel.setBorder(BorderFactory.createLineBorder(Color.GRAY.brighter(), 1));
     ((CalendarPanel) redpanel).stripComponents();
     redpanel.isActive = false;
     openDatePicker.addActionListener(e -> {
@@ -373,16 +380,16 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         redpanel.isActive = false;
         PAGE_ONE.add(lc_dpdwn);
       } else {
-        redpanel.setBounds(openDatePicker.getX(), openDatePicker.getY(), 300, 310);
+        redpanel.setBounds(openDatePicker.getX() + PAGE_ONE.getX(), openDatePicker.getY() + PAGE_ONE.getY(), 300, 310);
         redpanel.isActive = true;
         PAGE_ONE.remove(lc_dpdwn);
       }
     });
 
     PAGE_ONE.add(openDatePicker);
-    PAGE_ONE.add(redpanel);
+    mainpanel.add(redpanel);
     PAGE_ONE.setComponentZOrder(openDatePicker, 0);
-    PAGE_ONE.setComponentZOrder(redpanel, 1);
+    mainpanel.setComponentZOrder(redpanel, 1);
   }
 
   /**
@@ -448,9 +455,9 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     attachpanel.setBackground(MasterUI.lightCol);
     attachField = new TextField(0, reminderField.getY() + TF_MRGN);
     attachpanel.setBounds(attachField.getX() + attachField.getWidth() + 100, 40, 220, 200);
-    if (mode == VIEW) {
+    if (mode == VIEW && !editEvent.getAttachments().isEmpty()) {
       MasterUI.placeFieldLabel(attachField, "Attachments", PAGE_TWO);
-    } else {
+    } else if (mode == CREATE || mode == EDIT) {
       MasterUI.placeFieldLabel(attachField, "Attachments (optional)", PAGE_TWO);
     }
     attachField.setEditable(false);
@@ -562,7 +569,9 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    */
   private void drawParticipantSection() {
     searchUserField = new TextField(0, attachField.getY() + TF_MRGN);
-    MasterUI.placeFieldLabel(searchUserField, "People to invite", PAGE_TWO);
+    if (mode == CREATE) {
+      MasterUI.placeFieldLabel(searchUserField, "People to invite", PAGE_TWO);
+    }
 
     addUserBtn = searchUserField.appendButton(MasterUI.addUserIcon);
     userQueryResult = new Label(0, 0, "");
@@ -578,6 +587,9 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         // System.out.println("focus lost");
       }
     });
+
+    Label pcpIconLabel = new Label(pcpIconPos, 370, "Participants");
+    mainpanel.add(pcpIconLabel);
 
     for (User pcp : participants) {
       placeParticpantIcon(pcp);
@@ -616,27 +628,34 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * @param pcp - Participant user
    */
   public void placeParticpantIcon(User pcp) {
-    Label pcpIcon = new Label(pcpIconPos, 680, "");
+    Label pcpIcon = new Label(pcpIconPos, 400, "");
     pcpIcon.fillIcon(FormatUtil.resizeImageIcon(pcp.getAvatar(), 0.5f));
     pcpIcon.setVerticalTextPosition(SwingConstants.CENTER);
     mainpanel.add(pcpIcon);
     pcpIconPos += 40;
   }
 
+  /**
+   * Draw description text area for event description
+   */
   private void drawDesciptionSection() {
     descField = new JTextArea();
     descField.setBackground(MasterUI.lightColAlt);
     descField.setFont(MasterUI.robotoFont);
     descField.setForeground(MasterUI.primaryColAlt);
-    descField.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    descField.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     descField.setBounds(0, searchUserField.getY() + TF_MRGN, searchUserField.getWidth() + 40, 110);
     descField.setLineWrap(true);
 
-    Label descLabel = new Label(0, descField.getY() - 25, "Description (optional)");
-    if (mode == VIEW)
-      descLabel.setText("Description");
+    if (mode == CREATE || mode == EDIT) {
+      MasterUI.placeFieldLabel(descField, "Description (optional)", PAGE_TWO);
+    }
+    if (mode == VIEW && !descField.getText().isBlank()) {
+      MasterUI.placeFieldLabel(descField, "Description", PAGE_TWO);
+      descField.setBorder(BorderFactory.createEmptyBorder());
+      descField.setBackground(MasterUI.lightCol);
+    }
 
-    PAGE_TWO.add(descLabel);
     PAGE_TWO.add(descField);
   }
 
