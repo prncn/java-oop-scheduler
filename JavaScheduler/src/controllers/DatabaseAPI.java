@@ -278,7 +278,9 @@ public class DatabaseAPI {
 
       ArrayList<Event> events = getEventsFromUser(id);
       User user = new User(id, name, firstname, lastname, email, events, new ArrayList<Location>());
-      user.setAvatar(FormatUtil.byteToIcon(icon));
+      if (icon != null) {
+        user.setAvatar(FormatUtil.byteToIcon(icon));
+      }
       closeDatabase();
       return user;
     } catch (SQLException e) {

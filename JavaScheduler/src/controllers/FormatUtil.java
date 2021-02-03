@@ -18,7 +18,6 @@ import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.Files;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -158,6 +157,7 @@ public class FormatUtil {
 	/**
 	 * Convert Image object to ImageIcon object cropped to circular shape and
 	 * 128x128 dimensions for profile icon use from any user image.
+	 * Used to fetch from database and bring to view.
 	 * 
 	 * @param img - Image to be converted
 	 * @return ImageIcon object with proper attributes
@@ -188,6 +188,14 @@ public class FormatUtil {
 		return new ImageIcon(resized);
 	}
 
+	/**
+	 * Convert File object to array of bytes.
+	 * This method is used to select an image from files and import it
+	 * into the UI view.
+	 * 
+	 * @param img - File object of selected image
+	 * @return Byte array containing image stream data
+	 */
 	public static byte[] fileToBytes(File img) {
 		try {
 			BufferedImage image = ImageIO.read(img);
@@ -201,6 +209,13 @@ public class FormatUtil {
 		}
 	}
 
+	/**
+	 * Convert ImageIcon image to array of bytes.
+	 * This method is used to prepare storing icons to the database.
+	 * 
+	 * @param icon - ImageIcon to be converted
+	 * @return Byte array containing image stream data
+	 */
 	public static byte[] iconToBytes(ImageIcon icon) {
 		BufferedImage bi = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics g = bi.createGraphics();
