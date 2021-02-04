@@ -454,7 +454,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     Panel attachpanel = new Panel();
     attachpanel.setBackground(MasterUI.lightCol);
     attachField = new TextField(0, reminderField.getY() + TF_MRGN);
-    attachpanel.setBounds(attachField.getX() + attachField.getWidth() + 100, 40, 220, 200);
+    attachpanel.setBounds(430, 600, 220, 200);
     if (mode == VIEW && !editEvent.getAttachments().isEmpty()) {
       MasterUI.placeFieldLabel(attachField, "Attachments", PAGE_TWO);
     } else if (mode == CREATE || mode == EDIT) {
@@ -495,7 +495,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     if (mode != VIEW)
       PAGE_TWO.add(attachBtn);
     PAGE_TWO.add(attachField);
-    PAGE_TWO.add(attachpanel);
+    mainpanel.add(attachpanel);
+    // attachpanel.setBackground(Color.RED);
   }
 
   /**
@@ -517,7 +518,9 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       Label fname = new Label(55, 10, file.getName());
       Label fsize = new Label(fname.getX(), fname.getY() + 15, String.valueOf((int) file.length() / 1024) + " KB");
       Button del = new Button(fcard.getWidth() - 25, 10, "");
+      del.setColor(MasterUI.lightCol);
       Button open = new Button(0, 0, "");
+      open.setBlank(true);
       open.setSize(fcard.getWidth() - 30, fcard.getHeight());
       open.addActionListener(e -> {
         try {

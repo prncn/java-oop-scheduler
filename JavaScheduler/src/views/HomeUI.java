@@ -49,6 +49,7 @@ public class HomeUI extends MasterUI {
   private Button exportTab;
   private Button logoutTab;
   private Button prevBtn;
+  public static Label sidebarAvatar;
 
   private static Button dashboardTab;
   public static Button createTab;
@@ -322,9 +323,8 @@ public class HomeUI extends MasterUI {
    * sizes for left sidebar.
    */
   private void styleSidebar() {
-    Label avatarIcon = new Label(10, 30, "");
-    avatarIcon.setIcon(FormatUtil.resizeImageIcon(user.getAvatar(), 0.7f));
-    avatarIcon.setSize(avatarIcon.getIcon().getIconWidth(), avatarIcon.getIcon().getIconHeight());
+    sidebarAvatar = new Label(10, 30, "");
+    sidebarAvatar.fillIcon(FormatUtil.resizeImageIcon(user.getAvatar(), 0.7f));
 
     Label headerinfoUser = new Label(10, 140, user.getFirstname() + " " + user.getLastname());
     Label headerinfoEmail = new Label(headerinfoUser.getX(), headerinfoUser.getY() + 20, user.getUsername());
@@ -338,7 +338,7 @@ public class HomeUI extends MasterUI {
     sidebar.setLayout(null);
     sidebar.add(headerinfoUser);
     sidebar.add(headerinfoEmail);
-    sidebar.add(avatarIcon);
+    sidebar.add(sidebarAvatar);
   }
 
   /**
