@@ -75,6 +75,14 @@ public class ViewModelHandler {
     ProfilePanel.updateProfileStats(user);
   }
 
+    /**
+   * Update profile avatar icon on sidebar incase of
+   * changes in other views.
+   */
+  public static void updateProfileIcon(User user) {
+    HomeUI.sidebarAvatar.fillIcon(FormatUtil.resizeImageIcon(user.getAvatar(), 0.7f));
+  }
+
   /**
    * Create dummy event for testing. Date and time are randomised.
    * 

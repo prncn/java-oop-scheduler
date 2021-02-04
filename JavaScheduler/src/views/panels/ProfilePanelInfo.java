@@ -4,22 +4,36 @@ import models.User;
 import views.HomeUI;
 import views.MasterUI;
 import views.components.Button;
+import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
 
 import controllers.DatabaseAPI;
+import controllers.FormatUtil;
+import controllers.PasswordEncryption;
+import controllers.ViewModelHandler;
 
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.awt.event.ActionEvent;
+
+import javax.swing.JFileChooser;
+import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
 import java.awt.Point;
 
 public class ProfilePanelInfo extends Panel {
 
   private static final long serialVersionUID = 1L;
   private TextField usernameField;
+  private TextField passField;
   private TextField emailField;
   private TextField firstnameField;
   private TextField lastnameField;
+  private List<JTextField> fields;
   private Button saveBtn;
   private User user;
   private boolean isEditable;
@@ -28,9 +42,10 @@ public class ProfilePanelInfo extends Panel {
     super();
     this.user = user;
     setBackground(MasterUI.lightCol);
-    setBounds(40, 100, 320, 500);
-    
+    setBounds(40, 100, 320, 550);
+
     usernameField = new TextField(user.getUsername());
+    passField = new TextField("");
     emailField = new TextField(user.getEmail());
     firstnameField = new TextField(user.getFirstname());
     lastnameField = new TextField(user.getLastname());
@@ -42,35 +57,73 @@ public class ProfilePanelInfo extends Panel {
     }, "Change profile info?"));
     saveBtn.addActionListener(e -> setToStaticMode());
 
-    TextField[] fields = { usernameField, emailField, firstnameField, lastnameField };
-    
+    fields = new ArrayList<>(Arrays.asList(usernameField, passField, emailField, firstnameField, lastnameField));
+
+    Label profileIcon = new Label(0, 0, "");
+    profileIcon.fillIcon(FormatUtil.resizeImageIcon(user.getAvatar(), 0.5f));
+    Button piBtn = new Button(0, 0, "");
+    piBtn.setSize(profileIcon.getSize());
+    piBtn.setBlank(true);
+    profileIcon.add(piBtn);
+    piBtn.addActionListener(e -> {
+      JFileChooser chooser = new JFileChooser();
+      chooser.setAcceptAllFileFilterUsed(false);
+      chooser.setFileFilter(new FileFilter() {
+        public String getDescription() {
+          return "Image Files";
+        }
+
+        public boolean accept(File f) {
+          if (f.isDirectory()) {
+            return true;
+          } else {
+            String filename = f.getName().toLowerCase();
+            return filename.endsWith(".jpg") || filename.endsWith(".jpeg")
+                || filename.endsWith(".png");
+          }
+        }
+      });
+      if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+        File img = chooser.getSelectedFile();
+        byte[] bytes = FormatUtil.fileToBytes(img);
+        user.setAvatar(FormatUtil.byteToIcon(bytes));
+        profileIcon.fillIcon(FormatUtil.resizeImageIcon(user.getAvatar(), 0.5f));
+      }
+    });
+    add(profileIcon);
+
     /** Content box */
-    Point contentPoint = new Point(0, 0);
-    Point cb = new Point(contentPoint.x, contentPoint.y); 
+    Point contentPoint = new Point(0, 100);
+    Point cb = new Point(contentPoint.x, contentPoint.y);
     /** Vertical margin between text fields **/
-    int marginBottom = 80; 
-    
+    int marginBottom = 80;
+
     cb.setLocation(contentPoint.x, contentPoint.y);
-    for (TextField field : fields) {
-      field.setLocation(cb.x, cb.y + 20);
-      add(field);
-      cb.y += marginBottom;
-    }
-    
+    usernameField.setLocation(cb.x, cb.y - marginBottom);
+    usernameField.setBounds(cb.x + marginBottom, usernameField.getY(), usernameField.getWidth() - marginBottom, usernameField.getHeight());
+    passField.setLocation(cb.x, usernameField.getY() + marginBottom);
+    emailField.setLocation(cb.x, passField.getY() + marginBottom);
+    firstnameField.setLocation(cb.x, emailField.getY() + marginBottom);
+    firstnameField.setSize(firstnameField.getWidth() / 2 - 5, firstnameField.getHeight());
+    lastnameField.setLocation(firstnameField.getX() + firstnameField.getWidth() + 10, firstnameField.getY());
+    lastnameField.setSize(firstnameField.getSize());
+    fields.forEach(e -> add(e));
+
     MasterUI.placeFieldLabel(usernameField, "Username", this);
+    MasterUI.placeFieldLabel(passField, "Password", this);
     MasterUI.placeFieldLabel(emailField, "Email", this);
     MasterUI.placeFieldLabel(firstnameField, "First name", this);
     MasterUI.placeFieldLabel(lastnameField, "Last name", this);
     MasterUI.setComponentStyles(this, "light");
-    
-    if(isEditable){
+
+    if (isEditable) {
       this.isEditable = false;
       setToEditMode();
     } else {
       this.isEditable = true;
       setToStaticMode();
     }
-    
+
     this.isEditable = isEditable;
   }
 
@@ -82,8 +135,7 @@ public class ProfilePanelInfo extends Panel {
   public void setToStaticMode() {
     if (!getEditable())
       return;
-    TextField[] fields = { usernameField, emailField, firstnameField, lastnameField };
-    for (TextField field : fields) {
+    for (JTextField field : fields) {
       field.setBackground(MasterUI.primaryCol);
       field.setForeground(MasterUI.lightCol);
       field.setEditable(false);
@@ -104,8 +156,7 @@ public class ProfilePanelInfo extends Panel {
   public void setToEditMode() {
     if (getEditable())
       return;
-    TextField[] fields = { usernameField, emailField, firstnameField, lastnameField };
-    for (TextField field : fields) {
+    for (JTextField field : fields) {
       field.setBackground(MasterUI.lightColAlt);
       field.setEditable(true);
     }
@@ -172,8 +223,8 @@ public class ProfilePanelInfo extends Panel {
   }
 
   /**
-   * Set user attributes to data from form.
-   * This replaces and overwrites current user data.
+   * Set user attributes to data from form. This replaces and overwrites current
+   * user data.
    * 
    * @return ActionListener object
    */
@@ -197,13 +248,18 @@ public class ProfilePanelInfo extends Panel {
         user.setEmail(emailField.getText());
         user.setFirstname(firstnameField.getText());
         user.setLastname(lastnameField.getText());
+        if (!passField.getText().isBlank()) {
+          user.setPassword(PasswordEncryption.createHash(passField.getText()));
+        }
         DatabaseAPI.editUser(user);
+        ViewModelHandler.updateProfileIcon(user);
       }
     };
   }
 
   /**
    * Get save user data info button
+   * 
    * @return Save Button object
    */
   public Button getSaveBtn() {
