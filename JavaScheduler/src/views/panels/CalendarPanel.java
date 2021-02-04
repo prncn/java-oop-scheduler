@@ -214,8 +214,10 @@ public class CalendarPanel extends Panel {
       Date date = parser.parse(parseDate);
       SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
       formattedDate = formatter.format(date);
-    } catch (ParseException e1) {
-      e1.printStackTrace();
+      LocalDate localdate = LocalDate.parse(formattedDate);
+      monthField.setText(localdate.getMonth().toString());
+    } catch (ParseException e) {
+      return null;
     }
 
     return LocalDate.parse(formattedDate);
@@ -280,12 +282,14 @@ public class CalendarPanel extends Panel {
    * @param frame - JFrame of current instance (used for setComponentStyles cast)
    */
   public void changeDateFromTextField(JFrame frame) {
+    LocalDate argDate = parseDateFromTextField();
+    if (argDate == null) {
+      return;
+    }
     redpanel.removeAll();
     redpanel.repaint();
 
-    LocalDate argDate = parseDateFromTextField();
     initCalendarLayout(argDate);
-
     redpanel.setLayout(null);
     MasterUI.setComponentStyles(redpanel, "light");
     redpanel.repaint();
