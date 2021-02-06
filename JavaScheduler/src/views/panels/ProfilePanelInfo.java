@@ -1,5 +1,10 @@
 package views.panels;
 
+import controllers.DatabaseAPI;
+import controllers.FormatUtil;
+import controllers.PasswordEncryption;
+import controllers.ViewModelHandler;
+import models.Event;
 import models.User;
 import views.HomeUI;
 import views.MasterUI;
@@ -8,22 +13,15 @@ import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
 
-import controllers.DatabaseAPI;
-import controllers.FormatUtil;
-import controllers.PasswordEncryption;
-import controllers.ViewModelHandler;
-
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.awt.event.ActionEvent;
-
-import javax.swing.JFileChooser;
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileFilter;
-import java.awt.Point;
 
 public class ProfilePanelInfo extends Panel {
 
@@ -35,6 +33,7 @@ public class ProfilePanelInfo extends Panel {
   private TextField lastnameField;
   private List<JTextField> fields;
   private Button saveBtn;
+  private Button deleteBtn;
   private User user;
   private boolean isEditable;
 
@@ -56,6 +55,13 @@ public class ProfilePanelInfo extends Panel {
       resetForm();
     }, "Change profile info?"));
     saveBtn.addActionListener(e -> setToStaticMode());
+    deleteBtn = new Button(0,420, "Delete Account", MasterUI.hiPrioCol);
+    deleteBtn.setSize(310,50);
+    deleteBtn.setCornerRadius(Button.ROUND);
+    deleteBtn.addActionListener(confirm -> HomeUI.confirmDialog(deleteUser(user), e -> {
+      resetForm();
+    }, "Delete Account?"));
+    deleteBtn.addActionListener(e -> setToStaticMode());
 
     fields = new ArrayList<>(Arrays.asList(usernameField, passField, emailField, firstnameField, lastnameField));
 
@@ -162,6 +168,7 @@ public class ProfilePanelInfo extends Panel {
     }
 
     add(saveBtn);
+    add(deleteBtn);
     MasterUI.setComponentStyles(this, "light");
     repaint();
 
@@ -265,4 +272,46 @@ public class ProfilePanelInfo extends Panel {
   public Button getSaveBtn() {
     return saveBtn;
   }
+
+  /**
+   * deletes the user and all of his events
+   * @param user
+   * @return
+   */
+  public ActionListener deleteUser(User user) {
+    return new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+
+        /**
+         * first get all events from user,
+         * then deletes all user's hosted events (from list in events and in table Event),
+         * then remove the user in all events where user is not the host (from the list in events)
+         */
+        ArrayList<Event> allEvents = DatabaseAPI.getEventsFromUser(user.getId());
+        for (Event event : allEvents) {
+          if(user.getId() == event.getHostId()) {
+            user.deleteEvent(event);
+          } else {
+            //ArrayList<User> participants = event.getParticipants();
+            //DatabaseAPI.deleteUserEventBridge(user.getId(),event.getId());
+            //event.updateParticipantList();
+            event.removeParticipant(user);
+          }
+        }
+        /**
+         * delete user in database
+         */
+        DatabaseAPI.deleteUser(user.getId());
+
+        removeAll();
+        Label success = new Label(0,0, "User " + user.getUsername() + " successfully deleted");
+        add(success);
+        repaint();
+        return;
+      }
+    };
+  }
+
+
 }
