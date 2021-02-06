@@ -37,10 +37,9 @@ public class Event implements Comparable<Event> {
     this.description = description;
   }
 
-  public Event(int eventId, String name, String description, int duration,
-               LocalDate date, LocalTime time, Location location,
-               Priority priority, Reminder reminder,
-               ArrayList<User> participants, ArrayList<File> attachments) {
+  public Event(int eventId, String name, String description, int duration, LocalDate date, LocalTime time,
+      Location location, Priority priority, Reminder reminder, ArrayList<User> participants,
+      ArrayList<File> attachments) {
     this.id = eventId;
     this.name = name;
     this.description = description;
@@ -331,7 +330,7 @@ public class Event implements Comparable<Event> {
   }
 
   /**
-   * todo
+   * Remove participants
    *
    * @param user - User to be removed
    * @return <code>true</code> on successful removal
@@ -340,6 +339,19 @@ public class Event implements Comparable<Event> {
     return false;
   }
 
+  /**
+   * Get a list of all participants' full names as text
+   * 
+   * @return String of participant names
+   */
+  public String participantsToString() {
+    String list = "";
+    for (User participant : getParticipants()) {
+      list += participant.getFirstname() + " " + participant.getLastname() + "<br>";
+    }
+    return "<html> " + list + "<html>";
+  }
+  
   @Override
   public int compareTo(Event other) {
     if (getDate() == null || other.getDate() == null) {
@@ -348,11 +360,4 @@ public class Event implements Comparable<Event> {
     return getDate().compareTo(other.getDate());
   }
 
-  public String participantsToString() {
-    String list ="";
-    for(User participant : getParticipants()){
-      list += participant.getFirstname() + " " + participant.getLastname() + "<br>";
-    }
-    return "<html> " + list + "<html>";
-  }
 }

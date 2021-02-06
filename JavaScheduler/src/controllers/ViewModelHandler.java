@@ -12,6 +12,7 @@ import views.panels.ProfilePanel;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
+
 import java.awt.*;
 import java.io.File;
 import java.time.LocalDate;
@@ -22,10 +23,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+/**
+ * The view model handler contains methods that serve as interaction between model
+ * and view. For instance, it might bring higher level logic out of the view
+ * to then, turn into model entities.
+ */
 public class ViewModelHandler {
 
   /**
-   * Consume input form data from Create view and generate a model Event
+   * Consume input form data from Create view and generate a model Event.
+   * This method is used at the end of the schedule event form.
    * 
    * @param titleField    - Field for title
    * @param dateField     - Field for date
@@ -66,6 +73,14 @@ public class ViewModelHandler {
   public static void updateDashboard(User user) {
     Dashboard.drawEventData(user);
     ProfilePanel.updateProfileStats(user);
+  }
+
+    /**
+   * Update profile avatar icon on sidebar incase of
+   * changes in other views.
+   */
+  public static void updateProfileIcon(User user) {
+    HomeUI.sidebarAvatar.fillIcon(FormatUtil.resizeImageIcon(user.getAvatar(), 0.7f));
   }
 
   /**
@@ -122,7 +137,8 @@ public class ViewModelHandler {
   }
 
   /**
-   * Validate input
+   * Validate input of form. Display UI errors on the form
+   * incase of missing or invalid inputs.
    *
    * @param FieldMap         Map of textfields
    * @param selectedPriority selected Priority
@@ -150,7 +166,7 @@ public class ViewModelHandler {
         valid = false;
       } else {
         field.getErrorLabel().setText("");
-        field.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        field.setDefaultStyle();
       }
     }
 
@@ -162,8 +178,8 @@ public class ViewModelHandler {
 
         valid = false;
       } else {
-        startField.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        endField.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        startField.setDefaultStyle();
+        endField.setDefaultStyle();
         endField.getErrorLabel().setText("");
       }
     }
@@ -185,16 +201,4 @@ public class ViewModelHandler {
     }
     return true;
   }
-
-
-  public static ImageIcon resizeImageIcon(ImageIcon img, float proportion) {
-    int width = img.getIconWidth();
-    int height = img.getIconHeight();
-
-    width = Math.round(width*proportion);
-    height = Math.round(height*proportion);
-
-    return new ImageIcon(img.getImage().getScaledInstance(width, height, Image.SCALE_DEFAULT));
-  }
-
 }
