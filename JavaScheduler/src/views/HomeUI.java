@@ -1,5 +1,15 @@
 package views;
 
+import controllers.DatabaseAPI;
+import controllers.EmailHandler;
+import controllers.FormatUtil;
+import controllers.PDFDocument;
+import models.User;
+import views.components.Button;
+import views.components.Label;
+import views.panels.*;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,23 +26,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.swing.*;
-
-import controllers.DatabaseAPI;
-import controllers.EmailHandler;
-import controllers.FormatUtil;
-import controllers.PDFDocument;
-import models.*;
-import views.components.Button;
-import views.components.Label;
-import views.panels.AdminPanel;
-import views.panels.CalendarPanel;
-import views.panels.CalendarPanelWeekly;
-import views.panels.Dashboard;
-import views.panels.ProfilePanel;
-import views.panels.ScheduleEvent;
-import views.panels.ScheduleModes;
 
 public class HomeUI extends MasterUI {
   private static final long serialVersionUID = -771654490802003766L;
@@ -377,13 +370,20 @@ public class HomeUI extends MasterUI {
    * permissions for user "roles".
    */
   private void showAdminPanel() {
-    AdminPanel adminPanel = new AdminPanel(frame);
+    AdminPanel adminPanel = new AdminPanel(frame, user);
     adminTab = new Button(tabsBox.x, tabsBox.y - 50, "Admin Panel", adminPanel);
     adminTab.setIcon(FormatUtil.resizeImageIcon(adminIcon, 0.7f));
     adminTab.setTab();
     if (user.getUsername().equals("admin")) {
       sidebar.add(adminTab);
     }
+  }
+
+  /**
+   * dispose the HomeUI
+   */
+  public static void disposeFrame() {
+    frame.dispose();
   }
 
   public static void main(String[] args) {
