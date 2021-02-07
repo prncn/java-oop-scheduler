@@ -1,5 +1,9 @@
 package views.panels;
 
+import controllers.DatabaseAPI;
+import controllers.FormatUtil;
+import controllers.PasswordEncryption;
+import controllers.ViewModelHandler;
 import models.User;
 import views.HomeUI;
 import views.MasterUI;
@@ -8,22 +12,15 @@ import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
 
-import controllers.DatabaseAPI;
-import controllers.FormatUtil;
-import controllers.PasswordEncryption;
-import controllers.ViewModelHandler;
-
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.awt.event.ActionEvent;
-
-import javax.swing.JFileChooser;
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileFilter;
-import java.awt.Point;
 
 public class ProfilePanelInfo extends Panel {
 
@@ -35,6 +32,7 @@ public class ProfilePanelInfo extends Panel {
   private TextField lastnameField;
   private List<JTextField> fields;
   private Button saveBtn;
+  private Button deleteBtn;
   private User user;
   private boolean isEditable;
 
@@ -162,6 +160,7 @@ public class ProfilePanelInfo extends Panel {
     }
 
     add(saveBtn);
+    //add(deleteBtn);
     MasterUI.setComponentStyles(this, "light");
     repaint();
 
@@ -265,4 +264,5 @@ public class ProfilePanelInfo extends Panel {
   public Button getSaveBtn() {
     return saveBtn;
   }
+
 }
