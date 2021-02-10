@@ -35,6 +35,20 @@ public class Location {
         this.roomNr = roomNr;
     }
 
+    public Location(int location_id, String name, String city, String zip, String street, String streetNr, String building,
+                    String roomNr) {
+        this.id = location_id;
+        this.name = name;
+        this.city = city;
+        this.zip = zip;
+        this.street = street;
+        this.streetNr = streetNr;
+        this.building = building;
+        this.roomNr = roomNr;
+    }
+
+
+
     public int getId() {
         return id;
     }

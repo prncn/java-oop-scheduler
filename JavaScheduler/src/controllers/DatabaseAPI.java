@@ -324,6 +324,7 @@ public class DatabaseAPI {
         Event event = new Event(eventId, name, description, duration, date, time, new Location("Rock Bottom"), priority,
             reminder, getParticipants(eventId), new ArrayList<File>());
 
+
         event.setId(eventId);
         event.setHostId(host_id);
         events.add(event);
@@ -337,6 +338,7 @@ public class DatabaseAPI {
       e.printStackTrace();
       return null;
     }
+
   }
 
   /**
@@ -360,6 +362,8 @@ public class DatabaseAPI {
       while (rs.next()) {
         User u = new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("firstname"),
             rs.getString("lastName"), rs.getString("email"));
+        byte[] icon = rs.getBytes("icon");
+        u.setAvatar(FormatUtil.byteToIcon(icon));
         participants.add(u);
       }
       rs.close();
@@ -542,23 +546,23 @@ public class DatabaseAPI {
   /**
    * Creates an entry in Location table in the Database.
    * 
-   * @param l      Location that should be entered
+   * @param location Location that should be entered
    * @param userId User that the Location belongs to
    * @return ID of Location or -1
    */
-  public static int createLocation(Location l, int userId) {
+  public static int createLocation(Location location, int userId) {
     String sql = "INSERT INTO Location (name, city, street, streetNr, building, roomNr, user_id) "
         + "VALUES( ? , ? , ? , ? , ? , ? , ? )";
     Connection connection = connectDatabase();
     int locationId = -1;
     try {
       PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-      ps.setString(1, l.getName());
-      ps.setString(2, l.getCity());
-      ps.setString(3, l.getStreet());
-      ps.setString(4, l.getStreetNr());
-      ps.setString(5, l.getBuilding());
-      ps.setString(6, l.getRoomNr());
+      ps.setString(1, location.getName());
+      ps.setString(2, location.getCity());
+      ps.setString(3, location.getStreet());
+      ps.setString(4, location.getStreetNr());
+      ps.setString(5, location.getBuilding());
+      ps.setString(6, location.getRoomNr());
       ps.setInt(7, userId);
 
       ps.executeQuery();
@@ -582,8 +586,73 @@ public class DatabaseAPI {
   }
 
   /**
+   * Edit the Location entry in the Database.
+   * @param location Updated Location
+   * @return true on successful edit, false on failed edit
+   */
+  public static boolean editLocation(Location location){
+    String sql = "UPDATE Location SET name = ? , room_nr = ? , building = ? , city = ? , zip = ? , street = ? , street_nr = ? "
+            + "WHERE location_id = ? ";
+    Connection connection = connectDatabase();
+
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql);
+
+      ps.setString(1 , location.getName());
+      ps.setString(2 , location.getRoomNr());
+      ps.setString(3 , location.getBuilding());
+      ps.setString(4 , location.getCity());
+      ps.setString(5 , location.getZip());
+      ps.setString(6 , location.getStreet());
+      ps.setString(7 , location.getStreetNr());
+      ps.setInt(8 , location.getId());
+
+      ps.executeUpdate();
+
+      ps.close();
+      closeDatabase();
+      return true;
+    } catch (SQLException e){
+      e.printStackTrace();
+      closeDatabase();
+      return false;
+    }
+  }
+
+  public static ArrayList<Location> getLocationsFromUser(int userId){
+    String sql = "SELECT * FROM Location WHERE user_id = ?";
+    Connection connection = connectDatabase();
+    ArrayList<Location> locations = new ArrayList<>();
+
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql);
+      ps.setInt(1 , userId);
+
+      ResultSet rs = ps.executeQuery();
+
+      while(rs.next()){
+        Location location = new Location(
+                rs.getInt("location_id") ,
+                rs.getString("name"),
+                rs.getString("city") ,
+                rs.getString("zip"),
+                rs.getString("street"),
+                rs.getString("street_nr"),
+                rs.getString("building"),
+                rs.getString("room_nr"));
+        locations.add(location);
+      }
+      return locations;
+    } catch (SQLException e){
+      e.printStackTrace();
+      closeDatabase();
+      return null;
+    }
+  }
+
+  /**
    * TODO Adds attachment entry into the Database
-   * 
+   *
    * @param file
    * @param event
    * @return

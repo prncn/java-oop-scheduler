@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 public class HomeUI extends MasterUI {
   private static final long serialVersionUID = -771654490802003766L;
   private JPanel sidebar = new JPanel();
