@@ -269,7 +269,7 @@ public class TextField extends JTextField {
       scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
     scroll.getVerticalScrollBar().setUnitIncrement(14);
     scroll.setBorder(BorderFactory.createEmptyBorder());
-    scroll.setBounds(getX(), getY() + getHeight() - 5, getWidth() - 18, HGHT * options);
+    scroll.setBounds(getX(), getY() + getHeight() - 6, getWidth() - 18, HGHT * options);
     MasterUI.setComponentStyles(dppanel, "light");
 
     panel.add(this);
