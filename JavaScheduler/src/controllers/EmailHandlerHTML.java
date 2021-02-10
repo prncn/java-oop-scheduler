@@ -4,32 +4,49 @@ import models.*;
 
 import java.time.format.DateTimeFormatter;
 
+/**
+ * The Class EmailHanlderHTML is used for creating the mail Layout
+ * @author ZuHyunLee97
+ */
 public class EmailHandlerHTML {
 
+    /**
+     *
+     *
+     * @param event
+     * @return nothing or all participants of event if participants > 1
+     */
+    public static String  Participants(Event event) {
+        String p = "";
+        if (event.getParticipants().size() > 1) {
+            p = "Participants: " + event.participantsToString();
+        }
+        return p;
+    }
+
+    /**
+     *
+     * @param event
+     * @return
+     */
+    public static String Description(Event event) {
+        String d ="";
+        if (event.getDescription().equals(d)) {
+
+        } else {
+            d = "Description: " + event.getDescription();
+        }
+        return d;
+    }
+
+    /**
+     *
+     * @param event
+     * @param subject
+     * @return
+     */
     public static String setupText(Event event, String subject) {
-        return "<head>\n" +
-                "    <meta charset=\"UTF-8\">\n" +
-                "    <meta content=\"width=device-width, initial-scale=1\" name=\"viewport\">\n" +
-                "    <meta name=\"x-apple-disable-message-reformatting\">\n" +
-                "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n" +
-                "    <meta content=\"telephone=no\" name=\"format-detection\">\n" +
-                "    <title></title>\n" +
-                "    <!--[if (mso 16)]>\n" +
-                "    <style type=\"text/css\">\n" +
-                "    a {text-decoration: none;}\n" +
-                "    </style>\n" +
-                "    <![endif]-->\n" +
-                "    <!--[if gte mso 9]><style>sup { font-size: 100% !important; }</style><![endif]-->\n" +
-                "    <!--[if gte mso 9]>\n" +
-                "<xml>\n" +
-                "    <o:OfficeDocumentSettings>\n" +
-                "    <o:AllowPNG></o:AllowPNG>\n" +
-                "    <o:PixelsPerInch>96</o:PixelsPerInch>\n" +
-                "    </o:OfficeDocumentSettings>\n" +
-                "</xml>\n" +
-                "<![endif]-->\n" +
-                "</head>\n" +
-                "\n" +
+        return
                 "<body>\n" +
                 "    <div class=\"es-wrapper-color\">\n" +
                 "        <!--[if gte mso 9]>\n" +
@@ -135,8 +152,8 @@ public class EmailHandlerHTML {
                 "                                                                                        <p><strong>Time: " + event.getTime() + "</strong></p>\n" +
                 "                                                                                        <p><strong>Duration: " + event.getDurationMinutes() + " minutes" + "</strong></p>\n" +
                 "                                                                                        <p><strong>Location: " + event.getLocation().getName() + "</strong></p>\n" +
-                "                                                                                        <p><strong>Participants: " + event.participantsToString() +
-                "                                                                                        <p><strong>Description: " + event.getDescription() + "</strong></p>\n" +
+                "                                                                                        <p><strong>" + Participants(event) + "</strong></p>\n" +
+                "                                                                                        <p><strong>" + Description(event) +  "</strong></p>\n" +
                 "                                                                                    </td>\n" +
                 "                                                                                </tr>\n" +
                 "                                                                                <tr>\n" +
@@ -247,3 +264,29 @@ public class EmailHandlerHTML {
                 "</html>";
     }
 }
+
+/**
+ "<head>\n" +
+ "    <meta charset=\"UTF-8\">\n" +
+ "    <meta content=\"width=device-width, initial-scale=1\" name=\"viewport\">\n" +
+ "    <meta name=\"x-apple-disable-message-reformatting\">\n" +
+ "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n" +
+ "    <meta content=\"telephone=no\" name=\"format-detection\">\n" +
+ "    <title></title>\n" +
+ "    <!--[if (mso 16)]>\n" +
+ "    <style type=\"text/css\">\n" +
+ "    a {text-decoration: none;}\n" +
+ "    </style>\n" +
+ "    <![endif]-->\n" +
+ "    <!--[if gte mso 9]><style>sup { font-size: 100% !important; }</style><![endif]-->\n" +
+ "    <!--[if gte mso 9]>\n" +
+ "<xml>\n" +
+ "    <o:OfficeDocumentSettings>\n" +
+ "    <o:AllowPNG></o:AllowPNG>\n" +
+ "    <o:PixelsPerInch>96</o:PixelsPerInch>\n" +
+ "    </o:OfficeDocumentSettings>\n" +
+ "</xml>\n" +
+ "<![endif]-->\n" +
+ "</head>\n" +
+ "\n" +
+ */

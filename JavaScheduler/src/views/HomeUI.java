@@ -266,7 +266,7 @@ public class HomeUI extends MasterUI {
   }
 
   /**
-   * Set time and date for sidebar, updating itself every Minute
+   * Set time and date for sidebar, updating itself every Second
    */
   private void createTime() {
     DateTimeFormatter dateformat = DateTimeFormatter.ofPattern("dd . MM . yyyy");
@@ -279,8 +279,10 @@ public class HomeUI extends MasterUI {
     footerDate.setForeground(Color.white);
     footerTime.setUnset(true);
     footerDate.setUnset(true);
+
     /**footerTime.setHorizontalAlignment(SwingConstants.RIGHT);
     footerDate.setHorizontalAlignment(SwingConstants.RIGHT);**/
+
     sidebar.add(footerTime);
     sidebar.add(footerDate);
 

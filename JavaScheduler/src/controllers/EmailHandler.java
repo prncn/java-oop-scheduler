@@ -9,12 +9,25 @@ import java.util.Properties;
 
 import models.*;
 
+/**
+ * The Class EmailHandler is used to send Mails to the Participants of an event
+ * @author ZuHyunLee97
+ */
+
 public class EmailHandler {
 
+    /**sadasd*/
     Session newSession = null;
+
+    /**adasdasd*/
     MimeMessage mimeMessage = null;
 
-
+    /**
+     * Setups Mail Server, creates a Mail draft and sends the mail to all participants
+     *
+     * @param event the event of whi
+     * @param status of the event decides, which Mail layout will be drafted
+     */
     public static void sendEventMail(Event event, Status status) {
         EmailHandler mail = new EmailHandler();
         mail.setupServerProperties();
@@ -22,7 +35,12 @@ public class EmailHandler {
         mail.sendMail();
     }
 
-
+    /**
+     * Set ups Mail Server, creates a reminder mail draft and sends the mail to all participants
+     * checks if current time is the reminder time
+     *
+     * @param user
+     */
     public static void reminderMail(User user) {
         for(Event event : user.getEvents()){
             if(user.getId() == event.getHostId()) {
@@ -36,7 +54,9 @@ public class EmailHandler {
         }
     }
 
-
+    /**
+     * Set ups Google's SMTP Server for Mail
+     */
     void setupServerProperties() {
         Properties properties = System.getProperties();
         properties.put("mail.smtp.port", "587");
@@ -46,7 +66,12 @@ public class EmailHandler {
         newSession = Session.getDefaultInstance(properties, null);
     }
 
-
+    /**
+     * Drafts the Mail depending on event status which will lead to different mail layouts
+     *
+     * @param event
+     * @param status
+     */
     private void draftMail(Event event, Status status) {
         mimeMessage = new MimeMessage(newSession);
 
@@ -69,9 +94,11 @@ public class EmailHandler {
                 case EDITED:
                     subject = "Updated Event: ";
                     text = "Your Event has been edited!";
+                    break;
                 case DELETED:
                     subject = "Deleted Event: ";
                     text = "Your Event has been removed!";
+                    break;
             }
             mimeMessage.setSubject(subject + event.getName() + " " + event.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + event.getTime() + " " + event.getLocation().getName());
             mimeMessage.setText(EmailHandlerHTML.setupText(event, text),null, "html");
@@ -83,7 +110,7 @@ public class EmailHandler {
 
 
     /**
-     *
+     * Drafts the reminder mail layout
      * @param event
      */
     public void draftReminderMail(Event event) {
@@ -105,6 +132,12 @@ public class EmailHandler {
         }
     }
 
+    /**
+     * Checks if the current time after reminder time
+     *
+     * @param event
+     * @return Boolean if Current time is after reminder time
+     */
     public static boolean checkReminderTime(Event event){
         LocalDateTime eventTime = event.getDate().atTime(event.getTime());
         LocalDateTime reminderTime = eventTime.minusMinutes(event.getReminder().getMinutes());
@@ -114,6 +147,9 @@ public class EmailHandler {
         return  LocalDateTime.now().isAfter(reminderTime);
     }
 
+    /**
+     * Sends Mail with a Google Mail Account
+     */
     public  void sendMail() {
         String fromUser = "javaschedulerlablundaws2021@gmail.com";
         String fromUserPassword = "Javascheduler2021";
