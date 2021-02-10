@@ -336,7 +336,11 @@ public class Event implements Comparable<Event> {
    * @return <code>true</code> on successful removal
    */
   public boolean removeParticipant(User user) {
-    return false;
+    if(participants.contains(user)) {
+      participants.remove(user);
+      return true;
+    } else
+      return false;
   }
 
   /**

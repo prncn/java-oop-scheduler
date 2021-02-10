@@ -658,4 +658,25 @@ public class DatabaseAPI {
   public static boolean createAttachment(File file, Event event) {
     return false;
   }
+
+  /**
+   * Delete user in the user table and user's corresponding entries
+   * in table Location and table User_Event
+   * @param userId - id of user to delete
+   * @return true if deletion was successful
+   */
+  public static boolean deleteUser(int userId) {
+    String sql = "DELETE FROM User WHERE user_id = ?";
+    Connection connection = connectDatabase();
+    try {
+      PreparedStatement ps = connection.prepareStatement(sql);
+      ps.setInt(1,userId);
+      ps.executeUpdate();
+      return true;
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return false;
+    }
+  }
+
 }

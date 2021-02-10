@@ -3,9 +3,10 @@ package models;
 import controllers.DatabaseAPI;
 import controllers.EmailHandler;
 import views.MasterUI;
+
+import javax.swing.*;
 import java.util.ArrayList;
-import javax.swing.ImageIcon;
-import javax.xml.crypto.Data;
+
 
 public class User {
   private int id;
@@ -333,6 +334,8 @@ public class User {
   public ImageIcon getAvatar() {
     return avatar;
   }
+
+  public boolean isAdmin() { return isAdmin;}
 
   /**
    * Set profile icon

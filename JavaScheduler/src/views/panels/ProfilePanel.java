@@ -1,21 +1,23 @@
 package views.panels;
 
+import controllers.DatabaseAPI;
+import models.Event;
 import models.Location;
 import models.User;
 import views.HomeUI;
+import views.LoginUI;
 import views.MasterUI;
 import views.components.Button;
-import views.components.DataButton;
 import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
+import views.components.*;
 
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
+import java.util.ArrayList;
 
 public class ProfilePanel extends Panel {
 
@@ -31,6 +33,7 @@ public class ProfilePanel extends Panel {
 
   private Button editBtn;
   private Button cnclBtn;
+  private Button deleteBtn;
 
   private Button lcSaveBtn;
   private Button lcClrBtn;
@@ -63,30 +66,40 @@ public class ProfilePanel extends Panel {
     ProfilePanelInfo infoPanel = new ProfilePanelInfo(user, false);
     infoPanel.setToStaticMode();
 
+    deleteBtn = new Button(profileTitle.getX() + 190, profileTitle.getY(), "Delete Account", MasterUI.primaryCol);
+    deleteBtn.setSmall();
+    deleteBtn.setSize(deleteBtn.getWidth() + 50, deleteBtn.getHeight());
+    deleteBtn.addActionListener(confirm -> HomeUI.confirmDialog(deleteUser(user), "Delete Account?"));
+    add(deleteBtn);
+
     editBtn = new Button(40, 440, "Edit Profile", MasterUI.primaryCol);
     editBtn.setSize(310, 50);
     editBtn.setCornerRadius(Button.ROUND);
     editBtn.addActionListener(infoPanel.setEditAction());
     editBtn.addActionListener(e -> {
       remove(editBtn);
+      remove(deleteBtn);
       add(cnclBtn);
       panel.setComponentZOrder(cnclBtn, 0);
       panel.repaint();
     });
 
-    cnclBtn = new Button(profileTitle.getX() + 250, profileTitle.getY(), "Close");
+    cnclBtn = new Button(profileTitle.getX() + 240, profileTitle.getY(), "Close", MasterUI.primaryCol);
     cnclBtn.setSmall();
     cnclBtn.addActionListener(infoPanel.setStaticAction());
     cnclBtn.addActionListener(e -> {
       remove(cnclBtn);
+      add(deleteBtn);
       add(editBtn);
       panel.setComponentZOrder(editBtn, 0);
+      panel.setComponentZOrder(deleteBtn, 1);
       panel.repaint();
     });
 
     infoPanel.getSaveBtn().addActionListener(e -> {
       remove(cnclBtn);
       add(editBtn);
+      add(deleteBtn);
       panel.setComponentZOrder(editBtn, 0);
       panel.repaint();
     });
@@ -208,6 +221,42 @@ public class ProfilePanel extends Panel {
         }), "Replace location info?");
       });
     });
+  }
+
+  /**
+   * User can delete his own account.
+   * This include the deletion of all his events.
+   * After deletion the HomeUI is closed and the LoginUI is opened
+   * @param user
+   * @return
+   */
+  public ActionListener deleteUser(User user) {
+    return new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+
+        /**
+         * first get all events from user,
+         * then deletes all user's hosted events (from list in events and in table Event),
+         * then remove the user in all events where user is not the host (from the list in events)
+         */
+        ArrayList<Event> allEvents = DatabaseAPI.getEventsFromUser(user.getId());
+        for (Event event : allEvents) {
+          if(user.getId() == event.getHostId()) {
+            user.deleteEvent(event);
+          } else {
+            event.removeParticipant(user);
+          }
+        }
+        /**
+         * delete user in database
+         */
+        DatabaseAPI.deleteUser(user.getId());
+        HomeUI.disposeFrame();
+        new LoginUI();
+        return;
+      }
+    };
   }
 
   /**

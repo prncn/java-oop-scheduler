@@ -438,7 +438,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     ActionListener action = e -> {
       Reminder reminder = ((DataButton<Reminder>) e.getSource()).getData();
       descField.requestFocus();
-      remove(rmscroll);
+      PAGE_TWO.remove(rmscroll);
       rmscroll = null;
       selectedReminder = reminder;
     };

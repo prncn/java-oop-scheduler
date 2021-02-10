@@ -1,27 +1,26 @@
 package views.panels;
 
-import java.awt.Component;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.DocumentEvent;
-
 import controllers.DatabaseAPI;
 import controllers.ViewModelHandler;
+import models.Event;
 import models.User;
+import views.HomeUI;
 import views.MasterUI;
 import views.components.Button;
 import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
 
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AdminPanel extends Panel {
 
@@ -30,29 +29,44 @@ public class AdminPanel extends Panel {
   private JScrollPane sgscroll;
   private Panel searchBack;
   private TextField searchField;
+  private User currentUser;
+  private User searchedUser;
+  private Button deleteBtn;
+  private Label confirm;
+  private ActionListener closeSuggest;
 
-  public AdminPanel(JFrame frame) {
+  public AdminPanel(JFrame frame, User currentUser) {
     super(frame);
+    this.currentUser = currentUser;
     Panel panel = this;
 
     Label adminTitle = new Label(40, 40, "Admin Panel");
     adminTitle.setHeading();
+    confirm = new Label(40,70, "");
 
     searchBack = new Panel();
     searchBack.setBounds(450, 0, getWidth() - 450, getHeight());
     searchBack.setBackground(MasterUI.accentCol);
     initSearchField();
 
+    closeSuggest = e -> {
+      searchBack.remove(sgscroll);
+      sgscroll = null;
+    };
+
     Label userQueryResult = new Label(searchField.getX(), searchField.getY() + 60, "");
     Button searchBtn = searchField.appendButton(MasterUI.searchIcon);
     searchBtn.setColor(MasterUI.lightColAlt);
+    // searchBtn.addActionListener(closeSuggest);
     searchBtn.addActionListener(e -> {
-      User user = ViewModelHandler.searchUser(searchField, searchBack, userQueryResult);
-      if (user != null) {
+      searchedUser = ViewModelHandler.searchUser(searchField, searchBack, userQueryResult);
+      if ((searchedUser != null) && !(searchedUser.equals(currentUser))) {
         if (profileInfo != null) {
           panel.remove(profileInfo);
+          panel.remove(confirm);
         }
-        profileInfo = new ProfilePanelInfo(user, true);
+        profileInfo = new ProfilePanelInfo(searchedUser, true);
+        initDeleteBtn();
         panel.add(profileInfo);
         panel.repaint();
       }
@@ -106,20 +120,74 @@ public class AdminPanel extends Panel {
     });
   }
   
-  
-  public void updateSuggest() {
-    ActionListener action = e -> {
-      searchBack.remove(sgscroll);
-      sgscroll = null;
-    };
+  /**
+   * Method to trigger list of suggestions under user 
+   * search field
+   */
+  private void updateSuggest() {
     List<User> entries = DatabaseAPI.getAllUsers();
     List<User> suggestions = new ArrayList<>(entries);
     if (sgscroll != null)
     searchBack.remove(sgscroll);
-    suggestions.removeIf(e -> !e.getUsername().startsWith(searchField.getText()));
+    suggestions.removeIf(e -> (!e.getUsername().startsWith(searchField.getText())));
+    suggestions.removeIf(e -> e.getUsername().equals(currentUser.getUsername()));
     sgscroll = null;
-    Component[] _comps = searchField.setDropdown(suggestions, sgscroll, searchBack, action, suggestions.size());
+    Component[] _comps = searchField.setDropdown(suggestions, sgscroll, searchBack, closeSuggest, suggestions.size());
     sgscroll = (JScrollPane) _comps[0];
     searchField.requestFocus();
+  }
+
+  /**
+   * Initialise and create delete button to remove
+   * any user from the application database
+   */
+  private void initDeleteBtn() {
+    deleteBtn = new Button(40, 500, "Delete User", MasterUI.primaryCol);
+    deleteBtn.setSize(310, 50);
+    deleteBtn.setCornerRadius(Button.SMOOTH);
+    deleteBtn.setForeground(MasterUI.lightCol);
+    deleteBtn.addActionListener(confirm -> HomeUI.confirmDialog(deleteUser(searchedUser), "Delete User?"));
+    add(deleteBtn);
+  }
+
+  /**
+   * deletes the user and all of his events
+   * @param user
+   * @return
+   */
+  private ActionListener deleteUser(User user) {
+    return new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+
+        /**
+         * first get all events from user,
+         * then deletes all user's hosted events (from list in events and in table Event),
+         * then remove the user in all events where user is not the host (from the list in events)
+         */
+        ArrayList<Event> allEvents = DatabaseAPI.getEventsFromUser(user.getId());
+        for (Event event : allEvents) {
+          if(user.getId() == event.getHostId()) {
+            user.deleteEvent(event);
+          } else {
+            //ArrayList<User> participants = event.getParticipants();
+            DatabaseAPI.deleteUserEventBridge(user.getId(),event.getId());
+            //event.updateParticipantList();
+            event.removeParticipant(user);
+          }
+        }
+        /**
+         * delete user in database
+         */
+        DatabaseAPI.deleteUser(user.getId());
+
+        remove(deleteBtn);
+        remove(profileInfo);
+        confirm.setText("User " + user.getUsername() + " successfully deleted");
+        add(confirm);
+        repaint();
+        return;
+      }
+    };
   }
 }
