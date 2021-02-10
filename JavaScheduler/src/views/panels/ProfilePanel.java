@@ -66,7 +66,7 @@ public class ProfilePanel extends Panel {
     ProfilePanelInfo infoPanel = new ProfilePanelInfo(user, false);
     infoPanel.setToStaticMode();
 
-    deleteBtn = new Button(profileTitle.getX() + 200, profileTitle.getY(), "Delete Account", MasterUI.hiPrioCol);
+    deleteBtn = new Button(profileTitle.getX() + 190, profileTitle.getY(), "Delete Account", MasterUI.primaryCol);
     deleteBtn.setSmall();
     deleteBtn.setSize(deleteBtn.getWidth() + 50, deleteBtn.getHeight());
     deleteBtn.addActionListener(confirm -> HomeUI.confirmDialog(deleteUser(user), "Delete Account?"));
@@ -84,7 +84,7 @@ public class ProfilePanel extends Panel {
       panel.repaint();
     });
 
-    cnclBtn = new Button(profileTitle.getX() + 250, profileTitle.getY(), "Close");
+    cnclBtn = new Button(profileTitle.getX() + 240, profileTitle.getY(), "Close", MasterUI.primaryCol);
     cnclBtn.setSmall();
     cnclBtn.addActionListener(infoPanel.setStaticAction());
     cnclBtn.addActionListener(e -> {
@@ -92,6 +92,7 @@ public class ProfilePanel extends Panel {
       add(deleteBtn);
       add(editBtn);
       panel.setComponentZOrder(editBtn, 0);
+      panel.setComponentZOrder(deleteBtn, 1);
       panel.repaint();
     });
 
@@ -252,7 +253,7 @@ public class ProfilePanel extends Panel {
          */
         DatabaseAPI.deleteUser(user.getId());
         HomeUI.disposeFrame();
-        LoginUI login = new LoginUI();
+        new LoginUI();
         return;
       }
     };

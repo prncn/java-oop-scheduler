@@ -29,7 +29,7 @@ Scheduling application.
 - [x] Create Meeting
   - [x] Schedule form
     - [x] Location suggestions
-    - [ ] Search users suggestions
+    - [x] Search users suggestions
   - [x] Success panel
 - [x] View Calendar
   - [x] Monthly display mode
@@ -57,21 +57,21 @@ Scheduling application.
     - [x] Highlight events based to priority  
   - [x] Pass Meeting to participants
   - [x] Prepare to display created meetings on dashboards
-- [ ] Store meetings entity in database
-  - [ ] Link to user / participant
-  - [ ] Prepare to display stored meetings on dashboards
-- [ ] *Reminder* functionality
+- [x] Store meetings entity in database
+  - [x] Link to user / participant
+  - [x] Prepare to display stored meetings on dashboards
+- [x] *Reminder* functionality
   - [x] Drop down menu to select time
-  - [ ] Email notification *CONTROLLER*  
+  - [x] Email notification *CONTROLLER*  
 
 ### Delete and Edit Meetings/Appointments
-- [ ] Delete event
-  - [x] From client
-  - [ ] From database
-- [ ] Edit event
-  - [x] From client
-  - [ ] From database
-- [ ] User and Participant get *email notifcation* on delete/edit
+- [x] Delete event
+  - [x] In client
+  - [x] In database
+- [x] Edit event
+  - [x] In client
+  - [x] In database
+- [x] User and Participant get *email notifcation* on delete/edit
 
 ### Documentation
 - [x] Include *Javadoc* as API for classes, methods, attributes

@@ -32,7 +32,6 @@ public class ProfilePanelInfo extends Panel {
   private TextField lastnameField;
   private List<JTextField> fields;
   private Button saveBtn;
-  private Button deleteBtn;
   private User user;
   private boolean isEditable;
 
@@ -160,7 +159,6 @@ public class ProfilePanelInfo extends Panel {
     }
 
     add(saveBtn);
-    //add(deleteBtn);
     MasterUI.setComponentStyles(this, "light");
     repaint();
 
