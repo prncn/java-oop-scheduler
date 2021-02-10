@@ -5,6 +5,7 @@ import controllers.EmailHandler;
 import views.MasterUI;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
+import javax.xml.crypto.Data;
 
 public class User {
   private int id;
@@ -141,13 +142,30 @@ public class User {
   }
 
   /**
-   * Creates a new Location and adds it into the User.locations list
-   * @param location
+   * Creates a new Location and adds it into the User.locations list as well as the database
+   * @param location location that should be created
    */
   public void createLocation(Location location){
     int locationId = DatabaseAPI.createLocation(location , this.getId());
     location.setId(locationId);
-    this.addLocation(location);
+    updateLocationList();
+  }
+
+  /**
+   * Edits a location and adds it into the User.events list as well as the database
+   * @param location location that is edited.
+   */
+  public void editLocation(Location location){
+    DatabaseAPI.editLocation(location);
+    updateLocationList();
+  }
+
+  /**
+   * Updates the local list of locations from the database
+   */
+  private void updateLocationList(){
+    locations.clear();
+    locations.addAll(DatabaseAPI.getLocationsFromUser(this.getId()));
   }
 
   /**
