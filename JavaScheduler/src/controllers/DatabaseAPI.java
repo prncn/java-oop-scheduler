@@ -134,7 +134,7 @@ public class DatabaseAPI {
    * @param user - User object of new user
    * @return <code>true</code> on successful user creation
    */
-  public static boolean createUser(User user) {
+  public static boolean storeUser(User user) {
     String sql = "INSERT INTO User (username, password, email, firstname, lastname, icon)" + " VALUES(?, ?, ?, ?, ?, ?)";
     Connection connection = connectDatabase();
     try {
@@ -320,6 +320,7 @@ public class DatabaseAPI {
         Priority priority = Enum.valueOf(Priority.class, rs.getString("priority"));
         int host_id = rs.getInt("host_id");
         // int location_id = rs.getInt("location_id");
+        ArrayList<File> attachments = getAttachmentsFromEvent(eventId);
 
         Event event = new Event(eventId, name, description, duration, date, time, new Location("Rock Bottom"), priority,
             reminder, getParticipants(eventId), new ArrayList<File>());
@@ -327,6 +328,7 @@ public class DatabaseAPI {
 
         event.setId(eventId);
         event.setHostId(host_id);
+        event.setAttachments(attachments);
         events.add(event);
 
       }
@@ -363,7 +365,9 @@ public class DatabaseAPI {
         User u = new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("firstname"),
             rs.getString("lastName"), rs.getString("email"));
         byte[] icon = rs.getBytes("icon");
-        u.setAvatar(FormatUtil.byteToIcon(icon));
+        if (icon != null) {
+          u.setAvatar(FormatUtil.byteToIcon(icon));
+        }
         participants.add(u);
       }
       rs.close();
@@ -465,7 +469,7 @@ public class DatabaseAPI {
    * @param event Object of new entry.
    * @return ID on successful creation, return -1 on failed creation
    */
-  public static int createEvent(Event event) {
+  public static int storeEvent(Event event) {
     String sql = "INSERT INTO Event (host_id, name, date, time, duration_minutes, location_id, reminder, priority, description)"
         + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
     Connection connection = connectDatabase();
@@ -550,7 +554,7 @@ public class DatabaseAPI {
    * @param userId User that the Location belongs to
    * @return ID of Location or -1
    */
-  public static int createLocation(Location location, int userId) {
+  public static int storeLocation(Location location, int userId) {
     String sql = "INSERT INTO Location (name, city, street, streetNr, building, roomNr, user_id) "
         + "VALUES( ? , ? , ? , ? , ? , ? , ? )";
     Connection connection = connectDatabase();
@@ -657,7 +661,7 @@ public class DatabaseAPI {
    * @param event Event that the file belongs to
    * @return -1 on failed creation, ID on successful creation
    */
-  public static int createAttachment(File file, Event event) {
+  public static int storeAttachment(File file, Event event) {
     String sql = "INSERT INTO Attachment (file, event_id) VALUES ( ? , ? )";
     Connection connection = connectDatabase();
     int attachmentId = -1;
@@ -696,7 +700,7 @@ public class DatabaseAPI {
    * @param event Event from which the attachments should be returned
    * @return List of files
    */
-  public static ArrayList<File> getAttachmentsFromEvent(Event event){
+  public static ArrayList<File> getAttachmentsFromEvent(int eventId){
     String sql = "SELECT * FROM Attachment WHERE event_id = ?";
     Connection connection = connectDatabase();
     ArrayList<File> files = new ArrayList<>();
@@ -705,7 +709,7 @@ public class DatabaseAPI {
 
     try{
       PreparedStatement ps = connection.prepareStatement(sql);
-      ps.setInt(1 ,  event.getId());
+      ps.setInt(1 ,  eventId);
 
       ResultSet rs = ps.executeQuery();
 

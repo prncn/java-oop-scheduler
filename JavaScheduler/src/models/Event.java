@@ -91,7 +91,9 @@ public class Event implements Comparable<Event> {
     description = other.description;
 
     DatabaseAPI.editEvent(this);
-    EmailHandler.sendEventMail(this, Status.EDITED);
+    if (!getParticipants().isEmpty()) {
+      EmailHandler.sendEventMail(this, Status.EDITED);
+    }
   }
 
   /**
@@ -315,8 +317,8 @@ public class Event implements Comparable<Event> {
    * 
    * @param participants - List of participants
    */
-  public void setParticipants(ArrayList<Integer> participants) {
-    this.participants = this.participants;
+  public void setParticipants(ArrayList<User> participants) {
+    this.participants = participants;
   }
 
   /**
