@@ -2,7 +2,7 @@ package controllers;
 
 import models.*;
 
-import java.io.File;
+import java.io.*;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -653,14 +653,114 @@ public class DatabaseAPI {
   }
 
   /**
-   * TODO Adds attachment entry into the Database
+   * Adds attachment entry into the Database
    *
-   * @param file
-   * @param event
-   * @return
+   * @param file File to be uploaded into the database
+   * @param event Event that the file belongs to
+   * @return -1 on failed creation, ID on successful creation
    */
-  public static boolean createAttachment(File file, Event event) {
-    return false;
+  public static int createAttachment(File file, Event event) {
+    String sql = "INSERT INTO Attachment (file, event_id) VALUES ( ? , ? )";
+    Connection connection = connectDatabase();
+    int attachmentId = -1;
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql , Statement.RETURN_GENERATED_KEYS);
+      FileInputStream input = new FileInputStream(file);
+      ps.setBinaryStream(1 , input);
+      ps.setInt(2 , event.getId());
+
+      ps.executeUpdate();
+      ResultSet generatedKey = ps.getGeneratedKeys();
+
+      if (generatedKey.next()) {
+        attachmentId = generatedKey.getInt(1);
+      } else {
+      throw new SQLException("Creating Attachment failed, no ID obtained.");
+      }
+
+      input.close();
+      ps.close();
+      closeDatabase();
+      return attachmentId;
+
+    } catch (SQLException e){
+      e.printStackTrace();
+      closeDatabase();
+      return attachmentId;
+    } catch (IOException e) {
+      e.printStackTrace();
+      return attachmentId;
+    }
+  }
+
+  /**
+   * Gets the Attachments out of the Database
+   * @param event Event from which the attachments should be returned
+   * @return List of files
+   */
+  public static ArrayList<File> getAttachmentsFromEvent(Event event){
+    String sql = "SELECT * FROM Attachment WHERE event_id = ?";
+    Connection connection = connectDatabase();
+    ArrayList<File> files = new ArrayList<>();
+    InputStream input = null;
+    FileOutputStream output = null;
+
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql);
+      ps.setInt(1 ,  event.getId());
+
+      ResultSet rs = ps.executeQuery();
+
+      int n = 0;
+      while(rs.next()){
+        String extension = rs.getString("extension");
+
+        File tempFile = new File("attachment" + n + "." + extension);
+        output = new FileOutputStream(tempFile);
+
+        input = rs.getBinaryStream("file");
+
+        byte[] buffer = new byte[1024];
+        while (input.read(buffer) > 0){
+          output.write(buffer);
+        }
+
+        files.add(tempFile);
+
+        input.close();
+        output.close();
+      }
+
+
+      return files;
+    } catch (SQLException | IOException e) {
+      e.printStackTrace();
+
+      return null;
+    }
+  }
+
+  /**
+   * Delete all Attachment entries in the Database
+   * @param eventId Event which the entries should be deleted from.
+   */
+  public static void deleteAllAttachments(int eventId){
+    String sql = "DELETE FROM Attachment WHERE event_id = ?";
+
+    Connection connection = connectDatabase();
+
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql);
+      ps.setInt( 1, eventId);
+
+      ps.executeUpdate();
+
+      ps.close();
+      closeDatabase();
+    } catch(SQLException e){
+      e.printStackTrace();
+      closeDatabase();
+    }
   }
 
   /**
