@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
+import controllers.DatabaseAPI;
 import controllers.FormatUtil;
 import controllers.ViewModelHandler;
 
@@ -435,9 +436,9 @@ public class Dashboard extends Panel implements CardModes {
     card.add(date2);
     card.add(time);
     panel.add(card);
-
+    
     MasterUI.setComponentStyles(card, "light");
-
+    
     if (checkCardModeKey(cardMode) == VIEW && event.getPriority() == Priority.HIGH || cardMode == NOTIF) {
       card.setBackground(MasterUI.hiPrioCol);
       Label[] labels = { name, location, date1, date2, time };
@@ -445,17 +446,17 @@ public class Dashboard extends Panel implements CardModes {
         label.setForeground(MasterUI.lightColAlt);
       }
     }
-
+    
     if (checkCardModeKey(cardMode) == NOTIF) {
-      // location.setText("By " +
-      // DatabaseAPI.getUser(event.getHostId()).getUsername());
+      location.setText("By " + DatabaseAPI.getUser(event.getHostId()).getUsername());
       redpanel.setComponentZOrder(card, 0);
       card.setBackground(MasterUI.primaryCol.brighter());
       prio.setLocation(card.getWidth() - 34, 10);
     }
-
+    
     card.repaint();
-
+    panel.repaint();
+    
     return card;
   }
 
