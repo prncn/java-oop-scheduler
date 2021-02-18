@@ -305,7 +305,7 @@ public class HomeUI extends MasterUI {
       footerTime.setText(LocalTime.now().format(timeformat));
       footerDate.setText(LocalDate.now().format(dateformat));
       try {
-        Thread.sleep(1000);
+        Thread.sleep(500);
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
