@@ -363,7 +363,9 @@ public class DatabaseAPI {
         User u = new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("firstname"),
             rs.getString("lastName"), rs.getString("email"));
         byte[] icon = rs.getBytes("icon");
-        u.setAvatar(FormatUtil.byteToIcon(icon));
+        if (icon != null) {
+          u.setAvatar(FormatUtil.byteToIcon(icon));
+        }
         participants.add(u);
       }
       rs.close();
