@@ -27,7 +27,6 @@ public class DatabaseAPI {
       }
       Class.forName("com.mysql.jdbc.Driver");
       con = DriverManager.getConnection(SQL_CLOUD_URI, SQL_CLOUD_USERNAME, SQL_CLOUD_PASSWORD);
-      System.out.println("Database connected..");
 
       return con;
 
@@ -50,7 +49,6 @@ public class DatabaseAPI {
       if (con != null) {
         con.close();
         con = null;
-        System.out.println("Connection closed.");
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -86,6 +84,8 @@ public class DatabaseAPI {
     Boolean isUser = result.next();
     statement.close();
     // closeDatabase();
+
+    System.out.println("Verified user.");
     return isUser;
   }
 
@@ -118,8 +118,10 @@ public class DatabaseAPI {
 
       ResultSet result = statement.executeQuery();
 
-      if (result.next())
+      if (result.next()) {
+        System.out.println("Fetching user data.");
         return result;
+      }
       return null;
     } catch (SQLException e) {
       e.printStackTrace();
@@ -155,6 +157,7 @@ public class DatabaseAPI {
       return false;
     }
 
+    System.out.println("Stored user.");
     return true;
   }
 
@@ -186,6 +189,8 @@ public class DatabaseAPI {
       closeDatabase();
       return false;
     }
+
+    System.out.println("Updated user.");
     return true;
   }
 
@@ -282,6 +287,7 @@ public class DatabaseAPI {
         user.setAvatar(FormatUtil.byteToIcon(icon));
       }
       closeDatabase();
+      System.out.println("Fetched user.");
       return user;
     } catch (SQLException e) {
       e.printStackTrace();
@@ -662,7 +668,7 @@ public class DatabaseAPI {
    * @return -1 on failed creation, ID on successful creation
    */
   public static int storeAttachment(File file, Event event) {
-    String sql = "INSERT INTO Attachment (file, event_id) VALUES ( ? , ? )";
+    String sql = "INSERT INTO Attachment (file, event_id, name) VALUES ( ? , ? , ? )";
     Connection connection = connectDatabase();
     int attachmentId = -1;
     try{
@@ -670,6 +676,7 @@ public class DatabaseAPI {
       FileInputStream input = new FileInputStream(file);
       ps.setBinaryStream(1 , input);
       ps.setInt(2 , event.getId());
+      ps.setString(3, file.getName());
 
       ps.executeUpdate();
       ResultSet generatedKey = ps.getGeneratedKeys();
@@ -683,6 +690,7 @@ public class DatabaseAPI {
       input.close();
       ps.close();
       closeDatabase();
+      System.out.println("Attachment stored.");
       return attachmentId;
 
     } catch (SQLException e){
@@ -713,13 +721,9 @@ public class DatabaseAPI {
 
       ResultSet rs = ps.executeQuery();
 
-      int n = 0;
       while(rs.next()){
-        String extension = rs.getString("extension");
-
-        File tempFile = new File("attachment" + n + "." + extension);
+        File tempFile = new File(rs.getString("name"));
         output = new FileOutputStream(tempFile);
-
         input = rs.getBinaryStream("file");
 
         byte[] buffer = new byte[1024];
