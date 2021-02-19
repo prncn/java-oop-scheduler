@@ -86,8 +86,8 @@ public class User {
     event.setHostId(this.getId());
 
     int eventId = DatabaseAPI.storeEvent(event);
-    event.getAttachments().forEach(e -> DatabaseAPI.storeAttachment(e, event));
     event.setId(eventId);
+    event.getAttachments().forEach(e -> DatabaseAPI.storeAttachment(e, event));
     this.addEvent(event);
 
     for (User participant : event.getParticipants()) {
