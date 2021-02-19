@@ -248,7 +248,9 @@ public class Dashboard extends Panel implements CardModes {
       return;
     }
     for (Event event : user.getEvents()) {
-      drawEventCard(new Point(683, 80), event, redpanel, NOTIF, new Dimension(250, 100));
+      if (event.getHostId() != user.getId()) {
+        drawEventCard(new Point(683, 80), event, redpanel, NOTIF, new Dimension(250, 100));
+      }
     }
     sectionUpcomingEventsCards(user, new Point(0, 10));
     sectionAllEventsCards(user, new Point(0, 10));
