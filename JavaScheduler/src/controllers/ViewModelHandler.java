@@ -12,7 +12,6 @@ import views.panels.ProfilePanel;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-
 import java.awt.*;
 import java.io.File;
 import java.time.LocalDate;
@@ -182,6 +181,34 @@ public class ViewModelHandler {
         endField.setDefaultStyle();
         endField.getErrorLabel().setText("");
       }
+    } else if (!isValidTime(startField.getText()) | !isValidTime(endField.getText())) {
+        if(!isValidTime(startField.getText())) {
+            startField.setBorder(border);
+            startField.setBorder(border);
+            startField.getErrorLabel().setText("*Select " + startField.getErrorLabel().getName());
+            valid = false;
+          }
+        if(!isValidTime(endField.getText())) {
+            endField.setBorder(border);
+            endField.setBorder(border);
+            endField.getErrorLabel().setText("*Select " + endField.getErrorLabel().getName());
+            valid = false;
+          }
+        } else {
+          startField.setDefaultStyle();
+          startField.getErrorLabel().setText("");
+          endField.setDefaultStyle();
+          endField.getErrorLabel().setText("");
+    }
+
+    if (!isValidDate(dateField.getText())) {
+      dateField.setBorder(border);
+      dateField.setBorder(border);
+      dateField.getErrorLabel().setText("*Select " + dateField.getErrorLabel().getName());
+      valid = false;
+    } else {
+      dateField.setDefaultStyle();
+      dateField.getErrorLabel().setText("");
     }
 
     return valid;
@@ -196,6 +223,20 @@ public class ViewModelHandler {
   private static boolean isValidTime(String time) {
     try {
       LocalTime.parse(time);
+    } catch (DateTimeParseException e) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Validate if given string is of pattern "YYYY-MM-DD"
+   * @param date - the string to be checked
+   * @return Boolean whether form is valid or not
+   */
+  private static boolean isValidDate(String date) {
+    try {
+      LocalDate.parse(date);
     } catch (DateTimeParseException e) {
       return false;
     }
