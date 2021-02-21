@@ -1,5 +1,7 @@
 package views.components;
 
+import controllers.DatabaseAPI;
+import models.User;
 import views.MasterUI;
 
 import javax.swing.*;
@@ -9,17 +11,7 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
-
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-
-import controllers.DatabaseAPI;
-import models.User;
-
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
 
@@ -154,7 +146,21 @@ public class TextField extends JTextField {
    */
   public Label createErrorLabel(String msg) {
     int xPos = (getX() + getWidth()) - 250;
-    Label error = new Label(xPos, getY() + getHeight(), "");
+    Label error;
+    switch(msg) {
+      case "Date" : {
+        error = new Label(xPos + 55, getY() + getHeight(), "");
+        break;
+      }
+      case "Location" : {
+         error = new Label(xPos + 40, getY() + getHeight(), "");
+        break;
+      }
+      default: {
+        error = new Label(xPos, getY() + getHeight(), "");
+        break;
+      }
+    }
     error.setForeground(Color.RED);
     error.setHorizontalAlignment(SwingConstants.RIGHT);
     error.setUnset(true);
