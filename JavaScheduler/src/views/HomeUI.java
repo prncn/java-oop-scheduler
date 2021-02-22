@@ -82,10 +82,8 @@ public class HomeUI extends MasterUI {
     EmailHandler.reminderMail(user);
 
     setVisible(true);
-    createTime();
-
-    Button test = new Button(30, 500, "run", Color.RED);
-    sidebar.add(test);
+    createClock();
+    runClock();
   }
 
   /**
@@ -287,38 +285,33 @@ public class HomeUI extends MasterUI {
   }
 
   /**
-   * Set time and date for sidebar, updating itself every Minute
+   * Set time and date for sidebar, updating itself every Minute.
+   * This creates the initial static clock component.
    */
-  private void createTime() {
-    DateTimeFormatter dateformat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+  private void createClock() {
     DateTimeFormatter timeformat = DateTimeFormatter.ofPattern("HH:mm:ss");
-
     footerTime = new Label(90, 5, LocalTime.now().format(timeformat));
-    Label footerDate = new Label(footerTime.getX(), footerTime.getY() + footerTime.getHeight() - 5,
-        LocalDate.now().format(dateformat));
 
     footerTime.setForeground(Color.white);
-    footerDate.setForeground(Color.white);
     footerTime.setSize(100, 25);
-    footerDate.setSize(100, 25);
     footerTime.setFont(MasterUI.robotoFont);
-    footerDate.setFont(MasterUI.robotoFont);
     footerTime.setHorizontalAlignment(SwingConstants.RIGHT);
-    footerDate.setHorizontalAlignment(SwingConstants.RIGHT);
     sidebar.add(footerTime);
   }
   
+  /**
+   * Create a UI thread timer to periodically update
+   * the clock every few milliseconds. This prevents the application
+   * from stopping execution while the timer thread is running.
+   * @see javax.swing.Timer
+   */
   public void runClock() {
     DateTimeFormatter timeformat = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    while (true) {
+    Timer timer = new Timer(100, e -> {
       footerTime.setText(LocalTime.now().format(timeformat));
-      try {
-        Thread.sleep(500);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-    }
+    });
+    timer.start(); 
   }
 
   /**
