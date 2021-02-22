@@ -91,7 +91,9 @@ public class Event implements Comparable<Event> {
     description = other.description;
 
     DatabaseAPI.editEvent(this);
-    EmailHandler.sendEventMail(this, Status.EDITED);
+    if (!getParticipants().isEmpty()) {
+      EmailHandler.sendEventMail(this, Status.EDITED);
+    }
   }
 
   /**

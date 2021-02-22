@@ -2,7 +2,7 @@ package controllers;
 
 import models.*;
 
-import java.io.File;
+import java.io.*;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -27,7 +27,6 @@ public class DatabaseAPI {
       }
       Class.forName("com.mysql.jdbc.Driver");
       con = DriverManager.getConnection(SQL_CLOUD_URI, SQL_CLOUD_USERNAME, SQL_CLOUD_PASSWORD);
-      System.out.println("Database connected..");
 
       return con;
 
@@ -50,7 +49,6 @@ public class DatabaseAPI {
       if (con != null) {
         con.close();
         con = null;
-        System.out.println("Connection closed.");
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -86,6 +84,8 @@ public class DatabaseAPI {
     Boolean isUser = result.next();
     statement.close();
     // closeDatabase();
+
+    System.out.println("Verified user.");
     return isUser;
   }
 
@@ -118,8 +118,10 @@ public class DatabaseAPI {
 
       ResultSet result = statement.executeQuery();
 
-      if (result.next())
+      if (result.next()) {
+        System.out.println("Fetching user data.");
         return result;
+      }
       return null;
     } catch (SQLException e) {
       e.printStackTrace();
@@ -134,7 +136,7 @@ public class DatabaseAPI {
    * @param user - User object of new user
    * @return <code>true</code> on successful user creation
    */
-  public static boolean createUser(User user) {
+  public static boolean storeUser(User user) {
     String sql = "INSERT INTO User (username, password, email, firstname, lastname, icon)" + " VALUES(?, ?, ?, ?, ?, ?)";
     Connection connection = connectDatabase();
     try {
@@ -155,6 +157,7 @@ public class DatabaseAPI {
       return false;
     }
 
+    System.out.println("Stored user.");
     return true;
   }
 
@@ -186,6 +189,8 @@ public class DatabaseAPI {
       closeDatabase();
       return false;
     }
+
+    System.out.println("Updated user.");
     return true;
   }
 
@@ -282,6 +287,7 @@ public class DatabaseAPI {
         user.setAvatar(FormatUtil.byteToIcon(icon));
       }
       closeDatabase();
+      System.out.println("Fetched user.");
       return user;
     } catch (SQLException e) {
       e.printStackTrace();
@@ -320,12 +326,15 @@ public class DatabaseAPI {
         Priority priority = Enum.valueOf(Priority.class, rs.getString("priority"));
         int host_id = rs.getInt("host_id");
         // int location_id = rs.getInt("location_id");
+        ArrayList<File> attachments = getAttachmentsFromEvent(eventId);
 
         Event event = new Event(eventId, name, description, duration, date, time, new Location("Rock Bottom"), priority,
             reminder, getParticipants(eventId), new ArrayList<File>());
 
+
         event.setId(eventId);
         event.setHostId(host_id);
+        event.setAttachments(attachments);
         events.add(event);
 
       }
@@ -337,6 +346,7 @@ public class DatabaseAPI {
       e.printStackTrace();
       return null;
     }
+
   }
 
   /**
@@ -360,6 +370,10 @@ public class DatabaseAPI {
       while (rs.next()) {
         User u = new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("firstname"),
             rs.getString("lastName"), rs.getString("email"));
+        byte[] icon = rs.getBytes("icon");
+        if (icon != null) {
+          u.setAvatar(FormatUtil.byteToIcon(icon));
+        }
         participants.add(u);
       }
       rs.close();
@@ -461,7 +475,7 @@ public class DatabaseAPI {
    * @param event Object of new entry.
    * @return ID on successful creation, return -1 on failed creation
    */
-  public static int createEvent(Event event) {
+  public static int storeEvent(Event event) {
     String sql = "INSERT INTO Event (host_id, name, date, time, duration_minutes, location_id, reminder, priority, description)"
         + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
     Connection connection = connectDatabase();
@@ -542,23 +556,23 @@ public class DatabaseAPI {
   /**
    * Creates an entry in Location table in the Database.
    * 
-   * @param l      Location that should be entered
+   * @param location Location that should be entered
    * @param userId User that the Location belongs to
    * @return ID of Location or -1
    */
-  public static int createLocation(Location l, int userId) {
+  public static int storeLocation(Location location, int userId) {
     String sql = "INSERT INTO Location (name, city, street, streetNr, building, roomNr, user_id) "
         + "VALUES( ? , ? , ? , ? , ? , ? , ? )";
     Connection connection = connectDatabase();
     int locationId = -1;
     try {
       PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-      ps.setString(1, l.getName());
-      ps.setString(2, l.getCity());
-      ps.setString(3, l.getStreet());
-      ps.setString(4, l.getStreetNr());
-      ps.setString(5, l.getBuilding());
-      ps.setString(6, l.getRoomNr());
+      ps.setString(1, location.getName());
+      ps.setString(2, location.getCity());
+      ps.setString(3, location.getStreet());
+      ps.setString(4, location.getStreetNr());
+      ps.setString(5, location.getBuilding());
+      ps.setString(6, location.getRoomNr());
       ps.setInt(7, userId);
 
       ps.executeQuery();
@@ -582,14 +596,177 @@ public class DatabaseAPI {
   }
 
   /**
-   * TODO Adds attachment entry into the Database
-   * 
-   * @param file
-   * @param event
-   * @return
+   * Edit the Location entry in the Database.
+   * @param location Updated Location
+   * @return true on successful edit, false on failed edit
    */
-  public static boolean createAttachment(File file, Event event) {
-    return false;
+  public static boolean editLocation(Location location){
+    String sql = "UPDATE Location SET name = ? , room_nr = ? , building = ? , city = ? , zip = ? , street = ? , street_nr = ? "
+            + "WHERE location_id = ? ";
+    Connection connection = connectDatabase();
+
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql);
+
+      ps.setString(1 , location.getName());
+      ps.setString(2 , location.getRoomNr());
+      ps.setString(3 , location.getBuilding());
+      ps.setString(4 , location.getCity());
+      ps.setString(5 , location.getZip());
+      ps.setString(6 , location.getStreet());
+      ps.setString(7 , location.getStreetNr());
+      ps.setInt(8 , location.getId());
+
+      ps.executeUpdate();
+
+      ps.close();
+      closeDatabase();
+      return true;
+    } catch (SQLException e){
+      e.printStackTrace();
+      closeDatabase();
+      return false;
+    }
+  }
+
+  public static ArrayList<Location> getLocationsFromUser(int userId){
+    String sql = "SELECT * FROM Location WHERE user_id = ?";
+    Connection connection = connectDatabase();
+    ArrayList<Location> locations = new ArrayList<>();
+
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql);
+      ps.setInt(1 , userId);
+
+      ResultSet rs = ps.executeQuery();
+
+      while(rs.next()){
+        Location location = new Location(
+                rs.getInt("location_id") ,
+                rs.getString("name"),
+                rs.getString("city") ,
+                rs.getString("zip"),
+                rs.getString("street"),
+                rs.getString("street_nr"),
+                rs.getString("building"),
+                rs.getString("room_nr"));
+        locations.add(location);
+      }
+      return locations;
+    } catch (SQLException e){
+      e.printStackTrace();
+      closeDatabase();
+      return null;
+    }
+  }
+
+  /**
+   * Adds attachment entry into the Database
+   *
+   * @param file File to be uploaded into the database
+   * @param event Event that the file belongs to
+   * @return -1 on failed creation, ID on successful creation
+   */
+  public static int storeAttachment(File file, Event event) {
+    String sql = "INSERT INTO Attachment (file, event_id, name) VALUES ( ? , ? , ? )";
+    Connection connection = connectDatabase();
+    int attachmentId = -1;
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql , Statement.RETURN_GENERATED_KEYS);
+      FileInputStream input = new FileInputStream(file);
+      ps.setBinaryStream(1 , input);
+      ps.setInt(2 , event.getId());
+      ps.setString(3, file.getName());
+
+      ps.executeUpdate();
+      ResultSet generatedKey = ps.getGeneratedKeys();
+
+      if (generatedKey.next()) {
+        attachmentId = generatedKey.getInt(1);
+      } else {
+      throw new SQLException("Creating Attachment failed, no ID obtained.");
+      }
+
+      input.close();
+      ps.close();
+      closeDatabase();
+      System.out.println("Attachment stored.");
+      return attachmentId;
+
+    } catch (SQLException e){
+      e.printStackTrace();
+      closeDatabase();
+      return attachmentId;
+    } catch (IOException e) {
+      e.printStackTrace();
+      return attachmentId;
+    }
+  }
+
+  /**
+   * Gets the Attachments out of the Database
+   * @param event Event from which the attachments should be returned
+   * @return List of files
+   */
+  public static ArrayList<File> getAttachmentsFromEvent(int eventId){
+    String sql = "SELECT * FROM Attachment WHERE event_id = ?";
+    Connection connection = connectDatabase();
+    ArrayList<File> files = new ArrayList<>();
+    InputStream input = null;
+    FileOutputStream output = null;
+
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql);
+      ps.setInt(1 ,  eventId);
+
+      ResultSet rs = ps.executeQuery();
+
+      while(rs.next()){
+        File tempFile = new File(rs.getString("name"));
+        output = new FileOutputStream(tempFile);
+        input = rs.getBinaryStream("file");
+
+        byte[] buffer = new byte[1024];
+        while (input.read(buffer) > 0){
+          output.write(buffer);
+        }
+
+        files.add(tempFile);
+
+        input.close();
+        output.close();
+      }
+
+
+      return files;
+    } catch (SQLException | IOException e) {
+      e.printStackTrace();
+
+      return null;
+    }
+  }
+
+  /**
+   * Delete all Attachment entries in the Database
+   * @param eventId Event which the entries should be deleted from.
+   */
+  public static void deleteAllAttachments(int eventId){
+    String sql = "DELETE FROM Attachment WHERE event_id = ?";
+
+    Connection connection = connectDatabase();
+
+    try{
+      PreparedStatement ps = connection.prepareStatement(sql);
+      ps.setInt( 1, eventId);
+
+      ps.executeUpdate();
+
+      ps.close();
+      closeDatabase();
+    } catch(SQLException e){
+      e.printStackTrace();
+      closeDatabase();
+    }
   }
 
   /**

@@ -42,9 +42,11 @@ public class EmailHandler {
      * @param user
      */
     public static void reminderMail(User user) {
+        System.out.println("remindermail");
         for(Event event : user.getEvents()){
             if(user.getId() == event.getHostId()) {
                 if (checkReminderTime(event)) {
+                    System.out.println("ifcheckremindertimeevent");
                     EmailHandler mail = new EmailHandler();
                     mail.setupServerProperties();
                     mail.draftReminderMail(event);
@@ -114,6 +116,7 @@ public class EmailHandler {
      * @param event
      */
     public void draftReminderMail(Event event) {
+        System.out.println("draftremindermail");
         mimeMessage = new MimeMessage(newSession);
 
         for (User participant : event.getParticipants()) {
@@ -142,6 +145,7 @@ public class EmailHandler {
      * @return Boolean if Current time is after reminder time
      */
     public static boolean checkReminderTime(Event event){
+        System.out.println("checkremindertime");
         if(event.getReminder().equals(Reminder.NONE)){
             return false;
         }
@@ -154,7 +158,7 @@ public class EmailHandler {
     }
 
     /**
-     * Logs into Gmail account and sends email to all participantss
+     * Logs into Gmail account and sends email to all participants
      */
     public  void sendMail() {
         String fromUser = "javaschedulerlablundaws2021@gmail.com";

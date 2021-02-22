@@ -438,7 +438,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     ActionListener action = e -> {
       Reminder reminder = ((DataButton<Reminder>) e.getSource()).getData();
       descField.requestFocus();
-      remove(rmscroll);
+      PAGE_TWO.remove(rmscroll);
       rmscroll = null;
       selectedReminder = reminder;
     };
@@ -679,7 +679,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     Label[] errorLabels = { errorPriority, errorTitle, errorDate, errorLocation, errorStartTime, errorEndTime,
         errorReminder };
     for (Label error : errorLabels) {
-      add(error);
+      PAGE_ONE.add(error);
     }
 
     HashMap<String, TextField> FieldMap = new HashMap<String, TextField>();

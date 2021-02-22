@@ -114,10 +114,10 @@ public class CalendarPanel extends Panel {
     monthField.setBounds(110, 10, 50, 30);
     monthField.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 18f));
     monthField.setText(monthField.getText().substring(0, 3));
-    monthField.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+    monthField.setBorder(BorderFactory.createEmptyBorder());
     yearField.setBounds(160, 10, 50, 30);
     yearField.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 18f));
-    yearField.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+    yearField.setBorder(BorderFactory.createEmptyBorder());
     prevMonthBtn.setBounds(65, 1, 40, 39);
     nextMonthBtn.setBounds(220, 1, 40, 39);
 
@@ -214,8 +214,6 @@ public class CalendarPanel extends Panel {
       Date date = parser.parse(parseDate);
       SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
       formattedDate = formatter.format(date);
-      LocalDate localdate = LocalDate.parse(formattedDate);
-      monthField.setText(localdate.getMonth().toString());
     } catch (ParseException e) {
       return null;
     }
@@ -245,15 +243,15 @@ public class CalendarPanel extends Panel {
     } else {
       throw new IllegalArgumentException("Invalid calendar navigation direction");
     }
-    Month nextMonth = date.getMonth();
-    if (nextMonth.getValue() == breakpoint) {
+    Month month = date.getMonth();
+    if (month.getValue() == breakpoint) {
       yearField.setText(Integer.toString(Integer.parseInt(yearField.getText()) + addremove));
     }
     dayField.setText(FormatUtil.formatOrdinal(1));
     if (isMinified) {
-      monthField.setText(nextMonth.toString().substring(0, 3));
+      monthField.setText(month.toString().substring(0, 3));
     } else {
-      monthField.setText(nextMonth.toString());
+      monthField.setText(month.toString());
     }
     changeDateFromTextField(frame);
   }
@@ -441,10 +439,8 @@ public class CalendarPanel extends Panel {
     dayField = new TextField(700, 170);
 
     yearField.setText(Integer.toString(date.getYear()));
-    if (isMinified) {
-      monthField.setText(date.getMonth().toString().substring(0, 3));
-    } else {
-      monthField.setText(date.getMonth().toString());
+    monthField.setText(date.getMonth().toString());
+    if (!isMinified) {
       monthField.getCaret().setVisible(true);
     }
     dayField.setText(FormatUtil.formatOrdinal(date.getDayOfMonth()));
@@ -509,14 +505,8 @@ public class CalendarPanel extends Panel {
    */
   private void switchActiveDayBtn(Button dayBtn, int currentYear, Month currentMonth, int dayNum) {
     String yearStr = Integer.toString(currentYear);
-    String monthStr = currentMonth.toString();
 
     yearField.setText(yearStr);
-    if (isMinified) {
-      monthField.setText(monthStr.substring(0, 3));
-    } else {
-      monthField.setText(monthStr);
-    }
     dayField.setText(FormatUtil.formatOrdinal(dayNum));
 
     if (prevActive != null) {

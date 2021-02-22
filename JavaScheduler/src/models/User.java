@@ -7,6 +7,7 @@ import views.MasterUI;
 import javax.swing.*;
 import java.util.ArrayList;
 
+
 public class User {
   private int id;
   private String username;
@@ -84,8 +85,9 @@ public class User {
   public void createEvent(Event event) {
     event.setHostId(this.getId());
 
-    int eventId = DatabaseAPI.createEvent(event);
+    int eventId = DatabaseAPI.storeEvent(event);
     event.setId(eventId);
+    event.getAttachments().forEach(e -> DatabaseAPI.storeAttachment(e, event));
     this.addEvent(event);
 
     for (User participant : event.getParticipants()) {
@@ -94,7 +96,10 @@ public class User {
     }
 
     updateEventList();
-    EmailHandler.sendEventMail(event, Status.CREATED);
+
+    if (!event.getParticipants().isEmpty()) {
+      EmailHandler.sendEventMail(event, Status.CREATED);
+    }
   }
 
   /**
@@ -120,7 +125,9 @@ public class User {
       DatabaseAPI.deleteEvent(event.getId());
     }
     updateEventList();
-    EmailHandler.sendEventMail(event, Status.DELETED);
+    if (!event.getParticipants().isEmpty()) {
+      EmailHandler.sendEventMail(event, Status.DELETED);
+    }
   }
 
   /**
@@ -141,13 +148,30 @@ public class User {
   }
 
   /**
-   * Creates a new Location and adds it into the User.locations list
-   * @param location
+   * Creates a new Location and adds it into the User.locations list as well as the database
+   * @param location location that should be created
    */
   public void createLocation(Location location){
-    int locationId = DatabaseAPI.createLocation(location , this.getId());
+    int locationId = DatabaseAPI.storeLocation(location , this.getId());
     location.setId(locationId);
-    this.addLocation(location);
+    updateLocationList();
+  }
+
+  /**
+   * Edits a location and adds it into the User.events list as well as the database
+   * @param location location that is edited.
+   */
+  public void editLocation(Location location){
+    DatabaseAPI.editLocation(location);
+    updateLocationList();
+  }
+
+  /**
+   * Updates the local list of locations from the database
+   */
+  private void updateLocationList(){
+    locations.clear();
+    locations.addAll(DatabaseAPI.getLocationsFromUser(this.getId()));
   }
 
   /**

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 public class HomeUI extends MasterUI {
   private static final long serialVersionUID = -771654490802003766L;
   private JPanel sidebar = new JPanel();
@@ -78,6 +79,7 @@ public class HomeUI extends MasterUI {
     setLocationRelativeTo(null);
 
     EmailHandler.reminderMail(user);
+    System.out.println("hui");
 
     setVisible(true);
     createTime();
@@ -304,7 +306,7 @@ public class HomeUI extends MasterUI {
       footerTime.setText(LocalTime.now().format(timeformat));
       footerDate.setText(LocalDate.now().format(dateformat));
       try {
-        Thread.sleep(1000);
+        Thread.sleep(500);
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
