@@ -679,7 +679,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     Label[] errorLabels = { errorPriority, errorTitle, errorDate, errorLocation, errorStartTime, errorEndTime,
         errorReminder };
     for (Label error : errorLabels) {
-      add(error);
+      PAGE_ONE.add(error);
     }
 
     HashMap<String, TextField> FieldMap = new HashMap<String, TextField>();
