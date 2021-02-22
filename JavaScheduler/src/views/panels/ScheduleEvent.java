@@ -240,7 +240,6 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
           public void focusGained(FocusEvent f) {
             redpanel.setSize(0, 0);
             redpanel.isActive = false;
-            e.setText("");
           }
           public void focusLost(FocusEvent f) { }
         });
@@ -267,6 +266,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       startField.setText(editEvent.getTime().toString());
       endField.setText(FormatUtil.getEndTime(editEvent).toString());
       descField.setText(editEvent.getDescription());
+      reminderField.setText(editEvent.getReminder().toString());
       String attachStr = "";
       for (File f : editEvent.getAttachments()) {
         attachStr += f.getName() + " ";
