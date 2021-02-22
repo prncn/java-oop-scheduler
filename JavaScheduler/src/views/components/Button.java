@@ -16,6 +16,7 @@ import java.awt.event.ActionListener;
 
 import java.awt.Color;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -28,20 +29,26 @@ public class Button extends JButton implements MouseListener {
   private int width = 100;
   private int height = 40;
   private boolean dark = true;
-  private boolean filled;
-  private boolean rounded = false;
+  private boolean blank = false;
+  private boolean filled = true;  
+  private boolean outline = false;
   private boolean isTab = false;
   private boolean isRadio = false;
   private boolean isActive = false;
+  private int cornerRadius = FLAT;
   private ActionListener switchPanelAction;
   private Color prevColor;
   private static ArrayList<Button> links = new ArrayList<>();
+  
+  public final static int FLAT = 0;
+  public final static int SMOOTH = 20;
+  public final static int ROUND = 50;
 
   public Button(int x, int y, String text, Color color) {
     super(text);
     drawDefaultStyle();
     setColor(color);
-    setPosition(x, y);
+    setLocation(x, y);
     setBackground(color);
     setDark(true);
     filled = true;
@@ -50,7 +57,7 @@ public class Button extends JButton implements MouseListener {
   public Button(int x, int y, String text) {
     super(text);
     drawDefaultStyle();
-    setPosition(x, y);
+    setLocation(x, y);
     setBackground(MasterUI.primaryCol);
     setDark(true);
     setContentAreaFilled(false);
@@ -62,9 +69,9 @@ public class Button extends JButton implements MouseListener {
     drawDefaultStyle();
     switchPanelAction = HomeUI.switchPanelAction(switchTo);
     addActionListener(switchPanelAction);
-    setPosition(x, y);
+    setLocation(x, y);
     setTab();
-    setColor(MasterUI.primaryColAlt);
+    setColor(MasterUI.primaryColAlt.darker());
     filled = true;
   }
 
@@ -117,16 +124,6 @@ public class Button extends JButton implements MouseListener {
    */
   public void toggleActive() {
     isActive = !isActive;
-  }
-
-  /**
-   * Set position of button
-   * 
-   * @param x - Horizontal position coordinate
-   * @param y - Vertical position coordinate
-   */
-  public void setPosition(int x, int y) {
-    this.setBounds(x, y, this.getWidth(), this.getHeight());
   }
 
   /**
@@ -194,10 +191,11 @@ public class Button extends JButton implements MouseListener {
     if (getTab())
       return;
     setSize(200, 50);
-    setHorizontalAlignment(SwingConstants.LEFT);
-    setMargin(new Insets(5, 5, 10, 10));
+    setHorizontalAlignment(SwingConstants.LEADING);
+    setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 0));
     setFont(this.getFont().deriveFont(13f));
     setForeground(Color.WHITE);
+    setColor(MasterUI.primaryColAlt.darker());
     setFocusPainted(false);
     setContentAreaFilled(true);
     setIconTextGap(15);
@@ -230,6 +228,7 @@ public class Button extends JButton implements MouseListener {
     setVerticalTextPosition(SwingConstants.BOTTOM);
     setHorizontalAlignment(SwingConstants.CENTER);
     setVerticalAlignment(SwingConstants.CENTER);
+    setBorder(BorderFactory.createEmptyBorder());
   }
 
   /**
@@ -237,20 +236,19 @@ public class Button extends JButton implements MouseListener {
    * 
    * @return Boolean value of rounded
    */
-  public boolean getRounded() {
-    return rounded;
+  public int getCornerRadius() {
+    return cornerRadius;
   }
 
   /**
    * Set whether button is rounded
    * 
-   * @param value - Boolean value to be set of rounded
+   * @param cornerRadius - Boolean value to be set of rounded
    */
-  public void setRounded(boolean value) {
-    if (getRounded() == value)
+  public void setCornerRadius(int cornerRadius) {
+    if (getCornerRadius() == cornerRadius)
       return;
-    setOpaque(!value);
-    rounded = value;
+    this.cornerRadius = cornerRadius;
     repaint();
   }
 
@@ -263,20 +261,26 @@ public class Button extends JButton implements MouseListener {
     return isRadio;
   }
 
+  /**
+   * Toggle active state when clicking on a radio button
+   */
   private void radioToggleAction() {
     if (getActive()) {
-      setRounded(false);
+      setCornerRadius(ROUND);
       setOpaque(false);
       setEnabled(true);
       repaint();
     } else {
-      setRounded(true);
+      setCornerRadius(ROUND);
       setEnabled(false);
     }
     toggleActive();
 
   }
 
+  /**
+   * Get action listener when triggering a radio button
+   */
   private ActionListener radioAction = e -> {
     radioToggleAction();
     for (Button link : links) {
@@ -295,19 +299,29 @@ public class Button extends JButton implements MouseListener {
   public void setRadio(boolean isRadio) {
     if (getRadio() == isRadio)
       return;
-    setOpaque(!isRadio);
     setSize(13, 13);
     this.isRadio = isRadio;
     repaint();
     if (isActive) {
-      setRounded(true);
+      setCornerRadius(ROUND);
       setEnabled(false);
     }
     addActionListener(radioAction);
   }
 
+  /**
+   * Create a pre-set radio button. This button is is linked to other radio buttons,
+   * switchting their states on selection (activation).
+   * @param x - x position of button
+   * @param y - y position of button
+   * @param optionTitle - Description of option of radio button
+   * @param active - Set whether radio to be set active by default
+   * @param panel - Panel on which the radio button is placed
+   * @return Button object
+   */
   public static Button createRadioButton(int x, int y, String optionTitle, boolean active, Panel panel) {
     Button radioBtn = new Button(x, y, "", MasterUI.secondaryCol);
+    radioBtn.setCornerRadius(ROUND);
     radioBtn.setActive(active);
     radioBtn.setRadio(true);
     links.add(radioBtn);
@@ -324,24 +338,55 @@ public class Button extends JButton implements MouseListener {
   /**
    * Remove all action listener of a button
    */
-  public void wipeAllActionListener() {
+  public void wipeActionListeners() {
     ActionListener[] actions = getActionListeners();
     for (ActionListener action : actions) {
       removeActionListener(action);
     }
   }
 
+  /**
+   * Get whether button is blank (invisible). 
+   * This prevents <code>paintComponent()</code> on this object.
+   * @return Boolean blank value
+   */
+  public boolean getBlank() {
+    return blank;
+  }
+
+  /**
+   * Set whether button should be blanke (invisible). 
+   * This prevents <code>paintComponent()</code> on this object.
+   * @param blank
+   */
+  public void setBlank(boolean blank) {
+    this.blank = blank;
+  }
+
+  public boolean getOutline() {
+    return outline;
+  }
+
+  public void setOutline(boolean outline) {
+    this.outline = outline;
+    repaint();
+  }
+
   @Override
   protected void paintComponent(Graphics g) {
+    setOpaque(false);
+    if (getBlank()) {
+      return;
+    }
     Graphics2D g2d = (Graphics2D) g.create();
     g2d.setColor(getBackground());
-    if (getRounded()) {
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    if (getRadio() && !getActive() || getOutline()) {
+      if(getRadio()) g2d.setColor(Color.WHITE);
       g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 50, 50);
-    } else if (getRadio()) {
-      g2d.setColor(Color.WHITE);
-      g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      g2d.drawRoundRect(0, 0, getWidth() - 1, getWidth() - 1, 50, 50);
+      g2d.drawRoundRect(0, 0, getWidth() - 1, getWidth() - 1, ROUND, ROUND);
+    } else {
+      g2d.fillRoundRect(0, 0, getWidth(), getHeight(), getCornerRadius(), getCornerRadius());
     }
     super.paintComponent(g2d);
   }

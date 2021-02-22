@@ -33,7 +33,7 @@ import models.User;
 public class PDFDocument {
 
 	/**
-	 * Creates the.
+	 * Creates the PDF document.
 	 *
 	 * @param user the user for which the weekly calendar is to be created
 	 * @param img the image of the chosen weekly calendar stored in a byte array

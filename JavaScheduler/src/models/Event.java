@@ -37,10 +37,9 @@ public class Event implements Comparable<Event> {
     this.description = description;
   }
 
-  public Event(int eventId, String name, String description, int duration,
-               LocalDate date, LocalTime time, Location location,
-               Priority priority, Reminder reminder,
-               ArrayList<User> participants, ArrayList<File> attachments) {
+  public Event(int eventId, String name, String description, int duration, LocalDate date, LocalTime time,
+      Location location, Priority priority, Reminder reminder, ArrayList<User> participants,
+      ArrayList<File> attachments) {
     this.id = eventId;
     this.name = name;
     this.description = description;
@@ -316,8 +315,8 @@ public class Event implements Comparable<Event> {
    * 
    * @param participants - List of participants
    */
-  public void setParticipants(ArrayList<Integer> participants) {
-    this.participants = this.participants;
+  public void setParticipants(ArrayList<User> participants) {
+    this.participants = participants;
   }
 
   /**
@@ -331,15 +330,32 @@ public class Event implements Comparable<Event> {
   }
 
   /**
-   * todo
+   * Remove participants
    *
    * @param user - User to be removed
    * @return <code>true</code> on successful removal
    */
   public boolean removeParticipant(User user) {
-    return false;
+    if(participants.contains(user)) {
+      participants.remove(user);
+      return true;
+    } else
+      return false;
   }
 
+  /**
+   * Get a list of all participants' full names as text
+   * 
+   * @return String of participant names
+   */
+  public String participantsToString() {
+    String list = "";
+    for (User participant : getParticipants()) {
+      list += participant.getFirstname() + " " + participant.getLastname() + "<br>";
+    }
+    return "<html> " + list + "<html>";
+  }
+  
   @Override
   public int compareTo(Event other) {
     if (getDate() == null || other.getDate() == null) {
@@ -348,11 +364,4 @@ public class Event implements Comparable<Event> {
     return getDate().compareTo(other.getDate());
   }
 
-  public String participantsToString() {
-    String list ="";
-    for(User participant : getParticipants()){
-      list += participant.getFirstname() + " " + participant.getLastname() + "<br>";
-    }
-    return "<html> " + list + "<html>";
-  }
 }

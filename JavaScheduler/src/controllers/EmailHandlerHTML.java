@@ -5,7 +5,7 @@ import models.*;
 import java.time.format.DateTimeFormatter;
 
 /**
- * The Class EmailHanlderHTML is used for creating the mail Layout
+ * The Class EmailHandlerHTML is used for creating the email Layout
  * @author ZuHyunLee97
  */
 public class EmailHandlerHTML {
@@ -46,12 +46,14 @@ public class EmailHandlerHTML {
      * @return
      */
     public static String setupText(Event event, String subject) {
-        return
+        return  "<style>" +
+                "@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');" +
+                "</style>" +
                 "<body>\n" +
                 "    <div class=\"es-wrapper-color\">\n" +
                 "        <!--[if gte mso 9]>\n" +
                 "\t\t\t<v:background xmlns:v=\"urn:schemas-microsoft-com:vml\" fill=\"t\">\n" +
-                "\t\t\t\t<v:fill type=\"tile\" color=\"#eeeeee\"></v:fill>\n" +
+                "\t\t\t\t<v:fill type=\"tile\" color=\"#ffffff\"></v:fill>\n" +
                 "\t\t\t</v:background>\n" +
                 "\t\t<![endif]-->\n" +
                 "        <table class=\"es-wrapper\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\n" +
@@ -81,7 +83,7 @@ public class EmailHandlerHTML {
                 "                                                                            <tbody>\n" +
                 "                                                                                <tr>\n" +
                 "                                                                                    <td class=\"esd-block-text es-m-txt-c es-p5\" align=\"left\">\n" +
-                "                                                                                        <h1 style=\"color: #ffffff; line-height: 100%;\">  " + subject + "<br></h1>\n" +
+                "                                                                                        <h1 style=\"color: #ffffff; line-height: 100%; font-family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\">" + "   " + subject + "<br></h1>\n" +
                 "                                                                                    </td>\n" +
                 "                                                                                </tr>\n" +
                 "                                                                            </tbody>\n" +
@@ -138,22 +140,22 @@ public class EmailHandlerHTML {
                 "                                                                        <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\n" +
                 "                                                                            <tbody>\n" +
                 "                                                                                <tr>\n" +
-                "                                                                                    <td class=\"esd-block-image es-p20t es-p25b es-p35r es-p35l\" align=\"center\" style=\"font-size: 0px;\"><a target=\"_blank\" href=\"<ahref=&quot;https://icon-library.net/icon/add-reminder-icon-2.html&quot;title=&quot;AddReminderIcon#348522&quot;><imgsrc=&quot;https://icon-library.net//images/add-reminder-icon/add-reminder-icon-2.jpg&quot;width=&quot;350&quot;/></a>\"><img src=\"\"https://cdn.discordapp.com/attachments/764039131604451340/803230862853406740/kisspng-bell-computer-icons-clip-art-notification-bell-5b27cdf9abf9f9.2971416115293352897044.png\"\" alt style=\"display: block;\" width=\"120\"></a></td>\n" +
+                "                                                                                    <td class=\"esd-block-image es-p40t es-p25b es-p35r es-p35l\" align=\"center\" style=\"font-size: 0px; font-family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><a target=\"_blank\" href=\"<ahref=&quot;https://icon-library.net/icon/add-reminder-icon-2.html&quot;title=&quot;AddReminderIcon#348522&quot;\"><imgsrc=&quot;https://icon-library.net//images/add-reminder-icon/add-reminder-icon-2.jpg&quot;width=&quot;350&quot;/></a>\"><img src=\"https://cdn.discordapp.com/attachments/764039131604451340/803230862853406740/kisspng-bell-computer-icons-clip-art-notification-bell-5b27cdf9abf9f9.2971416115293352897044.png\" alt style=\"display: block;\" width=\"120\"></a></td>\n" +
                 "                                                                                </tr>\n" +
                 "                                                                                <tr>\n" +
                 "                                                                                    <td class=\"esd-block-text\" align=\"center\">\n" +
-                "                                                                                        <h2>" + event.getName() + "</h2>\n" +
+                "                                                                                        <h2 sytle=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\">" + event.getName() + "</h2>\n" +
                 "                                                                                    </td>\n" +
                 "                                                                                </tr>\n" +
                 "                                                                                <tr>\n" +
                 "                                                                                    <td class=\"esd-block-text es-p15t es-p10b es-p40l\" align=\"left\">\n" +
-                "                                                                                        <p><strong>Priority: " + event.getPriority() + "</strong></p>\n" +
-                "                                                                                        <p><strong><br>Date: " + event.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) +"</strong></p>\n" +
-                "                                                                                        <p><strong>Time: " + event.getTime() + "</strong></p>\n" +
-                "                                                                                        <p><strong>Duration: " + event.getDurationMinutes() + " minutes" + "</strong></p>\n" +
-                "                                                                                        <p><strong>Location: " + event.getLocation().getName() + "</strong></p>\n" +
-                "                                                                                        <p><strong>" + Participants(event) + "</strong></p>\n" +
-                "                                                                                        <p><strong>" + Description(event) +  "</strong></p>\n" +
+                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>Priority: " + event.getPriority() + "</strong></p>\n" +
+                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong><br>Date: " + event.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) +"</strong></p>\n" +
+                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>Time: " + event.getTime() + "</strong></p>\n" +
+                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>Duration: " + event.getDurationMinutes() + " minutes" + "</strong></p>\n" +
+                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>Location: " + event.getLocation().getName() + "</strong></p>\n" +
+                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>" + Participants(event) + "</strong></p>\n" +
+                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>" + Description(event) +  "</strong></p>\n" +
                 "                                                                                    </td>\n" +
                 "                                                                                </tr>\n" +
                 "                                                                                <tr>\n" +
@@ -185,7 +187,7 @@ public class EmailHandlerHTML {
                 "                                                                            <tbody>\n" +
                 "                                                                                <tr>\n" +
                 "                                                                                    <td class=\"esd-block-text es-p20t\" align=\"right\">\n" +
-                "                                                                                        <p>This mail was created automatically by Java-OOP-Scheduler<br>Please do not reply<br><br>*for a proper view, please disable darkmode</p>\n" +
+                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\">This mail was created automatically by Java-OOP-Scheduler<br>Please do not reply<br><br>*for a proper view, please disable darkmode</p>\n" +
                 "                                                                                    </td>\n" +
                 "                                                                                </tr>\n" +
                 "                                                                            </tbody>\n" +
@@ -264,6 +266,8 @@ public class EmailHandlerHTML {
                 "</html>";
     }
 }
+
+
 
 /**
  "<head>\n" +

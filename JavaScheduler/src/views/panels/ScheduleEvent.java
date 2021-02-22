@@ -25,6 +25,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.*;
 
+/**
+ * The purpose of this class is to create a user-accessible event creation view.
+ * This panel contains a form for selection of a event. This view is also used
+ * for viewing and editing the event.
+ */
 public class ScheduleEvent extends Panel implements ScheduleModes {
 
   private static final long serialVersionUID = 1L;
@@ -36,7 +41,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private Button lc_dpdwn;
   private TextField searchUserField;
   private Label userQueryResult;
-  private int participantListPosition;
+  private int pcpIconPos = 430;
   private ArrayList<User> participants;
   private ArrayList<File> selectedAttachments;
   private Reminder selectedReminder;
@@ -57,21 +62,46 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   public static JTextArea descField;
 
   /** Margin between text fields */
-  final int TF_MRGN = 70;
+  private final int TF_MRGN = 70;
+
+  private Panel PAGE_ONE;
+  private Panel PAGE_TWO;
+  private JScrollPane scroller;
+  private Panel mainpanel;
 
   private JFrame frame;
   private User user;
   private Event editEvent;
   private int mode;
 
+  /**
+   * Construct panel of event creator. This is panel is created and placed on the
+   * home panel.
+   * 
+   * @param frame     - Main frame containing this panel
+   * @param user      - Session logged in user
+   * @param editEvent - <code>null</code> if not in edit mode, else event to be
+   *                  edited
+   * @param mode      - Mode depicting if the view should display, create or edit
+   */
   public ScheduleEvent(JFrame frame, User user, Event editEvent, int mode) {
     super(frame);
     this.frame = frame;
     this.user = user;
     this.editEvent = editEvent;
     this.mode = mode;
+    mainpanel = new Panel();
+    mainpanel.setBackground(MasterUI.lightCol);
+    mainpanel.setPreferredSize(new Dimension(getWidth(), 1000));
 
-    cb = new Point(40, 170);
+    scroller = new JScrollPane(mainpanel);
+    scroller.setBounds(0, 0, getWidth(), getHeight());
+    scroller.getVerticalScrollBar().setUnitIncrement(10);
+    scroller.setBorder(BorderFactory.createEmptyBorder());
+    scroller.setBackground(MasterUI.lightCol);
+    add(scroller);
+
+    cb = new Point(0, TF_MRGN);
     Label screenTitle = new Label(40, 40, "");
     screenTitle.setHeading();
     if (mode == CREATE) {
@@ -91,7 +121,17 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       participants = editEvent.getParticipants();
     }
 
-    initLeftFormContent();
+    PAGE_ONE = new Panel();
+    PAGE_ONE.setBounds(100, 120, 320, 410);
+    PAGE_ONE.setBackground(MasterUI.lightCol);
+    mainpanel.add(PAGE_ONE);
+
+    PAGE_TWO = new Panel();
+    PAGE_TWO.setBounds(100, 540, 320, 400);
+    PAGE_TWO.setBackground(MasterUI.lightCol);
+    mainpanel.add(PAGE_TWO);
+
+    initPageOneFormContent();
     if (mode != VIEW) {
       initDatePicker();
     }
@@ -103,71 +143,20 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     drawDesciptionSection();
     processConfirm();
 
-    add(screenTitle);
+    mainpanel.add(screenTitle);
     MasterUI.setComponentStyles(this, "light");
+    MasterUI.setComponentStyles(PAGE_ONE, "light");
+    MasterUI.setComponentStyles(PAGE_TWO, "light");
+    MasterUI.setComponentStyles(mainpanel, "light");
     setDefaultProperties();
-  }
-
-  /**
-   * Build dropdown options as to when to remind the user of their event
-   */
-  @SuppressWarnings("unchecked")
-  private void reminderDropdownSelection() {
-    List<Reminder> reminders = new ArrayList<>(EnumSet.allOf(Reminder.class));
-    Panel panel = this;
-    ActionListener action = e -> {
-      Reminder reminder = ((DataButton<Reminder>) e.getSource()).getData();
-      descField.requestFocus();
-      remove(rmscroll);
-      rmscroll = null;
-      selectedReminder = reminder;
-    };
-    Component[] comps = reminderField.setDropdown(reminders, rmscroll, panel, action, 3);
-    rmscroll = (JScrollPane) comps[0];
-    panel = (Panel) comps[1];
-  }
-
-  /**
-   * Build dropdown options as to which custom location to select
-   * 
-   * @param textfield - Location TextField object to reference
-   */
-  @SuppressWarnings("unchecked")
-  private void locationDropdownSelection(TextField textfield) {
-    Panel panel = this;
-    List<Location> locations = user.getLocations();
-    ActionListener action = e -> {
-      Location location = ((DataButton<Location>) e.getSource()).getData();
-      remove(lcscroll);
-      lcscroll = null;
-      selectedLocation = location;
-    };
-    Component[] comps = locationField.setDropdown(locations, lcscroll, panel, action);
-    lcscroll = (JScrollPane) comps[0];
-    panel = (Panel) comps[1];
-  }
-
-  /**
-   * Draw reminder section section that then prompts drop down options
-   */
-  private void drawReminderSection() {
-    reminderField = new TextField(400, 120);
-    MasterUI.placeFieldLabel(reminderField, "Remind me before event", this);
-    reminderField.setText(Reminder.NONE.toString());
-    selectedReminder = Reminder.NONE;
-    reminderField.setEditable(false);
-    Button dpdwn = reminderField.appendButton(MasterUI.downIcon);
-    dpdwn.addActionListener(e -> reminderDropdownSelection());
-
-    if (mode != VIEW) add(dpdwn);
-    add(reminderField);
   }
 
   /**
    * Create and initialise page buttons
    */
   private void initPageButtons() {
-    confirmBtn = new Button(40, 550, "Confirm", MasterUI.secondaryCol);
+    confirmBtn = new Button(PAGE_ONE.getX() + PAGE_ONE.getWidth() + 200, PAGE_ONE.getY() + 150, "Confirm",
+        MasterUI.secondaryCol);
     switch (mode) {
       case VIEW:
         confirmBtn.setText("Back");
@@ -176,14 +165,36 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         confirmBtn.setText("Save Changes");
         break;
       default:
-        confirmBtn.setText("Confirm");
+        confirmBtn.setText("Next");
     }
 
     confirmBtn.setTab();
     confirmBtn.centerText();
-    confirmBtn.setRounded(true);
+    confirmBtn.setCornerRadius(Button.ROUND);
 
-    add(confirmBtn);
+    String pref = "";
+    switch (mode) {
+      case CREATE: pref = "Create"; break;
+      case EDIT: pref = "Edit"; break;
+      case VIEW: pref = "View"; break;
+    }
+
+    Label schedulehero = new Label(-10, -10, "");
+    schedulehero.setIcon(FormatUtil.resizeImageIcon(MasterUI.scheduleFormImage, 0.5f));
+    schedulehero.setSize(schedulehero.getIcon().getIconWidth(), schedulehero.getIcon().getIconHeight() - 70);
+    Label scheduleheroText = new Label(15, 15, pref + " your event here.");
+    scheduleheroText.setHeading();
+    scheduleheroText.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 28f));
+    scheduleheroText.setForeground(Color.WHITE);
+    Panel scheduleheroPanel = new Panel();
+    scheduleheroPanel.setBounds(confirmBtn.getX() - 190, confirmBtn.getY() - 130, schedulehero.getWidth(), 200);
+    scheduleheroPanel.setRounded(true);
+    scheduleheroPanel.setBackground(MasterUI.secondaryCol);
+    scheduleheroPanel.add(scheduleheroText);
+    scheduleheroPanel.add(schedulehero);
+
+    mainpanel.add(confirmBtn);
+    mainpanel.add(scheduleheroPanel);
   }
 
   /**
@@ -191,51 +202,50 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * statically for developemental purposes.
    *
    */
-  private void initLeftFormContent() {
+  private void initPageOneFormContent() {
     titleField = new TextField(cb.x, cb.y + 20);
-    MasterUI.placeFieldLabel(titleField, "Title", this);
+    MasterUI.placeFieldLabel(titleField, "Title", PAGE_ONE);
 
     dateField = new TextField(cb.x, titleField.getY() + TF_MRGN);
-    dateField.setSize(dateField.getWidth() - 60, dateField.getHeight());
-    MasterUI.placeFieldLabel(dateField, "Date", this);
+    dateField.setSize(dateField.getWidth() - 55, dateField.getHeight());
+    MasterUI.placeFieldLabel(dateField, "Date", PAGE_ONE);
 
     startField = new TextField(cb.x, dateField.getY() + TF_MRGN);
     startField.setSize(titleField.getWidth() / 2, titleField.getHeight());
-    MasterUI.placeFieldLabel(startField, "Start time", this);
+    MasterUI.placeFieldLabel(startField, "Start time", PAGE_ONE);
 
     endField = new TextField(cb.x + startField.getWidth() + 5, dateField.getY() + TF_MRGN);
     endField.setSize(startField.getWidth() - 5, startField.getHeight());
-    MasterUI.placeFieldLabel(endField, "End time", this);
+    MasterUI.placeFieldLabel(endField, "End time", PAGE_ONE);
 
     locationField = new TextField(cb.x, endField.getY() + TF_MRGN);
-    locationField.setSize(locationField.getWidth() - 40, dateField.getHeight());
     lc_dpdwn = locationField.appendButton(MasterUI.downIcon);
     lc_dpdwn.addActionListener(e -> locationDropdownSelection(locationField));
-    add(lc_dpdwn);
-    MasterUI.placeFieldLabel(locationField, "Location", this);
+    if (mode != VIEW)
+      PAGE_ONE.add(lc_dpdwn);
+    MasterUI.placeFieldLabel(locationField, "Location", PAGE_ONE);
 
     ArrayList<TextField> fields = new ArrayList<>(
         Arrays.asList(titleField, dateField, startField, endField, locationField));
-    fields.forEach(e -> add(e));
+    fields.forEach(e -> PAGE_ONE.add(e));
 
     /**
      * When clicking in on a text field, the panel of the date picker (redpanel)
      * closes, if it has been open, so that a user does not have to manually close
      * the panel.
      */
-    // fields.forEach(e -> {
-    // if (mode != VIEW) {
-    // e.addFocusListener(new FocusListener() {
-    // public void focusGained(FocusEvent f) {
-    // redpanel.setSize(0, 0);
-    // redpanel.isActive = false;
-    // e.setText("");
-    // }
-    // public void focusLost(FocusEvent f) {}
-    // });
-    // }
-    // });
-
+    fields.forEach(e -> {
+      if (mode != VIEW) {
+        e.addFocusListener(new FocusListener() {
+          public void focusGained(FocusEvent f) {
+            redpanel.setSize(0, 0);
+            redpanel.isActive = false;
+            e.setText("");
+          }
+          public void focusLost(FocusEvent f) { }
+        });
+      }
+    });
   }
 
   /**
@@ -255,7 +265,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       locationField.setText(editEvent.getLocation().getName());
       dateField.setText(editEvent.getDate().toString());
       startField.setText(editEvent.getTime().toString());
-      endField.setText(FormatUtil.getEndTime(editEvent.getTime(), editEvent.getDurationMinutes()).toString());
+      endField.setText(FormatUtil.getEndTime(editEvent).toString());
       descField.setText(editEvent.getDescription());
       String attachStr = "";
       for (File f : editEvent.getAttachments()) {
@@ -272,7 +282,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         field.setBackground(MasterUI.lightCol);
         field.setEditable(false);
         field.setEqualPadding(0);
-        field.setFont(MasterUI.robotoFont.deriveFont(Font.BOLD, 14f));
+        field.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD, 14f));
       }
       descField.setBackground(MasterUI.lightCol);
       descField.setEditable(false);
@@ -281,193 +291,10 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       Button[] prioBtns = { loPrioBtn, midPrioBtn, hiPrioBtn };
       for (Button prioBtn : prioBtns) {
         prioBtn.setEnabled(false);
+        prioBtn.setForeground(Color.WHITE);
       }
 
       repaint();
-    }
-  }
-
-  /**
-   * Search a user to add them to participants. If the database search fails, an
-   * error label indicates the query failure.
-   */
-  public void searchParticipant() {
-    Panel panel = this;
-    User user = ViewModelHandler.searchUser(searchUserField, panel, userQueryResult);
-    if (user == null) {
-    } else {
-      if (participants.contains(user)) {
-        userQueryResult.setText("User already added");
-        return;
-      }
-      participants.add(user);
-      Label participantLabel = new Label(800, participantListPosition, "");
-      participantLabel.setText(user.getUsername());
-      participantLabel.setIcon(MasterUI.circleUserIcon);
-      add(participantLabel);
-      repaint();
-      participantListPosition += 35;
-    }
-  }
-
-  /**
-   * Create and initialise attachment section
-   */
-  private void drawAttachmentSection() {
-    Panel attachpanel = new Panel();
-    attachpanel.setBounds(750, 40, 220, 200);
-    attachpanel.setBackground(MasterUI.lightCol);
-    attachField = new TextField(400, reminderField.getY() + TF_MRGN);
-    if (mode == VIEW) {
-      MasterUI.placeFieldLabel(attachField, "Attachments", this);
-    } else {
-      MasterUI.placeFieldLabel(attachField, "Attachments (optional)", this);
-    }
-    attachField.setEditable(false);
-    Button attachBtn = new Button(attachField.getX() + attachField.getWidth(), attachField.getY(), "",
-        MasterUI.lightColAlt);
-    attachBtn.setIcon(MasterUI.folderIcon);
-    attachBtn.setDark(false);
-    attachBtn.setForeground(MasterUI.accentCol);
-    attachBtn.setSize(attachField.getHeight(), attachField.getHeight());
-    attachBtn.addActionListener(e -> {
-      JFileChooser chooser = new JFileChooser();
-      chooser.setAcceptAllFileFilterUsed(false);
-      chooser.setFileFilter(new FileFilter() {
-        public String getDescription() {
-          return "PDF files and image files";
-        }
-
-        public boolean accept(File f) {
-          if (f.isDirectory()) {
-            return true;
-          } else {
-            String filename = f.getName().toLowerCase();
-            return filename.endsWith(".pdf") || filename.endsWith(".jpg") || filename.endsWith(".jpeg")
-                || filename.endsWith(".png");
-          }
-        }
-      });
-      if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-        File file = chooser.getSelectedFile();
-        selectedAttachments.add(file);
-        attachField.setText(selectedAttachments.size() + " File(s)");
-        addAttachmentCard(attachpanel);
-      }
-    });
-
-    addAttachmentCard(attachpanel);
-
-    if (mode != VIEW)
-      add(attachBtn);
-    add(attachField);
-    add(attachpanel);
-  }
-
-  /**
-   * When the attachment form receives a new file, a card panel respresenting the
-   * file is added to the right. The card allows the removal and opening of the
-   * file.
-   * 
-   * @param panel - Panel that holds the file cards
-   */
-  private void addAttachmentCard(Panel panel) {
-    panel.removeAll();
-    int y = 0;
-    for (File file : selectedAttachments) {
-      Panel fcard = new Panel();
-      fcard.setBounds(0, y, panel.getWidth(), 60);
-      fcard.setBackground(MasterUI.lightCol);
-      fcard.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-      Label ficon = new Label(5, 5, "");
-      Label fname = new Label(55, 10, file.getName());
-      Label fsize = new Label(fname.getX(), fname.getY() + 15, String.valueOf((int) file.length() / 1024) + " KB");
-      Button del = new Button(fcard.getWidth() - 25, 10, "");
-      Button open = new Button(0, 0, "");
-      open.setSize(fcard.getWidth() - 30, fcard.getHeight());
-      open.addActionListener(e -> {
-        try {
-          Desktop.getDesktop().open(file);
-        } catch (IOException exp) {
-          exp.printStackTrace();
-        }
-      });
-      if(file.getName().toLowerCase().endsWith(".pdf")) {
-        ficon.setIcon(ViewModelHandler.resizeImageIcon(MasterUI.pdfIcon, 0.9f));
-      }
-      if(file.getName().toLowerCase().endsWith(".jpg")) {
-        ficon.setIcon(ViewModelHandler.resizeImageIcon(MasterUI.jpgIcon, 0.9f));
-      }
-      if(file.getName().toLowerCase().endsWith(".png")) {
-        ficon.setIcon(ViewModelHandler.resizeImageIcon(MasterUI.pngIcon, 0.9f));
-      }
-      ficon.setSize(48, 48);
-      ficon.setHorizontalAlignment(SwingConstants.CENTER);
-      fname.setFont(MasterUI.robotoFont.deriveFont(14f));
-      fsize.setFont(MasterUI.robotoFont.deriveFont(11f));
-
-      del.addActionListener(e -> {
-        panel.remove(fcard);
-        selectedAttachments.remove(file);
-        attachField.setText(selectedAttachments.size() + " File(s)");
-        panel.repaint();
-      });
-      del.setIcon(MasterUI.xIcon);
-      del.setSize(15, 13);
-
-      fcard.add(open);
-      if (mode != VIEW)
-        fcard.add(del);
-      fcard.add(ficon);
-      fcard.add(fname);
-      fcard.add(fsize);
-
-      panel.add(fcard);
-      panel.repaint();
-      y += fcard.getHeight() + 7;
-    }
-  }
-
-  /**
-   * Create and initialise add-participant section
-   */
-  private void drawParticipantSection() {
-    searchUserField = new TextField(400, 260);
-    MasterUI.placeFieldLabel(searchUserField, "People to invite", this);
-
-    addUserBtn = new Button(700, searchUserField.getY(), "", MasterUI.lightColAlt);
-    addUserBtn.setSize(40, 40);
-    addUserBtn.setIcon(MasterUI.addUserIcon);
-
-    userQueryResult = new Label(0, 0, "");
-    participantListPosition = searchUserField.getY();
-    addUserBtn.addActionListener(e -> searchParticipant());
-
-    searchUserField.addFocusListener(new FocusListener() {
-      public void focusGained(FocusEvent e) {
-        redpanel.setSize(0, 0);
-        redpanel.isActive = false;
-      }
-
-      public void focusLost(FocusEvent e) {
-        // System.out.println("focus lost");
-      }
-    });
-
-    for (User part : participants) {
-      Label partLabel = new Label(800, participantListPosition, part.getUsername());
-      if (part.equals(user))
-        partLabel.setText(partLabel.getText() + " (Me)");
-      partLabel.setIcon(MasterUI.circleUserIcon);
-      partLabel.setVerticalTextPosition(SwingConstants.CENTER);
-      add(partLabel);
-      participantListPosition += 35;
-    }
-
-    if (mode != VIEW) {
-      add(addUserBtn);
-      add(searchUserField);
-      add(userQueryResult);
     }
   }
 
@@ -475,36 +302,20 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * Draw priority label and buttons
    */
   private void drawPrioritySection() {
-    Label priorityLabel = new Label(40, 100, "Priority");
-    priorityField = new TextField(40, 120);
-    loPrioBtn = new Button(40, 120, "LOW", new Color(171, 169, 239));
-    midPrioBtn = new Button(140, 120, "MEDIUM", new Color(129, 109, 254));
-    hiPrioBtn = new Button(240, 120, "HIGH", MasterUI.accentCol);
+    Label priorityLabel = new Label(0, -5, "Priority");
+    priorityField = new TextField(0, 20);
+    loPrioBtn = new Button(0, 20, "LOW", new Color(171, 169, 239));
+    midPrioBtn = new Button(105, 20, "MEDIUM", new Color(129, 109, 254));
+    hiPrioBtn = new Button(210, 20, "HIGH", MasterUI.accentCol);
 
     loPrioBtn.addActionListener(e -> prioBtnAction(Priority.LOW));
     midPrioBtn.addActionListener(e -> prioBtnAction(Priority.MEDIUM));
     hiPrioBtn.addActionListener(e -> prioBtnAction(Priority.HIGH));
 
-    add(priorityLabel);
-    add(loPrioBtn);
-    add(midPrioBtn);
-    add(hiPrioBtn);
-  }
-
-  private void drawDesciptionSection() {
-    descField = new JTextArea();
-    descField.setBackground(MasterUI.lightColAlt);
-    descField.setFont(MasterUI.robotoFont);
-    descField.setForeground(MasterUI.primaryColAlt);
-    descField.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    descField.setBounds(400, 330, 340, 110);
-    descField.setLineWrap(true);
-
-    Label descLabel = new Label(400, descField.getY() - 25, "Description (optional)");
-    if (mode == VIEW) descLabel.setText("Description");
-
-    add(descLabel);
-    add(descField);
+    PAGE_ONE.add(priorityLabel);
+    PAGE_ONE.add(loPrioBtn);
+    PAGE_ONE.add(midPrioBtn);
+    PAGE_ONE.add(hiPrioBtn);
   }
 
   /**
@@ -551,32 +362,304 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * Create and initialise date picker
    */
   private void initDatePicker() {
-    Button openDatePicker = new Button(285, dateField.getY(), "", MasterUI.accentCol);
+    Button openDatePicker = new Button(dateField.getX() + dateField.getWidth() - 10, dateField.getY(), "",
+        MasterUI.accentCol);
     openDatePicker.setIcon(MasterUI.calendarIcon);
-    openDatePicker.setSize(55, 40);
+    openDatePicker.setSize(65, 40);
 
     redpanel = new CalendarPanel(frame, 40, true, null);
     redpanel.setSize(0, 0);
     redpanel.setBackground(MasterUI.lightCol);
     redpanel.setLayout(null);
+    redpanel.setBorder(BorderFactory.createLineBorder(Color.GRAY.brighter(), 1));
     ((CalendarPanel) redpanel).stripComponents();
     redpanel.isActive = false;
     openDatePicker.addActionListener(e -> {
       if (redpanel.isActive) {
         redpanel.setSize(0, 0);
         redpanel.isActive = false;
-        add(lc_dpdwn);
+        PAGE_ONE.add(lc_dpdwn);
       } else {
-        redpanel.setBounds(openDatePicker.getX(), openDatePicker.getY(), 300, 310);
+        redpanel.setBounds(openDatePicker.getX() + PAGE_ONE.getX(), openDatePicker.getY() + PAGE_ONE.getY(), 300, 310);
         redpanel.isActive = true;
-        remove(lc_dpdwn);
+        PAGE_ONE.remove(lc_dpdwn);
       }
     });
 
-    add(openDatePicker);
-    add(redpanel);
-    setComponentZOrder(openDatePicker, 0);
-    setComponentZOrder(redpanel, 1);
+    PAGE_ONE.add(openDatePicker);
+    mainpanel.add(redpanel);
+    PAGE_ONE.setComponentZOrder(openDatePicker, 0);
+    mainpanel.setComponentZOrder(redpanel, 1);
+  }
+
+  /**
+   * Build dropdown options as to which custom location to select
+   * 
+   * @param textfield - Location TextField object to reference
+   */
+  @SuppressWarnings("unchecked")
+  private void locationDropdownSelection(TextField textfield) {
+    Panel panel = PAGE_ONE;
+    List<Location> locations = user.getLocations();
+    ActionListener action = e -> {
+      Location location = ((DataButton<Location>) e.getSource()).getData();
+      PAGE_ONE.remove(lcscroll);
+      lcscroll = null;
+      selectedLocation = location;
+    };
+    Component[] comps = locationField.setDropdown(locations, lcscroll, panel, action);
+    lcscroll = (JScrollPane) comps[0];
+    panel = (Panel) comps[1];
+  }
+
+  /**
+   * Draw reminder section section that then prompts drop down options
+   */
+  private void drawReminderSection() {
+    reminderField = new TextField(0, 25);
+    MasterUI.placeFieldLabel(reminderField, "Remind me before event", PAGE_TWO);
+    reminderField.setText(Reminder.NONE.toString());
+    selectedReminder = Reminder.NONE;
+    reminderField.setEditable(false);
+    Button dpdwn = reminderField.appendButton(MasterUI.downIcon);
+    dpdwn.addActionListener(e -> reminderDropdownSelection());
+
+    if (mode != VIEW)
+      PAGE_TWO.add(dpdwn);
+    PAGE_TWO.add(reminderField);
+  }
+
+  /**
+   * Build dropdown options as to when to remind the user of their event
+   */
+  @SuppressWarnings("unchecked")
+  private void reminderDropdownSelection() {
+    List<Reminder> reminders = new ArrayList<>(EnumSet.allOf(Reminder.class));
+    ActionListener action = e -> {
+      Reminder reminder = ((DataButton<Reminder>) e.getSource()).getData();
+      descField.requestFocus();
+      remove(rmscroll);
+      rmscroll = null;
+      selectedReminder = reminder;
+    };
+    Component[] comps = reminderField.setDropdown(reminders, rmscroll, PAGE_TWO, action, 3);
+    rmscroll = (JScrollPane) comps[0];
+    PAGE_TWO = (Panel) comps[1];
+  }
+
+  /**
+   * Create and initialise attachment section
+   */
+  private void drawAttachmentSection() {
+    Panel attachpanel = new Panel();
+    attachpanel.setBackground(MasterUI.lightCol);
+    attachField = new TextField(0, reminderField.getY() + TF_MRGN);
+    attachpanel.setBounds(430, 600, 220, 200);
+    if (mode == VIEW && !editEvent.getAttachments().isEmpty()) {
+      MasterUI.placeFieldLabel(attachField, "Attachments", PAGE_TWO);
+    } else if (mode == CREATE || mode == EDIT) {
+      MasterUI.placeFieldLabel(attachField, "Attachments (optional)", PAGE_TWO);
+    }
+    attachField.setEditable(false);
+    Button attachBtn = attachField.appendButton(MasterUI.folderIcon);
+    attachBtn.setDark(false);
+    attachBtn.setForeground(MasterUI.accentCol);
+    attachBtn.addActionListener(e -> {
+      JFileChooser chooser = new JFileChooser();
+      chooser.setAcceptAllFileFilterUsed(false);
+      chooser.setFileFilter(new FileFilter() {
+        public String getDescription() {
+          return "PDF files and image files";
+        }
+
+        public boolean accept(File f) {
+          if (f.isDirectory()) {
+            return true;
+          } else {
+            String filename = f.getName().toLowerCase();
+            return filename.endsWith(".pdf") || filename.endsWith(".jpg") || filename.endsWith(".jpeg")
+                || filename.endsWith(".png");
+          }
+        }
+      });
+      if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+        File file = chooser.getSelectedFile();
+        selectedAttachments.add(file);
+        attachField.setText(selectedAttachments.size() + " File(s)");
+        addAttachmentCard(attachpanel);
+      }
+    });
+
+    addAttachmentCard(attachpanel);
+
+    if (mode != VIEW)
+      PAGE_TWO.add(attachBtn);
+    PAGE_TWO.add(attachField);
+    mainpanel.add(attachpanel);
+    // attachpanel.setBackground(Color.RED);
+  }
+
+  /**
+   * When the attachment form receives a new file, a card panel respresenting the
+   * file is added to the right. The card allows the removal and opening of the
+   * file.
+   * 
+   * @param panel - Panel that holds the file cards
+   */
+  private void addAttachmentCard(Panel panel) {
+    panel.removeAll();
+    int y = 0;
+    for (File file : selectedAttachments) {
+      Panel fcard = new Panel();
+      fcard.setBounds(0, y, panel.getWidth(), 60);
+      fcard.setBackground(MasterUI.lightCol);
+      fcard.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+      Label ficon = new Label(5, 5, "");
+      Label fname = new Label(55, 10, file.getName());
+      Label fsize = new Label(fname.getX(), fname.getY() + 15, String.valueOf((int) file.length() / 1024) + " KB");
+      Button del = new Button(fcard.getWidth() - 25, 10, "");
+      del.setColor(MasterUI.lightCol);
+      Button open = new Button(0, 0, "");
+      open.setBlank(true);
+      open.setSize(fcard.getWidth() - 30, fcard.getHeight());
+      open.addActionListener(e -> {
+        try {
+          Desktop.getDesktop().open(file);
+        } catch (IOException exp) {
+          exp.printStackTrace();
+        }
+      });
+      if (file.getName().toLowerCase().endsWith(".pdf")) {
+        ficon.setIcon(FormatUtil.resizeImageIcon(MasterUI.pdfIcon, 0.9f));
+      }
+      if (file.getName().toLowerCase().endsWith(".jpg")) {
+        ficon.setIcon(FormatUtil.resizeImageIcon(MasterUI.jpgIcon, 0.9f));
+      }
+      if (file.getName().toLowerCase().endsWith(".png")) {
+        ficon.setIcon(FormatUtil.resizeImageIcon(MasterUI.pngIcon, 0.9f));
+      }
+      ficon.setSize(48, 48);
+      ficon.setHorizontalAlignment(SwingConstants.CENTER);
+      fname.setSize(200, 25);
+      fname.setFont(MasterUI.robotoFont.deriveFont(14f));
+      fsize.setFont(MasterUI.robotoFont.deriveFont(11f));
+
+      del.addActionListener(e -> {
+        panel.remove(fcard);
+        selectedAttachments.remove(file);
+        attachField.setText(selectedAttachments.size() + " File(s)");
+        panel.repaint();
+      });
+      del.setIcon(MasterUI.xIcon);
+      del.setSize(15, 13);
+
+      fcard.add(open);
+      if (mode != VIEW)
+        fcard.add(del);
+      fcard.add(ficon);
+      fcard.add(fname);
+      fcard.add(fsize);
+
+      panel.add(fcard);
+      panel.repaint();
+      y += fcard.getHeight() + 7;
+    }
+  }
+
+  /**
+   * Create and initialise add-participant section. User icons are set
+   * pre-emptively if they are already in the event participants list.
+   */
+  private void drawParticipantSection() {
+    searchUserField = new TextField(0, attachField.getY() + TF_MRGN);
+    if (mode == CREATE) {
+      MasterUI.placeFieldLabel(searchUserField, "People to invite", PAGE_TWO);
+    }
+
+    addUserBtn = searchUserField.appendButton(MasterUI.addUserIcon);
+    userQueryResult = new Label(0, 0, "");
+    addUserBtn.addActionListener(e -> searchParticipant());
+
+    searchUserField.addFocusListener(new FocusListener() {
+      public void focusGained(FocusEvent e) {
+        redpanel.setSize(0, 0);
+        redpanel.isActive = false;
+      }
+
+      public void focusLost(FocusEvent e) {
+        // System.out.println("focus lost");
+      }
+    });
+
+    Label pcpIconLabel = new Label(pcpIconPos, 370, "Participants");
+    mainpanel.add(pcpIconLabel);
+
+    for (User pcp : participants) {
+      placeParticpantIcon(pcp);
+    }
+
+    if (mode != VIEW) {
+      PAGE_TWO.add(addUserBtn);
+      PAGE_TWO.add(searchUserField);
+      PAGE_TWO.add(userQueryResult);
+    }
+  }
+
+  /**
+   * Search a user to add them to participants. If the database search fails, an
+   * error label indicates the query failure.
+   */
+  public void searchParticipant() {
+    User user = ViewModelHandler.searchUser(searchUserField, mainpanel, userQueryResult);
+    if (user == null) {
+    } else {
+      if (participants.contains(user)) {
+        userQueryResult.setText("User already added");
+        return;
+      }
+      participants.add(user);
+      placeParticpantIcon(user);
+      pcpIconPos += 40;
+      repaint();
+    }
+  }
+
+  /**
+   * Place icon of particpant on schedule form. Partcipants added are visible
+   * here, and can be removed from here.
+   * 
+   * @param pcp - Participant user
+   */
+  public void placeParticpantIcon(User pcp) {
+    Label pcpIcon = new Label(pcpIconPos, 400, "");
+    pcpIcon.fillIcon(FormatUtil.resizeImageIcon(pcp.getAvatar(), 0.5f));
+    pcpIcon.setVerticalTextPosition(SwingConstants.CENTER);
+    mainpanel.add(pcpIcon);
+    pcpIconPos += 40;
+  }
+
+  /**
+   * Draw description text area for event description
+   */
+  private void drawDesciptionSection() {
+    descField = new JTextArea();
+    descField.setBackground(MasterUI.lightColAlt);
+    descField.setFont(MasterUI.robotoFont);
+    descField.setForeground(MasterUI.primaryColAlt);
+    descField.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    descField.setBounds(0, searchUserField.getY() + TF_MRGN, searchUserField.getWidth() + 40, 110);
+    descField.setLineWrap(true);
+
+    if (mode == CREATE || mode == EDIT) {
+      MasterUI.placeFieldLabel(descField, "Description (optional)", PAGE_TWO);
+    }
+    if (mode == VIEW && !descField.getText().isBlank()) {
+      MasterUI.placeFieldLabel(descField, "Description", PAGE_TWO);
+      descField.setBorder(BorderFactory.createEmptyBorder());
+      descField.setBackground(MasterUI.lightCol);
+    }
+
+    PAGE_TWO.add(descField);
   }
 
   /**

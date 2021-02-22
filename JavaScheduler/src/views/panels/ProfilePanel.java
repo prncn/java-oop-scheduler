@@ -1,21 +1,23 @@
 package views.panels;
 
+import controllers.DatabaseAPI;
+import models.Event;
 import models.Location;
 import models.User;
 import views.HomeUI;
+import views.LoginUI;
 import views.MasterUI;
 import views.components.Button;
-import views.components.DataButton;
 import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
+import views.components.*;
 
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
+import java.util.ArrayList;
 
 public class ProfilePanel extends Panel {
 
@@ -31,6 +33,7 @@ public class ProfilePanel extends Panel {
 
   private Button editBtn;
   private Button cnclBtn;
+  private Button deleteBtn;
 
   private Button lcSaveBtn;
   private Button lcClrBtn;
@@ -56,19 +59,49 @@ public class ProfilePanel extends Panel {
    * @param user - User to be display
    */
   private void drawProfileSection(User user) {
+    Panel panel = this;
     Label profileTitle = new Label(40, 40, "Profile");
     profileTitle.setHeading();
 
     ProfilePanelInfo infoPanel = new ProfilePanelInfo(user, false);
-    infoPanel.setStatic();
+    infoPanel.setToStaticMode();
 
-    editBtn = new Button(150, 35, "Edit");
-    editBtn.setSmall();
+    deleteBtn = new Button(profileTitle.getX() + 200, profileTitle.getY(), "Delete Account", MasterUI.hiPrioCol);
+    deleteBtn.setSmall();
+    deleteBtn.setSize(deleteBtn.getWidth() + 50, deleteBtn.getHeight());
+    deleteBtn.addActionListener(confirm -> HomeUI.confirmDialog(deleteUser(user), "Delete Account?"));
+    add(deleteBtn);
+
+    editBtn = new Button(40, 440, "Edit Profile", MasterUI.primaryCol);
+    editBtn.setSize(310, 50);
+    editBtn.setCornerRadius(Button.ROUND);
     editBtn.addActionListener(infoPanel.setEditAction());
+    editBtn.addActionListener(e -> {
+      remove(editBtn);
+      remove(deleteBtn);
+      add(cnclBtn);
+      panel.setComponentZOrder(cnclBtn, 0);
+      panel.repaint();
+    });
 
-    cnclBtn = new Button(editBtn.getX() + editBtn.getWidth(), editBtn.getY(), "Cancel");
+    cnclBtn = new Button(profileTitle.getX() + 250, profileTitle.getY(), "Close");
     cnclBtn.setSmall();
     cnclBtn.addActionListener(infoPanel.setStaticAction());
+    cnclBtn.addActionListener(e -> {
+      remove(cnclBtn);
+      add(deleteBtn);
+      add(editBtn);
+      panel.setComponentZOrder(editBtn, 0);
+      panel.repaint();
+    });
+
+    infoPanel.getSaveBtn().addActionListener(e -> {
+      remove(cnclBtn);
+      add(editBtn);
+      add(deleteBtn);
+      panel.setComponentZOrder(editBtn, 0);
+      panel.repaint();
+    });
 
     stats_1 = new Label(40, 600, "You're partaking in " + user.getEvents().size() + " meetings.");
     stats_1.setForeground(MasterUI.accentCol);
@@ -76,7 +109,6 @@ public class ProfilePanel extends Panel {
 
     add(stats_1);
     add(editBtn);
-    add(cnclBtn);
     add(profileTitle);
     add(infoPanel);
 
@@ -99,12 +131,11 @@ public class ProfilePanel extends Panel {
 
     lcpanel = new Panel();
     lcpanel.setBackground(MasterUI.lightCol);
-    lcpanel.setBounds(450, 100, 300, 520);
+    lcpanel.setBounds(450, 100, 310, 630);
 
-    Label lcNameLabel = new Label(0, 0, "Location name");
     lcNameField = new TextField(0, 20);
     lcNameField.setText("Test");
-    lcpanel.add(lcNameLabel);
+    MasterUI.placeFieldLabel(lcNameField, "Location name", lcpanel);
     lcpanel.add(lcNameField);
 
     TextField[] lcFields = initLocationFields();
@@ -118,25 +149,45 @@ public class ProfilePanel extends Panel {
     user.addLocation(lc_2);
     user.addLocation(lc_3);
 
-    lcAddBtn = new Button(730, 35, "Add");
-    lcAddBtn.setSmall();
+    lcAddBtn = new Button(0, 340, "Create New Location", MasterUI.secondaryCol);
+    lcAddBtn.setSize(lcNameField.getWidth(), 50);
+    lcAddBtn.setCornerRadius(Button.ROUND);
     lcAddBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        Location temp = new Location(lcNameField.getText());
-        overwriteLocationData(temp);
-        user.addLocation(temp);
-        drawLocationListPanel(lcpanel);
+        if (lcNameField.getText().isBlank())
+          return;
+        HomeUI.confirmDialog((write -> {
+          Location temp = new Location(lcNameField.getText());
+          overwriteLocationData(temp);
+          user.addLocation(temp);
+        }), "Add new location " + lcNameField.getText() + "?");
       }
     });
-    add(lcAddBtn);
-    setComponentZOrder(lcAddBtn, 0);
+    lcSaveBtn = new Button(0, 340, "Save location info", MasterUI.accentCol);
+    lcSaveBtn.setDark(true);
+    lcSaveBtn.setSize(lcNameField.getWidth(), 50);
+    lcSaveBtn.setCornerRadius(Button.ROUND);
+    lcpanel.add(lcAddBtn);
+
     selectLocation = new TextField(0, lcpanel.getHeight() - 200);
+    selectLocation.setText("Select location to edit");
+    selectLocation.setEditable(false);
+    MasterUI.placeFieldLabel(selectLocation, "Edit custom location", lcpanel);
     selectLocation.setSize(selectLocation.getWidth() - 40, selectLocation.getHeight());
     Button dpdwn = selectLocation.appendButton(MasterUI.downIcon);
     dpdwn.addActionListener(e -> drawLocationListPanel(lcpanel));
 
-    lcpanel.add(selectLocation);
+    lcClrBtn = new Button(730, 35, "Cancel");
+    lcClrBtn.setSmall();
+
     lcpanel.add(dpdwn);
+    lcpanel.add(selectLocation);
+
+    lcClrBtn.addActionListener(e -> {
+      removeEditLocationButtons();
+      clearLocationForm();
+    });
+
     add(lcpanel);
     add(locationTitle);
     MasterUI.setComponentStyles(lcpanel, "light");
@@ -145,6 +196,7 @@ public class ProfilePanel extends Panel {
 
   /**
    * Action for location options inside the location dropdown
+   * 
    * @return ActionListener object
    */
   @SuppressWarnings("unchecked")
@@ -154,10 +206,56 @@ public class ProfilePanel extends Panel {
       addEditLocationButtons(location);
       sendLocationForm(location);
       selectLocation.setText(location.getName());
+      lcpanel.remove(lcAddBtn);
       lcpanel.remove(lcscroll);
       lcpanel.repaint();
       lcscroll = null;
+      for (ActionListener al : lcSaveBtn.getActionListeners())
+        lcSaveBtn.removeActionListener(al);
+      lcSaveBtn.addActionListener(btn -> {
+        HomeUI.confirmDialog((write -> {
+          overwriteLocationData(location);
+          removeEditLocationButtons();
+          clearLocationForm();
+        }), "Replace location info?");
+      });
     });
+  }
+
+  /**
+   * User can delete his own account.
+   * This include the deletion of all his events.
+   * After deletion the HomeUI is closed and the LoginUI is opened
+   * @param user
+   * @return
+   */
+  public ActionListener deleteUser(User user) {
+    return new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+
+        /**
+         * first get all events from user,
+         * then deletes all user's hosted events (from list in events and in table Event),
+         * then remove the user in all events where user is not the host (from the list in events)
+         */
+        ArrayList<Event> allEvents = DatabaseAPI.getEventsFromUser(user.getId());
+        for (Event event : allEvents) {
+          if(user.getId() == event.getHostId()) {
+            user.deleteEvent(event);
+          } else {
+            event.removeParticipant(user);
+          }
+        }
+        /**
+         * delete user in database
+         */
+        DatabaseAPI.deleteUser(user.getId());
+        HomeUI.disposeFrame();
+        LoginUI login = new LoginUI();
+        return;
+      }
+    };
   }
 
   /**
@@ -177,10 +275,10 @@ public class ProfilePanel extends Panel {
    * Remove location save and clear buttons. Push add button to foreground.
    */
   private void removeEditLocationButtons() {
-    remove(lcSaveBtn);
+    lcpanel.remove(lcSaveBtn);
     remove(lcClrBtn);
-    add(lcAddBtn);
-    setComponentZOrder(lcAddBtn, 0);
+    lcpanel.add(lcAddBtn);
+    lcpanel.repaint();
     repaint();
   }
 
@@ -190,38 +288,12 @@ public class ProfilePanel extends Panel {
    * to add a new entry appears.
    */
   private void addEditLocationButtons(Location location) {
-    if (lcAddBtn != null) {
-      remove(lcAddBtn);
-    }
-    if (lcSaveBtn != null || lcClrBtn != null) {
-      remove(lcSaveBtn);
-      remove(lcClrBtn);
-      lcSaveBtn = null;
-      lcClrBtn = null;
-    }
-    lcSaveBtn = new Button(730, 35, "Save");
-    lcSaveBtn.setSmall();
-    lcSaveBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        HomeUI.confirmDialog(saveFormLocationData(location), "Replace location info?");
-      }
-    });
-    lcClrBtn = new Button(lcSaveBtn.getX() + lcSaveBtn.getWidth(), lcSaveBtn.getY(), "Clear");
-    lcClrBtn.setSmall();
-    lcClrBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        clearLocationForm();
-        removeEditLocationButtons();
-      }
-    });
-
-    add(lcSaveBtn);
+    removeEditLocationButtons();
+    lcpanel.add(lcSaveBtn);
     add(lcClrBtn);
     MasterUI.setComponentStyles(this, "light");
-
-    setComponentZOrder(lcSaveBtn, 0);
-    setComponentZOrder(lcClrBtn, 1);
-
+    MasterUI.setComponentStyles(lcpanel, "light");
+    setComponentZOrder(lcClrBtn, 0);
     repaint();
   }
 
@@ -238,19 +310,6 @@ public class ProfilePanel extends Panel {
     lcStreetNrField.setText(location.getStreetNr());
     lcBuildingField.setText(location.getBuilding());
     lcRoomField.setText(location.getRoomNr());
-  }
-
-  /**
-   * Set location attributes to data from location form. This overwrites and
-   * replaces current location data.
-   */
-  public ActionListener saveFormLocationData(Location location) {
-    return new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        overwriteLocationData(location);
-        removeEditLocationButtons();
-      }
-    };
   }
 
   /**
@@ -312,17 +371,15 @@ public class ProfilePanel extends Panel {
       field.setName(labelStr);
 
       if (i % 2 == 0) {
-        Label label = new Label(0, y, labelStr);
         field.setSize(200, field.getHeight());
         field.setLocation(0, y + 20);
+        MasterUI.placeFieldLabel(field, labelStr, lcpanel);
         lcpanel.add(field);
-        lcpanel.add(label);
       } else {
-        Label label = new Label(210, y, labelStr);
         field.setSize(100, field.getHeight());
         field.setLocation(210, y + 20);
+        MasterUI.placeFieldLabel(field, labelStr, lcpanel);
         lcpanel.add(field);
-        lcpanel.add(label);
         y += 80;
       }
     }

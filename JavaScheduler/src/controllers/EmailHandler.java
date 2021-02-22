@@ -10,23 +10,23 @@ import java.util.Properties;
 import models.*;
 
 /**
- * The Class EmailHandler is used to send Mails to the Participants of an event
+ * The Class EmailHandler is used to send emails to the participants of an event
  * @author ZuHyunLee97
  */
 
 public class EmailHandler {
 
-    /**sadasd*/
+    /**creating new session object to hold host data */
     Session newSession = null;
 
-    /**adasdasd*/
+    /**creating new message object to hold email content */
     MimeMessage mimeMessage = null;
 
     /**
-     * Setups Mail Server, creates a Mail draft and sends the mail to all participants
+     * Sets up email server, creates a email draft and sends the email to all participants
      *
-     * @param event the event of whi
-     * @param status of the event decides, which Mail layout will be drafted
+     * @param event the event of which was created, updation, deleted
+     * @param status of the event decides, which Mail layout will be drafted(creation, updation, deletion email)
      */
     public static void sendEventMail(Event event, Status status) {
         EmailHandler mail = new EmailHandler();
@@ -36,7 +36,7 @@ public class EmailHandler {
     }
 
     /**
-     * Set ups Mail Server, creates a reminder mail draft and sends the mail to all participants
+     * Sets up email server, creates a reminder email draft and sends the mail to all participants
      * checks if current time is the reminder time
      *
      * @param user
@@ -55,7 +55,7 @@ public class EmailHandler {
     }
 
     /**
-     * Set ups Google's SMTP Server for Mail
+     * Sets up Google's SMTP server for email session
      */
     void setupServerProperties() {
         Properties properties = System.getProperties();
@@ -67,7 +67,7 @@ public class EmailHandler {
     }
 
     /**
-     * Drafts the Mail depending on event status which will lead to different mail layouts
+     * Drafts the email depending on event status which decides from different mail layouts
      *
      * @param event
      * @param status
@@ -130,6 +130,9 @@ public class EmailHandler {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+
+        event.setReminder(Reminder.NONE);
+        DatabaseAPI.editEvent(event);
     }
 
     /**
@@ -139,6 +142,9 @@ public class EmailHandler {
      * @return Boolean if Current time is after reminder time
      */
     public static boolean checkReminderTime(Event event){
+        if(event.getReminder().equals(Reminder.NONE)){
+            return false;
+        }
         LocalDateTime eventTime = event.getDate().atTime(event.getTime());
         LocalDateTime reminderTime = eventTime.minusMinutes(event.getReminder().getMinutes());
         if(LocalDateTime.now().isAfter(eventTime)){
@@ -148,7 +154,7 @@ public class EmailHandler {
     }
 
     /**
-     * Sends Mail with a Google Mail Account
+     * Logs into Gmail account and sends email to all participantss
      */
     public  void sendMail() {
         String fromUser = "javaschedulerlablundaws2021@gmail.com";
@@ -167,8 +173,7 @@ public class EmailHandler {
             e.printStackTrace();
         }
     }
-
-    }
+}
 
 
 
