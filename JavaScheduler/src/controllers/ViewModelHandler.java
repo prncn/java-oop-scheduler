@@ -12,7 +12,6 @@ import views.panels.ProfilePanel;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-
 import java.awt.*;
 import java.io.File;
 import java.time.LocalDate;
@@ -21,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -41,16 +41,36 @@ public class ViewModelHandler {
    * @param locationField - Field for location
    * @return Event object from given data
    */
-  public static Event consumeEventForm(TextField titleField, TextField dateField, TextField startField,
-      TextField endField, TextField locationField, ArrayList<User> participants, Reminder reminder, Priority priority,
+  public static Event consumeEventForm( HashMap<String, TextField> FieldMap, /*TextField titleField, TextField dateField, TextField startField,
+          TextField endField, TextField locationField,*/ ArrayList<User> participants, Reminder reminder, Priority priority,
       ArrayList<File> attachments, JTextArea descField) {
+
+    TextField titleField = FieldMap.get("titleField");
+    TextField dateField = FieldMap.get("dateField");
+    TextField startField = FieldMap.get("startField");
+    TextField endField = FieldMap.get("endField");
+    TextField locationField = FieldMap.get("locationField");
+
     String eventName = titleField.getText();
-    LocalDate eventDate = LocalDate.parse(dateField.getText());
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("[MMMM dd, yyyy]" + "[yyyy-MM-dd]", Locale.US);
+    LocalDate eventDate = LocalDate.parse(dateField.getText(), formatter);
     LocalTime eventTime = LocalTime.parse(startField.getText());
     int eventDuration = FormatUtil.parseDuration(startField.getText(), endField.getText());
     String locationName = locationField.getText();
     Location location = new Location(locationName);
     String description = descField.getText();
+
+    /*
+    System.out.println("in consumeEventForm\n"
+            + titleField.getText() + "\n"
+            + dateField.getText() + "\n"
+            + startField.getText() + "\n"
+            + endField.getText() + "\n"
+            + locationField.getText() + "\n"
+            + priority.toString() + "\n"
+            + reminder.toString() + "\n");
+     */
+
     return new Event(eventName, eventDate, eventTime, eventDuration, location, participants, reminder, priority,
         attachments, description);
   }
@@ -147,7 +167,7 @@ public class ViewModelHandler {
   public static boolean validateForm(HashMap<String, TextField> FieldMap, Priority selectedPriority) {
     boolean valid = true;
     CompoundBorder border = new CompoundBorder(BorderFactory.createLineBorder(Color.RED, 1),
-        BorderFactory.createEmptyBorder(4, 4, 4, 4));
+        BorderFactory.createEmptyBorder(9, 9, 9, 9));
 
     TextField titleField = FieldMap.get("titleField");
     TextField dateField = FieldMap.get("dateField");
@@ -157,7 +177,17 @@ public class ViewModelHandler {
     TextField locationField = FieldMap.get("locationField");
     TextField reminderField = FieldMap.get("reminderField");
 
-    TextField[] fields = { titleField, dateField, startField, endField, priorityField, locationField, reminderField };
+    TextField[] fields = { titleField, dateField, startField, endField, locationField, reminderField };
+    /*
+    System.out.println("in validate Form\n"
+            + titleField.getText() + "\n"
+            + dateField.getText() + "\n"
+            + startField.getText() + "\n"
+            + endField.getText() + "\n"
+            + selectedPriority.toString() + "\n"
+            + locationField.getText() + "\n"
+            + reminderField.getText() + "\n");
+     */
 
     for (TextField field : fields) {
       if (FormatUtil.isBlankString(field.getText())) {
@@ -170,18 +200,50 @@ public class ViewModelHandler {
       }
     }
 
+    if(selectedPriority == null) {
+      priorityField.getErrorLabel().setText("*Select " + priorityField.getErrorLabel().getName());
+      valid = false;
+    } else {
+      priorityField.getErrorLabel().setText("");
+      priorityField.setDefaultStyle();
+    }
+
     if (isValidTime(startField.getText()) && isValidTime(endField.getText())) {
       if (LocalTime.parse(startField.getText()).isAfter(LocalTime.parse(endField.getText()))) {
         startField.setBorder(border);
         endField.setBorder(border);
         endField.getErrorLabel().setText("*Start time can't be after end time");
-
         valid = false;
       } else {
         startField.setDefaultStyle();
         endField.setDefaultStyle();
         endField.getErrorLabel().setText("");
       }
+    } else if (!isValidTime(startField.getText()) | !isValidTime(endField.getText())) {
+        if(!isValidTime(startField.getText())) {
+            startField.setBorder(border);
+            startField.getErrorLabel().setText("*Select " + startField.getErrorLabel().getName());
+            valid = false;
+          }
+        if(!isValidTime(endField.getText())) {
+            endField.setBorder(border);
+            endField.getErrorLabel().setText("*Select " + endField.getErrorLabel().getName());
+            valid = false;
+          }
+        } else {
+          startField.setDefaultStyle();
+          startField.getErrorLabel().setText("");
+          endField.setDefaultStyle();
+          endField.getErrorLabel().setText("");
+        }
+
+    if (!isValidDate(dateField.getText())) {
+      dateField.setBorder(border);
+      dateField.getErrorLabel().setText("*Select " + dateField.getErrorLabel().getName());
+      valid = false;
+    } else {
+      dateField.setDefaultStyle();
+      dateField.getErrorLabel().setText("");
     }
 
     return valid;
@@ -196,6 +258,21 @@ public class ViewModelHandler {
   private static boolean isValidTime(String time) {
     try {
       LocalTime.parse(time);
+    } catch (DateTimeParseException e) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Validate if given string is of pattern "YYYY-MM-DD"
+   * @param date - the string to be checked
+   * @return Boolean whether form is valid or not
+   */
+  private static boolean isValidDate(String date) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("[MMMM dd, yyyy]" + "[yyyy-MM-dd]", Locale.US);
+    try {
+      LocalDate.parse(date, formatter);
     } catch (DateTimeParseException e) {
       return false;
     }
