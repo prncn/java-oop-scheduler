@@ -22,6 +22,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Profile info panel display account information.
+ * This is used by the profile panel and the admin panel to
+ * show user info.
+ */
 public class ProfilePanelInfo extends Panel {
 
   private static final long serialVersionUID = 1L;

@@ -124,7 +124,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     }
 
     PAGE_ONE = new Panel();
-    PAGE_ONE.setBounds(100, 120, 320, 410);
+    PAGE_ONE.setBounds(100, 120, 520, 420);
     PAGE_ONE.setBackground(MasterUI.lightCol);
     mainpanel.add(PAGE_ONE);
 
@@ -380,18 +380,17 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       if (redpanel.isActive) {
         redpanel.setSize(0, 0);
         redpanel.isActive = false;
-        PAGE_ONE.add(lc_dpdwn);
       } else {
-        redpanel.setBounds(openDatePicker.getX() + PAGE_ONE.getX(), openDatePicker.getY() + PAGE_ONE.getY(), 300, 310);
+        // redpanel.setBounds(openDatePicker.getX() + PAGE_ONE.getX(), openDatePicker.getY() + PAGE_ONE.getY(), 300, 310);
+        redpanel.setBounds(openDatePicker.getX(), openDatePicker.getY(), 300, 310);
         redpanel.isActive = true;
-        PAGE_ONE.remove(lc_dpdwn);
       }
     });
 
+    PAGE_ONE.add(redpanel);
     PAGE_ONE.add(openDatePicker);
-    mainpanel.add(redpanel);
+    PAGE_ONE.setComponentZOrder(redpanel, 1);
     PAGE_ONE.setComponentZOrder(openDatePicker, 0);
-    mainpanel.setComponentZOrder(redpanel, 1);
   }
 
   /**

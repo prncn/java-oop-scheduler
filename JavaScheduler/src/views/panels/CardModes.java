@@ -1,5 +1,8 @@
 package views.panels;
 
+/**
+ * Interface for different modes of dashboard event cards
+ */
 public interface CardModes {
 
   /** Card layout for upcoming events */

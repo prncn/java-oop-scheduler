@@ -8,10 +8,22 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
+/**
+ * This class handles database related queries and
+ * storing. A communication to MySQL is built, which is then
+ * executed for database manipulation.
+ */
 public class DatabaseAPI {
+  /** URI Link for MySQL database connection */
   private static final String SQL_CLOUD_URI = "jdbc:mysql://bqzknjzyoeidxu0hmqhq-mysql.services.clever-cloud.com:3306/bqzknjzyoeidxu0hmqhq?useSSL=false";
+
+  /** Username of MySQL database */
   private static final String SQL_CLOUD_USERNAME = "udpcghp8h7wkwbrg";
+
+  /** Password of MySQL database */
   private static final String SQL_CLOUD_PASSWORD = "mYe6S6puRrvcblEZPIWZ";
+
+  /** Attribute used database connection object */
   private static Connection con = null;
 
   /**
@@ -195,7 +207,7 @@ public class DatabaseAPI {
   }
 
   /**
-   * todo remove password? Gets all users from DB
+   * Return all database users to a list
    *
    * @return all users as an arraylist
    */
@@ -514,9 +526,10 @@ public class DatabaseAPI {
   }
   
   /**
-   *
+   * Edit an event in database
+   * 
    * @param event new event object which the Database should be adjusted for
-   * @return
+   * @return <code>true</code> on succeful table entry edit
    */
   public static boolean editEvent(Event event) {
     String sql = "UPDATE Event SET reminder = ? , priority = ? , name = ? , date = ? , time = ? , duration_minutes = ? , description = ? ,  host_id = ? ,location_id = ? "
@@ -658,6 +671,11 @@ public class DatabaseAPI {
     }
   }
 
+  /**
+   * Get all location from a specified user
+   * @param userId UserId of user to queried 
+   * @return ArrayList of locations
+   */
   public static ArrayList<Location> getLocationsFromUser(int userId){
     String sql = "SELECT * FROM Location WHERE user_id = ?";
     Connection connection = connectDatabase();

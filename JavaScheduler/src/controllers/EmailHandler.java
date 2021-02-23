@@ -15,6 +15,11 @@ public class EmailHandler {
     MimeMessage mimeMessage = null;
 
 
+    
+    /** 
+     * @param event
+     * @param status
+     */
     public static void sendEventMail(Event event, Status status) {
         EmailHandler mail = new EmailHandler();
         mail.setupServerProperties();
@@ -23,6 +28,10 @@ public class EmailHandler {
     }
 
 
+    
+    /** 
+     * @param user
+     */
     public static void reminderMail(User user) {
         for(Event event : user.getEvents()){
             if(user.getId() == event.getHostId()) {
@@ -47,6 +56,11 @@ public class EmailHandler {
     }
 
 
+    
+    /** 
+     * @param event
+     * @param status
+     */
     private void draftMail(Event event, Status status) {
         mimeMessage = new MimeMessage(newSession);
 
@@ -105,6 +119,11 @@ public class EmailHandler {
         }
     }
 
+    
+    /** 
+     * @param event
+     * @return boolean
+     */
     public static boolean checkReminderTime(Event event){
         LocalDateTime eventTime = event.getDate().atTime(event.getTime());
         LocalDateTime reminderTime = eventTime.minusMinutes(event.getReminder().getMinutes());

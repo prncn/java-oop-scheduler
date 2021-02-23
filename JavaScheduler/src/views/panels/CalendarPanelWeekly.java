@@ -25,6 +25,9 @@ import views.components.Button;
 import views.components.Label;
 import views.components.Panel;
 
+/** 
+ * Weekly view of calendar panel
+ */
 public class CalendarPanelWeekly extends Panel {
 
   private static final long serialVersionUID = -8947171452870363548L;

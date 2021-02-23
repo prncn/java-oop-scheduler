@@ -21,29 +21,74 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+/**
+ * Custom button component from JButton
+ */
 public class Button extends JButton implements MouseListener {
 
   private static final long serialVersionUID = 1L;
+  /** Cursor of mouse */
   private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
+
+  /** Button color */
   private Color color;
+
+  /** Default width of button */
   private int width = 100;
+
+  /** Default height of button */
   private int height = 40;
+
+  /** Boolean whether button is bright (black foreground) or dark */
   private boolean dark = true;
+
+  /** Boolean whether button is invisible */
   private boolean blank = false;
+
+  /** Boolean whether button is filled out */
   private boolean filled = true;  
+
+  /** Boolean whether button shows outline border */
   private boolean outline = false;
+
+  /** Boolean whether button is a large navigation button (tab) */
   private boolean isTab = false;
+
+  /** Boolean whether button is a radio button */
   private boolean isRadio = false;
+
+  /** Boolean whether button is currently clicked */
   private boolean isActive = false;
+
+  /** Shape of button, either flat, smooth or round */
   private int cornerRadius = FLAT;
+
+  /** ActionListener for changing panels of views */
   private ActionListener switchPanelAction;
+
+  /** Previous color of button */
   private Color prevColor;
+
+  /** List of linked buttons to this button */
   private static ArrayList<Button> links = new ArrayList<>();
   
+  /** Sharp corners for a rectangular, flat look */
   public final static int FLAT = 0;
+
+  /** Smoothed out corners for a rectangular look with rounded corners */
   public final static int SMOOTH = 20;
+
+  /** Rounded corners for a oval, round shape */
   public final static int ROUND = 50;
 
+  /**
+   * Default button constructor, created a colored button.
+   * Will highlight when hovered over.
+   * @param x - X position of button
+   * @param y - Y position of button
+   * @param text - Text inside button
+   * @param color - Color to be set to button
+   */
   public Button(int x, int y, String text, Color color) {
     super(text);
     drawDefaultStyle();
@@ -54,6 +99,13 @@ public class Button extends JButton implements MouseListener {
     filled = true;
   }
 
+  /**
+   * Button constructor to create a uncolored button. 
+   * Will not highlight when hovered over.
+   * @param x - X position of button
+   * @param y - Y position of button
+   * @param text - Text inside button
+   */
   public Button(int x, int y, String text) {
     super(text);
     drawDefaultStyle();
@@ -64,6 +116,15 @@ public class Button extends JButton implements MouseListener {
     filled = false;
   }
 
+  /**
+   * Button construcot to create a tab button.
+   * A tab has different (larger) default sizings and
+   * is intended for switching for different views.
+   * @param x - X position of tab
+   * @param y - Y position of tab
+   * @param text - Text inside tab
+   * @param switchTo - Panel to be switched to when clicked
+   */
   public Button(int x, int y, String text, JPanel switchTo) {
     super(text);
     drawDefaultStyle();
@@ -179,8 +240,13 @@ public class Button extends JButton implements MouseListener {
     this.color = color;
   }
 
+  /**
+   * Get color of current button
+   * 
+   * @return Color object of button
+   */
   public Color getColor() {
-    return this.color;
+    return color;
   }
 
   /**
@@ -363,15 +429,28 @@ public class Button extends JButton implements MouseListener {
     this.blank = blank;
   }
 
+  /**
+   * Get whether button is set to outline
+   * @return Boolean outline value
+   */
   public boolean getOutline() {
     return outline;
   }
 
+  /**
+   * Set value of outline. <code>true</code> will
+   * set button to display a stroke on its borders.
+   * @param outline Boolean outline value
+   */
   public void setOutline(boolean outline) {
     this.outline = outline;
     repaint();
   }
 
+  
+  /** 
+   * @param g
+   */
   @Override
   protected void paintComponent(Graphics g) {
     setOpaque(false);
@@ -391,6 +470,10 @@ public class Button extends JButton implements MouseListener {
     super.paintComponent(g2d);
   }
 
+  
+  /** 
+   * @param e
+   */
   @Override
   public void mouseEntered(MouseEvent e) {
     if (this.filled) {
@@ -398,6 +481,10 @@ public class Button extends JButton implements MouseListener {
     }
   }
 
+  
+  /** 
+   * @param e
+   */
   @Override
   public void mouseExited(MouseEvent e) {
     if (this.filled) {
@@ -405,14 +492,28 @@ public class Button extends JButton implements MouseListener {
     }
   }
 
+  
+  /** 
+   * @param e
+   */
   @Override
   public void mousePressed(MouseEvent e) {
     this.setBackground(color);
   }
 
+  
+  /** 
+   * @param e
+   */
+  @Override
   public void mouseReleased(MouseEvent e) {
   }
 
+  
+  /** 
+   * @param e
+   */
+  @Override
   public void mouseClicked(MouseEvent e) {
   }
 

@@ -22,17 +22,40 @@ import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Admin panel. In this view, (admin) users can search up a user 
+ * of the database and change their profile attributes.
+ */
 public class AdminPanel extends Panel {
 
+  /** Generated serial ID */
   private static final long serialVersionUID = 542069743291702880L;
+
+  /** Profile info panel object displaying user information */
   private ProfilePanelInfo profileInfo;
+
+  /** Scroll pane of suggestions field */
   private JScrollPane sgscroll;
+
+  /** Background panel of search field */
   private Panel searchBack;
+
+  /** Search field */
   private TextField searchField;
+
+  /** Currently logged user of this session */
   private User currentUser;
+
+  /** User found in search field */
   private User searchedUser;
+
+  /** Deletion button */
   private Button deleteBtn;
+
+  /** Confirmation label */
   private Label confirm;
+
+  /** ActionListener object to close suggestions */
   private ActionListener closeSuggest;
 
   public AdminPanel(JFrame frame, User currentUser) {
@@ -80,7 +103,11 @@ public class AdminPanel extends Panel {
     MasterUI.setComponentStyles(this, "light");
   }
 
-  
+  /**
+   * Initalise search field on admin panel.
+   * The search field allows so look through the lists of
+   * application users.
+   */
   private void initSearchField() {
     Label searchTitle = new Label(50, 40, "<html><p>Search for a user and access their profile</p><html>");
     searchTitle.setVerticalTextPosition(SwingConstants.TOP);
@@ -151,9 +178,9 @@ public class AdminPanel extends Panel {
   }
 
   /**
-   * deletes the user and all of his events
+   * Deletes the user and all of his events
    * @param user
-   * @return
+   * @return ActionListener object
    */
   private ActionListener deleteUser(User user) {
     return new ActionListener() {

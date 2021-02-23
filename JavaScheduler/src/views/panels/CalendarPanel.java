@@ -39,8 +39,12 @@ import views.components.TextField;
 import views.HomeUI;
 import views.MasterUI;
 
+/** 
+ * Monthly view of calendar panel
+ */
 public class CalendarPanel extends Panel {
 
+  /** Generic serial ID */
   private static final long serialVersionUID = 1L;
   public int d_wdth; 
   final static int initialX = 10; 
