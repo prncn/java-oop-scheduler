@@ -107,7 +107,7 @@ public class RegisterUI extends LoginUI {
    */
   private void processRegistration() {
     String encryptPass = PasswordEncryption.createHash(inputPass);
-    User user = new User(inputUser, encryptPass, inputEmail, inputFirstname, inputLastname);
+    User user = new User(inputUser, encryptPass, inputFirstname, inputLastname, inputEmail);
     if (!DatabaseAPI.isAvailable(user)) {
       success.setText("User already exists");
       return;
