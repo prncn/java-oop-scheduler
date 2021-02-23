@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class HomeUI extends MasterUI {
   private static final long serialVersionUID = -771654490802003766L;
   private JPanel sidebar = new JPanel();
@@ -106,7 +105,8 @@ public class HomeUI extends MasterUI {
     List<Button> tabs = new ArrayList<>(
         Arrays.asList(dashboardTab, createTab, calendarTab, profileTab, exportTab, adminTab));
     tabs.forEach(e -> {
-      if (e != adminTab) sidebar.add(e);
+      if (e != adminTab)
+        sidebar.add(e);
     });
 
     /**
@@ -285,8 +285,8 @@ public class HomeUI extends MasterUI {
   }
 
   /**
-   * Set time and date for sidebar, updating itself every Minute.
-   * This creates the initial static clock component.
+   * Set time and date for sidebar, updating itself every Minute. This creates the
+   * initial static clock component.
    */
   private void createClock() {
     DateTimeFormatter timeformat = DateTimeFormatter.ofPattern("HH:mm:ss");
@@ -298,11 +298,12 @@ public class HomeUI extends MasterUI {
     footerTime.setHorizontalAlignment(SwingConstants.RIGHT);
     sidebar.add(footerTime);
   }
-  
+
   /**
-   * Create a UI thread timer to periodically update
-   * the clock every few milliseconds. This prevents the application
-   * from stopping execution while the timer thread is running.
+   * Create a UI thread timer to periodically update the clock every few
+   * milliseconds. This prevents the application from stopping execution while the
+   * timer thread is running.
+   * 
    * @see javax.swing.Timer
    */
   public void runClock() {
@@ -311,7 +312,7 @@ public class HomeUI extends MasterUI {
     Timer timer = new Timer(100, e -> {
       footerTime.setText(LocalTime.now().format(timeformat));
     });
-    timer.start(); 
+    timer.start();
   }
 
   /**

@@ -325,18 +325,15 @@ public class DatabaseAPI {
         Reminder reminder = Enum.valueOf(Reminder.class, rs.getString("reminder"));
         Priority priority = Enum.valueOf(Priority.class, rs.getString("priority"));
         int host_id = rs.getInt("host_id");
-        // int location_id = rs.getInt("location_id");
+        Location location = fetchLocation(rs.getInt("location_id"));
         ArrayList<File> attachments = getAttachmentsFromEvent(eventId);
 
-        Event event = new Event(eventId, name, description, duration, date, time, new Location("Rock Bottom"), priority,
-            reminder, getParticipants(eventId), new ArrayList<File>());
-
+        Event event = new Event(eventId, name, description, duration, date, time, location, priority, reminder, getParticipants(eventId));
 
         event.setId(eventId);
         event.setHostId(host_id);
         event.setAttachments(attachments);
         events.add(event);
-
       }
 
       rs.close();
@@ -349,6 +346,7 @@ public class DatabaseAPI {
 
   }
 
+  
   /**
    * Gets a list of participants for an event
    * 
@@ -358,24 +356,24 @@ public class DatabaseAPI {
   private static ArrayList<User> getParticipants(int eventId) {
     String sql = "SELECT * FROM User " + "LEFT JOIN User_Event "
         + "ON User_Event.user_id = User.user_id WHERE User_Event.event_id = ? ";
-    Connection connection = connectDatabase();
-    ArrayList<User> participants = new ArrayList<>();
-
-    try {
-      PreparedStatement ps = connection.prepareStatement(sql);
-      ps.setInt(1, eventId);
-
-      ResultSet rs = ps.executeQuery();
-
-      while (rs.next()) {
-        User u = new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("firstname"),
+        Connection connection = connectDatabase();
+        ArrayList<User> participants = new ArrayList<>();
+        
+        try {
+          PreparedStatement ps = connection.prepareStatement(sql);
+          ps.setInt(1, eventId);
+          
+          ResultSet rs = ps.executeQuery();
+          
+          while (rs.next()) {
+            User u = new User(rs.getInt("user_id"), rs.getString("username"), rs.getString("firstname"),
             rs.getString("lastName"), rs.getString("email"));
-        byte[] icon = rs.getBytes("icon");
-        if (icon != null) {
-          u.setAvatar(FormatUtil.byteToIcon(icon));
-        }
-        participants.add(u);
-      }
+            byte[] icon = rs.getBytes("icon");
+            if (icon != null) {
+              u.setAvatar(FormatUtil.byteToIcon(icon));
+            }
+            participants.add(u);
+          }
       rs.close();
       ps.close();
       return participants;
@@ -394,15 +392,15 @@ public class DatabaseAPI {
   public static boolean deleteEvent(int eventId) {
     String sql = "DELETE FROM Event WHERE event_id = ?";
     Connection connection = connectDatabase();
-
+    
     try {
       PreparedStatement ps = connection.prepareStatement(sql);
       ps.setInt(1, eventId);
-
+      
       ps.executeUpdate();
-
+      
       ps.close();
-
+      
       closeDatabase();
       return true;
     } catch (SQLException e) {
@@ -411,7 +409,7 @@ public class DatabaseAPI {
       return false;
     }
   }
-
+  
   /**
    * Creates an entry in the User_Event table in the Database.
    * 
@@ -423,14 +421,14 @@ public class DatabaseAPI {
   public static boolean createUserEventBridge(int userId, int eventId) {
     String sql = "INSERT INTO User_Event (user_id , event_id) " + "VALUES(?, ?)";
     Connection connection = connectDatabase();
-
+    
     try {
       PreparedStatement ps = connection.prepareStatement(sql);
       ps.setInt(1, userId);
       ps.setInt(2, eventId);
-
+      
       ps.executeUpdate();
-
+      
       ps.close();
       closeDatabase();
       return true;
@@ -440,7 +438,7 @@ public class DatabaseAPI {
       return false;
     }
   }
-
+  
   /**
    * Delete table entry in the User_Event & therefore remove the connection
    * between the User & Event.
@@ -453,12 +451,12 @@ public class DatabaseAPI {
     String sql;
     Connection connection = connectDatabase();
     sql = "DELETE FROM User_Event WHERE user_id = ? AND event_id = ?";
-
+    
     try {
       PreparedStatement ps = connection.prepareStatement(sql);
       ps.setInt(1, userId);
       ps.setInt(2, eventId);
-
+      
       ps.executeUpdate();
       closeDatabase();
       return true;
@@ -468,7 +466,7 @@ public class DatabaseAPI {
       return false;
     }
   }
-
+  
   /**
    * Create table entry of new event in database.
    *
@@ -477,13 +475,13 @@ public class DatabaseAPI {
    */
   public static int storeEvent(Event event) {
     String sql = "INSERT INTO Event (host_id, name, date, time, duration_minutes, location_id, reminder, priority, description)"
-        + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
     Connection connection = connectDatabase();
     int eventId;
-
+    
     try {
       PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-
+      
       statement.setInt(1, event.getHostId());
       statement.setString(2, event.getName());
       statement.setDate(3, Date.valueOf(event.getDate()));
@@ -494,27 +492,27 @@ public class DatabaseAPI {
       statement.setString(8, event.getPriority().name());
       statement.setString(9, event.getDescription());
       statement.executeUpdate();
-
+      
       ResultSet generatedKey = statement.getGeneratedKeys();
-
+      
       if (generatedKey.next()) {
         eventId = generatedKey.getInt(1);
       } else {
         throw new SQLException("Creating user failed, no ID obtained.");
       }
-
+      
       statement.close();
       closeDatabase();
-
+      
       return eventId;
-
+      
     } catch (SQLException e) {
       e.printStackTrace();
       closeDatabase();
       return -1;
     }
   }
-
+  
   /**
    *
    * @param event new event object which the Database should be adjusted for
@@ -522,13 +520,13 @@ public class DatabaseAPI {
    */
   public static boolean editEvent(Event event) {
     String sql = "UPDATE Event SET reminder = ? , priority = ? , name = ? , date = ? , time = ? , duration_minutes = ? , description = ? ,  host_id = ? ,location_id = ? "
-        + "WHERE event_id = ? ";
-
+    + "WHERE event_id = ? ";
+    
     Connection connection = connectDatabase();
-
+    
     try {
       PreparedStatement ps = connection.prepareStatement(sql);
-
+      
       ps.setString(1, event.getReminder().name());
       ps.setString(2, event.getPriority().name());
       ps.setString(3, event.getName());
@@ -538,9 +536,9 @@ public class DatabaseAPI {
       ps.setString(7, event.getDescription());
       ps.setInt(8, event.getHostId());
       ps.setInt(9, event.getLocation().getId());
-
+      
       ps.setInt(10, event.getId());
-
+      
       ps.executeUpdate();
       ps.close();
       closeDatabase();
@@ -552,7 +550,7 @@ public class DatabaseAPI {
       return false;
     }
   }
-
+  
   /**
    * Creates an entry in Location table in the Database.
    * 
@@ -561,38 +559,69 @@ public class DatabaseAPI {
    * @return ID of Location or -1
    */
   public static int storeLocation(Location location, int userId) {
-    String sql = "INSERT INTO Location (name, city, street, streetNr, building, roomNr, user_id) "
-        + "VALUES( ? , ? , ? , ? , ? , ? , ? )";
+    String sql = "INSERT INTO Location (name, city, zip, street, street_nr, building, room_nr, user_id) "
+    + "VALUES( ? , ? , ? , ? , ? , ? , ? , ?)";
     Connection connection = connectDatabase();
     int locationId = -1;
     try {
       PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
       ps.setString(1, location.getName());
       ps.setString(2, location.getCity());
-      ps.setString(3, location.getStreet());
-      ps.setString(4, location.getStreetNr());
-      ps.setString(5, location.getBuilding());
-      ps.setString(6, location.getRoomNr());
-      ps.setInt(7, userId);
-
-      ps.executeQuery();
-
+      ps.setString(3, location.getZip());
+      ps.setString(4, location.getStreet());
+      ps.setString(5, location.getStreetNr());
+      ps.setString(6, location.getBuilding());
+      ps.setString(7, location.getRoomNr());
+      ps.setInt(8, userId);
+      
+      ps.executeUpdate();
+      
       ResultSet genKey = ps.getGeneratedKeys();
-
+      
       if (genKey.next()) {
         locationId = genKey.getInt(1);
       } else {
         throw new SQLException("Creating Location failed, no ID obtained.");
       }
-
+      
       ps.close();
       genKey.close();
-
+      
       return locationId;
     } catch (SQLException e) {
       e.printStackTrace();
       return -1;
     }
+  }
+  
+  /**
+   * Fetch a location object with its given location id
+   * @param locationId Location ID to specify location
+   * @return Location object
+   */
+  private static Location fetchLocation(int locationId) {
+    String sql = "SELECT * FROM Location WHERE location_id = ?";
+    Connection con = connectDatabase();
+
+    try {
+      PreparedStatement ps = con.prepareStatement(sql);
+      ps.setInt(1, locationId);
+      
+      ResultSet rs = ps.executeQuery();
+      if (rs.next()) {
+        Location lc = new Location(rs.getString("name"));
+        lc.setCity(rs.getString("city"));
+        lc.setZip(rs.getString("zip"));
+        lc.setStreet(rs.getString("street"));
+        lc.setStreetNr(rs.getString("street_nr"));
+        lc.setBuilding(rs.getString("building"));
+        lc.setRoomNr(rs.getString("room_nr"));
+        return lc;
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   /**
@@ -602,9 +631,9 @@ public class DatabaseAPI {
    */
   public static boolean editLocation(Location location){
     String sql = "UPDATE Location SET name = ? , room_nr = ? , building = ? , city = ? , zip = ? , street = ? , street_nr = ? "
-            + "WHERE location_id = ? ";
+    + "WHERE location_id = ? ";
     Connection connection = connectDatabase();
-
+    
     try{
       PreparedStatement ps = connection.prepareStatement(sql);
 
@@ -642,7 +671,6 @@ public class DatabaseAPI {
 
       while(rs.next()){
         Location location = new Location(
-                rs.getInt("location_id") ,
                 rs.getString("name"),
                 rs.getString("city") ,
                 rs.getString("zip"),
@@ -650,6 +678,7 @@ public class DatabaseAPI {
                 rs.getString("street_nr"),
                 rs.getString("building"),
                 rs.getString("room_nr"));
+        location.setId(rs.getInt("location_id"));
         locations.add(location);
       }
       return locations;

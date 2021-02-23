@@ -70,15 +70,15 @@ abstract public class MasterUI extends JFrame {
   public static ImageIcon createdMeetingImage2 = new ImageIcon(fileRoot + imagesRoot + "taxi-schedule-2.png");
   public static ImageIcon scheduleFormImage = new ImageIcon(fileRoot + imagesRoot + "taxi-create-1.png");
   public static ImageIcon dashImage1 = FormatUtil
-      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-1.png"), 0.5f);
+      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-1.png"), 0.4f);
   public static ImageIcon dashImage2 = FormatUtil
-      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-2.png"), 0.5f);
+      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-2.png"), 0.4f);
   public static ImageIcon dashImage3 = FormatUtil
-      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-3.png"), 0.5f);
+      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-3.png"), 0.4f);
   public static ImageIcon dashImage4 = FormatUtil
-      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-4.png"), 0.5f);
+      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-4.png"), 0.4f);
   public static ImageIcon dashImage5 = FormatUtil
-      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-5.png"), 0.5f);
+      .resizeImageIcon(new ImageIcon(fileRoot + imagesRoot + "pablita-dashimage-5.png"), 0.4f);
   public static ImageIcon dashhero = new ImageIcon(fileRoot + imagesRoot + "taxi-dashhero-1.png");
   public static ImageIcon avatarImage2 = new ImageIcon(fileRoot + imagesRoot + "avatar-icon-2.png");
 
