@@ -1,5 +1,9 @@
 package models;
 
+/**
+ * The Location class represents a location which a user can create
+ * in order to select the location object as location of an event
+ */
 public class Location {
     private int id;
     private String name = "";

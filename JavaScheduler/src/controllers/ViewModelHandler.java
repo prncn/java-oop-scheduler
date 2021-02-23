@@ -33,16 +33,16 @@ public class ViewModelHandler {
   /**
    * Consume input form data from Create view and generate a model Event.
    * This method is used at the end of the schedule event form.
-   * 
-   * @param titleField    - Field for title
-   * @param dateField     - Field for date
-   * @param startField    - Field for Start Time
-   * @param endField      - Field for End Time
-   * @param locationField - Field for location
+   *
+   * @param FieldMap    -  Map of text fields which is passed
+   * @param participants - list of participants
+   * @param reminder    - selected reminder
+   * @param priority    - selected priority
+   * @param attachments - list of attachments
+   * @param descField   - description field
    * @return Event object from given data
    */
-  public static Event consumeEventForm( HashMap<String, TextField> FieldMap, /*TextField titleField, TextField dateField, TextField startField,
-          TextField endField, TextField locationField,*/ ArrayList<User> participants, Reminder reminder, Priority priority,
+  public static Event consumeEventForm( HashMap<String, TextField> FieldMap, ArrayList<User> participants, Reminder reminder, Priority priority,
       ArrayList<File> attachments, JTextArea descField) {
 
     TextField titleField = FieldMap.get("titleField");
@@ -60,16 +60,6 @@ public class ViewModelHandler {
     Location location = new Location(locationName);
     String description = descField.getText();
 
-    /*
-    System.out.println("in consumeEventForm\n"
-            + titleField.getText() + "\n"
-            + dateField.getText() + "\n"
-            + startField.getText() + "\n"
-            + endField.getText() + "\n"
-            + locationField.getText() + "\n"
-            + priority.toString() + "\n"
-            + reminder.toString() + "\n");
-     */
 
     return new Event(eventName, eventDate, eventTime, eventDuration, location, participants, reminder, priority,
         attachments, description);
@@ -178,16 +168,6 @@ public class ViewModelHandler {
     TextField reminderField = FieldMap.get("reminderField");
 
     TextField[] fields = { titleField, dateField, startField, endField, locationField, reminderField };
-    /*
-    System.out.println("in validate Form\n"
-            + titleField.getText() + "\n"
-            + dateField.getText() + "\n"
-            + startField.getText() + "\n"
-            + endField.getText() + "\n"
-            + selectedPriority.toString() + "\n"
-            + locationField.getText() + "\n"
-            + reminderField.getText() + "\n");
-     */
 
     for (TextField field : fields) {
       if (FormatUtil.isBlankString(field.getText())) {
