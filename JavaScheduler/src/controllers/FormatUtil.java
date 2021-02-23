@@ -16,6 +16,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Includes general formatting functions that are usable for any class in the project.
+ */
 public class FormatUtil {
 	/**
 	 * Parse any date to LocalDate object

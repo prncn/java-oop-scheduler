@@ -9,21 +9,20 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 
 /**
- * This class handles database related queries and
- * storing. A communication to MySQL is built, which is then
- * executed for database manipulation.
+ * The Class DatabaseAPI manages everything SQL related and includes all queries on the Database.
  */
 public class DatabaseAPI {
-  /** URI Link for MySQL database connection */
+  
+  /** URI to our Database. */
   private static final String SQL_CLOUD_URI = "jdbc:mysql://bqzknjzyoeidxu0hmqhq-mysql.services.clever-cloud.com:3306/bqzknjzyoeidxu0hmqhq?useSSL=false";
-
-  /** Username of MySQL database */
+  
+  /** Username used for the Database. */
   private static final String SQL_CLOUD_USERNAME = "udpcghp8h7wkwbrg";
-
-  /** Password of MySQL database */
+  
+  /** Password used for the Database. */
   private static final String SQL_CLOUD_PASSWORD = "mYe6S6puRrvcblEZPIWZ";
-
-  /** Attribute used database connection object */
+  
+  /** Used for connecting to the Database. */
   private static Connection con = null;
 
   /**
@@ -68,12 +67,12 @@ public class DatabaseAPI {
   }
 
   /**
-   * Verify if given username and pass correspond to a user in the database
+   * Verify if given username and pass correspond to a user in the database.
    *
    * @param username - String of username
    * @param password - String of <i>hashed<i> password
    * @return <code>true</code> if user exists
-   * @throws SQLException
+   * @throws SQLException in case of errors during queries.
    */
   public static boolean verifyUser(String username, String password) throws SQLException {
     Connection connection = connectDatabase();
@@ -106,7 +105,7 @@ public class DatabaseAPI {
    * functions.
    *
    * @param connection - SQL jdbc connection object, connection to DB
-   * @param key        - ???
+   * @param key        - used to find a certain user
    * @return SQL result of data entry or <code>null</code> if user doesn't exist
    */
   private static <T> ResultSet fetchUserData(Connection connection, T key) {
@@ -207,7 +206,7 @@ public class DatabaseAPI {
   }
 
   /**
-   * Return all database users to a list
+   * Gets all users from the Database.
    *
    * @return all users as an arraylist
    */
@@ -240,7 +239,7 @@ public class DatabaseAPI {
   }
 
   /**
-   * Check if username or email is already taken
+   * Check if username or email is already taken.
    *
    * @param user - User data
    * @return <code>true</code> if user data is available
@@ -273,7 +272,7 @@ public class DatabaseAPI {
   /**
    * Query a username and return the corresponding User object from its table
    * entry. Used to search the user table.
-   * 
+   *
    * @param key - String of username or Int of userid
    * @return User object on successful query, else <code>null</code>
    */
@@ -360,10 +359,10 @@ public class DatabaseAPI {
 
   
   /**
-   * Gets a list of participants for an event
-   * 
-   * @param eventId
-   * @return
+   * Gets a list of participants for an event.
+   *
+   * @param eventId eventid of the event you want the participants from
+   * @return the participants
    */
   private static ArrayList<User> getParticipants(int eventId) {
     String sql = "SELECT * FROM User " + "LEFT JOIN User_Event "
@@ -396,9 +395,9 @@ public class DatabaseAPI {
   }
 
   /**
-   * Delete table entry in Event
+   * Delete table entry in Event.
    *
-   * @param eventId
+   * @param eventId the event id of the event to be deleted
    * @return true when deletion is successful, false when deletion is unsuccessful
    */
   public static boolean deleteEvent(int eventId) {
@@ -424,9 +423,9 @@ public class DatabaseAPI {
   
   /**
    * Creates an entry in the User_Event table in the Database.
-   * 
-   * @param userId
-   * @param eventId
+   *
+   * @param userId the user id of the according user
+   * @param eventId the event id of the according event
    * @return true when insertion was successful, false when insertion had an
    *         exception.
    */
@@ -526,10 +525,10 @@ public class DatabaseAPI {
   }
   
   /**
-   * Edit an event in database
-   * 
+   * Edits the event.
+   *
    * @param event new event object which the Database should be adjusted for
-   * @return <code>true</code> on succeful table entry edit
+   * @return true, if successful
    */
   public static boolean editEvent(Event event) {
     String sql = "UPDATE Event SET reminder = ? , priority = ? , name = ? , date = ? , time = ? , duration_minutes = ? , description = ? ,  host_id = ? ,location_id = ? "
@@ -608,7 +607,8 @@ public class DatabaseAPI {
   }
   
   /**
-   * Fetch a location object with its given location id
+   * Fetch a location object with its given location id.
+   *
    * @param locationId Location ID to specify location
    * @return Location object
    */
@@ -672,9 +672,10 @@ public class DatabaseAPI {
   }
 
   /**
-   * Get all location from a specified user
-   * @param userId UserId of user to queried 
-   * @return ArrayList of locations
+   * Gets the locations from user.
+   *
+   * @param userId necessary to find the locations from the user in the Database
+   * @return the locations from user
    */
   public static ArrayList<Location> getLocationsFromUser(int userId){
     String sql = "SELECT * FROM Location WHERE user_id = ?";
@@ -708,7 +709,7 @@ public class DatabaseAPI {
   }
 
   /**
-   * Adds attachment entry into the Database
+   * Adds attachment entry into the Database.
    *
    * @param file File to be uploaded into the database
    * @param event Event that the file belongs to
@@ -751,7 +752,8 @@ public class DatabaseAPI {
   }
 
   /**
-   * Gets the Attachments out of the Database
+   * Gets the Attachments out of the Database.
+   *
    * @param eventId Id of an event from which the attachments should be returned
    * @return List of files
    */
@@ -794,7 +796,8 @@ public class DatabaseAPI {
   }
 
   /**
-   * Delete all Attachment entries in the Database
+   * Delete all Attachment entries in the Database.
+   *
    * @param eventId Event which the entries should be deleted from.
    */
   public static void deleteAllAttachments(int eventId){
@@ -818,7 +821,8 @@ public class DatabaseAPI {
 
   /**
    * Delete user in the user table and user's corresponding entries
-   * in table Location and table User_Event
+   * in table Location and table User_Event.
+   *
    * @param userId - id of user to delete
    * @return true if deletion was successful
    */

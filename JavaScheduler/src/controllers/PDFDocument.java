@@ -30,6 +30,9 @@ import com.itextpdf.layout.element.Text;
 import models.Event;
 import models.User;
 
+/**
+ * Weekly schedule is exported into a PDF File.
+ */
 public class PDFDocument {
 
 	/**
@@ -127,9 +130,6 @@ public class PDFDocument {
 				Cell cell = new Cell().add(event.getName());
 				cell.setBackgroundColor(new DeviceGray(0.93f));
 				table.addCell(cell);
-				//cell = new Cell().add(event.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-				//cell.setBackgroundColor(new DeviceGray(0.93f));
-				//table.addCell(cell);
 				cell = new Cell().add(event.getLocation().getName());
 				cell.setBackgroundColor(new DeviceGray(0.93f));
 				table.addCell(cell);
