@@ -531,7 +531,7 @@ public class DatabaseAPI {
    * @return true, if successful
    */
   public static boolean editEvent(Event event) {
-    String sql = "UPDATE Event SET reminder = ? , priority = ? , name = ? , date = ? , time = ? , duration_minutes = ? , description = ? ,  host_id = ? ,location_id = ? "
+    String sql = "UPDATE Event SET reminder = ? , priority = ? , name = ? , date = ? , time = ? , duration_minutes = ? , description = ? ,  host_id = ? "
     + "WHERE event_id = ? ";
     
     Connection connection = connectDatabase();
@@ -547,9 +547,9 @@ public class DatabaseAPI {
       ps.setInt(6, event.getDurationMinutes());
       ps.setString(7, event.getDescription());
       ps.setInt(8, event.getHostId());
-      ps.setInt(9, event.getLocation().getId());
+      //ps.setInt(9, event.getLocation().getId());
       
-      ps.setInt(10, event.getId());
+      ps.setInt(9, event.getId());
       
       ps.executeUpdate();
       ps.close();

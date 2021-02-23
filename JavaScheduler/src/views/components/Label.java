@@ -80,8 +80,7 @@ public class Label extends JLabel {
    * Get whether label is unset.
    * Unset labels are ignored by #setComponentStyles() in 
    * MasterUI, and their styles are not overwritten
-   * 
-   * @see #views.MasterUI
+   *
    * @return boolean
    */
   public boolean getUnset() {

@@ -349,9 +349,21 @@ public class Event implements Comparable<Event> {
    * @return String of participant names
    */
   public String participantsToString() {
+    String join = "";
     String list = "";
-    for (User participant : getParticipants()) {
-      list += participant.getFirstname() + " " + participant.getLastname() + "<br>";
+    ArrayList<User> p = getParticipants();
+    for (int i = 0;  i < p.size(); i++) {
+      if(i != p.size()-1){
+        join = " - ";
+      }
+      else{join = "";}
+
+      if(p.get(i).getFirstname().isBlank() || p.get(i).getLastname().isBlank())
+        list += p.get(i).getUsername() + join;
+      else {
+        list += p.get(i).getFirstname() + " " + p.get(i).getLastname() + join;
+      }
+
     }
     return "<html> " + list + "<html>";
   }

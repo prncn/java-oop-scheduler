@@ -167,8 +167,9 @@ public abstract class MasterUI extends JFrame {
    * Place label of name of textfield above that textfield. This is not a method
    * for TextField since it would not be callable on JPasswordFields for instance.
    * 
-   * @param field - Textfield of input
+   * @param comp - component object
    * @param name  - Name corresponding of textfield
+   * @param panel - panel to be placed on
    */
   public static void placeFieldLabel(Component comp, String name, JPanel panel) {
     Label label = new Label(comp.getX(), comp.getY() - 25, name);

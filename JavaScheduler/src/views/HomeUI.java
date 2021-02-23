@@ -82,7 +82,7 @@ public class HomeUI extends MasterUI {
     add(sidebar);
     setLocationRelativeTo(null);
 
-    EmailHandler.reminderMail(user);
+    EmailHandler.runreminderMail(user);
 
     setVisible(true);
     createClock();
