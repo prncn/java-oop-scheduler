@@ -8,10 +8,21 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
+/**
+ * The Class DatabaseAPI manages everything SQL related and includes all queries on the Database.
+ */
 public class DatabaseAPI {
+  
+  /** URI to our Database. */
   private static final String SQL_CLOUD_URI = "jdbc:mysql://bqzknjzyoeidxu0hmqhq-mysql.services.clever-cloud.com:3306/bqzknjzyoeidxu0hmqhq?useSSL=false";
+  
+  /** Username used for the Database. */
   private static final String SQL_CLOUD_USERNAME = "udpcghp8h7wkwbrg";
+  
+  /** Password used for the Database. */
   private static final String SQL_CLOUD_PASSWORD = "mYe6S6puRrvcblEZPIWZ";
+  
+  /** Used for connecting to the Database. */
   private static Connection con = null;
 
   /**
@@ -56,12 +67,12 @@ public class DatabaseAPI {
   }
 
   /**
-   * Verify if given username and pass correspond to a user in the database
+   * Verify if given username and pass correspond to a user in the database.
    *
    * @param username - String of username
    * @param password - String of <i>hashed<i> password
    * @return <code>true</code> if user exists
-   * @throws SQLException
+   * @throws SQLException the SQL exception
    */
   public static boolean verifyUser(String username, String password) throws SQLException {
     Connection connection = connectDatabase();
@@ -93,6 +104,7 @@ public class DatabaseAPI {
    * Fetch user data from database. This is only called by other user related DB
    * functions.
    *
+   * @param <T> the generic type
    * @param connection - SQL jdbc connection object, connection to DB
    * @param key        - ???
    * @return SQL result of data entry or <code>null</code> if user doesn't exist
@@ -195,7 +207,7 @@ public class DatabaseAPI {
   }
 
   /**
-   * todo remove password? Gets all users from DB
+   * todo remove password? Gets all users from DB.
    *
    * @return all users as an arraylist
    */
@@ -228,7 +240,7 @@ public class DatabaseAPI {
   }
 
   /**
-   * Check if username or email is already taken
+   * Check if username or email is already taken.
    *
    * @param user - User data
    * @return <code>true</code> if user data is available
@@ -261,7 +273,8 @@ public class DatabaseAPI {
   /**
    * Query a username and return the corresponding User object from its table
    * entry. Used to search the user table.
-   * 
+   *
+   * @param <T> the generic type
    * @param key - String of username or Int of userid
    * @return User object on successful query, else <code>null</code>
    */
@@ -348,10 +361,10 @@ public class DatabaseAPI {
 
   
   /**
-   * Gets a list of participants for an event
-   * 
-   * @param eventId
-   * @return
+   * Gets a list of participants for an event.
+   *
+   * @param eventId the event id
+   * @return the participants
    */
   private static ArrayList<User> getParticipants(int eventId) {
     String sql = "SELECT * FROM User " + "LEFT JOIN User_Event "
@@ -384,9 +397,9 @@ public class DatabaseAPI {
   }
 
   /**
-   * Delete table entry in Event
+   * Delete table entry in Event.
    *
-   * @param eventId
+   * @param eventId the event id
    * @return true when deletion is successful, false when deletion is unsuccessful
    */
   public static boolean deleteEvent(int eventId) {
@@ -412,9 +425,9 @@ public class DatabaseAPI {
   
   /**
    * Creates an entry in the User_Event table in the Database.
-   * 
-   * @param userId
-   * @param eventId
+   *
+   * @param userId the user id
+   * @param eventId the event id
    * @return true when insertion was successful, false when insertion had an
    *         exception.
    */
@@ -514,9 +527,10 @@ public class DatabaseAPI {
   }
   
   /**
+   * Edits the event.
    *
    * @param event new event object which the Database should be adjusted for
-   * @return
+   * @return true, if successful
    */
   public static boolean editEvent(Event event) {
     String sql = "UPDATE Event SET reminder = ? , priority = ? , name = ? , date = ? , time = ? , duration_minutes = ? , description = ? ,  host_id = ? ,location_id = ? "
@@ -595,7 +609,8 @@ public class DatabaseAPI {
   }
   
   /**
-   * Fetch a location object with its given location id
+   * Fetch a location object with its given location id.
+   *
    * @param locationId Location ID to specify location
    * @return Location object
    */
@@ -658,6 +673,12 @@ public class DatabaseAPI {
     }
   }
 
+  /**
+   * Gets the locations from user.
+   *
+   * @param userId the user id
+   * @return the locations from user
+   */
   public static ArrayList<Location> getLocationsFromUser(int userId){
     String sql = "SELECT * FROM Location WHERE user_id = ?";
     Connection connection = connectDatabase();
@@ -690,7 +711,7 @@ public class DatabaseAPI {
   }
 
   /**
-   * Adds attachment entry into the Database
+   * Adds attachment entry into the Database.
    *
    * @param file File to be uploaded into the database
    * @param event Event that the file belongs to
@@ -733,7 +754,8 @@ public class DatabaseAPI {
   }
 
   /**
-   * Gets the Attachments out of the Database
+   * Gets the Attachments out of the Database.
+   *
    * @param eventId Id of an event from which the attachments should be returned
    * @return List of files
    */
@@ -776,7 +798,8 @@ public class DatabaseAPI {
   }
 
   /**
-   * Delete all Attachment entries in the Database
+   * Delete all Attachment entries in the Database.
+   *
    * @param eventId Event which the entries should be deleted from.
    */
   public static void deleteAllAttachments(int eventId){
@@ -800,7 +823,8 @@ public class DatabaseAPI {
 
   /**
    * Delete user in the user table and user's corresponding entries
-   * in table Location and table User_Event
+   * in table Location and table User_Event.
+   *
    * @param userId - id of user to delete
    * @return true if deletion was successful
    */
