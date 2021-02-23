@@ -12,7 +12,7 @@ import javax.crypto.spec.PBEKeySpec;
 
 /**
  * The Class PasswordEncryption is used to encrypt and decrypt a Password
- * @author Wizard107
+ * 
  */
 public class PasswordEncryption {
 	
@@ -22,7 +22,7 @@ public class PasswordEncryption {
 	/** The Constant algorithm determines which hashing method is used. */
 	private static final String algorithm = "PBKDF2WithHmacSHA512";
 	
-	/** The integer keylen represents the number of bits for the hashcode. */
+	/** The integer hash_len represents the number of bits for the hashcode. */
 	private static final int hash_len = 128;
 	
 	/**
@@ -51,7 +51,6 @@ public class PasswordEncryption {
 		if(split.length!=2) throw new IllegalArgumentException("Form has to be Salt$Hash");		//has to have format salt$hash
 		byte[] check_hash = pbkdf2(password.toCharArray(), Base64.getDecoder().decode(split[0]), iterations);	//create hash with entered password and stored salt
 		String test=Base64.getEncoder().withoutPadding().encodeToString(check_hash);		//translate check_hash from byte to string
-		//return(test.equals(split[1]));		//return true or false
 		return split[0] + "$" + test;
 	}
 	
