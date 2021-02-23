@@ -705,7 +705,7 @@ public class DatabaseAPI {
 
   /**
    * Gets the Attachments out of the Database
-   * @param event Event from which the attachments should be returned
+   * @param eventId Id of an event from which the attachments should be returned
    * @return List of files
    */
   public static ArrayList<File> getAttachmentsFromEvent(int eventId){
