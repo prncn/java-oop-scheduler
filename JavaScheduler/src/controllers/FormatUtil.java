@@ -123,8 +123,7 @@ public class FormatUtil {
 	/**
 	 * Get ending time from a giving starting time and duration.
 	 * 
-	 * @param startTime    - Starting LocalTime of event
-	 * @param durationMins - Duration in minutes
+	 * @param event - event time to be read
 	 * @return LocalTime of ending time
 	 */
 	public static LocalTime getEndTime(Event event) {
@@ -155,7 +154,7 @@ public class FormatUtil {
 	 * 128x128 dimensions for profile icon use from any user image. Used to fetch
 	 * from database and bring to view.
 	 * 
-	 * @param img - Image to be converted
+	 * @param bytes - bytes of image to be converted
 	 * @return ImageIcon object with proper attributes
 	 */
 	public static ImageIcon byteToIcon(byte[] bytes) {

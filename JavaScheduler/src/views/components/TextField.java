@@ -182,7 +182,6 @@ public class TextField extends JTextField {
    * suggestions are loaded in through the <code>setDropdown</code> method.
    * 
    * @param <T>     - Generic entry type, i.e. <code>Event.location</code>
-   * @param entries - List of entries that should be displayed on the menu
    * @param scroll  - Scroll pane that should contain the menu panel
    * @param panel   - Panel on which the dropdown menu is placed
    * @param action  - ActionListener that specifies the action on clicking a menu

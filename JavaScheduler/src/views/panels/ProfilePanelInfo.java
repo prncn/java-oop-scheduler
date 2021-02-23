@@ -131,8 +131,6 @@ public class ProfilePanelInfo extends Panel {
 
   /**
    * Set given fields to static, making uneditable and read-only
-   * 
-   * @param fields - Text fields for user data
    */
   public void setToStaticMode() {
     if (!getEditable())
@@ -152,8 +150,6 @@ public class ProfilePanelInfo extends Panel {
 
   /**
    * Set given fields to editable mode
-   * 
-   * @param fields - Text fields for user data
    */
   public void setToEditMode() {
     if (getEditable())

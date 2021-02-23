@@ -346,8 +346,7 @@ public class User {
   }
 
   
-  /** 
-   * @param avatar
+  /**
    * @return boolean
    */
   public boolean isAdmin() { return isAdmin;}
