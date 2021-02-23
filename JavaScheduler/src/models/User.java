@@ -85,6 +85,7 @@ public class User {
   public void createEvent(Event event) {
     event.setHostId(this.getId());
 
+    event.getLocation().setId(DatabaseAPI.storeLocation(event.getLocation(), this.getId()));
     int eventId = DatabaseAPI.storeEvent(event);
     event.setId(eventId);
     event.getAttachments().forEach(e -> DatabaseAPI.storeAttachment(e, event));

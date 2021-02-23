@@ -38,8 +38,7 @@ public class Event implements Comparable<Event> {
   }
 
   public Event(int eventId, String name, String description, int duration, LocalDate date, LocalTime time,
-      Location location, Priority priority, Reminder reminder, ArrayList<User> participants,
-      ArrayList<File> attachments) {
+      Location location, Priority priority, Reminder reminder, ArrayList<User> participants) {
     this.id = eventId;
     this.name = name;
     this.description = description;
@@ -50,7 +49,6 @@ public class Event implements Comparable<Event> {
     this.priority = priority;
     this.reminder = reminder;
     this.participants = participants;
-    this.attachments = attachments;
   }
 
   /**

@@ -2,26 +2,20 @@ package models;
 
 public class Location {
     private int id;
-    private String name;
-    private String city;
-    private String zip;
-    private String street;
-    private String streetNr;
-    private String building;
-    private String roomNr;
+    private String name = "";
+    private String city = "";
+    private String zip = "";
+    private String street = "";
+    private String streetNr = "";
+    private String building = "";
+    private String roomNr = "";
 
     /**
-     * Placeholder constructor
+     * Minimal constructor
      * @param name
      */
     public Location(String name) {
         this.name = name;
-        city = "";
-        street = "";
-        streetNr = "";
-        zip = "";
-        building = "";
-        roomNr = "";
     }
 
     /**
@@ -38,26 +32,6 @@ public class Location {
         this.roomNr = roomNr;
     }
 
-    /**
-     *  Constructor for locations that are pulled from the database.
-     */
-    public Location(int location_id, String name, String city, String zip, String street, String streetNr, String building,
-                    String roomNr) {
-        this.id = location_id;
-        this.name = name;
-        this.city = city;
-        this.zip = zip;
-        this.street = street;
-        this.streetNr = streetNr;
-        this.building = building;
-        this.roomNr = roomNr;
-    }
-
-
-    /**
-     * Get location ID
-     * @return id of location
-     */
     public int getId() {
         return id;
     }
