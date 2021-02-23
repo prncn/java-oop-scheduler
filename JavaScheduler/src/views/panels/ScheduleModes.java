@@ -1,5 +1,10 @@
 package views.panels;
 
+/**
+ * Interface for the different modes of the schedule panel. The
+ * default mode is create, in which the standard creator is displayed.
+ * Yes, this could simply have been an enum.
+ */
 public interface ScheduleModes {
 
   /** Schedule layout for creation of event */

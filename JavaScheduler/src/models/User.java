@@ -220,6 +220,10 @@ public class User {
     return this.email;
   }
 
+  
+  /** 
+   * @param id
+   */
   public void setId(int id) {
     this.id = id;
   }
@@ -341,6 +345,11 @@ public class User {
     return avatar;
   }
 
+  
+  /** 
+   * @param avatar
+   * @return boolean
+   */
   public boolean isAdmin() { return isAdmin;}
 
   /**
@@ -359,6 +368,11 @@ public class User {
     return getUsername();
   }
 
+  
+  /** 
+   * @param other
+   * @return boolean
+   */
   @Override
   public boolean equals(Object other) {
     User that = (User) other;

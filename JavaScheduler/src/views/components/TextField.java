@@ -17,11 +17,19 @@ import java.util.List;
 
 public class TextField extends JTextField {
 
+  /** Generated serial ID */
   private static final long serialVersionUID = -2254754514418403224L;
+
+  /** Error label hint to be placed on textfield */
   private Label errorLabel;
+
+  /** Helper attribute for components to build suggestions field  */
   private Component[] comps;
 
+  /** Default width of textfield */
   private final int WIDTH = 310;
+
+  /** Default height of textfield */
   private final int HEIGHT = 40;
 
   /**

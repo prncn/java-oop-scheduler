@@ -6,6 +6,12 @@ import java.time.format.DateTimeFormatter;
 
 public class EmailHandlerHTML {
 
+    
+    /** 
+     * @param event
+     * @param subject
+     * @return String
+     */
     public static String setupText(Event event, String subject) {
         return "<head>\n" +
                 "    <meta charset=\"UTF-8\">\n" +

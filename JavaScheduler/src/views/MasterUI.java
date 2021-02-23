@@ -27,7 +27,12 @@ import java.awt.Insets;
 import java.io.File;
 import java.io.IOException;
 
-abstract public class MasterUI extends JFrame {
+/**
+ * Abstract class for general settings 
+ * of application views. Colors, fonts and images are configured in here,
+ * as well as general stylings.
+ */
+public abstract class MasterUI extends JFrame {
   private static final long serialVersionUID = 349351600837986896L;
 
   /**
