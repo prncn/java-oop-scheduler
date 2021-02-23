@@ -72,7 +72,7 @@ public class DatabaseAPI {
    * @param username - String of username
    * @param password - String of <i>hashed<i> password
    * @return <code>true</code> if user exists
-   * @throws SQLException the SQL exception
+   * @throws SQLException in case of errors during queries.
    */
   public static boolean verifyUser(String username, String password) throws SQLException {
     Connection connection = connectDatabase();
@@ -104,9 +104,8 @@ public class DatabaseAPI {
    * Fetch user data from database. This is only called by other user related DB
    * functions.
    *
-   * @param <T> the generic type
    * @param connection - SQL jdbc connection object, connection to DB
-   * @param key        - ???
+   * @param key        - used to find a certain user
    * @return SQL result of data entry or <code>null</code> if user doesn't exist
    */
   private static <T> ResultSet fetchUserData(Connection connection, T key) {
@@ -207,7 +206,7 @@ public class DatabaseAPI {
   }
 
   /**
-   * todo remove password? Gets all users from DB.
+   * Gets all users from the Database.
    *
    * @return all users as an arraylist
    */
@@ -274,7 +273,6 @@ public class DatabaseAPI {
    * Query a username and return the corresponding User object from its table
    * entry. Used to search the user table.
    *
-   * @param <T> the generic type
    * @param key - String of username or Int of userid
    * @return User object on successful query, else <code>null</code>
    */
@@ -363,7 +361,7 @@ public class DatabaseAPI {
   /**
    * Gets a list of participants for an event.
    *
-   * @param eventId the event id
+   * @param eventId eventid of the event you want the participants from
    * @return the participants
    */
   private static ArrayList<User> getParticipants(int eventId) {
@@ -399,7 +397,7 @@ public class DatabaseAPI {
   /**
    * Delete table entry in Event.
    *
-   * @param eventId the event id
+   * @param eventId the event id of the event to be deleted
    * @return true when deletion is successful, false when deletion is unsuccessful
    */
   public static boolean deleteEvent(int eventId) {
@@ -426,8 +424,8 @@ public class DatabaseAPI {
   /**
    * Creates an entry in the User_Event table in the Database.
    *
-   * @param userId the user id
-   * @param eventId the event id
+   * @param userId the user id of the according user
+   * @param eventId the event id of the according event
    * @return true when insertion was successful, false when insertion had an
    *         exception.
    */
@@ -676,7 +674,7 @@ public class DatabaseAPI {
   /**
    * Gets the locations from user.
    *
-   * @param userId the user id
+   * @param userId necessary to find the locations from the user in the Database
    * @return the locations from user
    */
   public static ArrayList<Location> getLocationsFromUser(int userId){
