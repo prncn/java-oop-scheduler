@@ -51,15 +51,15 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private JScrollPane lcscroll;
   private JScrollPane rmscroll;
   public static Panel redpanel;
-  public static TextField titleField;
+  public TextField titleField;
   public static TextField dateField;
-  public static TextField startField;
-  public static TextField endField;
-  public static TextField priorityField;
-  public static TextField locationField;
-  public static TextField reminderField;
-  public static TextField attachField;
-  public static JTextArea descField;
+  public TextField startField;
+  public TextField endField;
+  public TextField priorityField;
+  public TextField locationField;
+  public TextField reminderField;
+  public TextField attachField;
+  public JTextArea descField;
 
   /** Margin between text fields */
   private final int TF_MRGN = 70;
@@ -77,7 +77,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   /**
    * Construct panel of event creator. This is panel is created and placed on the
    * home panel.
-   * 
+   *
    * @param frame     - Main frame containing this panel
    * @param user      - Session logged in user
    * @param editEvent - <code>null</code> if not in edit mode, else event to be
@@ -117,6 +117,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     } else if (mode == VIEW) {
       screenTitle.setText(editEvent.getName());
       screenTitle.setForeground(MasterUI.accentCol);
+      selectedReminder = editEvent.getReminder();
       selectedAttachments = editEvent.getAttachments();
       participants = editEvent.getParticipants();
     }
@@ -332,7 +333,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
 
   /**
    * Get button action for priority buttons
-   * 
+   *
    * @param prio - Priority enum
    */
   public void prioBtnAction(Priority prio) {
@@ -394,7 +395,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
 
   /**
    * Build dropdown options as to which custom location to select
-   * 
+   *
    * @param textfield - Location TextField object to reference
    */
   @SuppressWarnings("unchecked")
@@ -418,8 +419,12 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private void drawReminderSection() {
     reminderField = new TextField(0, 25);
     MasterUI.placeFieldLabel(reminderField, "Remind me before event", PAGE_TWO);
-    reminderField.setText(Reminder.NONE.toString());
-    selectedReminder = Reminder.NONE;
+    if(mode == CREATE) {
+      reminderField.setText(Reminder.NONE.toString());
+      selectedReminder = Reminder.NONE;
+    } else {
+      reminderField.setText(selectedReminder.toString());
+    }
     reminderField.setEditable(false);
     Button dpdwn = reminderField.appendButton(MasterUI.downIcon);
     dpdwn.addActionListener(e -> reminderDropdownSelection());
@@ -503,7 +508,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * When the attachment form receives a new file, a card panel respresenting the
    * file is added to the right. The card allows the removal and opening of the
    * file.
-   * 
+   *
    * @param panel - Panel that holds the file cards
    */
   private void addAttachmentCard(Panel panel) {
@@ -627,7 +632,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   /**
    * Place icon of particpant on schedule form. Partcipants added are visible
    * here, and can be removed from here.
-   * 
+   *
    * @param pcp - Participant user
    */
   public void placeParticpantIcon(User pcp) {
@@ -691,11 +696,35 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     FieldMap.put("locationField", locationField);
     FieldMap.put("reminderField", reminderField);
 
+/*
+    System.out.println("in processConfirm\n"
+            + titleField.getText() + "\n"
+            + dateField.getText() + "\n"
+            + startField.getText() + "\n"
+            + endField.getText() + "\n"
+            + locationField.getText() + "\n"
+            + reminderField.getText() + "\n"
+            + selectedReminder.toString() + "\n"
+    );
+ */
+
     ActionListener createAction = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         panel.removeAll();
 
-        Event event = ViewModelHandler.consumeEventForm(titleField, dateField, startField, endField, locationField,
+        /*
+        System.out.println("in actionperformed\n"
+                + titleField.getText() + "\n"
+                + dateField.getText() + "\n"
+                + startField.getText() + "\n"
+                + endField.getText() + "\n"
+                + locationField.getText() + "\n"
+                + selectedPriority.toString() + "\n"
+                + reminderField.getText() + "\n"
+                + selectedReminder.toString() + "\n");
+         */
+
+        Event event = ViewModelHandler.consumeEventForm(FieldMap,
             participants, selectedReminder, selectedPriority, selectedAttachments, descField);
         if (selectedLocation != null && selectedLocation.getName().equals(locationField.getText())) {
           event.setLocation(selectedLocation);
@@ -722,6 +751,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       }
     };
 
+
     confirmBtn.addActionListener(e -> {
       if (!ViewModelHandler.validateForm(FieldMap, selectedPriority))
         return;
@@ -732,4 +762,6 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       HomeUI.confirmDialog(createAction, "Proceed with this event?");
     });
   }
+
+
 }
