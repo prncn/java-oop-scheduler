@@ -112,6 +112,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     } else if (mode == EDIT) {
       screenTitle.setText("Edit event");
       screenTitle.setForeground(MasterUI.accentCol);
+      selectedReminder = editEvent.getReminder();
       participants = editEvent.getParticipants();
       selectedAttachments = editEvent.getAttachments();
     } else if (mode == VIEW) {
