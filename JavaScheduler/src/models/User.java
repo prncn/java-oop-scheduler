@@ -7,7 +7,9 @@ import views.MasterUI;
 import javax.swing.*;
 import java.util.ArrayList;
 
-
+/**
+ * The User Class represents the user of the application.
+ */
 public class User {
   private int id;
   private String username;
@@ -220,10 +222,6 @@ public class User {
     return this.email;
   }
 
-  
-  /** 
-   * @param id
-   */
   public void setId(int id) {
     this.id = id;
   }
@@ -345,10 +343,6 @@ public class User {
     return avatar;
   }
 
-  
-  /**
-   * @return boolean
-   */
   public boolean isAdmin() { return isAdmin;}
 
   /**
@@ -367,10 +361,10 @@ public class User {
     return getUsername();
   }
 
-  
-  /** 
-   * @param other
-   * @return boolean
+  /**
+   * compare two users
+   * @param other - the other user
+   * @return boolean whether the compared users are equal or not
    */
   @Override
   public boolean equals(Object other) {

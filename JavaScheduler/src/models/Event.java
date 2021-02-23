@@ -8,6 +8,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
+/**
+ * The Event Class represents the events which a user creates
+ */
 public class Event implements Comparable<Event> {
   private int id;
   private String name;
@@ -22,6 +25,19 @@ public class Event implements Comparable<Event> {
   private Reminder reminder;
   private String description = "";
 
+  /**
+   * Constructor for creating event from users input
+   * @param name - name of the event
+   * @param date - date of the event
+   * @param time - starting time of event
+   * @param durationMinutes - duration of event in minutes
+   * @param location - location of event
+   * @param participants - list of participants
+   * @param reminder - selected reminder for the event
+   * @param priority - selected priority for the event
+   * @param attachments - list of attachements
+   * @param description - description of the event
+   */
   public Event(String name, LocalDate date, LocalTime time, int durationMinutes, Location location,
       ArrayList<User> participants, Reminder reminder, Priority priority, ArrayList<File> attachments,
       String description) {
@@ -37,6 +53,9 @@ public class Event implements Comparable<Event> {
     this.description = description;
   }
 
+  /**
+   * Constructor for fetching event from database and creating model class from it
+   */
   public Event(int eventId, String name, String description, int duration, LocalDate date, LocalTime time,
       Location location, Priority priority, Reminder reminder, ArrayList<User> participants) {
     this.id = eventId;
@@ -349,29 +368,18 @@ public class Event implements Comparable<Event> {
    * @return String of participant names
    */
   public String participantsToString() {
-    String join = "";
     String list = "";
-    ArrayList<User> p = getParticipants();
-    for (int i = 0;  i < p.size(); i++) {
-      if(i != p.size()-1){
-        join = " - ";
-      }
-      else{join = "";}
-
-      if(p.get(i).getFirstname().isBlank() || p.get(i).getLastname().isBlank())
-        list += p.get(i).getUsername() + join;
-      else {
-        list += p.get(i).getFirstname() + " " + p.get(i).getLastname() + join;
-      }
-
+    for (User participant : getParticipants()) {
+      list += participant.getFirstname() + " " + participant.getLastname() + "<br>";
     }
     return "<html> " + list + "<html>";
   }
-  
-  
-  /** 
+
+  /**
+   * Compare the dates of two Event objects
+   *
    * @param other
-   * @return int
+   * @return negative integer if date is before, positive integer if date is after
    */
   @Override
   public int compareTo(Event other) {
