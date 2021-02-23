@@ -19,6 +19,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+/**
+ * Profile panel displays data of a user. This panel
+ * is a hub to configure profile settings and to change 
+ * custom locations.
+ */
 public class ProfilePanel extends Panel {
 
   private static final long serialVersionUID = -3221137395347263706L;

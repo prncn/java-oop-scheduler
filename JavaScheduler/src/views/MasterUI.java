@@ -27,7 +27,12 @@ import java.awt.Insets;
 import java.io.File;
 import java.io.IOException;
 
-abstract public class MasterUI extends JFrame {
+/**
+ * Abstract class for general settings 
+ * of application views. Colors, fonts and images are configured in here,
+ * as well as general stylings.
+ */
+public abstract class MasterUI extends JFrame {
   private static final long serialVersionUID = 349351600837986896L;
 
   /**
@@ -162,8 +167,9 @@ abstract public class MasterUI extends JFrame {
    * Place label of name of textfield above that textfield. This is not a method
    * for TextField since it would not be callable on JPasswordFields for instance.
    * 
-   * @param field - Textfield of input
+   * @param comp - component object
    * @param name  - Name corresponding of textfield
+   * @param panel - panel to be placed on
    */
   public static void placeFieldLabel(Component comp, String name, JPanel panel) {
     Label label = new Label(comp.getX(), comp.getY() - 25, name);

@@ -25,6 +25,9 @@ import views.components.Button;
 import views.components.Label;
 import views.components.Panel;
 
+/** 
+ * Weekly view of calendar panel
+ */
 public class CalendarPanelWeekly extends Panel {
 
   private static final long serialVersionUID = -8947171452870363548L;
@@ -136,10 +139,10 @@ public class CalendarPanelWeekly extends Panel {
   /**
    * Work-around for java swing limitations. Wrapping this function fixes
    * visibility bugs in scroll component.
-   * 
-   * @see placeEventDriver
-   * @param scrollpanel - Panel containg calendar grid
-   * @param time        - Time of event
+   *
+   * @see #placeEvent(Panel, Event)
+   * @param panel - panel containing calendar grid
+   * @param event - event of subject
    */
   private static void placeEvent(Panel panel, Event event) {
     LocalDate date = event.getDate();
@@ -177,9 +180,8 @@ public class CalendarPanelWeekly extends Panel {
    * Place event graphic onto weekly calendar. Wrapper for
    * {@link #placeEvent(Panel, Event)}
    * 
-   * @see placeEvent
-   * @param time - Time of event
-   * @param date - Date of event
+   * @see #placeEvent(Panel, Event)
+   * @param event - event of subject
    */
   public void placeEventDriver(Event event) {
     placeEvent(scrollpanel, event);

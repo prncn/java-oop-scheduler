@@ -15,6 +15,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 
+/**
+ * Login panel. This panel is booted on application startup
+ * and sends the user to the login flow and finally the application.
+ */
 public class LoginUI extends MasterUI {
   private static final long serialVersionUID = -6864342302747015773L;
 

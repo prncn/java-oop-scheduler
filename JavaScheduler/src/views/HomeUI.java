@@ -27,6 +27,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Main view of application. The Home panel contains
+ * all sub panels and application systems.
+ */
 public class HomeUI extends MasterUI {
   private static final long serialVersionUID = -771654490802003766L;
   private JPanel sidebar = new JPanel();
@@ -78,7 +82,7 @@ public class HomeUI extends MasterUI {
     add(sidebar);
     setLocationRelativeTo(null);
 
-    EmailHandler.reminderMail(user);
+    EmailHandler.runreminderMail(user);
 
     setVisible(true);
     createClock();
@@ -190,6 +194,10 @@ public class HomeUI extends MasterUI {
     return true;
   }
 
+  
+  /** 
+   * @param prompt
+   */
   public static void confirmDialog(String prompt) {
     confirmDialog(null, null, prompt);
   }
@@ -390,6 +398,10 @@ public class HomeUI extends MasterUI {
     frame.dispose();
   }
 
+  
+  /** 
+   * @param args
+   */
   public static void main(String[] args) {
     User guest = DatabaseAPI.getUser("admin");
     new HomeUI(guest);

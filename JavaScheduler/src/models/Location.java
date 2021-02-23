@@ -36,6 +36,10 @@ public class Location {
         this.roomNr = roomNr;
     }
 
+    
+    /** 
+     * @return int
+     */
     public int getId() {
         return id;
     }

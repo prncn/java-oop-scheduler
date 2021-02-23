@@ -33,6 +33,10 @@ import views.components.Label;
 import views.components.Panel;
 import views.components.TextField;
 
+/**
+ * Dashboard panel. This panel is the landing page of the user, on
+ * which they can see upcoming and all events.
+ */
 public class Dashboard extends Panel implements CardModes {
 
   private enum SortModes {
