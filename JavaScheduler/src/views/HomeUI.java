@@ -79,7 +79,6 @@ public class HomeUI extends MasterUI {
     setLocationRelativeTo(null);
 
     EmailHandler.reminderMail(user);
-    System.out.println("hui");
 
     setVisible(true);
     createTime();

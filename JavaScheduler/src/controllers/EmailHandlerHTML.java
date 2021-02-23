@@ -19,7 +19,7 @@ public class EmailHandlerHTML {
     public static String  Participants(Event event) {
         String p = "";
         if (event.getParticipants().size() > 1) {
-            p = "Participants: " + event.participantsToString();
+            p = "Participants: " + event.participantsToString()+ "</strong></p>\n";
         }
         return p;
     }
@@ -34,7 +34,7 @@ public class EmailHandlerHTML {
         if (event.getDescription().equals(d)) {
 
         } else {
-            d = "Description: " + event.getDescription();
+            d = "Description: " + event.getDescription() + "</strong></p>\n";
         }
         return d;
     }
@@ -51,11 +51,6 @@ public class EmailHandlerHTML {
                 "</style>" +
                 "<body>\n" +
                 "    <div class=\"es-wrapper-color\">\n" +
-                "        <!--[if gte mso 9]>\n" +
-                "\t\t\t<v:background xmlns:v=\"urn:schemas-microsoft-com:vml\" fill=\"t\">\n" +
-                "\t\t\t\t<v:fill type=\"tile\" color=\"#ffffff\"></v:fill>\n" +
-                "\t\t\t</v:background>\n" +
-                "\t\t<![endif]-->\n" +
                 "        <table class=\"es-wrapper\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\n" +
                 "            <tbody>\n" +
                 "                <tr>\n" +
@@ -74,7 +69,6 @@ public class EmailHandlerHTML {
                 "                                            <tbody>\n" +
                 "                                                <tr>\n" +
                 "                                                    <td class=\"esd-structure es-p15t es-p15b es-p15r es-p15l\" align=\"left\">\n" +
-                "                                                        <!--[if mso]><table width=\"520\" cellpadding=\"0\" cellspacing=\"0\"><tr><td width=\"328\" valign=\"top\"><![endif]-->\n" +
                 "                                                        <table class=\"es-left\" cellspacing=\"0\" cellpadding=\"0\" align=\"left\">\n" +
                 "                                                            <tbody>\n" +
                 "                                                                <tr>\n" +
@@ -92,7 +86,6 @@ public class EmailHandlerHTML {
                 "                                                                </tr>\n" +
                 "                                                            </tbody>\n" +
                 "                                                        </table>\n" +
-                "                                                        <!--[if mso]></td><td width=\"20\"></td><td width=\"172\" valign=\"top\"><![endif]-->\n" +
                 "                                                        <table cellspacing=\"0\" cellpadding=\"0\" align=\"right\">\n" +
                 "                                                            <tbody>\n" +
                 "                                                                <tr class=\"es-hidden\">\n" +
@@ -116,7 +109,6 @@ public class EmailHandlerHTML {
                 "                                                                </tr>\n" +
                 "                                                            </tbody>\n" +
                 "                                                        </table>\n" +
-                "                                                        <!--[if mso]></td></tr></table><![endif]-->\n" +
                 "                                                    </td>\n" +
                 "                                                </tr>\n" +
                 "                                            </tbody>\n" +
@@ -140,7 +132,7 @@ public class EmailHandlerHTML {
                 "                                                                        <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\n" +
                 "                                                                            <tbody>\n" +
                 "                                                                                <tr>\n" +
-                "                                                                                    <td class=\"esd-block-image es-p40t es-p25b es-p35r es-p35l\" align=\"center\" style=\"font-size: 0px; font-family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><a target=\"_blank\" href=\"<ahref=&quot;https://icon-library.net/icon/add-reminder-icon-2.html&quot;title=&quot;AddReminderIcon#348522&quot;\"><imgsrc=&quot;https://icon-library.net//images/add-reminder-icon/add-reminder-icon-2.jpg&quot;width=&quot;350&quot;/></a>\"><img src=\"https://cdn.discordapp.com/attachments/764039131604451340/803230862853406740/kisspng-bell-computer-icons-clip-art-notification-bell-5b27cdf9abf9f9.2971416115293352897044.png\" alt style=\"display: block;\" width=\"120\"></a></td>\n" +
+                "                                                                                    <td class=\"esd-block-image es-p40t es-p25b es-p35r es-p35l\" align=\"center\" style=\"font-size: 0px; font-family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><a target=\"_blank\" href=\"<ahref=&quot;https://icon-library.net/icon/add-reminder-icon-2.html&quot;title=&quot;AddReminderIcon#348522&quot;\"><imgsrc=&quot;https://icon-library.net//images/add-reminder-icon/add-reminder-icon-2.jpg&quot;width=&quot;350&quot;/></a>\"><img top=200px src=\"https://cdn.discordapp.com/attachments/764039131604451340/803230862853406740/kisspng-bell-computer-icons-clip-art-notification-bell-5b27cdf9abf9f9.2971416115293352897044.png\" alt style=\"display: block;\" width=\"120\"></a></td>\n" +
                 "                                                                                </tr>\n" +
                 "                                                                                <tr>\n" +
                 "                                                                                    <td class=\"esd-block-text\" align=\"center\">\n" +
@@ -150,12 +142,12 @@ public class EmailHandlerHTML {
                 "                                                                                <tr>\n" +
                 "                                                                                    <td class=\"esd-block-text es-p15t es-p10b es-p40l\" align=\"left\">\n" +
                 "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>Priority: " + event.getPriority() + "</strong></p>\n" +
-                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong><br>Date: " + event.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) +"</strong></p>\n" +
+                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>Date: " + event.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) +"</strong></p>\n" +
                 "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>Time: " + event.getTime() + "</strong></p>\n" +
                 "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>Duration: " + event.getDurationMinutes() + " minutes" + "</strong></p>\n" +
                 "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>Location: " + event.getLocation().getName() + "</strong></p>\n" +
-                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>" + Participants(event) + "</strong></p>\n" +
-                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>" + Description(event) +  "</strong></p>\n" +
+                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>" + Participants(event)  +
+                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>" + Description(event) +
                 "                                                                                    </td>\n" +
                 "                                                                                </tr>\n" +
                 "                                                                                <tr>\n" +
@@ -214,17 +206,13 @@ public class EmailHandlerHTML {
                 "                            <tbody>\n" +
                 "                                <tr>\n" +
                 "                                    <td class=\"esd-stripe\" esd-custom-block-id=\"7766\" align=\"center\">\n" +
-                "                                        <table class=\"es-content-body\" style=\"border-bottom:10px solid #6600ff;background-color: #1b9ba3;\" width=\"550\" cellspacing=\"0\" cellpadding=\"0\" bgcolor=\"#6600ff\" align=\"center\">\n" +
+                "                                        <table class=\"es-content-body\" style=\"border-bottom:10px solid #6600ff;background-color: #ffffff;\" width=\"550\" cellspacing=\"0\" cellpadding=\"0\" bgcolor=\"#6600ff\" align=\"center\">\n" +
                 "                                            <tbody>\n" +
                 "                                                <tr>\n" +
                 "                                                    <td class=\"esd-structure\" align=\"left\">\n" +
                 "                                                        <table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">\n" +
                 "                                                            <tbody>\n" +
                 "                                                                <tr>\n" +
-                "                                                                                </tr>\n" +
-                "                                                                            </tbody>\n" +
-                "                                                                        </table>\n" +
-                "                                                                    </td>\n" +
                 "                                                                </tr>\n" +
                 "                                                            </tbody>\n" +
                 "                                                        </table>\n" +
@@ -277,20 +265,10 @@ public class EmailHandlerHTML {
  "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n" +
  "    <meta content=\"telephone=no\" name=\"format-detection\">\n" +
  "    <title></title>\n" +
- "    <!--[if (mso 16)]>\n" +
- "    <style type=\"text/css\">\n" +
- "    a {text-decoration: none;}\n" +
- "    </style>\n" +
- "    <![endif]-->\n" +
- "    <!--[if gte mso 9]><style>sup { font-size: 100% !important; }</style><![endif]-->\n" +
- "    <!--[if gte mso 9]>\n" +
- "<xml>\n" +
- "    <o:OfficeDocumentSettings>\n" +
- "    <o:AllowPNG></o:AllowPNG>\n" +
- "    <o:PixelsPerInch>96</o:PixelsPerInch>\n" +
- "    </o:OfficeDocumentSettings>\n" +
- "</xml>\n" +
- "<![endif]-->\n" +
  "</head>\n" +
  "\n" +
+ */
+
+/**
+ *
  */

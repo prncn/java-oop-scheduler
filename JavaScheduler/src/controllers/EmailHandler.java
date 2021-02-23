@@ -134,8 +134,8 @@ public class EmailHandler {
             e.printStackTrace();
         }
 
-        event.setReminder(Reminder.NONE);
-        DatabaseAPI.editEvent(event);
+        //event.setReminder(Reminder.NONE);
+        //DatabaseAPI.editEvent(event);
     }
 
     /**

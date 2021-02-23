@@ -694,7 +694,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     ActionListener createAction = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         panel.removeAll();
-
+        System.out.println(selectedReminder);
         Event event = ViewModelHandler.consumeEventForm(titleField, dateField, startField, endField, locationField,
             participants, selectedReminder, selectedPriority, selectedAttachments, descField);
         if (selectedLocation != null && selectedLocation.getName().equals(locationField.getText())) {
