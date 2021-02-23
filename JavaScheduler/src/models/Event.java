@@ -368,6 +368,11 @@ public class Event implements Comparable<Event> {
     return "<html> " + list + "<html>";
   }
   
+  
+  /** 
+   * @param other
+   * @return int
+   */
   @Override
   public int compareTo(Event other) {
     if (getDate() == null || other.getDate() == null) {

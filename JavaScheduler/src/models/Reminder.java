@@ -9,7 +9,8 @@ public enum Reminder {
   THREE_DAYS("Three days before",4320 ),
   ONE_HOUR("One hour before", 60),
   TEN_MINUTES("Ten minutes before", 10),
-  NONE("Don't remind me", 0 );
+  NONE("Don't remind me", 0),
+  SENT("Reminder has been sent", -1);
 
   private String name;
   private int minutes;

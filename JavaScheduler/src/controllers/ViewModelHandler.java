@@ -34,22 +34,22 @@ public class ViewModelHandler {
    * Consume input form data from Create view and generate a model Event.
    * This method is used at the end of the schedule event form.
    * 
-   * @param titleField    - Field for title
-   * @param dateField     - Field for date
-   * @param startField    - Field for Start Time
-   * @param endField      - Field for End Time
-   * @param locationField - Field for location
+   * @param fieldMap    - Field for title
+   * @param participants     - Field for date
+   * @param reminder    - Field for Start Time
+   * @param priority      - Field for End Time
+   * @param attachments - Field for location
+   * @param descField -
    * @return Event object from given data
    */
-  public static Event consumeEventForm( HashMap<String, TextField> FieldMap, /*TextField titleField, TextField dateField, TextField startField,
-          TextField endField, TextField locationField,*/ ArrayList<User> participants, Reminder reminder, Priority priority,
+  public static Event consumeEventForm( HashMap<String, TextField> fieldMap, ArrayList<User> participants, Reminder reminder, Priority priority,
       ArrayList<File> attachments, JTextArea descField) {
 
-    TextField titleField = FieldMap.get("titleField");
-    TextField dateField = FieldMap.get("dateField");
-    TextField startField = FieldMap.get("startField");
-    TextField endField = FieldMap.get("endField");
-    TextField locationField = FieldMap.get("locationField");
+    TextField titleField = fieldMap.get("titleField");
+    TextField dateField = fieldMap.get("dateField");
+    TextField startField = fieldMap.get("startField");
+    TextField endField = fieldMap.get("endField");
+    TextField locationField = fieldMap.get("locationField");
 
     String eventName = titleField.getText();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("[MMMM dd, yyyy]" + "[yyyy-MM-dd]", Locale.US);
@@ -135,7 +135,7 @@ public class ViewModelHandler {
       return null;
     }
     User user = DatabaseAPI.getUser(searchField.getText());
-    userQueryResult.setPosition(searchField.getX() + searchField.getWidth() - userQueryResult.getWidth() + 40,
+    userQueryResult.setLocation(searchField.getX() + searchField.getWidth() - userQueryResult.getWidth() + 40,
         searchField.getY() + 40);
     userQueryResult.setHorizontalAlignment(SwingConstants.RIGHT);
     userQueryResult.setUnset(true);

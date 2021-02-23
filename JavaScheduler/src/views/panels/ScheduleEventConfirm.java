@@ -16,6 +16,10 @@ import views.components.Panel;
 import views.HomeUI;
 import views.MasterUI;
 
+/**
+ * After the user has successfully created an event, they are sent
+ * to this panel on which they see a success message.
+ */
 public class ScheduleEventConfirm extends Panel {
 
   private static final long serialVersionUID = 4625075272906690489L;

@@ -8,6 +8,10 @@ import java.awt.event.ActionListener;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+/**
+ * Account sign up panel. User accounts are created
+ * here.
+ */
 public class RegisterUI extends LoginUI {
   private static final long serialVersionUID = -6864343981907015773L;
   private JPasswordField passConfField;

@@ -53,6 +53,10 @@ public class Panel extends JPanel {
     return rounded;
   }
 
+  
+  /** 
+   * @return boolean
+   */
   public boolean getCard() {
     return isCard;
   }
@@ -69,6 +73,10 @@ public class Panel extends JPanel {
     }
   }
 
+  
+  /** 
+   * @param value
+   */
   public void setCard(boolean value){
     if(isCard != value){
       setOpaque(!value);
@@ -89,6 +97,10 @@ public class Panel extends JPanel {
     }
   }
 
+  
+  /** 
+   * @param g
+   */
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);

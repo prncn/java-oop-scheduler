@@ -39,8 +39,12 @@ import views.components.TextField;
 import views.HomeUI;
 import views.MasterUI;
 
+/** 
+ * Monthly view of calendar panel
+ */
 public class CalendarPanel extends Panel {
 
+  /** Generic serial ID */
   private static final long serialVersionUID = 1L;
   public int d_wdth; 
   final static int initialX = 10; 
@@ -258,8 +262,6 @@ public class CalendarPanel extends Panel {
 
   /**
    * Create and initialise navigation buttons
-   * 
-   * @param frame - JFrame of current instance
    */
   private void initNavigationBtns() {
     nextMonthBtn = new Button(740, 15, "", MasterUI.lightColAlt);
@@ -431,7 +433,6 @@ public class CalendarPanel extends Panel {
    * Create and initialise date text fields
    * 
    * @param date  - LocalDate object of any date
-   * @param frame - JFrame of current instance
    */
   private void initDateTextFields(LocalDate date) {
     yearField = new TextField(700, 70);
