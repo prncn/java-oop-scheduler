@@ -11,12 +11,12 @@ import java.time.format.DateTimeFormatter;
 public class EmailHandlerHTML {
 
     /**
-     *
-     *
+     * Displays HTML text of participants list or
+     * hide the section if no other participants
      * @param event
      * @return nothing or all participants of event if participants > 1
      */
-    public static String  Participants(Event event) {
+    public static String showParticipants(Event event) {
         String p = "";
         if (event.getParticipants().size() > 1) {
             p = "Participants: " + event.participantsToString()+ "</strong></p>\n";
@@ -25,11 +25,12 @@ public class EmailHandlerHTML {
     }
 
     /**
-     *
+     * Displays HTML text of description or
+     * hide the section if no other participants
      * @param event
      * @return
      */
-    public static String Description(Event event) {
+    public static String showDescription(Event event) {
         String d ="";
         if (event.getDescription().equals(d)) {
 
@@ -40,7 +41,7 @@ public class EmailHandlerHTML {
     }
 
     /**
-     *
+     * Sets up the dynamical HTML layout for the emails
      * @param event
      * @param subject
      * @return
@@ -146,8 +147,8 @@ public class EmailHandlerHTML {
                 "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>Time: " + event.getTime() + "</strong></p>\n" +
                 "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>Duration: " + event.getDurationMinutes() + " minutes" + "</strong></p>\n" +
                 "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>Location: " + event.getLocation().getName() + "</strong></p>\n" +
-                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>" + Participants(event)  +
-                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>" + Description(event) +
+                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>" + showParticipants(event)  +
+                "                                                                                        <p style=\"front family: roboto, 'helvetica neue', helvetica, arial, sans-serif;\"><strong>" + showDescription(event) +
                 "                                                                                    </td>\n" +
                 "                                                                                </tr>\n" +
                 "                                                                                <tr>\n" +
@@ -254,21 +255,3 @@ public class EmailHandlerHTML {
                 "</html>";
     }
 }
-
-
-
-/**
- "<head>\n" +
- "    <meta charset=\"UTF-8\">\n" +
- "    <meta content=\"width=device-width, initial-scale=1\" name=\"viewport\">\n" +
- "    <meta name=\"x-apple-disable-message-reformatting\">\n" +
- "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\n" +
- "    <meta content=\"telephone=no\" name=\"format-detection\">\n" +
- "    <title></title>\n" +
- "</head>\n" +
- "\n" +
- */
-
-/**
- *
- */
