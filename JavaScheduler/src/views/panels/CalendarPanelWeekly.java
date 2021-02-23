@@ -154,6 +154,7 @@ public class CalendarPanelWeekly extends Panel {
 
     bluepanel.setBounds(90 + yOffset, xOffset, d_wdth - 2, Math.max(event.getDurationMinutes(), 45));
     bluepanel.setBackground(eventCol);
+    bluepanel.setBorder(BorderFactory.createMatteBorder(0, 4, 0, 0, eventCol));
     bluepanel.setAlpha(0.65f);
 
     Label eventInfo = new Label(7, 7,

@@ -124,7 +124,7 @@ public class Dashboard extends Panel implements CardModes {
     allSectionInner.setBackground(MasterUI.lightCol);
     allSectionInner.setBounds(40, 650, upSectionInner.getWidth(), upSectionInner.getHeight());
 
-    Label dashImage = new Label(550, 400, "");
+    Label dashImage = new Label(650, 400, "");
     ImageIcon[] images = { MasterUI.dashImage1, MasterUI.dashImage2, MasterUI.dashImage3, MasterUI.dashImage4,
         MasterUI.dashImage5 };
     dashImage.setIcon(images[new Random().nextInt(5)]);
@@ -318,7 +318,7 @@ public class Dashboard extends Panel implements CardModes {
       Event event = allEvents.get(i);
       int mgn = 15;
       Panel card = null;
-      if (event.getHostId() == user.getId()) { // DatabaseAPI.getUser(event.getHostId()).equals(user)){
+      if (event.getHostId() == user.getId()) { 
         card = drawEventCard(content, event, allSectionInner, EDIT, new Dimension(300, 150));
       } else {
         card = drawEventCard(content, event, allSectionInner, VIEW, new Dimension(300, 150));
@@ -419,10 +419,10 @@ public class Dashboard extends Panel implements CardModes {
       card.add(edit);
     }
 
-    if (cardMode == EDIT) {
+    if (cardMode == EDIT || cardMode == VIEW) {
       int x = 10;
       for (User user : event.getParticipants()) {
-        Label pcpIcon = new Label(x, card.getHeight() - 50, "");
+        Label pcpIcon = new Label(x, 100, "");
         pcpIcon.setIcon(FormatUtil.resizeImageIcon(user.getAvatar(), 0.3f));
         pcpIcon.setSize(pcpIcon.getIcon().getIconWidth(), pcpIcon.getIcon().getIconHeight());
         card.add(pcpIcon);

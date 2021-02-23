@@ -28,7 +28,7 @@ public class LoginUI extends MasterUI {
   protected static Label success;
   protected JLabel backIconHero;
   protected Label screenTitle;
-
+  
   /** Pixel coordinates box for content */
   protected static Point lgnBox = new Point(70, 70);
 
@@ -40,11 +40,11 @@ public class LoginUI extends MasterUI {
     setTitle("Scheduler Login");
     setSize(600, 500);
     panel.updateBounds(this);
-    getRootPane().setDefaultButton(loginBtn);
     
     createLoginForm();
-    loginBtnAction();
     registerBtnAction();
+    loginBtnAction();
+    getRootPane().setDefaultButton(loginBtn);
     
     setComponentStyles(panel, "dark");
     screenTitle.setHeading();
@@ -99,8 +99,7 @@ public class LoginUI extends MasterUI {
             frame.dispose();
             frame.remove(panel);
             User session = DatabaseAPI.getUser(inputUser);
-            HomeUI home = new HomeUI(session);
-            home.setVisible(true);
+            new HomeUI(session);
           } else {
             success.setText("Wrong username or password");
             passField.setText("");

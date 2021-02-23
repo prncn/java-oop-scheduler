@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class HomeUI extends MasterUI {
   private static final long serialVersionUID = -771654490802003766L;
   private JPanel sidebar = new JPanel();
@@ -44,6 +43,7 @@ public class HomeUI extends MasterUI {
   private Button logoutTab;
   private Button prevBtn;
   public static Label sidebarAvatar;
+  public static Label footerTime;
 
   private static Button dashboardTab;
   public static Button createTab;
@@ -81,7 +81,8 @@ public class HomeUI extends MasterUI {
     EmailHandler.reminderMail(user);
 
     setVisible(true);
-    createTime();
+    createClock();
+    runClock();
   }
 
   /**
@@ -103,7 +104,10 @@ public class HomeUI extends MasterUI {
 
     List<Button> tabs = new ArrayList<>(
         Arrays.asList(dashboardTab, createTab, calendarTab, profileTab, exportTab, adminTab));
-    tabs.forEach(e -> sidebar.add(e));
+    tabs.forEach(e -> {
+      if (e != adminTab)
+        sidebar.add(e);
+    });
 
     /**
      * Highlight active tab by color
@@ -281,35 +285,34 @@ public class HomeUI extends MasterUI {
   }
 
   /**
-   * Set time and date for sidebar, updating itself every Minute
+   * Set time and date for sidebar, updating itself every Minute. This creates the
+   * initial static clock component.
    */
-  private void createTime() {
-    DateTimeFormatter dateformat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+  private void createClock() {
     DateTimeFormatter timeformat = DateTimeFormatter.ofPattern("HH:mm:ss");
-
-    Label footerTime = new Label(90, 5, LocalTime.now().format(timeformat));
-    Label footerDate = new Label(footerTime.getX(), footerTime.getY() + footerTime.getHeight() - 5,
-        LocalDate.now().format(dateformat));
+    footerTime = new Label(90, 5, LocalTime.now().format(timeformat));
 
     footerTime.setForeground(Color.white);
-    footerDate.setForeground(Color.white);
     footerTime.setSize(100, 25);
-    footerDate.setSize(100, 25);
     footerTime.setFont(MasterUI.robotoFont);
-    footerDate.setFont(MasterUI.robotoFont);
     footerTime.setHorizontalAlignment(SwingConstants.RIGHT);
-    footerDate.setHorizontalAlignment(SwingConstants.RIGHT);
     sidebar.add(footerTime);
+  }
 
-    while (true) {
+  /**
+   * Create a UI thread timer to periodically update the clock every few
+   * milliseconds. This prevents the application from stopping execution while the
+   * timer thread is running.
+   * 
+   * @see javax.swing.Timer
+   */
+  public void runClock() {
+    DateTimeFormatter timeformat = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+    Timer timer = new Timer(100, e -> {
       footerTime.setText(LocalTime.now().format(timeformat));
-      footerDate.setText(LocalDate.now().format(dateformat));
-      try {
-        Thread.sleep(500);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-    }
+    });
+    timer.start();
   }
 
   /**
@@ -388,7 +391,7 @@ public class HomeUI extends MasterUI {
   }
 
   public static void main(String[] args) {
-    User guest = DatabaseAPI.getUser("Admin");
+    User guest = DatabaseAPI.getUser("admin");
     new HomeUI(guest);
   }
 

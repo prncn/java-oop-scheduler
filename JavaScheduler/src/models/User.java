@@ -18,7 +18,7 @@ public class User {
   private ArrayList<Event> events = new ArrayList<Event>();
   private ArrayList<Location> locations = new ArrayList<Location>();
   private Boolean isAdmin;
-  private ImageIcon avatar = MasterUI.avatarImage6;
+  private ImageIcon avatar = MasterUI.avatarImage2;
 
   /**
    * Constructor for fetching user from database and creating model class from it
@@ -85,6 +85,7 @@ public class User {
   public void createEvent(Event event) {
     event.setHostId(this.getId());
 
+    event.getLocation().setId(DatabaseAPI.storeLocation(event.getLocation(), this.getId()));
     int eventId = DatabaseAPI.storeEvent(event);
     event.setId(eventId);
     event.getAttachments().forEach(e -> DatabaseAPI.storeAttachment(e, event));
