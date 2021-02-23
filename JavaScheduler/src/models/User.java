@@ -85,8 +85,9 @@ public class User {
   public void createEvent(Event event) {
     event.setHostId(this.getId());
 
-    int eventId = DatabaseAPI.createEvent(event);
+    int eventId = DatabaseAPI.storeEvent(event);
     event.setId(eventId);
+    event.getAttachments().forEach(e -> DatabaseAPI.storeAttachment(e, event));
     this.addEvent(event);
 
     for (User participant : event.getParticipants()) {
@@ -96,7 +97,9 @@ public class User {
 
     updateEventList();
 
-    // EmailHandler.sendEventMail(event, Status.CREATED);
+    if (!event.getParticipants().isEmpty()) {
+      EmailHandler.sendEventMail(event, Status.CREATED);
+    }
   }
 
   /**
@@ -122,7 +125,9 @@ public class User {
       DatabaseAPI.deleteEvent(event.getId());
     }
     updateEventList();
-    EmailHandler.sendEventMail(event, Status.DELETED);
+    if (!event.getParticipants().isEmpty()) {
+      EmailHandler.sendEventMail(event, Status.DELETED);
+    }
   }
 
   /**
@@ -147,7 +152,7 @@ public class User {
    * @param location location that should be created
    */
   public void createLocation(Location location){
-    int locationId = DatabaseAPI.createLocation(location , this.getId());
+    int locationId = DatabaseAPI.storeLocation(location , this.getId());
     location.setId(locationId);
     updateLocationList();
   }

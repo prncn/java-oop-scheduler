@@ -156,8 +156,8 @@ public class FormatUtil {
 
 	/**
 	 * Convert Image object to ImageIcon object cropped to circular shape and
-	 * 128x128 dimensions for profile icon use from any user image.
-	 * Used to fetch from database and bring to view.
+	 * 128x128 dimensions for profile icon use from any user image. Used to fetch
+	 * from database and bring to view.
 	 * 
 	 * @param img - Image to be converted
 	 * @return ImageIcon object with proper attributes
@@ -173,9 +173,11 @@ public class FormatUtil {
 		}
 		BufferedImage resized = new BufferedImage(128, 128, BufferedImage.TYPE_INT_ARGB);
 		if (original.getWidth() > original.getHeight()) {
-			original = original.getSubimage(original.getWidth() / 2 - original.getHeight() / 2, 0, original.getHeight(), original.getHeight());
+			original = original.getSubimage(original.getWidth() / 2 - original.getHeight() / 2, 0, original.getHeight(),
+					original.getHeight());
 		} else {
-			original = original.getSubimage(0, original.getHeight() / 2 - original.getWidth() / 2, original.getWidth(), original.getWidth());
+			original = original.getSubimage(0, original.getHeight() / 2 - original.getWidth() / 2, original.getWidth(),
+					original.getWidth());
 		}
 		Graphics2D g = resized.createGraphics();
 		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
@@ -189,9 +191,8 @@ public class FormatUtil {
 	}
 
 	/**
-	 * Convert File object to array of bytes.
-	 * This method is used to select an image from files and import it
-	 * into the UI view.
+	 * Convert File object to array of bytes. This method is used to select an image
+	 * from files and import it into the UI view.
 	 * 
 	 * @param img - File object of selected image
 	 * @return Byte array containing image stream data
@@ -210,8 +211,8 @@ public class FormatUtil {
 	}
 
 	/**
-	 * Convert ImageIcon image to array of bytes.
-	 * This method is used to prepare storing icons to the database.
+	 * Convert ImageIcon image to array of bytes. This method is used to prepare
+	 * storing icons to the database.
 	 * 
 	 * @param icon - ImageIcon to be converted
 	 * @return Byte array containing image stream data
@@ -228,6 +229,15 @@ public class FormatUtil {
 			e.printStackTrace();
 		}
 		return baos.toByteArray();
+	}
+
+	/**
+	 * Get file extension name
+	 * @param filename - File to get extension from
+	 * @return String of file extension
+	 */
+	public static String getFileExtension(String filename) {
+		return filename.substring(filename.lastIndexOf(".") + 1);
 	}
 
 }

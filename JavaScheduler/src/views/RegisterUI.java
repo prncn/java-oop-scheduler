@@ -108,7 +108,7 @@ public class RegisterUI extends LoginUI {
       success.setText("User already exists");
       return;
     }
-    DatabaseAPI.createUser(user);
+    DatabaseAPI.storeUser(user);
     panel.removeAll();
     LoginUI login = new LoginUI();
     login.setVisible(true);
