@@ -1,5 +1,12 @@
 package controllers;
 
+import models.Event;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -8,20 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Locale;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-
-import models.Event;
-
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.AlphaComposite;
 
 public class FormatUtil {
 	/**
