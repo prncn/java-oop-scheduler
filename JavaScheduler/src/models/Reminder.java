@@ -11,7 +11,9 @@ public enum Reminder {
   TEN_MINUTES("Ten minutes before", 10),
   NONE("Don't remind me", 0 );
 
+  /** Name of reminder */
   private String name;
+  /** minutes before start of event */
   private int minutes;
 
   /**

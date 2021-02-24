@@ -11,15 +11,25 @@ import java.util.ArrayList;
  * The User Class represents the user of the application.
  */
 public class User {
+  /** id of user */
   private int id;
+  /** Username of user */
   private String username;
+  /** Firstname of user */
   private String firstname;
+  /** Lastname of user */
   private String lastname;
+  /** Password of user */
   private String password;
+  /** Email of user */
   private String email;
+  /** List of events which the user is partaking*/
   private ArrayList<Event> events = new ArrayList<Event>();
+  /** List of locations which the user has created */
   private ArrayList<Location> locations = new ArrayList<Location>();
+  /** Boolean to determine if user is Admin */
   private Boolean isAdmin;
+  /** icon or rather the avatar of user */
   private ImageIcon avatar = MasterUI.avatarImage2;
 
   /**

@@ -13,8 +13,11 @@ public enum Priority {
   MEDIUM("Medium", MasterUI.midPrioCol, MasterUI.midPrioIcon), 
   LOW("Low", MasterUI.loPrioCol, MasterUI.loPrioIcon);
 
-  private String name; 
+  /** Name of priority */
+  private String name;
+  /** Color of priority */
   private Color color;
+  /** Icon of priority */
   private ImageIcon icon;
 
   /**

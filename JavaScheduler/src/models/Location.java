@@ -5,13 +5,21 @@ package models;
  * in order to select the location object as location of an event
  */
 public class Location {
+    /** id of location */
     private int id;
+    /** name of location */
     private String name = "";
+    /** city of location (optional)*/
     private String city = "";
+    /** zip of location (optional) */
     private String zip = "";
+    /** street of location (optional) */
     private String street = "";
+    /** street number of location (optional) */
     private String streetNr = "";
+    /** building of location (optional) */
     private String building = "";
+    /** room number of location (optional) */
     private String roomNr = "";
 
     /**
