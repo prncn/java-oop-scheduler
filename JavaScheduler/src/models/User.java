@@ -8,30 +8,32 @@ import javax.swing.*;
 import java.util.ArrayList;
 
 /**
-   * The User Class represents the user of the application.
-   */
+ * The User Class represents the user of the application.
+ */
 public class User {
-  	
+  /** id of user */
   private int id;
+  /** Username of user */
   private String username;
+  /** Firstname of user */
   private String firstname;
+  /** Lastname of user */
   private String lastname;
+  /** Password of user */
   private String password;
+  /** Email of user */
   private String email;
+  /** List of events which the user is partaking*/
   private ArrayList<Event> events = new ArrayList<Event>();
+  /** List of locations which the user has created */
   private ArrayList<Location> locations = new ArrayList<Location>();
+  /** Boolean to determine if user is Admin */
   private Boolean isAdmin;
+  /** icon or rather the avatar of user */
   private ImageIcon avatar = MasterUI.avatarImage2;
 
   /**
    * Constructor for fetching user from database and creating model class from it
-   * @param id - id of user
-   * @param username - username chosen for account
-   * @param firstName - firstname of user that is entered during registration
-   * @param lastName - lastname of user that is entered during registration
-   * @param email - email address that is entered during registration
-   * @param events - list of user's events
-   * @param customLocations - saved locations of user
    */
   public User(int id, String username, String firstName, String lastName, String email,
       ArrayList<Event> events, ArrayList<Location> customLocations) {
@@ -47,11 +49,6 @@ public class User {
 
   /**
    * Constructor after account creation and before storing to database
-   * @param username - username chosen for account
-   * @param password - password of account
-   * @param firstname - firstname of user that is entered during registration
-   * @param lastname - lastname of user that is entered during registration
-   * @param email - email address that is entered during registration
    */
   public User(String username, String password, String firstname, String lastname, String email) {
     this.username = username;
@@ -66,11 +63,6 @@ public class User {
 
   /**
    * Constructor for list of participants in an Event Object, excludes list of events & locations.
-   * @param username - username chosen for account
-   * @param user_id - id of useraccount
-   * @param firstName - firstname of user that is entered during registration
-   * @param lastName - lastname of user that is entered during registration
-   * @param email - email address that is entered during registration
    */
   public User(int user_id, String username, String firstName, String lastName, String email) {
     this.id = user_id;
@@ -292,7 +284,7 @@ public class User {
   /**
    * Set locations
    * 
-   * @param locations - list of locations
+   * @param locations
    */
   public void setLocations(ArrayList<Location> locations) {
     this.locations = locations;

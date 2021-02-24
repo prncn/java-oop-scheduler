@@ -12,17 +12,29 @@ import java.util.ArrayList;
  * The Event Class represents the events which a user creates
  */
 public class Event implements Comparable<Event> {
+  /** id of event */
   private int id;
+  /** Name of event */
   private String name;
+  /** Date of event */
   private LocalDate date;
+  /** Start time of event */
   private LocalTime time;
+  /** Duration in minutes of event */
   private int durationMinutes;
+  /** Location object of event */
   private Location location;
+  /** Host id of event */
   private int hostId;
+  /** List of participants of an event */
   private ArrayList<User> participants;
+  /** Priority of event */
   private Priority priority;
+  /** List of attachment of an event */
   private ArrayList<File> attachments;
+  /** Reminder of an event */
   private Reminder reminder;
+  /** Description of event */
   private String description = "";
 
   /**
