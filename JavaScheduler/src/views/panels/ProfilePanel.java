@@ -27,27 +27,52 @@ import java.util.ArrayList;
 public class ProfilePanel extends Panel {
 
   private static final long serialVersionUID = -3221137395347263706L;
+  /** Text field for the name of the location the user wants to create */
   private TextField lcNameField;
+
+  /** Text field for the city of the location the user wants to create */
   private TextField lcCityField;
+
+  /** Text field for the zip of the location the user wants to create */
   private TextField lcZipField;
+
+  /** Text field for the street of the location the user wants to create */
   private TextField lcStreetField;
+
+  /** Text field for the street number  of the location the user wants to create */
   private TextField lcStreetNrField;
+
+  /** Text field for the building of the location the user wants to create */
   private TextField lcBuildingField;
+
+  /** Text field for the room of the location the user wants to create */
   private TextField lcRoomField;
+
+  /** Text field for the selection of already created location */
   private TextField selectLocation;
 
+  /** Edit Button  */
   private Button editBtn;
+  /** Cancel Button */
   private Button cnclBtn;
+  /** Delete Button */
   private Button deleteBtn;
 
+  /** Save Button */
   private Button lcSaveBtn;
+  /** Clear Button */
   private Button lcClrBtn;
+  /** Add Button (new Location)  */
   private Button lcAddBtn;
 
+  /** Label to display in how many Events the user is partaking*/
   private static Label stats_1;
+  /** Scroller */
   private JScrollPane lcscroll;
+  /** Base panel for Profile */
   private Panel lcpanel;
 
+  /** Current User */
   private User user;
 
   public ProfilePanel(JFrame frame, User user) {
@@ -293,6 +318,7 @@ public class ProfilePanel extends Panel {
    * Create and initialise edit and add button for location section. If a location
    * is selected, the user can edit that selection. If none are selected an option
    * to add a new entry appears.
+   * @param location - selected location
    */
   private void addEditLocationButtons(Location location) {
     removeEditLocationButtons();
