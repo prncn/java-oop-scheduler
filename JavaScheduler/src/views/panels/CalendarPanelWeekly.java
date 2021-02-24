@@ -266,7 +266,7 @@ public class CalendarPanelWeekly extends Panel {
   /**
    * Update the data on the week day bar, depending on currently
    * selected day on the monthly calendar
-   * @param date
+   * @param date - selected date
    */
   public void updateWeekDaysBar(LocalDate date) {
     String[] days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };

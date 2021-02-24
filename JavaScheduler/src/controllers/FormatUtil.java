@@ -81,6 +81,7 @@ public class FormatUtil {
 	 * Function to make Strings capitalized
 	 * 
 	 * @param input - input String that gets capitalized
+	 * @return output is the capitalized String.
 	 */
 	public static String capitalize(String input) {
 		String output = input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();

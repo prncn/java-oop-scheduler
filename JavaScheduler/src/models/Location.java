@@ -16,7 +16,7 @@ public class Location {
 
     /**
      * Minimal constructor
-     * @param name
+     * @param name - name for location
      */
     public Location(String name) {
         this.name = name;
@@ -24,6 +24,13 @@ public class Location {
 
     /**
      *  Constructor for creating a location without ID
+     *  @param name - synonym for location
+     *  @param city - city of location
+     *  @param zip - zip of city
+     *  @param street - street in which event takes place
+     *  @param streetNr - streetnumber for the street
+     *  @param building - descirbes in which building event takes place
+     *  @param roomNr - roomNr for event
      */
     public Location(String name, String city, String zip, String street, String streetNr, String building,
             String roomNr) {
@@ -38,7 +45,7 @@ public class Location {
 
     
     /** 
-     * @return int
+     * @return id for location
      */
     public int getId() {
         return id;
@@ -46,7 +53,7 @@ public class Location {
 
     /**
      * Set location ID
-     * @param id
+     * @param id id that is given for location
      */
     public void setId(int id) {
         this.id = id;
@@ -62,7 +69,7 @@ public class Location {
 
     /**
      * Set city of location
-     * @param city
+     * @param city the city of the location
      */
     public void setCity(String city) {
         this.city = city;

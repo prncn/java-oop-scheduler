@@ -55,6 +55,16 @@ public class Event implements Comparable<Event> {
 
   /**
    * Constructor for fetching event from database and creating model class from it
+   * @param eventId - id of event
+   * @param name - name of the event
+   * @param date - date of the event
+   * @param time - starting time of event
+   * @param duration - duration of event in minutes
+   * @param location - location of event
+   * @param participants - list of participants
+   * @param reminder - selected reminder for the event
+   * @param priority - selected priority for the event
+   * @param description - description of the event
    */
   public Event(int eventId, String name, String description, int duration, LocalDate date, LocalTime time,
       Location location, Priority priority, Reminder reminder, ArrayList<User> participants) {
@@ -296,7 +306,7 @@ public class Event implements Comparable<Event> {
   /**
    * Check if event is in the past
    * 
-   * @return
+   * @return true if it was in the past, else false.
    */
   public boolean hasPassed() {
     return date.isBefore(LocalDate.now());
@@ -378,7 +388,7 @@ public class Event implements Comparable<Event> {
   /**
    * Compare the dates of two Event objects
    *
-   * @param other
+   * @param other - event that is compared
    * @return negative integer if date is before, positive integer if date is after
    */
   @Override

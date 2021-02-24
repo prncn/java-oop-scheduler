@@ -69,7 +69,7 @@ public class Label extends JLabel {
   /** 
    * Set whether label is a heading
    * 
-   * @param unset
+   * @param unset - true if label is heading
    */
   public void setUnset(boolean unset) {
     this.unset = unset;
@@ -81,7 +81,7 @@ public class Label extends JLabel {
    * Unset labels are ignored by #setComponentStyles() in 
    * MasterUI, and their styles are not overwritten
    *
-   * @return boolean
+   * @return boolean value, true if it is unset
    */
   public boolean getUnset() {
     return unset;

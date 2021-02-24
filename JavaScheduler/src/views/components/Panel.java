@@ -47,7 +47,7 @@ public class Panel extends JPanel {
 
   /**
    * Get whether panel is set to be rounded
-   * @return
+   * @return if it is to be rounded
    */
   public boolean getRounded() {
     return rounded;
@@ -55,7 +55,8 @@ public class Panel extends JPanel {
 
   
   /** 
-   * @return boolean
+   * Get whether panel is card
+   * @return boolean, true if is a card
    */
   public boolean getCard() {
     return isCard;
@@ -75,7 +76,8 @@ public class Panel extends JPanel {
 
   
   /** 
-   * @param value
+   * Set panel to be card or not and reverse opacity depending on decision
+   * @param value - decides whether panel is card.
    */
   public void setCard(boolean value){
     if(isCard != value){
