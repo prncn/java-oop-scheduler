@@ -26,7 +26,7 @@ public enum Reminder {
 
   /**
    * Get minutes of the reminder
-   * @return
+   * @return minutes of reminder
    */
   public int getMinutes(){
     return minutes;

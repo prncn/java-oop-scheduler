@@ -64,7 +64,7 @@ public class Panel extends JPanel {
 
   /**
    * Set panel to be rounded or not. Rounds corners of panel.
-   * @param value
+   * @param value - decides whether panel is round.
    */
   public void setRounded(boolean value){
     if(rounded != value){
@@ -101,7 +101,8 @@ public class Panel extends JPanel {
 
   
   /** 
-   * @param g
+   * Paint Panel
+   * @param g - graphics object according to which panel is painted
    */
   @Override
   protected void paintComponent(Graphics g) {

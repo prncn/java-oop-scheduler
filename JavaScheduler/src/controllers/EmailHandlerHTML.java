@@ -13,7 +13,7 @@ public class EmailHandlerHTML {
     /**
      * Displays HTML text of participants list or
      * hide the section if no other participants
-     * @param event
+     * @param event show participants for this event
      * @return nothing or all participants of event if participants > 1
      */
     public static String showParticipants(Event event) {

@@ -38,7 +38,7 @@ import views.components.TextField;
  * which they can see upcoming and all events.
  */
 public class Dashboard extends Panel implements CardModes {
-
+/** Sort Dashboard through different modes*/
   private enum SortModes {
     ALPHA, DATE_ADDED, DATE_EVENT, PARTICIPS;
   };
@@ -99,7 +99,7 @@ public class Dashboard extends Panel implements CardModes {
 
   /**
    * Create scroll pane and set properties
-   * 
+   * @param panel - panel on which scroller is placed
    * @return scroll pane object
    */
   private JScrollPane createScroller(Panel panel) {
@@ -113,6 +113,7 @@ public class Dashboard extends Panel implements CardModes {
 
   /**
    * Create and initialise (default) dashboard panel
+   * @param user - user for which dashboard is created
    */
   private void createDashboardTab(User user) {
     Label screenTitle = new Label(40, 40, "Upcoming Events");
@@ -265,8 +266,8 @@ public class Dashboard extends Panel implements CardModes {
    * Draw all cards onto upcoming events section. This will filter for up to 8
    * coming events.
    * 
-   * @param user
-   * @param content
+   * @param user - user to be read events from
+   * @param content - Point pixel coordinate to place the card
    */
   private static void sectionUpcomingEventsCards(User user, Point content) {
     List<Event> upcomingEvents = new ArrayList<>(user.getEvents());
@@ -354,6 +355,7 @@ public class Dashboard extends Panel implements CardModes {
    * @param panel    - Panel for the card to be placed on
    * @param cardMode - Layout mode for card. <code>UPCOMING</code>,
    *                 <code>ALL</code>, <code>NOTIF</code> or <code>CALENDAR</code>
+   * @param size 	 - size for the card
    * @return Card as panel object
    */
   private static Panel drawEventCard(Point p, Event event, Panel panel, int cardMode, Dimension size) {
