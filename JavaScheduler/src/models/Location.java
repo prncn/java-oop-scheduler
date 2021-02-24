@@ -85,7 +85,7 @@ public class Location {
 
     /**
      * Set street of location
-     * @param street
+     * @param street - street of location
      */
     public void setStreet(String street) {
         this.street = street;
@@ -101,7 +101,7 @@ public class Location {
 
     /**
      * Set street number of location
-     * @param streetNr
+     * @param streetNr - of street of location
      */
     public void setStreetNr(String streetNr) {
         this.streetNr = streetNr;
@@ -117,7 +117,7 @@ public class Location {
 
     /**
      * Set zip code of location
-     * @param zip
+     * @param zip - zip code of city of location
      */
     public void setZip(String zip) {
         this.zip = zip;
@@ -133,7 +133,7 @@ public class Location {
 
     /**
      * Set building of location
-     * @param building
+     * @param building - building of location
      */
     public void setBuilding(String building) {
         this.building = building;
@@ -149,7 +149,7 @@ public class Location {
 
     /**
      * Set room number of location
-     * @param roomNr
+     * @param roomNr - roomNr of location
      */
     public void setRoomNr(String roomNr) {
         this.roomNr = roomNr;
@@ -173,7 +173,7 @@ public class Location {
 
     /**
      * Set name of location
-     * @param name
+     * @param name - name of location
      */
     public void setName(String name) {
         this.name = name;

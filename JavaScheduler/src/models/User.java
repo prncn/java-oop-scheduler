@@ -9,18 +9,9 @@ import java.util.ArrayList;
 
 /**
    * The User Class represents the user of the application.
-   * @param dd - id of user
-   * @param username - username chosen for account
-   * @param firstname - firstname of user that is entered during registration
-   * @param lastname - lastname of user that is entered during registration
-   * @param password - password of account
-   * @param email - email address that is entered during registration
-   * @param events - list of user's events
-   * @param locations - saved locations of user
-   * @param isAdmin - whether user has admin rights.
-   * @param avatar - avatar that user has set for profile
    */
 public class User {
+  	
   private int id;
   private String username;
   private String firstname;
@@ -36,11 +27,11 @@ public class User {
    * Constructor for fetching user from database and creating model class from it
    * @param id - id of user
    * @param username - username chosen for account
-   * @param firstname - firstname of user that is entered during registration
-   * @param lastname - lastname of user that is entered during registration
+   * @param firstName - firstname of user that is entered during registration
+   * @param lastName - lastname of user that is entered during registration
    * @param email - email address that is entered during registration
    * @param events - list of user's events
-   * @param customlocations - saved locations of user
+   * @param customLocations - saved locations of user
    */
   public User(int id, String username, String firstName, String lastName, String email,
       ArrayList<Event> events, ArrayList<Location> customLocations) {
@@ -77,8 +68,8 @@ public class User {
    * Constructor for list of participants in an Event Object, excludes list of events & locations.
    * @param username - username chosen for account
    * @param user_id - id of useraccount
-   * @param firstname - firstname of user that is entered during registration
-   * @param lastname - lastname of user that is entered during registration
+   * @param firstName - firstname of user that is entered during registration
+   * @param lastName - lastname of user that is entered during registration
    * @param email - email address that is entered during registration
    */
   public User(int user_id, String username, String firstName, String lastName, String email) {
@@ -301,7 +292,7 @@ public class User {
   /**
    * Set locations
    * 
-   * @param locations
+   * @param locations - list of locations
    */
   public void setLocations(ArrayList<Location> locations) {
     this.locations = locations;
