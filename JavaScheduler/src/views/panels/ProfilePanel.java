@@ -123,6 +123,7 @@ public class ProfilePanel extends Panel {
 
   /**
    * Update current user profile statistics.
+   * @param user - user whose profile is updated
    */
   public static void updateProfileStats(User user) {
     stats_1.setText("You're partaking in " + user.getEvents().size() + " meetings.");
@@ -232,8 +233,8 @@ public class ProfilePanel extends Panel {
    * User can delete his own account.
    * This include the deletion of all his events.
    * After deletion the HomeUI is closed and the LoginUI is opened
-   * @param user
-   * @return
+   * @param user - the user that wants to delete his account
+   * @return the action for deleting the user.
    */
   public ActionListener deleteUser(User user) {
     return new ActionListener() {
