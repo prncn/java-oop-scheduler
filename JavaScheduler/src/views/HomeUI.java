@@ -33,26 +33,40 @@ import java.util.List;
  */
 public class HomeUI extends MasterUI {
   private static final long serialVersionUID = -771654490802003766L;
+  /** sidebar for the HomeUI where user can select from different options*/
   private JPanel sidebar = new JPanel();
+  /** user that is logged in*/
   private User user;
   private static JPanel currentPanel;
+  /** the frame which is the basis for all other panels*/
   private static JFrame frame;
+  /** coordinate point for orientation and placement of entities*/
   private Point tabsBox;
-
+  /**Panel that visualizes dashboard(upcoming events etc.)*/
   public static Dashboard dashPanel;
+  /**Panel to schedule an event*/
   public static ScheduleEvent createPanel;
+  /**Panel for the monthly calendar*/
   public static CalendarPanel calendarPanel;
   private ProfilePanel profilePanel;
+  /**Button for exporting schedule*/
   private Button exportTab;
+  /** button for logout*/
   private Button logoutTab;
   private Button prevBtn;
+  /**label that shows user avatar*/
   public static Label sidebarAvatar;
+  /**label which shows current time*/
   public static Label footerTime;
-
+  /**button to get to dashboard*/
   private static Button dashboardTab;
+  /**button to create Meetings*/
   public static Button createTab;
+  /**button to get to get to calendar*/
   public static Button calendarTab;
+  /**button to get to profile*/
   public static Button profileTab;
+  /**button to get to admin functions*/
   private static Button adminTab;
 
   public HomeUI(User user) {
