@@ -179,7 +179,7 @@ public class AdminPanel extends Panel {
 
   /**
    * Deletes the user and all of his events
-   * @param user
+   * @param user user to be deleted
    * @return ActionListener object
    */
   private ActionListener deleteUser(User user) {

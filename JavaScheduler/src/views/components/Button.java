@@ -321,7 +321,7 @@ public class Button extends JButton implements MouseListener {
   /**
    * Get whether button is a radio button
    * 
-   * @return
+   * @return true if it is a radio button
    */
   public boolean getRadio() {
     return isRadio;
@@ -423,7 +423,7 @@ public class Button extends JButton implements MouseListener {
   /**
    * Set whether button should be blanke (invisible). 
    * This prevents <code>paintComponent()</code> on this object.
-   * @param blank
+   * @param blank - true if button should be blank
    */
   public void setBlank(boolean blank) {
     this.blank = blank;
@@ -449,7 +449,8 @@ public class Button extends JButton implements MouseListener {
 
   
   /** 
-   * @param g
+   * used to paint a button
+   * @param g - decides how button is painted 
    */
   @Override
   protected void paintComponent(Graphics g) {
@@ -472,7 +473,8 @@ public class Button extends JButton implements MouseListener {
 
   
   /** 
-   * @param e
+   * if mouse is located above an entity
+   * @param e mousebutton is entered
    */
   @Override
   public void mouseEntered(MouseEvent e) {
@@ -483,7 +485,8 @@ public class Button extends JButton implements MouseListener {
 
   
   /** 
-   * @param e
+   * if mouse is no longer placed above entity
+   * @param e mousebutton is exited
    */
   @Override
   public void mouseExited(MouseEvent e) {
@@ -494,7 +497,8 @@ public class Button extends JButton implements MouseListener {
 
   
   /** 
-   * @param e
+   * mouse clicked on entity to provoke action
+   * @param e mousebutton is pressed
    */
   @Override
   public void mousePressed(MouseEvent e) {
@@ -503,7 +507,8 @@ public class Button extends JButton implements MouseListener {
 
   
   /** 
-   * @param e
+   * after mouse button is released
+   * @param e mousebutton is released
    */
   @Override
   public void mouseReleased(MouseEvent e) {
@@ -511,7 +516,8 @@ public class Button extends JButton implements MouseListener {
 
   
   /** 
-   * @param e
+   * after mouse button has been pressed and released
+   * @param e mousebutton is clicked
    */
   @Override
   public void mouseClicked(MouseEvent e) {

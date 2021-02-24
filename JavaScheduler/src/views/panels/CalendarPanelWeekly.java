@@ -87,6 +87,7 @@ public class CalendarPanelWeekly extends Panel {
 
   /**
    * Replace static calendar panel with the dynamic panel when the user scrolls
+   * @param scroller - the scroller which is used in dynamic panel
    */
   private void replaceStaticPanel(JScrollPane scroller) {
     Panel panel = this;
@@ -237,6 +238,7 @@ public class CalendarPanelWeekly extends Panel {
   /**
    * Draw buttons to switch display modes.
    * <code>Week</code> shows weekly calendar, <code>Month</code> show regular monthly calendar.
+   * @param frame - frame on which is drawn
    */
   private void drawDisplayModeBtns(JFrame frame) {
     dispModeWeek = new Button(initialX, 10, "Week", MasterUI.secondaryCol);
@@ -266,7 +268,7 @@ public class CalendarPanelWeekly extends Panel {
   /**
    * Update the data on the week day bar, depending on currently
    * selected day on the monthly calendar
-   * @param date
+   * @param date - selected date
    */
   public void updateWeekDaysBar(LocalDate date) {
     String[] days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };

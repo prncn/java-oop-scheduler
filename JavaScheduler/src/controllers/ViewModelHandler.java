@@ -68,6 +68,7 @@ public class ViewModelHandler {
   /**
    * Update and redraw calendar layout on events. Method gets called on event
    * change.
+   * @param frame - frame which is used to place calendar on.
    */
   public static void updateCalendar(JFrame frame) {
     HomeUI.calendarPanel.changeDateFromTextField(frame);
@@ -88,6 +89,7 @@ public class ViewModelHandler {
     /**
    * Update profile avatar icon on sidebar incase of
    * changes in other views.
+   * @param user - Currently logged in user
    */
   public static void updateProfileIcon(User user) {
     HomeUI.sidebarAvatar.fillIcon(FormatUtil.resizeImageIcon(user.getAvatar(), 0.7f));

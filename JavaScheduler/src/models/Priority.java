@@ -42,7 +42,7 @@ public enum Priority {
 
   /**
    * Get Color of the priority
-   * @return
+   * @return the color according to priority(green,yellow,red)
    */
   public Color getColor() {
     return color;
@@ -50,7 +50,7 @@ public enum Priority {
 
   /**
    * Get icon of priority
-   * @return
+   * @return the icon of priority
    */
   public ImageIcon getIcon() {
     return icon;

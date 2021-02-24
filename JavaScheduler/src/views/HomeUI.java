@@ -196,7 +196,7 @@ public class HomeUI extends MasterUI {
 
   
   /** 
-   * @param prompt
+   * @param prompt - text that is shown
    */
   public static void confirmDialog(String prompt) {
     confirmDialog(null, null, prompt);
@@ -206,8 +206,8 @@ public class HomeUI extends MasterUI {
    * Overload confirmDialog, for prompts that have no fail action. A fail action
    * is the action to be triggered if the user does no confirm.c
    * 
-   * @param action
-   * @param prompt
+   * @param action - actions that can be done in dialog.
+   * @param prompt - text to be shown.
    * @see #confirmDialog(ActionListener, ActionListener, String)
    */
   public static void confirmDialog(ActionListener action, String prompt) {
@@ -220,6 +220,7 @@ public class HomeUI extends MasterUI {
    * selecting yes, an action listener will be triggered.
    * 
    * @param action - ActionListener object to be passed to "YES" button
+   * @param failAction - to be passed to "NO" button
    * @param prompt - String prompt the user is asked
    */
   public static void confirmDialog(ActionListener action, ActionListener failAction, String prompt) {
