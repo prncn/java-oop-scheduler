@@ -14,7 +14,7 @@ import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
-
+  /** Generate TextFields that can be used for other Components*/
 public class TextField extends JTextField {
 
   /** Generated serial ID */

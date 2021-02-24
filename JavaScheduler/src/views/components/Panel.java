@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.AlphaComposite;
 import java.awt.RenderingHints;
 
-
+/** Create and customize panels that can be used by every class*/
 public class Panel extends JPanel {
 
   private static final long serialVersionUID = -3799733211815510931L;
