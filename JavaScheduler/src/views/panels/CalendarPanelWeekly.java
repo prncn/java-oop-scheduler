@@ -31,22 +31,33 @@ import views.components.Panel;
 public class CalendarPanelWeekly extends Panel {
 
   private static final long serialVersionUID = -8947171452870363548L;
+  /**shows option to switch to week*/
   private Button dispModeWeek;
+  /**shows option to switch to month*/
   private Button dispModeMonth;
-
+  /**x coordinate*/
   private final static int initialX = 10;
+  /**y coordinate*/
   private final static int initialY = 50;
+  /**width of calendarpanel*/
   private final static int d_wdth = 125;
-
+  /**label for day number */
   private static Label dayNum;
+  /**label for day name */
   private static Label dayName;
+  /**scroller used for dynamic calendarpanel*/
   private static Panel scrollpanel;
+  /**panel for static panel*/
   private static Panel greenpanel;
+  /**background color*/
   private Color background;
+  /**panel for weekday bar*/
   private Panel dayNums;
-
+  /**date of subject*/
   public LocalDate date;
+  /**orginal calendarpanel*/
   private CalendarPanel origin;
+  /**user that is logged in*/
   private User user;
 
   public CalendarPanelWeekly(JFrame frame, CalendarPanel origin, User user) {
