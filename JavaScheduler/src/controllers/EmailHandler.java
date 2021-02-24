@@ -26,8 +26,8 @@ public class EmailHandler {
     /**
      * Sets up email server, creates a email draft and sends the email to all participants
      *
-     * @param event the event of which was created, updated, deleted
-     * @param status of the event decides, which Mail layout will be drafted(creation, update, deletion email)
+     * @param event the event of subject
+     * @param status of the event, which Mail layout will be drafted(creation, update, deletion email)
      */
     public static void sendEventMail(Event event, Status status) {
         EmailHandler mail = new EmailHandler();
@@ -156,7 +156,7 @@ public class EmailHandler {
      * Checks if the current time after reminder time
      *
      * @param event event of subject
-     * @return Boolean if Current time is after reminder time
+     * @return Boolean if current time is after reminder time
      */
     public static boolean checkReminderTime(Event event){
         if(event.getReminder().equals(Reminder.NONE)){

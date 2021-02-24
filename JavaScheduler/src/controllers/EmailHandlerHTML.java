@@ -13,7 +13,7 @@ public class EmailHandlerHTML {
     /**
      * Displays HTML text of participants list or
      * hide the section if no other participants
-     * @param event show participants for this event
+     * @param event show participants for event of subject
      * @return nothing or all participants of event if participants > 1
      */
     public static String showParticipants(Event event) {
@@ -27,8 +27,8 @@ public class EmailHandlerHTML {
     /**
      * Displays HTML text of description or
      * hide the section if no other participants
-     * @param event relevant event
-     * @return Even Description
+     * @param event event of subject
+     * @return nothing or description of event if not empty
      */
     public static String showDescription(Event event) {
         String d ="";
@@ -42,9 +42,9 @@ public class EmailHandlerHTML {
 
     /**
      * Sets up the dynamical HTML layout for the emails
-     * @param event relevant event
-     * @param subject is the subject of mail
-     * @return html layout for the mail
+     * @param event event of subject
+     * @param subject subject depending on status of event
+     * @return HTML layout for the email as String
      */
     public static String setupText(Event event, String subject) {
         return  "<style>" +
