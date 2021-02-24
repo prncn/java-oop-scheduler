@@ -1,2 +1,2 @@
-/*custom components for swing UI*/
+/**custom components for swing UI*/
 package views.components;
