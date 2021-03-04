@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class DatabaseAPI {
   
   /** URI to our Database. */
-  private static final String SQL_CLOUD_URI = "jdbc:mysql://bqzknjzyoeidxu0hmqhq-mysql.services.clever-cloud.com:3306/bqzknjzyoeidxu0hmqhq?useSSL=false";
+  private static final String SQL_CLOUD_URI = "jdbc:mysql://bda7xeloolcvse2aqa6l-mysql.services.clever-cloud.com:3306/bda7xeloolcvse2aqa6l?useSSL=false";
   
   /** Username used for the Database. */
   private static final String SQL_CLOUD_USERNAME = "udpcghp8h7wkwbrg";

@@ -393,7 +393,7 @@ public class Dashboard extends Panel implements CardModes {
     int margin = 6;
 
     if (checkCardModeKey(cardMode) == EDIT) {
-      Button edit = new Button(card.getWidth() - 95, card.getHeight() - 50, "");
+      Button edit = new Button(card.getWidth() - 95, card.getHeight() - 50, "", MasterUI.lightColAlt);
       edit.setSize(40, 40);
       edit.setColor(MasterUI.secondaryCol);
       edit.setOutline(true);
