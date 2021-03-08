@@ -124,7 +124,7 @@ public class Dashboard extends Panel implements CardModes {
     allSectionInner.setBackground(MasterUI.lightCol);
     allSectionInner.setBounds(40, 650, upSectionInner.getWidth(), upSectionInner.getHeight());
 
-    Label dashImage = new Label(550, 400, "");
+    Label dashImage = new Label(650, 400, "");
     ImageIcon[] images = { MasterUI.dashImage1, MasterUI.dashImage2, MasterUI.dashImage3, MasterUI.dashImage4,
         MasterUI.dashImage5 };
     dashImage.setIcon(images[new Random().nextInt(5)]);

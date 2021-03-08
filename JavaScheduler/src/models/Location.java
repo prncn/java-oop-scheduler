@@ -2,26 +2,20 @@ package models;
 
 public class Location {
     private int id;
-    private String name;
-    private String city;
-    private String zip;
-    private String street;
-    private String streetNr;
-    private String building;
-    private String roomNr;
+    private String name = "";
+    private String city = "";
+    private String zip = "";
+    private String street = "";
+    private String streetNr = "";
+    private String building = "";
+    private String roomNr = "";
 
     /**
-     * Placeholder constructor
+     * Minimal constructor
      * @param name
      */
     public Location(String name) {
         this.name = name;
-        city = "";
-        street = "";
-        streetNr = "";
-        zip = "";
-        building = "";
-        roomNr = "";
     }
 
     /**
