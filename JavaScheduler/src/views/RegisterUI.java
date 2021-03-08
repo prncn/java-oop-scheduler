@@ -8,18 +8,31 @@ import java.awt.event.ActionListener;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+/**
+ * Account sign up panel. User accounts are created
+ * here.
+ */
 public class RegisterUI extends LoginUI {
   private static final long serialVersionUID = -6864343981907015773L;
+  /**Textfield where password is entered*/
   private JPasswordField passConfField;
+  /**Textfield where email is entered*/
   private TextField emailField;
+  /**Textfield where firstname is entered*/
   private TextField firstnameField;
+  /**Textfield where lastname is entered*/
   private TextField lastnameField;
-
+  /**String containing the input for username*/
   private String inputUser;
+  /**String containing the input for password*/
   private String inputPass;
+  /**String containing the input for password confirmation*/
   private String inputPassConf;
+  /**String containing the input for email*/
   private String inputEmail;
+  /**String containing the input for firstname*/
   private String inputFirstname;
+  /**String containing the input for lastname*/
   private String inputLastname;
 
 
@@ -103,7 +116,7 @@ public class RegisterUI extends LoginUI {
    */
   private void processRegistration() {
     String encryptPass = PasswordEncryption.createHash(inputPass);
-    User user = new User(inputUser, encryptPass, inputEmail, inputFirstname, inputLastname);
+    User user = new User(inputUser, encryptPass, inputFirstname, inputLastname, inputEmail);
     if (!DatabaseAPI.isAvailable(user)) {
       success.setText("User already exists");
       return;

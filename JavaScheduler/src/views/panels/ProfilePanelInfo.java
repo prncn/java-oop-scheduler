@@ -22,17 +22,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Profile info panel display account information.
+ * This is used by the profile panel and the admin panel to
+ * show user info.
+ */
 public class ProfilePanelInfo extends Panel {
 
   private static final long serialVersionUID = 1L;
+
+  /** Text Field to enter the username */
   private TextField usernameField;
+  /** Text Field to enter the password */
   private TextField passField;
+  /** Text Field to enter the email */
   private TextField emailField;
+  /** Text Field to enter the firstname */
   private TextField firstnameField;
+  /** Text Field to enter the lastname */
   private TextField lastnameField;
+  /** List of Text Fields */
   private List<JTextField> fields;
+  /** Save Button */
   private Button saveBtn;
+  /** Current User */
   private User user;
+  /** Boolean to determine if text fields are editable or not */
   private boolean isEditable;
 
   public ProfilePanelInfo(User user, boolean isEditable) {
@@ -126,8 +141,6 @@ public class ProfilePanelInfo extends Panel {
 
   /**
    * Set given fields to static, making uneditable and read-only
-   * 
-   * @param fields - Text fields for user data
    */
   public void setToStaticMode() {
     if (!getEditable())
@@ -147,8 +160,6 @@ public class ProfilePanelInfo extends Panel {
 
   /**
    * Set given fields to editable mode
-   * 
-   * @param fields - Text fields for user data
    */
   public void setToEditMode() {
     if (getEditable())

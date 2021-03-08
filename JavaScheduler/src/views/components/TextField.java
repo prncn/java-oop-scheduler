@@ -14,14 +14,22 @@ import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
-
+  /** Generate TextFields that can be used for other Components*/
 public class TextField extends JTextField {
 
+  /** Generated serial ID */
   private static final long serialVersionUID = -2254754514418403224L;
+
+  /** Error label hint to be placed on textfield */
   private Label errorLabel;
+
+  /** Helper attribute for components to build suggestions field  */
   private Component[] comps;
 
+  /** Default width of textfield */
   private final int WIDTH = 310;
+
+  /** Default height of textfield */
   private final int HEIGHT = 40;
 
   /**
@@ -54,9 +62,9 @@ public class TextField extends JTextField {
   /**
    * Constructor for positioning and text
    * 
-   * @param x
-   * @param y
-   * @param title
+   * @param x - x coordinate for bound
+   * @param y - y coordinate for bound
+   * @param title - text on the textfield 
    */
   public TextField(int x, int y, String title) {
     super(title);
@@ -67,7 +75,7 @@ public class TextField extends JTextField {
   /**
    * Constructor for text only, position has to be set seperately
    * 
-   * @param title
+   * @param title - text on the textfield.
    */
   public TextField(String title) {
     super(title);
@@ -78,8 +86,8 @@ public class TextField extends JTextField {
   /**
    * Constructor for default text field, only position
    * 
-   * @param x
-   * @param y
+   * @param x - x coordinate for bound
+   * @param y - y coordinate for bound
    */
   public TextField(int x, int y) {
     super();
@@ -132,7 +140,7 @@ public class TextField extends JTextField {
   /**
    * Get error label that was created to the field
    * 
-   * @return
+   * @return the error label created to the field
    */
   public Label getErrorLabel() {
     return errorLabel;
@@ -141,7 +149,7 @@ public class TextField extends JTextField {
   /**
    * Create error label that appears on specific (error) behaviour on a text field
    * 
-   * @param msg
+   * @param msg - message shown on error label
    * @return Label object for error messaging
    */
   public Label createErrorLabel(String msg) {
@@ -174,11 +182,10 @@ public class TextField extends JTextField {
    * suggestions are loaded in through the <code>setDropdown</code> method.
    * 
    * @param <T>     - Generic entry type, i.e. <code>Event.location</code>
-   * @param entries - List of entries that should be displayed on the menu
    * @param scroll  - Scroll pane that should contain the menu panel
    * @param panel   - Panel on which the dropdown menu is placed
-   * @param action  - ActionListener that specifies the action on clicking a menu
-   *                option
+   * @param action  - ActionListener that specifies the action on clicking a menu option
+   * @return the user suggestion
    */
   public <T> Component[] setSuggestionField(JScrollPane scroll, Panel panel, ActionListener action) {
     comps = new Component[2];
@@ -234,8 +241,8 @@ public class TextField extends JTextField {
    * @param entries - List of entries that should be displayed on the menu
    * @param scroll  - Scroll pane that should contain the menu panel
    * @param panel   - Panel on which the dropdown menu is placed
-   * @param action  - ActionListener that specifies the action on clicking a menu
-   *                option
+   * @param action  - ActionListener that specifies the action on clicking a menu option
+   * @param options - number of options for menu
    * @return An array that returns the scroll panel on the first index and the
    *         inner panel on the second index
    */
@@ -289,6 +296,7 @@ public class TextField extends JTextField {
 
   /**
    * Set max. length of a entered characters in a textfield
+   * @param limit - defines the maximum length
    */
   public void setMaximumLength(int limit) {
     ((AbstractDocument) this.getDocument()).setDocumentFilter(new LimitDocumentFilter(limit));

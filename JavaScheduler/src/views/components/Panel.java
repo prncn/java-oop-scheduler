@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.AlphaComposite;
 import java.awt.RenderingHints;
 
-
+/** Create and customize panels that can be used by every class*/
 public class Panel extends JPanel {
 
   private static final long serialVersionUID = -3799733211815510931L;
@@ -47,19 +47,24 @@ public class Panel extends JPanel {
 
   /**
    * Get whether panel is set to be rounded
-   * @return
+   * @return if it is to be rounded
    */
   public boolean getRounded() {
     return rounded;
   }
 
+  
+  /** 
+   * Get whether panel is card
+   * @return boolean, true if is a card
+   */
   public boolean getCard() {
     return isCard;
   }
 
   /**
    * Set panel to be rounded or not. Rounds corners of panel.
-   * @param value
+   * @param value - decides whether panel is round.
    */
   public void setRounded(boolean value){
     if(rounded != value){
@@ -69,6 +74,11 @@ public class Panel extends JPanel {
     }
   }
 
+  
+  /** 
+   * Set panel to be card or not and reverse opacity depending on decision
+   * @param value - decides whether panel is card.
+   */
   public void setCard(boolean value){
     if(isCard != value){
       setOpaque(!value);
@@ -89,6 +99,11 @@ public class Panel extends JPanel {
     }
   }
 
+  
+  /** 
+   * Paint Panel
+   * @param g - graphics object according to which panel is painted
+   */
   @Override
   protected void paintComponent(Graphics g) {
     super.paintComponent(g);

@@ -1,72 +1,103 @@
 package views.panels;
 
-import java.awt.Color;
-import java.awt.Dimension;
-
 import controllers.FormatUtil;
 import models.Event;
 import models.User;
+import views.HomeUI;
+import views.MasterUI;
+import views.components.Button;
+import views.components.Label;
+import views.components.Panel;
+import views.components.TextField;
 
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.awt.event.ActionEvent;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.SwingConstants;
-
-import views.components.Button;
-import views.components.Label;
-import views.components.Panel;
-import views.components.TextField;
-import views.HomeUI;
-import views.MasterUI;
-
+/** 
+ * Monthly view of calendar panel
+ */
 public class CalendarPanel extends Panel {
 
+  /** Generic serial ID */
   private static final long serialVersionUID = 1L;
-  public int d_wdth; 
-  final static int initialX = 10; 
-  private final int initialY = 100; 
 
+  /** Width of Calendar Panel */
+  public int d_wdth;
+
+  /** X - coordinates */
+  final static int initialX = 10;
+
+  /** Y - coordinates */
+  private final int initialY = 100;
+
+
+  /** Text field where use can enter the year */
   private TextField yearField;
+  /** Text field where use can enter the month */
   private TextField monthField;
+  /** Text field where use can enter the day */
   private TextField dayField;
 
+  /** Base panel for calendar */
   private Panel redpanel = new Panel();
+
+  /** Weekly calendar object */
   private CalendarPanelWeekly weeklyDisplay;
+
+  /** Weekly calendar object for PDF */
   private static CalendarPanelWeekly weeklyDisplay_PDF;
+
+  /**  */
   private Button prevActive = null;
+
+  /** Button which highlights today */
   private Button highlightToday;
+
+  /** Today's date */
   public LocalDate today;
+
+  /** Label which shows if there are events today */
   private Label meetingsInfo;
+
+  /** Text if there are no events */
   private String noMeetingStr = "No meetings on this day :)";
 
+
+  /** Button to dsiplay Weekly Calendar */
   public static Button dispModeWeek;
+
+  /** Button to display Monthly Calendar */
   public static Button dispModeMonth;
+
+  /** Button to select next Month */
   private Button nextMonthBtn;
+
+  /** Button to select previous Month */
   private Button prevMonthBtn;
 
+  /** Boolean to determine if Calendar should be displayed in mini-format */
   private boolean isMinified;
+
+  /** Base Frame */
   private JFrame frame;
+
+  /** Fram for Weekly Calendar */
   private static JFrame original_size;
+
+  /** Current User */
   public User user;
 
   public CalendarPanel(JFrame frame, int d_wdth, boolean isMinified, User user) {
@@ -258,8 +289,6 @@ public class CalendarPanel extends Panel {
 
   /**
    * Create and initialise navigation buttons
-   * 
-   * @param frame - JFrame of current instance
    */
   private void initNavigationBtns() {
     nextMonthBtn = new Button(740, 15, "", MasterUI.lightColAlt);
@@ -431,7 +460,6 @@ public class CalendarPanel extends Panel {
    * Create and initialise date text fields
    * 
    * @param date  - LocalDate object of any date
-   * @param frame - JFrame of current instance
    */
   private void initDateTextFields(LocalDate date) {
     yearField = new TextField(700, 70);

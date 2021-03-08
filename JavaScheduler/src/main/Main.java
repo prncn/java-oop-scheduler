@@ -1,7 +1,7 @@
 package main;
 
 import views.LoginUI;
-
+/** Main application driver*/
 public class Main {
   
   /**

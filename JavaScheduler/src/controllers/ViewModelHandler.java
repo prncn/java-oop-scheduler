@@ -33,16 +33,16 @@ public class ViewModelHandler {
   /**
    * Consume input form data from Create view and generate a model Event.
    * This method is used at the end of the schedule event form.
-   * 
-   * @param titleField    - Field for title
-   * @param dateField     - Field for date
-   * @param startField    - Field for Start Time
-   * @param endField      - Field for End Time
-   * @param locationField - Field for location
+   *
+   * @param FieldMap    -  Map of text fields which is passed
+   * @param participants - list of participants
+   * @param reminder    - selected reminder
+   * @param priority    - selected priority
+   * @param attachments - list of attachments
+   * @param descField   - description field
    * @return Event object from given data
    */
-  public static Event consumeEventForm( HashMap<String, TextField> FieldMap, /*TextField titleField, TextField dateField, TextField startField,
-          TextField endField, TextField locationField,*/ ArrayList<User> participants, Reminder reminder, Priority priority,
+  public static Event consumeEventForm( HashMap<String, TextField> FieldMap, ArrayList<User> participants, Reminder reminder, Priority priority,
       ArrayList<File> attachments, JTextArea descField) {
 
     TextField titleField = FieldMap.get("titleField");
@@ -60,16 +60,6 @@ public class ViewModelHandler {
     Location location = new Location(locationName);
     String description = descField.getText();
 
-    /*
-    System.out.println("in consumeEventForm\n"
-            + titleField.getText() + "\n"
-            + dateField.getText() + "\n"
-            + startField.getText() + "\n"
-            + endField.getText() + "\n"
-            + locationField.getText() + "\n"
-            + priority.toString() + "\n"
-            + reminder.toString() + "\n");
-     */
 
     return new Event(eventName, eventDate, eventTime, eventDuration, location, participants, reminder, priority,
         attachments, description);
@@ -78,6 +68,7 @@ public class ViewModelHandler {
   /**
    * Update and redraw calendar layout on events. Method gets called on event
    * change.
+   * @param frame - frame which is used to place calendar on.
    */
   public static void updateCalendar(JFrame frame) {
     HomeUI.calendarPanel.changeDateFromTextField(frame);
@@ -98,6 +89,7 @@ public class ViewModelHandler {
     /**
    * Update profile avatar icon on sidebar incase of
    * changes in other views.
+   * @param user - Currently logged in user
    */
   public static void updateProfileIcon(User user) {
     HomeUI.sidebarAvatar.fillIcon(FormatUtil.resizeImageIcon(user.getAvatar(), 0.7f));
@@ -135,7 +127,7 @@ public class ViewModelHandler {
       return null;
     }
     User user = DatabaseAPI.getUser(searchField.getText());
-    userQueryResult.setPosition(searchField.getX() + searchField.getWidth() - userQueryResult.getWidth() + 40,
+    userQueryResult.setLocation(searchField.getX() + searchField.getWidth() - userQueryResult.getWidth() + 40,
         searchField.getY() + 40);
     userQueryResult.setHorizontalAlignment(SwingConstants.RIGHT);
     userQueryResult.setUnset(true);
@@ -178,16 +170,6 @@ public class ViewModelHandler {
     TextField reminderField = FieldMap.get("reminderField");
 
     TextField[] fields = { titleField, dateField, startField, endField, locationField, reminderField };
-    /*
-    System.out.println("in validate Form\n"
-            + titleField.getText() + "\n"
-            + dateField.getText() + "\n"
-            + startField.getText() + "\n"
-            + endField.getText() + "\n"
-            + selectedPriority.toString() + "\n"
-            + locationField.getText() + "\n"
-            + reminderField.getText() + "\n");
-     */
 
     for (TextField field : fields) {
       if (FormatUtil.isBlankString(field.getText())) {

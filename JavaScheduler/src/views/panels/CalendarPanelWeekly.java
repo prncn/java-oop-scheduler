@@ -25,25 +25,39 @@ import views.components.Button;
 import views.components.Label;
 import views.components.Panel;
 
+/** 
+ * Weekly view of calendar panel
+ */
 public class CalendarPanelWeekly extends Panel {
 
   private static final long serialVersionUID = -8947171452870363548L;
+  /**shows option to switch to week*/
   private Button dispModeWeek;
+  /**shows option to switch to month*/
   private Button dispModeMonth;
-
+  /**x coordinate*/
   private final static int initialX = 10;
+  /**y coordinate*/
   private final static int initialY = 50;
+  /**width of calendarpanel*/
   private final static int d_wdth = 125;
-
+  /**label for day number */
   private static Label dayNum;
+  /**label for day name */
   private static Label dayName;
+  /**scroller used for dynamic calendarpanel*/
   private static Panel scrollpanel;
+  /**panel for static panel*/
   private static Panel greenpanel;
+  /**background color*/
   private Color background;
+  /**panel for weekday bar*/
   private Panel dayNums;
-
+  /**date of subject*/
   public LocalDate date;
+  /**orginal calendarpanel*/
   private CalendarPanel origin;
+  /**user that is logged in*/
   private User user;
 
   public CalendarPanelWeekly(JFrame frame, CalendarPanel origin, User user) {
@@ -84,6 +98,7 @@ public class CalendarPanelWeekly extends Panel {
 
   /**
    * Replace static calendar panel with the dynamic panel when the user scrolls
+   * @param scroller - the scroller which is used in dynamic panel
    */
   private void replaceStaticPanel(JScrollPane scroller) {
     Panel panel = this;
@@ -136,10 +151,10 @@ public class CalendarPanelWeekly extends Panel {
   /**
    * Work-around for java swing limitations. Wrapping this function fixes
    * visibility bugs in scroll component.
-   * 
-   * @see placeEventDriver
-   * @param scrollpanel - Panel containg calendar grid
-   * @param time        - Time of event
+   *
+   * @see #placeEvent(Panel, Event)
+   * @param panel - panel containing calendar grid
+   * @param event - event of subject
    */
   private static void placeEvent(Panel panel, Event event) {
     LocalDate date = event.getDate();
@@ -177,9 +192,8 @@ public class CalendarPanelWeekly extends Panel {
    * Place event graphic onto weekly calendar. Wrapper for
    * {@link #placeEvent(Panel, Event)}
    * 
-   * @see placeEvent
-   * @param time - Time of event
-   * @param date - Date of event
+   * @see #placeEvent(Panel, Event)
+   * @param event - event of subject
    */
   public void placeEventDriver(Event event) {
     placeEvent(scrollpanel, event);
@@ -235,6 +249,7 @@ public class CalendarPanelWeekly extends Panel {
   /**
    * Draw buttons to switch display modes.
    * <code>Week</code> shows weekly calendar, <code>Month</code> show regular monthly calendar.
+   * @param frame - frame on which is drawn
    */
   private void drawDisplayModeBtns(JFrame frame) {
     dispModeWeek = new Button(initialX, 10, "Week", MasterUI.secondaryCol);
@@ -264,7 +279,7 @@ public class CalendarPanelWeekly extends Panel {
   /**
    * Update the data on the week day bar, depending on currently
    * selected day on the monthly calendar
-   * @param date
+   * @param date - selected date
    */
   public void updateWeekDaysBar(LocalDate date) {
     String[] days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
