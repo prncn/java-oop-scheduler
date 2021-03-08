@@ -9,7 +9,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class DatabaseAPI {
-  private static final String SQL_CLOUD_URI = "jdbc:mysql://bqzknjzyoeidxu0hmqhq-mysql.services.clever-cloud.com:3306/bqzknjzyoeidxu0hmqhq?useSSL=false";
+  private static final String SQL_CLOUD_URI = "jdbc:mysql://bda7xeloolcvse2aqa6l-mysql.services.clever-cloud.com:3306/bda7xeloolcvse2aqa6l?useSSL=false";
   private static final String SQL_CLOUD_USERNAME = "udpcghp8h7wkwbrg";
   private static final String SQL_CLOUD_PASSWORD = "mYe6S6puRrvcblEZPIWZ";
   private static Connection con = null;
