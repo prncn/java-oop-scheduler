@@ -41,7 +41,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   private Button lc_dpdwn;
   private TextField searchUserField;
   private Label userQueryResult;
-  private int pcpIconPos = 430;
+  private int pcpIconPos = 330;
   private ArrayList<User> participants;
   private ArrayList<File> selectedAttachments;
   private Reminder selectedReminder;
@@ -132,12 +132,12 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     }
 
     PAGE_ONE = new Panel();
-    PAGE_ONE.setBounds(100, 120, 320, 420);
+    PAGE_ONE.setBounds(100, 120, 730, 450);
     PAGE_ONE.setBackground(MasterUI.lightCol);
     mainpanel.add(PAGE_ONE);
 
     PAGE_TWO = new Panel();
-    PAGE_TWO.setBounds(100, 540, 320, 400);
+    PAGE_TWO.setBounds(100, 570, 320, 400);
     PAGE_TWO.setBackground(MasterUI.lightCol);
     mainpanel.add(PAGE_TWO);
 
@@ -165,7 +165,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * Create and initialise page buttons
    */
   private void initPageButtons() {
-    confirmBtn = new Button(PAGE_ONE.getX() + PAGE_ONE.getWidth() + 200, PAGE_ONE.getY() + 150, "Confirm",
+    confirmBtn = new Button(titleField.getX() + 520, titleField.getY() + 60, "Confirm",
         MasterUI.secondaryCol);
     switch (mode) {
       case VIEW:
@@ -203,8 +203,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     scheduleheroPanel.add(scheduleheroText);
     scheduleheroPanel.add(schedulehero);
 
-    mainpanel.add(confirmBtn);
-    mainpanel.add(scheduleheroPanel);
+    PAGE_ONE.add(confirmBtn);
+    PAGE_ONE.add(scheduleheroPanel);
   }
 
   /**
@@ -263,8 +263,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    */
   public void setDefaultProperties() {
     if (editEvent == null) {
-      titleField.setText("Proxy Networking");
-      locationField.setText("Communications department");
+      // titleField.setText("Proxy Networking");
+      // locationField.setText("Communications department");
       dateField.setText(LocalDate.now().toString());
       startField.setText("09:00");
       endField.setText("10:35");
@@ -377,11 +377,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     openDatePicker.setIcon(MasterUI.calendarIcon);
     openDatePicker.setSize(65, 40);
 
-    redpanel = new CalendarPanel(frame, 40, true, null);
+    redpanel = new CalendarPanel(frame, 37, true, null);
     redpanel.setSize(0, 0);
     redpanel.setBackground(MasterUI.lightCol);
     redpanel.setLayout(null);
-    redpanel.setBorder(BorderFactory.createLineBorder(Color.GRAY.brighter(), 1));
+    redpanel.setBorder(BorderFactory.createLineBorder(Color.decode("#e8e8e8"), 1));
     ((CalendarPanel) redpanel).stripComponents();
     redpanel.isActive = false;
     openDatePicker.addActionListener(e -> {
@@ -389,14 +389,17 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
         redpanel.setSize(0, 0);
         redpanel.isActive = false;
       } else {
-        redpanel.setBounds(openDatePicker.getX() + PAGE_ONE.getX(), openDatePicker.getY() + PAGE_ONE.getY(), 300, 310);
-        // redpanel.setBounds(openDatePicker.getX(), openDatePicker.getY(), 300, 310);
+        // redpanel.setBounds(openDatePicker.getX() + PAGE_ONE.getX(), openDatePicker.getY() + PAGE_ONE.getY(), 300, 310);
+        redpanel.setBounds(openDatePicker.getX(), openDatePicker.getY(), 280, 290);
+        redpanel.revalidate();
         redpanel.isActive = true;
       }
     });
 
-    mainpanel.add(redpanel);
+    // mainpanel.add(redpanel);
+    // mainpanel.setComponentZOrder(redpanel, 0);
     PAGE_ONE.add(openDatePicker);
+    PAGE_ONE.add(redpanel);
     PAGE_ONE.setComponentZOrder(redpanel, 1);
     PAGE_ONE.setComponentZOrder(openDatePicker, 0);
   }
@@ -604,8 +607,8 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       }
     });
 
-    Label pcpIconLabel = new Label(pcpIconPos, 370, "Participants");
-    mainpanel.add(pcpIconLabel);
+    Label pcpIconLabel = new Label(pcpIconPos, 270, "Participants");
+    PAGE_ONE.add(pcpIconLabel);
 
     for (User pcp : participants) {
       placeParticpantIcon(pcp);
@@ -643,10 +646,11 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    * @param pcp - Participant user
    */
   public void placeParticpantIcon(User pcp) {
-    Label pcpIcon = new Label(pcpIconPos, 400, "");
+    Label pcpIcon = new Label(pcpIconPos, 300, "");
     pcpIcon.fillIcon(FormatUtil.resizeImageIcon(pcp.getAvatar(), 0.5f));
     pcpIcon.setVerticalTextPosition(SwingConstants.CENTER);
-    mainpanel.add(pcpIcon);
+    pcpIcon.setToolTipText(pcp.getUsername());
+    PAGE_ONE.add(pcpIcon);
     pcpIconPos += 40;
   }
 
