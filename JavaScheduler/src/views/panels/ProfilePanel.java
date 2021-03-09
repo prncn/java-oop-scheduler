@@ -167,6 +167,7 @@ public class ProfilePanel extends Panel {
 
     lcNameField = new TextField(0, 20);
     lcNameField.setText("Test");
+    lcNameField.setMaximumLength(25);
     MasterUI.placeFieldLabel(lcNameField, "Location name", lcpanel);
     lcpanel.add(lcNameField);
 
@@ -385,6 +386,14 @@ public class ProfilePanel extends Panel {
     lcStreetNrField = new TextField("");
     lcBuildingField = new TextField("");
     lcRoomField = new TextField("");
+
+    lcCityField.setMaximumLength(25);
+    lcZipField.setMaximumLength(25);
+    lcStreetField.setMaximumLength(40);
+    lcStreetNrField.setMaximumLength(10);
+    lcBuildingField.setMaximumLength(25);
+    lcRoomField.setMaximumLength(25);
+
     TextField[] lcFields = { lcCityField, lcZipField, lcStreetField, lcStreetNrField, lcBuildingField, lcRoomField };
     return lcFields;
   }

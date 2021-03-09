@@ -214,6 +214,7 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
    */
   private void initPageOneFormContent() {
     titleField = new TextField(cb.x, cb.y + 20);
+    titleField.setMaximumLength(25);
     MasterUI.placeFieldLabel(titleField, "Title", PAGE_ONE);
 
     dateField = new TextField(cb.x, titleField.getY() + TF_MRGN);
@@ -222,13 +223,16 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
 
     startField = new TextField(cb.x, dateField.getY() + TF_MRGN);
     startField.setSize(titleField.getWidth() / 2, titleField.getHeight());
+    startField.setMaximumLength(5);
     MasterUI.placeFieldLabel(startField, "Start time", PAGE_ONE);
 
     endField = new TextField(cb.x + startField.getWidth() + 5, dateField.getY() + TF_MRGN);
     endField.setSize(startField.getWidth() - 5, startField.getHeight());
+    endField.setMaximumLength(5);
     MasterUI.placeFieldLabel(endField, "End time", PAGE_ONE);
 
     locationField = new TextField(cb.x, endField.getY() + TF_MRGN);
+    locationField.setMaximumLength(25);
     lc_dpdwn = locationField.appendButton(MasterUI.downIcon);
     lc_dpdwn.addActionListener(e -> locationDropdownSelection(locationField));
     if (mode != VIEW)
@@ -704,33 +708,10 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     FieldMap.put("locationField", locationField);
     FieldMap.put("reminderField", reminderField);
 
-/*
-    System.out.println("in processConfirm\n"
-            + titleField.getText() + "\n"
-            + dateField.getText() + "\n"
-            + startField.getText() + "\n"
-            + endField.getText() + "\n"
-            + locationField.getText() + "\n"
-            + reminderField.getText() + "\n"
-            + selectedReminder.toString() + "\n"
-    );
- */
-
     ActionListener createAction = new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         panel.removeAll();
 
-        /*
-        System.out.println("in actionperformed\n"
-                + titleField.getText() + "\n"
-                + dateField.getText() + "\n"
-                + startField.getText() + "\n"
-                + endField.getText() + "\n"
-                + locationField.getText() + "\n"
-                + selectedPriority.toString() + "\n"
-                + reminderField.getText() + "\n"
-                + selectedReminder.toString() + "\n");
-         */
 
         Event event = ViewModelHandler.consumeEventForm(FieldMap,
             participants, selectedReminder, selectedPriority, selectedAttachments, descField);
