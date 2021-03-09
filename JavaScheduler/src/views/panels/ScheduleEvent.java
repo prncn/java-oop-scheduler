@@ -64,14 +64,22 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
   /** Margin between text fields */
   private final int TF_MRGN = 70;
 
+  /** Panel for the above section */
   private Panel PAGE_ONE;
+  /** Panel for the below section */
   private Panel PAGE_TWO;
+  /** Scroller */
   private JScrollPane scroller;
+  /** Base Panel */
   private Panel mainpanel;
 
+  /** Base Frame */
   private JFrame frame;
+  /** Current User */
   private User user;
+  /** Event which is viewed in mode == EDIT */
   private Event editEvent;
+  /** Mode of this Panel, different layouts depending on mode */
   private int mode;
 
   /**

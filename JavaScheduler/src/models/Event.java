@@ -8,20 +8,48 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
+/**
+ * The Event Class represents the events which a user creates
+ */
 public class Event implements Comparable<Event> {
+  /** id of event */
   private int id;
+  /** Name of event */
   private String name;
+  /** Date of event */
   private LocalDate date;
+  /** Start time of event */
   private LocalTime time;
+  /** Duration in minutes of event */
   private int durationMinutes;
+  /** Location object of event */
   private Location location;
+  /** Host id of event */
   private int hostId;
+  /** List of participants of an event */
   private ArrayList<User> participants;
+  /** Priority of event */
   private Priority priority;
+  /** List of attachment of an event */
   private ArrayList<File> attachments;
+  /** Reminder of an event */
   private Reminder reminder;
+  /** Description of event */
   private String description = "";
 
+  /**
+   * Constructor for creating event from users input
+   * @param name - name of the event
+   * @param date - date of the event
+   * @param time - starting time of event
+   * @param durationMinutes - duration of event in minutes
+   * @param location - location of event
+   * @param participants - list of participants
+   * @param reminder - selected reminder for the event
+   * @param priority - selected priority for the event
+   * @param attachments - list of attachements
+   * @param description - description of the event
+   */
   public Event(String name, LocalDate date, LocalTime time, int durationMinutes, Location location,
       ArrayList<User> participants, Reminder reminder, Priority priority, ArrayList<File> attachments,
       String description) {
@@ -37,6 +65,19 @@ public class Event implements Comparable<Event> {
     this.description = description;
   }
 
+  /**
+   * Constructor for fetching event from database and creating model class from it
+   * @param eventId - id of event
+   * @param name - name of the event
+   * @param date - date of the event
+   * @param time - starting time of event
+   * @param duration - duration of event in minutes
+   * @param location - location of event
+   * @param participants - list of participants
+   * @param reminder - selected reminder for the event
+   * @param priority - selected priority for the event
+   * @param description - description of the event
+   */
   public Event(int eventId, String name, String description, int duration, LocalDate date, LocalTime time,
       Location location, Priority priority, Reminder reminder, ArrayList<User> participants) {
     this.id = eventId;
@@ -277,7 +318,7 @@ public class Event implements Comparable<Event> {
   /**
    * Check if event is in the past
    * 
-   * @return
+   * @return true if it was in the past, else false.
    */
   public boolean hasPassed() {
     return date.isBefore(LocalDate.now());
@@ -349,29 +390,18 @@ public class Event implements Comparable<Event> {
    * @return String of participant names
    */
   public String participantsToString() {
-    String join = "";
     String list = "";
-    ArrayList<User> p = getParticipants();
-    for (int i = 0;  i < p.size(); i++) {
-      if(i != p.size()-1){
-        join = " - ";
-      }
-      else{join = "";}
-
-      if(p.get(i).getFirstname().isBlank() || p.get(i).getLastname().isBlank())
-        list += p.get(i).getUsername() + join;
-      else {
-        list += p.get(i).getFirstname() + " " + p.get(i).getLastname() + join;
-      }
-
+    for (User participant : getParticipants()) {
+      list += participant.getFirstname() + " " + participant.getLastname() + "<br>";
     }
     return "<html> " + list + "<html>";
   }
-  
-  
-  /** 
-   * @param other
-   * @return int
+
+  /**
+   * Compare the dates of two Event objects
+   *
+   * @param other - event that is compared
+   * @return negative integer if date is before, positive integer if date is after
    */
   @Override
   public int compareTo(Event other) {

@@ -25,12 +25,19 @@ public class LoginUI extends MasterUI {
   /**
    * UI components
    */
+  /**Textfield in which user can enter his username*/ 
   protected static TextField userField;
+  /**Textfield in which user can enter his password*/
   protected static JPasswordField passField;
+  /**button which is used to get to registration*/
   protected static Button loginBtn;
+  /**button which is used to get to registration*/
   protected static Button registerBtn;
+  /**shows whether login was successful*/
   protected static Label success;
+  /**icon for the application*/
   protected JLabel backIconHero;
+  /**contains the screentitle shown in LoginUI*/
   protected Label screenTitle;
   
   /** Pixel coordinates box for content */

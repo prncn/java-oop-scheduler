@@ -1,20 +1,17 @@
 package views.panels;
 
-import controllers.*;
-
-import java.util.Random;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.SwingConstants;
-
+import controllers.FormatUtil;
+import controllers.ViewModelHandler;
 import models.Event;
 import models.User;
+import views.HomeUI;
+import views.MasterUI;
 import views.components.Button;
 import views.components.Label;
 import views.components.Panel;
-import views.HomeUI;
-import views.MasterUI;
+
+import javax.swing.*;
+import java.util.Random;
 
 /**
  * After the user has successfully created an event, they are sent
@@ -23,6 +20,7 @@ import views.MasterUI;
 public class ScheduleEventConfirm extends Panel {
 
   private static final long serialVersionUID = 4625075272906690489L;
+  /** Panel object for schedule an event */
   private ScheduleEvent createMeetingPanel;
 
   public ScheduleEventConfirm(JFrame frame, User user, Event event, int mode) {

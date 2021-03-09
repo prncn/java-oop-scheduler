@@ -1,6 +1,10 @@
 # Java OOP WS20/21 Project
 Scheduling application.
 
+![Alt Text](https://i.imgur.com/jb9Jerx.gif)
+
+![Alt Text](https://i.imgur.com/B03pIvt.gif)
+
 ## Checklist
 ### Workflow
 - [x] Setup github repo  
@@ -76,10 +80,10 @@ Scheduling application.
 ### Documentation
 - [x] Include *Javadoc* as API for classes, methods, attributes
 - [x] *Diagrams* (class, sequence, flow) describing the software architecture and functionality
-- [ ] *Project documentation* (max. 18 pages) (see requirements)
+- [x] *Project documentation* (max. 18 pages) (see requirements)
   - [x] Description
   - [x] Motivation
   - [x] Requirements
   - [x] Organisation/Task distribution
   - [x] Technical descriptions and solutions
-  - [ ] Conclusion
+  - [x] Conclusion
