@@ -632,7 +632,6 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       }
       participants.add(user);
       placeParticpantIcon(user);
-      pcpIconPos += 40;
       repaint();
     }
   }
