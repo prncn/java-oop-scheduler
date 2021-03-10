@@ -58,6 +58,8 @@ public class AdminPanel extends Panel {
   /** ActionListener object to close suggestions */
   private ActionListener closeSuggest;
 
+  private List<User> users;
+
   public AdminPanel(JFrame frame, User currentUser) {
     super(frame);
     this.currentUser = currentUser;
@@ -90,7 +92,7 @@ public class AdminPanel extends Panel {
           panel.remove(profileInfo);
           panel.remove(confirm);
         }
-        profileInfo = new ProfilePanelInfo(searchedUser, true);
+        profileInfo = new ProfilePanelInfo(searchedUser, true, true);
         initDeleteBtn();
         panel.add(profileInfo);
         panel.repaint();
@@ -112,7 +114,7 @@ public class AdminPanel extends Panel {
           panel.remove(profileInfo);
           panel.remove(confirm);
         }
-        profileInfo = new ProfilePanelInfo(searchedUser, true);
+        profileInfo = new ProfilePanelInfo(searchedUser, true, true);
         initDeleteBtn();
         panel.add(profileInfo);
         panel.repaint();
@@ -129,17 +131,16 @@ public class AdminPanel extends Panel {
     searchTitle.setVerticalTextPosition(SwingConstants.TOP);
     searchTitle.setHeading();
     searchTitle.setSize(450, 75);
+    users = DatabaseAPI.getAllUsers();
 
     searchField = new TextField(50, 150);
     searchField.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
         updateSuggest();
       }
-      
       public void removeUpdate(DocumentEvent e) {
         updateSuggest();
       }
-      
       public void insertUpdate(DocumentEvent e) {
         updateSuggest();
       }
@@ -172,7 +173,7 @@ public class AdminPanel extends Panel {
     if (DatabaseAPI.getUser(searchField.getText()) != null){
       return;
     }
-    List<User> entries = DatabaseAPI.getAllUsers();
+    List<User> entries = new ArrayList<>(users);
     List<User> suggestions = new ArrayList<>(entries);
     if (sgscroll != null)
     searchBack.remove(sgscroll);
@@ -184,7 +185,7 @@ public class AdminPanel extends Panel {
     searchField.requestFocus();
   }
 
-  
+
   /**
    * Initialise and create delete button to remove
    * any user from the application database
