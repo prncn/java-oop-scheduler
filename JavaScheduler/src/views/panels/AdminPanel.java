@@ -84,6 +84,7 @@ public class AdminPanel extends Panel {
     // searchBtn.addActionListener(closeSuggest);
     searchBtn.addActionListener(e -> {
       searchedUser = ViewModelHandler.searchUser(searchField, searchBack, userQueryResult);
+      searchBack.remove(sgscroll);
       if ((searchedUser != null) && !(searchedUser.equals(currentUser))) {
         if (profileInfo != null) {
           panel.remove(profileInfo);
@@ -167,11 +168,14 @@ public class AdminPanel extends Panel {
    * search field
    */
   private void updateSuggest() {
+    if (DatabaseAPI.getUser(searchField.getText()) != null){
+      return;
+    }
     List<User> entries = DatabaseAPI.getAllUsers();
     List<User> suggestions = new ArrayList<>(entries);
     if (sgscroll != null)
     searchBack.remove(sgscroll);
-    suggestions.removeIf(e -> (!e.getUsername().startsWith(searchField.getText())));
+    suggestions.removeIf(e -> (!e.getUsername().toUpperCase().startsWith(searchField.getText().toUpperCase())));
     suggestions.removeIf(e -> e.getUsername().equals(currentUser.getUsername()));
     sgscroll = null;
     Component[] _comps = searchField.setDropdown(suggestions, sgscroll, searchBack, closeSuggest, suggestions.size());
