@@ -177,6 +177,14 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       default:
         confirmBtn.setText("Next");
     }
+    Button cnclBtn = new Button(confirmBtn.getX() - 200, confirmBtn.getY(), "Cancel", MasterUI.primaryColAlt);
+    cnclBtn.setTab();
+    cnclBtn.centerText();
+    cnclBtn.setCornerRadius(Button.ROUND);
+    cnclBtn.addActionListener(e -> {
+      removeAll();
+    });
+    PAGE_ONE.add(cnclBtn);
 
     confirmBtn.setTab();
     confirmBtn.centerText();
