@@ -107,9 +107,9 @@ public class ViewModelHandler {
     LocalDate date = LocalDate.parse("2021-01-" + String.valueOf(rand.nextInt(31) + 1), dateFormat);
     LocalTime time = LocalTime.parse(String.valueOf(rand.nextInt(17 - 9) + 9) + ":00", timeFormat);
     int duration = rand.nextInt(190 - 30) + 30;
-    System.out.println(duration);
     Event event = new Event("Test", date, time, duration, new Location("Testtown"), null, Reminder.NONE, Priority.LOW,
         null, "");
+    event.setParticipants(new ArrayList<User>());
     return event;
   }
 
