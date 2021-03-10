@@ -107,7 +107,7 @@ public class DatabaseAPI {
    * @param connection - SQL jdbc connection object, connection to DB
    * @param key        - used to find a certain user
    * @return SQL result of data entry or <code>null</code> if user doesn't exist
-   */
+  1 */
   private static <T> ResultSet fetchUserData(Connection connection, T key) {
     String sqlColumn = "";
 
@@ -314,8 +314,10 @@ public class DatabaseAPI {
    * @return a list of all events a user is part of.
    */
   public static ArrayList<Event> getEventsFromUser(int userId) {
-    String sql = "SELECT * FROM Event " + "LEFT JOIN User_Event " + "ON User_Event.event_id = Event.event_id "
-        + "WHERE User_Event.user_id = ?";
+    String sql = "SELECT * FROM Event "
+            + "LEFT JOIN User_Event "
+            + "ON User_Event.event_id = Event.event_id "
+            + "WHERE User_Event.user_id = ?";
     Connection connection = connectDatabase();
     ArrayList<Event> events = new ArrayList<Event>();
 
@@ -336,6 +338,7 @@ public class DatabaseAPI {
         Reminder reminder = Enum.valueOf(Reminder.class, rs.getString("reminder"));
         Priority priority = Enum.valueOf(Priority.class, rs.getString("priority"));
         int host_id = rs.getInt("host_id");
+
         Location location = fetchLocation(rs.getInt("location_id"));
         ArrayList<File> attachments = getAttachmentsFromEvent(eventId);
 
