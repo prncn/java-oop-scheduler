@@ -98,17 +98,26 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     this.user = user;
     this.editEvent = editEvent;
     this.mode = mode;
+
+    buildPanel();
+  }
+  
+  /**
+   * Build all of the content of the schedule event panel. This method is
+   * used to rebuild the panel as well.
+   */
+  private void buildPanel() {
     mainpanel = new Panel();
     mainpanel.setBackground(MasterUI.lightCol);
     mainpanel.setPreferredSize(new Dimension(getWidth(), 1000));
-
+  
     scroller = new JScrollPane(mainpanel);
     scroller.setBounds(0, 0, getWidth(), getHeight());
     scroller.getVerticalScrollBar().setUnitIncrement(10);
     scroller.setBorder(BorderFactory.createEmptyBorder());
     scroller.setBackground(MasterUI.lightCol);
     add(scroller);
-
+  
     cb = new Point(0, TF_MRGN);
     Label screenTitle = new Label(40, 40, "");
     screenTitle.setHeading();
@@ -130,17 +139,17 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       selectedAttachments = editEvent.getAttachments();
       participants = editEvent.getParticipants();
     }
-
+  
     PAGE_ONE = new Panel();
     PAGE_ONE.setBounds(100, 120, 730, 450);
     PAGE_ONE.setBackground(MasterUI.lightCol);
     mainpanel.add(PAGE_ONE);
-
+  
     PAGE_TWO = new Panel();
     PAGE_TWO.setBounds(100, 570, 320, 400);
     PAGE_TWO.setBackground(MasterUI.lightCol);
     mainpanel.add(PAGE_TWO);
-
+  
     initPageOneFormContent();
     if (mode != VIEW) {
       initDatePicker();
@@ -152,13 +161,14 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
     drawParticipantSection();
     drawDesciptionSection();
     processConfirm();
-
+  
     mainpanel.add(screenTitle);
     MasterUI.setComponentStyles(this, "light");
     MasterUI.setComponentStyles(PAGE_ONE, "light");
     MasterUI.setComponentStyles(PAGE_TWO, "light");
     MasterUI.setComponentStyles(mainpanel, "light");
     setDefaultProperties();
+
   }
 
   /**
@@ -177,12 +187,18 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       default:
         confirmBtn.setText("Next");
     }
-    Button cnclBtn = new Button(confirmBtn.getX() - 200, confirmBtn.getY(), "Cancel", MasterUI.primaryColAlt);
+    Button cnclBtn = new Button(confirmBtn.getX() - 180, confirmBtn.getY(), "Reset", MasterUI.primaryColAlt);
     cnclBtn.setTab();
     cnclBtn.centerText();
+    cnclBtn.setSize(170, cnclBtn.getHeight());
+    cnclBtn.setColor(MasterUI.primaryCol.brighter());
     cnclBtn.setCornerRadius(Button.ROUND);
     cnclBtn.addActionListener(e -> {
+      pcpIconPos = 330;
       removeAll();
+      buildPanel();
+      revalidate();
+      repaint();
     });
     PAGE_ONE.add(cnclBtn);
 
