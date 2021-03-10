@@ -155,7 +155,7 @@ public class User {
   /**
    * Updates the local list of events from the database
    */
-  private void updateEventList(){
+  public void updateEventList(){
     events.clear();
     events.addAll(DatabaseAPI.getEventsFromUser(this.getId()));
   }

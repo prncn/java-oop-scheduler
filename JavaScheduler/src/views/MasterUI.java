@@ -110,6 +110,7 @@ public abstract class MasterUI extends JFrame {
   public static ImageIcon folderIcon = new ImageIcon(fileRoot + iconsRoot + "folder-regular-24.png");
   public static ImageIcon editIcon = new ImageIcon(fileRoot + iconsRoot + "edit-solid-24.png");
   public static ImageIcon removeIcon = new ImageIcon(fileRoot + iconsRoot + "trash-alt-regular-24.png");
+  public static ImageIcon leaveIcon = new ImageIcon(fileRoot + iconsRoot + "exit-solid-24.png");
 
   public static ImageIcon hiPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-rd.png");
   public static ImageIcon midPrioIcon = new ImageIcon(fileRoot + iconsRoot + "circle-solid-24-ylw.png");

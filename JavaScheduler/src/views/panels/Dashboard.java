@@ -201,12 +201,14 @@ public class Dashboard extends Panel implements CardModes {
     Button fqBtn_2 = filterQuery_2.appendButton(MasterUI.searchIconLight);
 
     fqBtn_1.addActionListener(e -> {
+      TITLE_KEY = "";
       if (!filterQuery_1.getText().equals(filterQuery_1.getName())) {
         TITLE_KEY = filterQuery_1.getText();
       }
       drawEventData(user);
     });
     fqBtn_2.addActionListener(e -> {
+      LOCATION_KEY = "";
       if (!filterQuery_2.getText().equals(filterQuery_2.getName())) {
         LOCATION_KEY = filterQuery_2.getText();
       }
@@ -276,9 +278,12 @@ public class Dashboard extends Panel implements CardModes {
       upSectionInner.add(eventData);
       return;
     }
-    for (Event event : user.getEvents()) {
+    List<Event> events = new ArrayList<>(user.getEvents());
+    Collections.reverse(events);
+    for (Event event : events) {
       if (event.getHostId() != user.getId()) {
         drawEventCard(new Point(683, 80), event, redpanel, NOTIF, new Dimension(250, 100));
+        break;
       }
     }
     sectionUpcomingEventsCards(user, new Point(0, 10));
@@ -360,12 +365,12 @@ public class Dashboard extends Panel implements CardModes {
         content.y += card.getHeight() + mgn;
       }
     }
-    if (allEvents.size() % 6 == 0 && allEvents.size() > 0) {
-      allSectionInner.setSize(allSectionInner.getWidth(), (allEvents.size() * 115) * 2);
-      redpanel.setSize(redpanel.getWidth(), (allEvents.size() * 115) * 2);
-      bluepanel.setSize(redpanel.getWidth(), (allEvents.size() * 115) * 2);
-      bluepanel.setPreferredSize(new Dimension(redpanel.getWidth(), (allEvents.size() * 115) * 2));
-    }
+    int resize = Math.max(allEvents.size() * 115, 6 * 115);
+    allSectionInner.setSize(allSectionInner.getWidth(), (resize) * 2);
+    redpanel.setSize(redpanel.getWidth(), (resize) * 2);
+    bluepanel.setSize(redpanel.getWidth(), (resize) * 2);
+    bluepanel.setPreferredSize(new Dimension(redpanel.getWidth(), (resize) * 2));
+
     allSectionInner.repaint();
     allSectionInner.revalidate();
   }
@@ -420,8 +425,8 @@ public class Dashboard extends Panel implements CardModes {
     int margin = 6;
 
     if (checkCardModeKey(cardMode) == EDIT) {
-      Button edit = new Button(card.getWidth() - 95, card.getHeight() - 50, "", MasterUI.lightColAlt);
-      edit.setSize(40, 40);
+      Button edit = new Button(215, 105, "", MasterUI.lightColAlt);
+      edit.setSize(35, 35);
       edit.setColor(MasterUI.secondaryCol);
       edit.setOutline(true);
       edit.setCornerRadius(Button.ROUND);
@@ -432,7 +437,7 @@ public class Dashboard extends Panel implements CardModes {
       });
 
       Button remove = new Button(edit.getX() + (edit.getWidth() + margin), edit.getY(), "", MasterUI.secondaryCol);
-      remove.setSize(40, 40);
+      remove.setSize(35, 35);
       remove.setCornerRadius(Button.ROUND);
       remove.setHorizontalAlignment(SwingConstants.CENTER);
       remove.setBorder(BorderFactory.createEmptyBorder());
@@ -451,24 +456,27 @@ public class Dashboard extends Panel implements CardModes {
     }
 
     if (cardMode == VIEW) {
-      Button leave = new Button(100, card.getHeight() - 50, "", MasterUI.accentCol);
-      leave.setSize(40, 40);
+      Button leave = new Button(255, 105, "", Color.LIGHT_GRAY);
+      leave.setSize(35, 35);
       leave.setCornerRadius(Button.ROUND);
       leave.setHorizontalAlignment(SwingConstants.CENTER);
       leave.setBorder(BorderFactory.createEmptyBorder());
-      leave.setIcon(FormatUtil.resizeImageIcon(MasterUI.removeIcon, 0.8f));
+      leave.setIcon(FormatUtil.resizeImageIcon(MasterUI.leaveIcon, 0.8f));
       leave.addActionListener(e -> HomeUI.confirmDialog(a -> {
         user.removeEvent(event);
+        user.updateEventList();
         ViewModelHandler.updateDashboard(user);
         panel.repaint();
       }, "Remove this event?"));
+
+      card.add(leave);
     }
 
     if (cardMode == EDIT || cardMode == VIEW) {
       int x = 10;
-      for (User user : event.getParticipants()) {
+      for (int i = 0; i < Math.min(event.getParticipants().size(), 4); i++) {
         Label pcpIcon = new Label(x, 100, "");
-        pcpIcon.setIcon(FormatUtil.resizeImageIcon(user.getAvatar(), 0.3f));
+        pcpIcon.setIcon(FormatUtil.resizeImageIcon(event.getParticipants().get(i).getAvatar(), 0.3f));
         pcpIcon.setSize(pcpIcon.getIcon().getIconWidth(), pcpIcon.getIcon().getIconHeight());
         card.add(pcpIcon);
         x += pcpIcon.getWidth() - 5;
@@ -486,7 +494,7 @@ public class Dashboard extends Panel implements CardModes {
     
     MasterUI.setComponentStyles(card, "light");
     
-    if (checkCardModeKey(cardMode) == VIEW && event.getPriority() == Priority.HIGH || cardMode == NOTIF) {
+    if (event.getPriority() == Priority.HIGH || cardMode == NOTIF) {
       card.setBackground(MasterUI.hiPrioCol);
       Label[] labels = { name, location, date1, date2, time };
       for (Label label : labels) {
