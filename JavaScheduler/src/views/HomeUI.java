@@ -415,7 +415,7 @@ public class HomeUI extends MasterUI {
 
   
   /** 
-   * Test runnning application directly on HomeUI
+   * Dev testing onto HomeUI
    * 
    * @param args - Standard arguments
    */
