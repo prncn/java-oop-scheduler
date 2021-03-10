@@ -148,7 +148,7 @@ public class User {
    *
    * @param event - Event to be removed
    */
-  private void removeEvent(Event event) {
+  public void removeEvent(Event event) {
     DatabaseAPI.deleteUserEventBridge(this.getId(), event.getId());
   }
 

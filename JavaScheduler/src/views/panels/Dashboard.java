@@ -16,6 +16,8 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -170,23 +172,44 @@ public class Dashboard extends Panel implements CardModes {
     filterLabel.setHeading();
     filterLabel.setForeground(Color.WHITE);
 
-    TextField filterQuery_1 = new TextField(20, 70, "filter event names...");
+    TextField filterQuery_1 = new TextField(20, 70, "Filter event names...");
     filterQuery_1.setBackground(MasterUI.primaryColAlt);
     filterQuery_1.setSize(240, 40);
-
-    TextField filterQuery_2 = new TextField(20, 120, "filter locations...");
+    filterQuery_1.setName(filterQuery_1.getText());
+    TextField filterQuery_2 = new TextField(20, 120, "Filter locations...");
     filterQuery_2.setBackground(MasterUI.primaryColAlt);
     filterQuery_2.setSize(240, 40);
+    filterQuery_2.setName(filterQuery_2.getText());
+
+    FocusListener close = new FocusListener() {
+      public void focusGained(FocusEvent e) {
+        TextField field = ((TextField) e.getSource());
+        field.setText("");
+      }
+      public void focusLost(FocusEvent e) {
+        TextField field = ((TextField) e.getSource());
+        if(field.getText().isBlank()) {
+          field.setText(field.getName());
+        }
+      }
+    };
+
+    filterQuery_1.addFocusListener(close);
+    filterQuery_2.addFocusListener(close);
 
     Button fqBtn_1 = filterQuery_1.appendButton(MasterUI.searchIconLight);
     Button fqBtn_2 = filterQuery_2.appendButton(MasterUI.searchIconLight);
 
     fqBtn_1.addActionListener(e -> {
-      TITLE_KEY = filterQuery_1.getText();
+      if (!filterQuery_1.getText().equals(filterQuery_1.getName())) {
+        TITLE_KEY = filterQuery_1.getText();
+      }
       drawEventData(user);
     });
     fqBtn_2.addActionListener(e -> {
-      LOCATION_KEY = filterQuery_2.getText();
+      if (!filterQuery_2.getText().equals(filterQuery_2.getName())) {
+        LOCATION_KEY = filterQuery_2.getText();
+      }
       drawEventData(user);
     });
 
@@ -194,6 +217,7 @@ public class Dashboard extends Panel implements CardModes {
     filterPanel.add(fqBtn_1);
     filterPanel.add(fqBtn_2);
     filterPanel.add(filterQuery_1);
+
     filterPanel.add(filterQuery_2);
 
     Panel sortPanel = new Panel();
@@ -336,13 +360,14 @@ public class Dashboard extends Panel implements CardModes {
         content.y += card.getHeight() + mgn;
       }
     }
-    if (allEvents.size() % 8 == 0) {
+    if (allEvents.size() % 6 == 0 && allEvents.size() > 0) {
       allSectionInner.setSize(allSectionInner.getWidth(), (allEvents.size() * 115) * 2);
       redpanel.setSize(redpanel.getWidth(), (allEvents.size() * 115) * 2);
       bluepanel.setSize(redpanel.getWidth(), (allEvents.size() * 115) * 2);
       bluepanel.setPreferredSize(new Dimension(redpanel.getWidth(), (allEvents.size() * 115) * 2));
     }
     allSectionInner.repaint();
+    allSectionInner.revalidate();
   }
 
   /**
@@ -395,7 +420,7 @@ public class Dashboard extends Panel implements CardModes {
     int margin = 6;
 
     if (checkCardModeKey(cardMode) == EDIT) {
-      Button edit = new Button(card.getWidth() - 95, card.getHeight() - 50, "");
+      Button edit = new Button(card.getWidth() - 95, card.getHeight() - 50, "", MasterUI.lightColAlt);
       edit.setSize(40, 40);
       edit.setColor(MasterUI.secondaryCol);
       edit.setOutline(true);
@@ -423,6 +448,20 @@ public class Dashboard extends Panel implements CardModes {
 
       card.add(remove);
       card.add(edit);
+    }
+
+    if (cardMode == VIEW) {
+      Button leave = new Button(100, card.getHeight() - 50, "", MasterUI.accentCol);
+      leave.setSize(40, 40);
+      leave.setCornerRadius(Button.ROUND);
+      leave.setHorizontalAlignment(SwingConstants.CENTER);
+      leave.setBorder(BorderFactory.createEmptyBorder());
+      leave.setIcon(FormatUtil.resizeImageIcon(MasterUI.removeIcon, 0.8f));
+      leave.addActionListener(e -> HomeUI.confirmDialog(a -> {
+        user.removeEvent(event);
+        ViewModelHandler.updateDashboard(user);
+        panel.repaint();
+      }, "Remove this event?"));
     }
 
     if (cardMode == EDIT || cardMode == VIEW) {
@@ -464,6 +503,9 @@ public class Dashboard extends Panel implements CardModes {
     
     card.repaint();
     panel.repaint();
+
+    card.revalidate();
+    panel.revalidate();
     
     return card;
   }

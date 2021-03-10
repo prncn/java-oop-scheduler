@@ -415,7 +415,9 @@ public class HomeUI extends MasterUI {
 
   
   /** 
-   * @param args
+   * Test runnning application directly on HomeUI
+   * 
+   * @param args - Standard arguments
    */
   public static void main(String[] args) {
     User guest = DatabaseAPI.getUser("admin");

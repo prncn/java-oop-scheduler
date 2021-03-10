@@ -328,7 +328,7 @@ public class CalendarPanel extends Panel {
    * @param str - String the label to be set to
    * @return ActionListener to be passed to day button
    */
-  private ActionListener setInfoAction(String str) {
+  public ActionListener setInfoAction(String str) {
     return new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         meetingsInfo.setText(str);
@@ -348,14 +348,12 @@ public class CalendarPanel extends Panel {
     for (Event event : user.getEvents()) {
       if (currentLocalDate.equals(event.getDate())) {
         dayBtn.setColor(MasterUI.accentCol);
-        dayBtn.addActionListener(setInfoAction(event.getName()));
         dayBtn.setText("<html><p>" + event.getName() + "</p><html>");
         dayBtn.setFont(MasterUI.bodyFont.deriveFont(Font.BOLD));
         dayBtn.setVerticalAlignment(SwingConstants.TOP);
         dayBtn.setDark(true);
-
       } else {
-        dayBtn.addActionListener(setInfoAction(noMeetingStr));
+        // dayBtn.addActionListener(setInfoAction(noMeetingStr));
       }
     }
   }
@@ -447,6 +445,11 @@ public class CalendarPanel extends Panel {
           sendToScheduleForm();
           if (!isMinified) {
             weeklyDisplay.updateWeekDaysBar(FormatUtil.parseDate(currentYear, currentMonth.getValue(), dayNum));
+            if (dayBtn.getText().length() > 2) {
+              meetingsInfo.setText(dayBtn.getText());
+            } else {
+              meetingsInfo.setText(noMeetingStr);
+            }
           }
         }
       });
