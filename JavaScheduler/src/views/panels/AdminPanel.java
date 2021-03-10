@@ -75,6 +75,7 @@ public class AdminPanel extends Panel {
     closeSuggest = e -> {
       searchBack.remove(sgscroll);
       sgscroll = null;
+      searchAction(panel);
     };
 
     Label userQueryResult = new Label(searchField.getX(), searchField.getY() + 60, "");
@@ -101,6 +102,20 @@ public class AdminPanel extends Panel {
     add(adminTitle);
 
     MasterUI.setComponentStyles(this, "light");
+  }
+
+  private void searchAction(Panel panel) {
+    searchedUser = ViewModelHandler.searchUser(searchField, searchBack, null);
+      if ((searchedUser != null) && !(searchedUser.equals(currentUser))) {
+        if (profileInfo != null) {
+          panel.remove(profileInfo);
+          panel.remove(confirm);
+        }
+        profileInfo = new ProfilePanelInfo(searchedUser, true);
+        initDeleteBtn();
+        panel.add(profileInfo);
+        panel.repaint();
+      }
   }
 
   /**
@@ -171,7 +186,7 @@ public class AdminPanel extends Panel {
   private void initDeleteBtn() {
     deleteBtn = new Button(40, 500, "Delete User", MasterUI.primaryCol);
     deleteBtn.setSize(310, 50);
-    deleteBtn.setCornerRadius(Button.SMOOTH);
+    deleteBtn.setCornerRadius(Button.ROUND);
     deleteBtn.setForeground(MasterUI.lightCol);
     deleteBtn.addActionListener(confirm -> HomeUI.confirmDialog(deleteUser(searchedUser), "Delete User?"));
     add(deleteBtn);

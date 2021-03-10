@@ -127,6 +127,9 @@ public class ViewModelHandler {
       return null;
     }
     User user = DatabaseAPI.getUser(searchField.getText());
+    if (userQueryResult == null) {
+      return user;
+    }
     userQueryResult.setLocation(searchField.getX() + searchField.getWidth() - userQueryResult.getWidth() + 40,
         searchField.getY() + 40);
     userQueryResult.setHorizontalAlignment(SwingConstants.RIGHT);
