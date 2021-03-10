@@ -450,6 +450,20 @@ public class Dashboard extends Panel implements CardModes {
       card.add(edit);
     }
 
+    if (cardMode == VIEW) {
+      Button leave = new Button(100, card.getHeight() - 50, "", MasterUI.accentCol);
+      leave.setSize(40, 40);
+      leave.setCornerRadius(Button.ROUND);
+      leave.setHorizontalAlignment(SwingConstants.CENTER);
+      leave.setBorder(BorderFactory.createEmptyBorder());
+      leave.setIcon(FormatUtil.resizeImageIcon(MasterUI.removeIcon, 0.8f));
+      leave.addActionListener(e -> HomeUI.confirmDialog(a -> {
+        user.removeEvent(event);
+        ViewModelHandler.updateDashboard(user);
+        panel.repaint();
+      }, "Remove this event?"));
+    }
+
     if (cardMode == EDIT || cardMode == VIEW) {
       int x = 10;
       for (User user : event.getParticipants()) {

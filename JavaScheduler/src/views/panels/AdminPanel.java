@@ -163,6 +163,7 @@ public class AdminPanel extends Panel {
     });
   }
   
+
   /**
    * Method to trigger list of suggestions under user 
    * search field
@@ -183,6 +184,7 @@ public class AdminPanel extends Panel {
     searchField.requestFocus();
   }
 
+  
   /**
    * Initialise and create delete button to remove
    * any user from the application database
