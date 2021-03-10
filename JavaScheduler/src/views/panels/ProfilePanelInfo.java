@@ -113,12 +113,17 @@ public class ProfilePanelInfo extends Panel {
     cb.setLocation(contentPoint.x, contentPoint.y);
     usernameField.setLocation(cb.x, cb.y - marginBottom);
     usernameField.setBounds(cb.x + marginBottom, usernameField.getY(), usernameField.getWidth() - marginBottom, usernameField.getHeight());
+    usernameField.setMaximumLength(20);
     passField.setLocation(cb.x, usernameField.getY() + marginBottom);
+    passField.setMaximumLength(50);
     emailField.setLocation(cb.x, passField.getY() + marginBottom);
+    emailField.setMaximumLength(45);
     firstnameField.setLocation(cb.x, emailField.getY() + marginBottom);
     firstnameField.setSize(firstnameField.getWidth() / 2 - 5, firstnameField.getHeight());
+    firstnameField.setMaximumLength(30);
     lastnameField.setLocation(firstnameField.getX() + firstnameField.getWidth() + 10, firstnameField.getY());
     lastnameField.setSize(firstnameField.getSize());
+    lastnameField.setMaximumLength(30);
     fields.forEach(e -> add(e));
 
     MasterUI.placeFieldLabel(usernameField, "Username", this);
