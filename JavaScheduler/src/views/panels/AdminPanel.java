@@ -58,6 +58,8 @@ public class AdminPanel extends Panel {
   /** ActionListener object to close suggestions */
   private ActionListener closeSuggest;
 
+  private List<User> users;
+
   public AdminPanel(JFrame frame, User currentUser) {
     super(frame);
     this.currentUser = currentUser;
@@ -75,6 +77,7 @@ public class AdminPanel extends Panel {
     closeSuggest = e -> {
       searchBack.remove(sgscroll);
       sgscroll = null;
+      searchAction(panel);
     };
 
     Label userQueryResult = new Label(searchField.getX(), searchField.getY() + 60, "");
@@ -83,12 +86,13 @@ public class AdminPanel extends Panel {
     // searchBtn.addActionListener(closeSuggest);
     searchBtn.addActionListener(e -> {
       searchedUser = ViewModelHandler.searchUser(searchField, searchBack, userQueryResult);
+      searchBack.remove(sgscroll);
       if ((searchedUser != null) && !(searchedUser.equals(currentUser))) {
         if (profileInfo != null) {
           panel.remove(profileInfo);
           panel.remove(confirm);
         }
-        profileInfo = new ProfilePanelInfo(searchedUser, true);
+        profileInfo = new ProfilePanelInfo(searchedUser, true, true);
         initDeleteBtn();
         panel.add(profileInfo);
         panel.repaint();
@@ -103,6 +107,20 @@ public class AdminPanel extends Panel {
     MasterUI.setComponentStyles(this, "light");
   }
 
+  private void searchAction(Panel panel) {
+    searchedUser = ViewModelHandler.searchUser(searchField, searchBack, null);
+      if ((searchedUser != null) && !(searchedUser.equals(currentUser))) {
+        if (profileInfo != null) {
+          panel.remove(profileInfo);
+          panel.remove(confirm);
+        }
+        profileInfo = new ProfilePanelInfo(searchedUser, true, true);
+        initDeleteBtn();
+        panel.add(profileInfo);
+        panel.repaint();
+      }
+  }
+
   /**
    * Initalise search field on admin panel.
    * The search field allows so look through the lists of
@@ -113,17 +131,16 @@ public class AdminPanel extends Panel {
     searchTitle.setVerticalTextPosition(SwingConstants.TOP);
     searchTitle.setHeading();
     searchTitle.setSize(450, 75);
+    users = DatabaseAPI.getAllUsers();
 
     searchField = new TextField(50, 150);
     searchField.getDocument().addDocumentListener(new DocumentListener() {
       public void changedUpdate(DocumentEvent e) {
         updateSuggest();
       }
-      
       public void removeUpdate(DocumentEvent e) {
         updateSuggest();
       }
-      
       public void insertUpdate(DocumentEvent e) {
         updateSuggest();
       }
@@ -147,22 +164,27 @@ public class AdminPanel extends Panel {
     });
   }
   
+
   /**
    * Method to trigger list of suggestions under user 
    * search field
    */
   private void updateSuggest() {
-    List<User> entries = DatabaseAPI.getAllUsers();
+    if (DatabaseAPI.getUser(searchField.getText()) != null){
+      return;
+    }
+    List<User> entries = new ArrayList<>(users);
     List<User> suggestions = new ArrayList<>(entries);
     if (sgscroll != null)
     searchBack.remove(sgscroll);
-    suggestions.removeIf(e -> (!e.getUsername().startsWith(searchField.getText())));
+    suggestions.removeIf(e -> (!e.getUsername().toUpperCase().startsWith(searchField.getText().toUpperCase())));
     suggestions.removeIf(e -> e.getUsername().equals(currentUser.getUsername()));
     sgscroll = null;
     Component[] _comps = searchField.setDropdown(suggestions, sgscroll, searchBack, closeSuggest, suggestions.size());
     sgscroll = (JScrollPane) _comps[0];
     searchField.requestFocus();
   }
+
 
   /**
    * Initialise and create delete button to remove
@@ -171,7 +193,7 @@ public class AdminPanel extends Panel {
   private void initDeleteBtn() {
     deleteBtn = new Button(40, 500, "Delete User", MasterUI.primaryCol);
     deleteBtn.setSize(310, 50);
-    deleteBtn.setCornerRadius(Button.SMOOTH);
+    deleteBtn.setCornerRadius(Button.ROUND);
     deleteBtn.setForeground(MasterUI.lightCol);
     deleteBtn.addActionListener(confirm -> HomeUI.confirmDialog(deleteUser(searchedUser), "Delete User?"));
     add(deleteBtn);
