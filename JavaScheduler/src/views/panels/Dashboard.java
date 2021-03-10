@@ -1,5 +1,6 @@
 package views.panels;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -16,6 +17,8 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -170,13 +173,30 @@ public class Dashboard extends Panel implements CardModes {
     filterLabel.setHeading();
     filterLabel.setForeground(Color.WHITE);
 
-    TextField filterQuery_1 = new TextField(20, 70, "filter event names...");
+    TextField filterQuery_1 = new TextField(20, 70, "Filter event names...");
     filterQuery_1.setBackground(MasterUI.primaryColAlt);
     filterQuery_1.setSize(240, 40);
-
-    TextField filterQuery_2 = new TextField(20, 120, "filter locations...");
+    filterQuery_1.setName(filterQuery_1.getText());
+    TextField filterQuery_2 = new TextField(20, 120, "Filter locations...");
     filterQuery_2.setBackground(MasterUI.primaryColAlt);
     filterQuery_2.setSize(240, 40);
+    filterQuery_2.setName(filterQuery_2.getText());
+
+    FocusListener close = new FocusListener() {
+      public void focusGained(FocusEvent e) {
+        TextField field = ((TextField) e.getSource());
+        field.setText("");
+      }
+      public void focusLost(FocusEvent e) {
+        TextField field = ((TextField) e.getSource());
+        if(field.getText().isBlank()) {
+          field.setText(field.getName());
+        }
+      }
+    };
+
+    filterQuery_1.addFocusListener(close);
+    filterQuery_2.addFocusListener(close);
 
     Button fqBtn_1 = filterQuery_1.appendButton(MasterUI.searchIconLight);
     Button fqBtn_2 = filterQuery_2.appendButton(MasterUI.searchIconLight);
