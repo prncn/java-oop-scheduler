@@ -130,7 +130,7 @@ public class HomeUI extends MasterUI {
     /**
      * Highlight active tab by color
      */
-    Color active = MasterUI.primaryColAlt;
+    Color active = MasterUI.accentCol;
     Color inactive = MasterUI.primaryColAlt.darker();
     dashboardTab.setColor(active);
     prevBtn = dashboardTab;
@@ -415,7 +415,7 @@ public class HomeUI extends MasterUI {
 
   
   /** 
-   * Test runnning application directly on HomeUI
+   * Dev testing onto HomeUI
    * 
    * @param args - Standard arguments
    */
