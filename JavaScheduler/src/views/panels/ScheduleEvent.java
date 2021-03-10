@@ -200,7 +200,9 @@ public class ScheduleEvent extends Panel implements ScheduleModes {
       revalidate();
       repaint();
     });
-    PAGE_ONE.add(cnclBtn);
+    if (mode == CREATE) {
+      PAGE_ONE.add(cnclBtn);
+    }
 
     confirmBtn.setTab();
     confirmBtn.centerText();

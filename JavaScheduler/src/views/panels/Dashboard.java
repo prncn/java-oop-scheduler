@@ -1,6 +1,5 @@
 package views.panels;
 
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -202,11 +201,15 @@ public class Dashboard extends Panel implements CardModes {
     Button fqBtn_2 = filterQuery_2.appendButton(MasterUI.searchIconLight);
 
     fqBtn_1.addActionListener(e -> {
-      TITLE_KEY = filterQuery_1.getText();
+      if (!filterQuery_1.getText().equals(filterQuery_1.getName())) {
+        TITLE_KEY = filterQuery_1.getText();
+      }
       drawEventData(user);
     });
     fqBtn_2.addActionListener(e -> {
-      LOCATION_KEY = filterQuery_2.getText();
+      if (!filterQuery_2.getText().equals(filterQuery_2.getName())) {
+        LOCATION_KEY = filterQuery_2.getText();
+      }
       drawEventData(user);
     });
 
@@ -214,6 +217,7 @@ public class Dashboard extends Panel implements CardModes {
     filterPanel.add(fqBtn_1);
     filterPanel.add(fqBtn_2);
     filterPanel.add(filterQuery_1);
+
     filterPanel.add(filterQuery_2);
 
     Panel sortPanel = new Panel();
@@ -356,13 +360,14 @@ public class Dashboard extends Panel implements CardModes {
         content.y += card.getHeight() + mgn;
       }
     }
-    if (allEvents.size() % 8 == 0) {
+    if (allEvents.size() % 8 == 0 && allEvents.size() > 0) {
       allSectionInner.setSize(allSectionInner.getWidth(), (allEvents.size() * 115) * 2);
       redpanel.setSize(redpanel.getWidth(), (allEvents.size() * 115) * 2);
       bluepanel.setSize(redpanel.getWidth(), (allEvents.size() * 115) * 2);
       bluepanel.setPreferredSize(new Dimension(redpanel.getWidth(), (allEvents.size() * 115) * 2));
     }
     allSectionInner.repaint();
+    allSectionInner.revalidate();
   }
 
   /**
@@ -484,6 +489,9 @@ public class Dashboard extends Panel implements CardModes {
     
     card.repaint();
     panel.repaint();
+
+    card.revalidate();
+    panel.revalidate();
     
     return card;
   }
