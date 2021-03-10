@@ -92,7 +92,7 @@ public class AdminPanel extends Panel {
           panel.remove(profileInfo);
           panel.remove(confirm);
         }
-        profileInfo = new ProfilePanelInfo(searchedUser, true);
+        profileInfo = new ProfilePanelInfo(searchedUser, true, true);
         initDeleteBtn();
         panel.add(profileInfo);
         panel.repaint();
@@ -114,7 +114,7 @@ public class AdminPanel extends Panel {
           panel.remove(profileInfo);
           panel.remove(confirm);
         }
-        profileInfo = new ProfilePanelInfo(searchedUser, true);
+        profileInfo = new ProfilePanelInfo(searchedUser, true, true);
         initDeleteBtn();
         panel.add(profileInfo);
         panel.repaint();

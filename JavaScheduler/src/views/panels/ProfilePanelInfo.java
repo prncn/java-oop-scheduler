@@ -49,10 +49,13 @@ public class ProfilePanelInfo extends Panel {
   private User user;
   /** Boolean to determine if text fields are editable or not */
   private boolean isEditable;
+  /** Boolean to determnie if profile view is admin page or not */
+  private boolean adminView;
 
-  public ProfilePanelInfo(User user, boolean isEditable) {
+  public ProfilePanelInfo(User user, boolean isEditable, boolean adminView) {
     super();
     this.user = user;
+    this.adminView = adminView;
     setBackground(MasterUI.lightCol);
     setBounds(40, 100, 320, 550);
 
@@ -260,7 +263,9 @@ public class ProfilePanelInfo extends Panel {
           user.setPassword(PasswordEncryption.createHash(passField.getText()));
         }
         DatabaseAPI.editUser(user);
-        ViewModelHandler.updateProfileIcon(user);
+        if (!adminView) {
+          ViewModelHandler.updateProfileIcon(user);
+        }
       }
     };
   }

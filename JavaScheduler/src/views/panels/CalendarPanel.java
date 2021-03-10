@@ -328,7 +328,7 @@ public class CalendarPanel extends Panel {
    * @param str - String the label to be set to
    * @return ActionListener to be passed to day button
    */
-  private ActionListener setInfoAction(String str) {
+  public ActionListener setInfoAction(String str) {
     return new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         meetingsInfo.setText(str);

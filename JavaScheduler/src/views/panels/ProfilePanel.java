@@ -93,7 +93,7 @@ public class ProfilePanel extends Panel {
     Label profileTitle = new Label(40, 40, "Profile");
     profileTitle.setHeading();
 
-    ProfilePanelInfo infoPanel = new ProfilePanelInfo(user, false);
+    ProfilePanelInfo infoPanel = new ProfilePanelInfo(user, false, false);
     infoPanel.setToStaticMode();
 
     deleteBtn = new Button(profileTitle.getX() + 190, profileTitle.getY(), "Delete Account", MasterUI.primaryCol);
