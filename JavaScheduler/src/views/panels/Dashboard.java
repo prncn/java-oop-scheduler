@@ -360,7 +360,7 @@ public class Dashboard extends Panel implements CardModes {
         content.y += card.getHeight() + mgn;
       }
     }
-    if (allEvents.size() % 8 == 0 && allEvents.size() > 0) {
+    if (allEvents.size() % 6 == 0 && allEvents.size() > 0) {
       allSectionInner.setSize(allSectionInner.getWidth(), (allEvents.size() * 115) * 2);
       redpanel.setSize(redpanel.getWidth(), (allEvents.size() * 115) * 2);
       bluepanel.setSize(redpanel.getWidth(), (allEvents.size() * 115) * 2);
