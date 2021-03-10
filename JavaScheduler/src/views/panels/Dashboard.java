@@ -365,10 +365,11 @@ public class Dashboard extends Panel implements CardModes {
         content.y += card.getHeight() + mgn;
       }
     }
-    allSectionInner.setSize(allSectionInner.getWidth(), (allEvents.size() * 115) * 2);
-    redpanel.setSize(redpanel.getWidth(), (allEvents.size() * 115) * 2);
-    bluepanel.setSize(redpanel.getWidth(), (allEvents.size() * 115) * 2);
-    bluepanel.setPreferredSize(new Dimension(redpanel.getWidth(), (allEvents.size() * 115) * 2));
+    int resize = Math.max(allEvents.size() * 115, 6 * 115);
+    allSectionInner.setSize(allSectionInner.getWidth(), (resize) * 2);
+    redpanel.setSize(redpanel.getWidth(), (resize) * 2);
+    bluepanel.setSize(redpanel.getWidth(), (resize) * 2);
+    bluepanel.setPreferredSize(new Dimension(redpanel.getWidth(), (resize) * 2));
 
     allSectionInner.repaint();
     allSectionInner.revalidate();
@@ -493,7 +494,7 @@ public class Dashboard extends Panel implements CardModes {
     
     MasterUI.setComponentStyles(card, "light");
     
-    if (checkCardModeKey(cardMode) == VIEW && event.getPriority() == Priority.HIGH || cardMode == NOTIF) {
+    if (event.getPriority() == Priority.HIGH || cardMode == NOTIF) {
       card.setBackground(MasterUI.hiPrioCol);
       Label[] labels = { name, location, date1, date2, time };
       for (Label label : labels) {
